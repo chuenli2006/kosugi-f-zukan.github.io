@@ -653,7 +653,7 @@
 
     <div class="btn-group" id="sortGroup">
       <button class="btn-toggle active" id="sortCount" onclick="changeSort('count')">回数順</button>
-      <button class="btn-toggle" id="sortRecent" onclick="changeSort('recent')">最新利用順</button>
+      <button class="btn-toggle" id="sortRecent" onclick="changeSort('recent')">最近順</button>
       <button class="btn-toggle" id="sortName" onclick="changeSort('name')">五十音順</button>
     </div>
   </div>
@@ -760,7 +760,7 @@
     <div class="modal-content">
       <h3>💬 お知らせ</h3>
       <p class="modal-desc">
-        制作仕様のため、Chromeなど新型のブラウザでは履歴シェア機能が利用できません。
+        制作仕様のため、Chromeなど新型のブラウザでは履歴シェア機能をご利用できません。
       </p>
       <button class="close-btn" onclick="closeModal('shareAlertModal')">閉じる</button>
     </div>
@@ -1172,8 +1172,8 @@
       const lastMonth = parseInt(lastMonthStr.replace('月',''), 10);
       const now = new Date();
       const diffMonths = (now.getFullYear() - lastYear) * 12 + ((now.getMonth() + 1) - lastMonth);
-      if (diffMonths <= 0) return "最近イッてきました。";
-      return diffMonths + "ヶ月ブランク";
+      if (diffMonths <= 0) return "最近イッた記録あり。";
+      return diffMonths + "ヶ月前";
     }
 
     /* アナリティクス計算 */
