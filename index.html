@@ -797,17 +797,19 @@
       flex: 1;
     }
 
-    /* スリーサイズ 4列入力グリッド */
-    .style-grid {
+    /* スリーサイズ 2×2 グリッド（スマホ横スクロール防止） */
+    .style-grid-2x2 {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
     }
 
-    .style-grid input {
-      padding: 6px;
+    .style-grid-2x2 input {
+      padding: 8px;
       text-align: center;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
+      font-weight: bold;
+      transition: all 0.2s;
     }
 
     /* 🏷️ フラグ選択チップエリア */
@@ -1041,22 +1043,14 @@
           <input type="text" id="addName" placeholder="例: ゆあ" required>
         </div>
 
-        <!-- 💃 スリーサイズ 個別分割入力枠 -->
+        <!-- 💃 スリーサイズ 2×2 配置（リアルタイム色変化対応） -->
         <div class="form-group">
           <label>スリーサイズ（スタイルデータ）</label>
-          <div class="style-grid">
-            <div class="form-group">
-              <input type="text" id="addStyleT" placeholder="T:154">
-            </div>
-            <div class="form-group">
-              <input type="text" id="addStyleB" placeholder="B:80(A)">
-            </div>
-            <div class="form-group">
-              <input type="text" id="addStyleW" placeholder="W:53">
-            </div>
-            <div class="form-group">
-              <input type="text" id="addStyleH" placeholder="H:84">
-            </div>
+          <div class="style-grid-2x2">
+            <input type="text" id="addStyleT" placeholder="T: 154" oninput="updateInputColor(this, 'T')">
+            <input type="text" id="addStyleB" placeholder="B: 80(A)" oninput="updateInputColor(this, 'B')">
+            <input type="text" id="addStyleW" placeholder="W: 53" oninput="updateInputColor(this, 'W')">
+            <input type="text" id="addStyleH" placeholder="H: 84" oninput="updateInputColor(this, 'H')">
           </div>
         </div>
 
@@ -1244,7 +1238,7 @@
       "ゆず": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3523", notes: "", oldName: "", style: "", letters: [{ date: "2026年3月", imageUrl: "https://i.imgur.com/GtHdniF.jpeg", text: "ジュン君　今日は出会えて　よかった♡　また会いたいです！　ゆず" }] },
       "ななみ": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/okinawa-nursejyogakuen/girlid-65139298/", notes: "", oldName: "", style: "", letters: [] },
       "なるみ": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/Eq6COe4.jpeg", text: "ありがとう♡　またきてね　大学がんばってね！　なるみ" }] },
-      "ひびき": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3454", notes: "", oldName: "", style: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/bNSgBmz.jpeg", text: "今日はありがとう♡　たくさんお話できて楽しかったです！　また遊びに来てください❕️ひびき" }] },
+      "ひびき": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3454", notes: "", oldName: "", style: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/bNSgBmz.jpeg", text: "今日はありがとう♡　たくさんお話できて楽しかったです！　また遊びに来てください❕️　ひびき" }] },
       "せいな": { link: "https://www.cityheaven.net/tokyo/A1312/A131201/uenolip/girlid-52762713/?mygirl=1&lo=1", notes: "", oldName: "", style: "", letters: [] },
       "きほ": { link: "https://www.cityheaven.net/tokyo/A1304/A130401/a-crystal/girlid-65756780/", notes: "", oldName: "", style: "", letters: [] },
       "アクア": { link: "https://www.cityheaven.net/tokyo/A1303/A130301/sc-crystal/girlid-64589705/", notes: "", oldName: "", style: "", letters: [] },
@@ -1316,6 +1310,35 @@
 
     function clearFlagsInput() {
       document.getElementById('addFlags').value = '';
+    }
+
+    /* 🎨 入力中のリアルタイム背景色変化ロジック */
+    function updateInputColor(inputElem, type) {
+      const val = inputElem.value.trim().toUpperCase();
+      const numMatch = val.match(/\d+/);
+
+      if (!numMatch) {
+        inputElem.style.background = "var(--bg-color)";
+        inputElem.style.borderColor = "var(--border-color)";
+        inputElem.style.color = "var(--text-color)";
+        return;
+      }
+
+      const num = parseInt(numMatch[0], 10);
+
+      if (type === 'T') {
+        if (num < 150) { inputElem.style.background = "#e7f5ff"; inputElem.style.borderColor = "#a5d8ff"; inputElem.style.color = "#1c7ed6"; }
+        else if (num < 155) { inputElem.style.background = "#ebfbee"; inputElem.style.borderColor = "#b2f2bb"; inputElem.style.color = "#2b8a3e"; }
+        else if (num < 160) { inputElem.style.background = "#fff9db"; inputElem.style.borderColor = "#ffec99"; inputElem.style.color = "#d9480f"; }
+        else { inputElem.style.background = "#f3d9fa"; inputElem.style.borderColor = "#eebefa"; inputElem.style.color = "#9c36b5"; }
+      } else if (type === 'B') {
+        if (num < 85) { inputElem.style.background = "#fff0f6"; inputElem.style.borderColor = "#fcc2d7"; inputElem.style.color = "#d6336c"; }
+        else if (num < 90) { inputElem.style.background = "#ffdeeb"; inputElem.style.borderColor = "#faa2c1"; inputElem.style.color = "#c2255c"; }
+        else { inputElem.style.background = "#fcc2d7"; inputElem.style.borderColor = "#f783ac"; inputElem.style.color = "#a61e4d"; }
+      } else if (type === 'W' || type === 'H') {
+        if (num <= 55 || (type === 'H' && num <= 85)) { inputElem.style.background = "#ebfbee"; inputElem.style.borderColor = "#b2f2bb"; inputElem.style.color = "#2b8a3e"; }
+        else { inputElem.style.background = "#fff9db"; inputElem.style.borderColor = "#ffec99"; inputElem.style.color = "#d9480f"; }
+      }
     }
 
     /* 💃 手書きイラストに基づく「分割カプセル型」タグ生成関数 */
@@ -1620,10 +1643,13 @@
 
       // フォーム初期化
       document.getElementById('addName').value = '';
-      document.getElementById('addStyleT').value = '';
-      document.getElementById('addStyleB').value = '';
-      document.getElementById('addStyleW').value = '';
-      document.getElementById('addStyleH').value = '';
+      ['addStyleT', 'addStyleB', 'addStyleW', 'addStyleH'].forEach(id => {
+        const elem = document.getElementById(id);
+        elem.value = '';
+        elem.style.background = 'var(--bg-color)';
+        elem.style.borderColor = 'var(--border-color)';
+        elem.style.color = 'var(--text-color)';
+      });
       document.getElementById('addFlags').value = '';
       document.getElementById('addOldName').value = '';
       document.getElementById('addLink').value = '';
