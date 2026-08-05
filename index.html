@@ -296,6 +296,7 @@
       font-weight: bold;
       background: transparent;
       transition: background-color 0.2s;
+      gap: 8px;
     }
 
     summary.card-btn:active {
@@ -306,10 +307,12 @@
       display: none;
     }
 
-    /* 🖼 丸型サムネイル用スタイル (案1) */
+    /* 🖼 丸型サムネイル用スタイル（潰れ防止修正） */
     .avatar-box {
       width: 42px;
       height: 42px;
+      min-width: 42px;
+      min-height: 42px;
       border-radius: 50%;
       overflow: hidden;
       flex-shrink: 0;
@@ -346,15 +349,17 @@
     .cast-header-left {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       flex: 1;
+      min-width: 0; /* テキスト溢れ防止 */
     }
 
     .cast-info {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
       flex-wrap: wrap;
+      min-width: 0;
     }
 
     .status-badge {
@@ -402,6 +407,7 @@
       padding: 2px 8px;
       border-radius: 10px;
       font-size: 0.75rem;
+      flex-shrink: 0;
     }
 
     .super-favorite .badge-count {
@@ -435,6 +441,8 @@
     .detail-avatar-box {
       width: 70px;
       height: 70px;
+      min-width: 70px;
+      min-height: 70px;
       border-radius: 12px;
       overflow: hidden;
       flex-shrink: 0;
@@ -1074,12 +1082,12 @@
     ];
 
     const kosugiCastData = {
-      "ゆあ": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/lipsokinawa/girlid-60270238/", img: "https://i.imgur.com/5VJcm4m.png", notes: "", oldName: "", letters: [] },
+      "ゆあ": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/lipsokinawa/girlid-60270238/", img: "", notes: "", oldName: "", letters: [] },
       "さきな": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3335", img: "", notes: "", oldName: "", letters: [{ date: "2026年7月", imageUrl: "https://i.imgur.com/HQGHmMO.jpeg", text: "じゅんくんへ♡今日は久しぶりに会えてさきなとってもうれしかったよ〜！！また遊ぼうね♡さきなより" }] },
       "モカ": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3367", img: "", notes: "", oldName: "", letters: [{ date: "2026年7月", imageUrl: "https://i.imgur.com/XbmVYZm.jpeg", text: "モカです❣️明日から大学生活！たのしんでね　いつもモカに会いに来てくれていろんなお話きかせてくれてありがと　ファイトー!!また待ってるねん〜♡" },{ date: "2025年11月", imageUrl: "https://i.imgur.com/TfScpzj.jpeg", text: "はじめまして！モカです♡　モカをえらんであいにきてくれてありがと～！　としちかいお兄さん初めてて楽しすぎた✨　また待ってるねん😄" }] },
       "カルア": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3451", img: "", notes: "", oldName: "菜乃花", letters: [{ date: "2026年2月", imageUrl: "https://i.imgur.com/wlffBij.jpeg", text: "じゅんくんへ💕　今日はなのかのところに来てくれてありがとう! いつもBiGニュースを持ってきて楽しそうに話すじゅんくんを見るのが幸せです😌♡　言葉えらび面白くてついついよく笑っちゃってます✨　いつも笑顔でプレイしてくれてすなおなじゅんくんでいてくれてありがとう!!" }] },
       "まりあ": { link: "", img: "", notes: "", oldName: "", letters: [{ date: "2025年", imageUrl: "https://i.imgur.com/Ofhz9gl.jpeg", text: "" },{ date: "2025年", imageUrl: "https://i.imgur.com/qtpVpTE.jpeg", text: "" },{ date: "2025年", imageUrl: "https://i.imgur.com/ZZZdW0C.jpeg", text: "" },{ date: "2025年", imageUrl: "https://i.imgur.com/mOkhVsi.jpeg", text: "" }] },
-      "もも": { link: "", img: "", notes: "", oldName: "", letters: [{ date: "2026年2月", imageUrl: "https://i.imgur.com/x7K08ve.jpeg", text: "じゅんくん♡　いつも仲良くしてくれてありがとう〜！！　中国語もべんきょうしとくネ！！　大学ファイトだよ！人生これからスタートだネ　ファイト♡{もも" }] },
+      "もも": { link: "", img: "", notes: "", oldName: "", letters: [{ date: "2026年2月", imageUrl: "https://i.imgur.com/x7K08ve.jpeg", text: "じゅんくん♡　いつも仲良くしてくれてありがとう〜！！　中国語もべんきょうしとくネ！！　大学ファイトだよ！人生これからスタートだネ　ファイト♡　もも" }] },
       "ことり": { link: "https://www.cityheaven.net/aichi/A2301/A230104/jj-shinsakae/girlid-48589728/?mygirl=1&lo=1", img: "", notes: "", oldName: "", letters: [] },
       "四葉": { link: "", img: "", notes: "", oldName: "", letters: [] },
       "ひまわり": { link: "", img: "", notes: "", oldName: "", letters: [] },
@@ -1096,10 +1104,10 @@
       "さな": { link: "", img: "", notes: "", oldName: "", letters: [{ date: "2026年2月", imageUrl: "https://i.imgur.com/YoaqJJO.jpeg", text: "いっぱいガンバッててえらいよ🙂　むりしないでまた来てね💮" }] },
       "るか": { link: "https://www.cityheaven.net/tokyo/A1304/A130401/a-crystal/girlid-64506913/?mygirl=1&lo=1", img: "", notes: "", oldName: "", letters: [] },
       "ミノリ": { link: "", img: "", notes: "", oldName: "", letters: [{ date: "2026年2月", imageUrl: "https://i.imgur.com/KNNzZ7H.jpeg", text: "バレンタイン♡♡" }] },
-      "さら": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/okinawa-naminouejyogakuin/girlid-62305727/?mygirl=1&lo=1", img: "", notes: "", oldName: "", letters: [] },
-      "める": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/okinawa-naminouesougoubyouin/girlid-44817013/?mygirl=1&lo=1", img: "", notes: "", oldName: "", letters: [] },
+      "さら": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/okinawa-naminouejyogakuin/girlid-62305727/", img: "", notes: "", oldName: "", letters: [] },
+      "める": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/okinawa-naminouesougoubyouin/girlid-44817013/", img: "", notes: "", oldName: "", letters: [] },
       "ゆず": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3523", img: "", notes: "", oldName: "", letters: [{ date: "2026年3月", imageUrl: "https://i.imgur.com/GtHdniF.jpeg", text: "ジュン君　今日は出会えて　よかった♡　また会いたいです！　ゆず" }] },
-      "ななみ": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/okinawa-nursejyogakuen/girlid-65139298/?mygirl=1&lo=1", img: "", notes: "", oldName: "", letters: [] },
+      "ななみ": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/okinawa-nursejyogakuen/girlid-65139298/", img: "", notes: "", oldName: "", letters: [] },
       "なるみ": { link: "", img: "", notes: "", oldName: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/Eq6COe4.jpeg", text: "ありがとう♡　またきてね　大学がんばってね！　なるみ" }] },
       "ひびき": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3454", img: "", notes: "", oldName: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/bNSgBmz.jpeg", text: "今日はありがとう♡　たくさんお話できて楽しかったです！　また遊びに来てください❕️　ひびき" }] },
       "せいな": { link: "https://www.cityheaven.net/tokyo/A1312/A131201/uenolip/girlid-52762713/?mygirl=1&lo=1", img: "", notes: "", oldName: "", letters: [] },
@@ -1502,7 +1510,7 @@
         const notesHtml = '<div class="notes-box"> ' + (notes ? notes : '備考なし') + '</div>';
         const daysAgoText = calcMonthsAgo(c.lastVisit.year, c.lastVisit.month);
 
-        /* 🎬 丸型サムネイル＋画像組み込み構造 */
+        /* 🎬 丸型サムネイル＋画像組み込み構造（潰れ防止修正版） */
         details.innerHTML = 
           '<summary class="card-btn">' +
             '<div class="cast-header-left">' +
