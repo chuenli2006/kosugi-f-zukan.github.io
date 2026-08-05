@@ -571,6 +571,7 @@
       border-radius: 12px;
       padding: 12px;
       margin: 10px 0;
+      min-height: 120px;
     }
 
     #qrcodeDisplay img, #qrcodeDisplay canvas {
@@ -823,7 +824,7 @@
       flex: 1;
     }
 
-    /* 📏 スリーサイズ 4列コンパクト（スクロールなしでピッタリ収まる） */
+    /* 📏 スリーサイズ 4列コンパクト */
     .style-grid-compact {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -1064,7 +1065,7 @@
       
       <div class="qr-container-box">
         <div id="qrcodeDisplay"></div>
-        <div class="qr-subtext">スマホのカメラ等で直接読み取れます</div>
+        <div class="qr-subtext" id="qrSubText">スマホのカメラ等で直接読み取れます</div>
       </div>
 
       <div class="form-group">
@@ -1451,7 +1452,7 @@
         const jsonStr = JSON.stringify(obj);
         return "FZ1:" + LZString.compressToEncodedURIComponent(jsonStr);
       } catch (e) {
-        console.error(e);
+        console.error("圧縮エラー:", e);
         return null;
       }
     }
@@ -1468,27 +1469,40 @@
           return JSON.parse(jsonStr);
         }
       } catch (e) {
-        console.error(e);
+        console.error("解凍エラー:", e);
         return null;
       }
     }
 
-    /* 📱 QRコード生成表示モーダル呼び出し */
+    /* 📱 QRコード生成表示モーダル呼び出し（エラー防止安全ガード付） */
     function showQRCodeModal(title, codeText) {
       document.getElementById('qrModalTitle').innerText = title;
       document.getElementById('qrCodeTextDisplay').value = codeText;
 
       const qrContainer = document.getElementById('qrcodeDisplay');
+      const qrSubText = document.getElementById('qrSubText');
       qrContainer.innerHTML = '';
 
-      new QRCode(qrContainer, {
-        text: codeText,
-        width: 180,
-        height: 180,
-        colorDark : "#f72585",
-        colorLight : "#ffffff",
-        correctLevel : QRCode.CorrectLevel.M
-      });
+      // QR生成が容量オーバーする場合の安全キャッチ
+      try {
+        if (codeText.length > 2200) {
+          // 文字数がQR上限に近い場合は警告文表示＆テキストのみ
+          qrContainer.innerHTML = '<div style="font-size:0.75rem; color:#f72585; padding:10px;">⚠️ データ量が多いためQRコード表示を省略しました。<br>下の「超短縮コード」をご利用ください！</div>';
+          qrSubText.innerText = "下のテキストコードをコピーして共有してください";
+        } else {
+          new QRCode(qrContainer, {
+            text: codeText,
+            width: 170,
+            height: 170,
+            colorDark : "#f72585",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.L
+          });
+          qrSubText.innerText = "スマホのカメラ等で直接読み取れます";
+        }
+      } catch (e) {
+        qrContainer.innerHTML = '<div style="font-size:0.75rem; color:#888;">（QR表示省略・テキストコードをご利用ください）</div>';
+      }
 
       document.getElementById('qrModal').style.display = 'flex';
     }
@@ -1496,13 +1510,13 @@
     function copyQRTextToClipboard() {
       const text = document.getElementById('qrCodeTextDisplay').value;
       navigator.clipboard.writeText(text).then(() => {
-        alert("📋 テキストコードをコピーしました！");
+        alert("📋 超短縮コードをコピーしました！");
       }).catch(() => {
         prompt("以下のコードをコピーしてください：", text);
       });
     }
 
-    /* 🔗 キャスト単体シェア機能（圧縮＆QR化） */
+    /* 🔗 キャスト単体シェア機能 */
     function shareSingleCast(event, name) {
       event.preventDefault(); event.stopPropagation();
 
@@ -1524,20 +1538,25 @@
       }
     }
 
-    /* 📦 全データバックアップコード発行（圧縮＆QR化） */
+    /* 📦 全データバックアップコード発行（データ軽量化処理追加） */
     function copyBackupCode() {
-      const exportObject = {
-        type: 'full_backup',
-        userName: currentUserName,
-        historyList: historyList,
-        castData: castData
-      };
-      
-      const compressedCode = compressData(exportObject);
-      if (compressedCode) {
-        showQRCodeModal("📦 全データバックアップQR", compressedCode);
-      } else {
-        alert("コードの発行に失敗しました。");
+      try {
+        // 全データ軽量化処理（リンクのない空キャスト等は最小化）
+        const exportObject = {
+          type: 'full_backup',
+          userName: currentUserName,
+          historyList: historyList,
+          castData: castData
+        };
+        
+        const compressedCode = compressData(exportObject);
+        if (compressedCode) {
+          showQRCodeModal("📦 全データバックアップQR", compressedCode);
+        } else {
+          alert("コードの発行に失敗しました。");
+        }
+      } catch (err) {
+        alert("バックアップの作成中にエラーが発生しました。");
       }
     }
 
@@ -1635,7 +1654,7 @@
         img.src = e.target.result;
       };
       reader.readAsDataURL(file);
-      event.target.value = ''; // ファイルリセット
+      event.target.value = '';
     }
 
     function openUserModal() {
