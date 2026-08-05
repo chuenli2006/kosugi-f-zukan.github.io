@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title id="pageTitle">風俗履歴図鑑</title>
+  <title id="pageTitle">風俗履歴図鑑 [DEV a15.2]</title>
   
   <style>
     :root {
@@ -82,6 +82,47 @@
 
     .help-btn {
       background: #fff;
+    }
+
+    /* 🧪 画面左下バージョン表記バッジ（ダイアログ風） */
+    .dev-version-badge {
+      position: fixed;
+      bottom: 20px;
+      left: 16px;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(8px);
+      border: 1.5px solid var(--primary-pink);
+      border-radius: 20px;
+      padding: 6px 12px;
+      font-size: 0.72rem;
+      font-weight: bold;
+      color: var(--accent-pink);
+      box-shadow: 0 4px 12px rgba(247, 37, 133, 0.2);
+      z-index: 850;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .dev-version-badge:active {
+      transform: scale(0.95);
+    }
+
+    .dev-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #ff922b;
+      border-radius: 50%;
+      display: inline-block;
+      animation: pulseDot 1.5s infinite;
+    }
+
+    @keyframes pulseDot {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.8; }
     }
 
     /* メインナビゲーションタブ */
@@ -951,8 +992,30 @@
     <div id="sharedContent"></div>
   </div>
 
+  <!-- 🧪 左下フローティング・バージョンバッジ -->
+  <div class="dev-version-badge" onclick="openDevInfoModal()">
+    <span class="dev-dot"></span>
+    <span>DEV VERSION a15.2</span>
+  </div>
+
   <!-- ➕ フローティング追加ボタン -->
   <button class="fab-add" onclick="openAddModal()" title="新しい利用記録を追加">＋</button>
+
+  <!-- 🧪 サンドボックス版案内モーダル -->
+  <div class="modal-overlay" id="devInfoModal">
+    <div class="modal-content">
+      <h3>🧪 サンドボックス環境（a15.2）</h3>
+      <div class="help-section">
+        <div class="help-box" style="border-color:var(--primary-pink); background:#fffafb;">
+          <p style="font-size:0.8rem; line-height:1.5;">
+            現在は開発・検証用の<strong>サンドボックス（Dev）バージョン a15.2</strong>です。<br><br>
+            新しい機能の実験やテストを行っている環境のため、一部動作が安定しない場合があります。
+          </p>
+        </div>
+      </div>
+      <button class="close-btn" onclick="closeModal('devInfoModal')">了解して閉じる</button>
+    </div>
+  </div>
 
   <!-- 📖 使い方ダイアログ -->
   <div class="modal-overlay" id="helpModal">
@@ -981,7 +1044,7 @@
     <div class="modal-content">
       <h3>👤 ユーザー切り替え・保存先設定</h3>
       
-      <!-- 💾 GitHub連携モード切替ボックス（特定リポジトリ名デフォルト指定） -->
+      <!-- 💾 GitHub連携モード切替ボックス（正しいリポジトリ名デフォルト指定） -->
       <div class="storage-selector-box">
         <label style="font-size:0.75rem; font-weight:bold; color:var(--accent-pink);">💾 保存先モード選択</label>
         <div class="radio-group">
@@ -991,7 +1054,7 @@
 
         <div class="github-inputs" id="githubConfigBox" style="display:none;">
           <input type="password" id="ghToken" placeholder="GitHub Token (ghp_...)" style="font-size:0.75rem;">
-          <input type="text" id="ghRepo" placeholder="chuenli2006.github.io/kosugi-f-zukan.github.io" style="font-size:0.75rem;">
+          <input type="text" id="ghRepo" placeholder="chuenli2006/kosugi-f-zukan" style="font-size:0.75rem;">
           <div style="font-size:0.7rem; color:#666; margin-top:2px;">
             保存ファイル名: <strong id="ghFileNamePreview">data_童貞.json</strong>
           </div>
@@ -1245,8 +1308,8 @@
       "ゆうか": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3504", notes: "", oldName: "ここみ", style: "", letters: [{ date: "2026年7月", imageUrl: "https://i.imgur.com/vcJpOyD.jpeg", text: "今日はありがとう〜まさかの二度目ましてでおもろかった(笑ナースの時よりも少し風俗慣れてた気がして寂しい気もするけど会えて良かった!))" }] }
     };
 
-    // デフォルトのリポジトリを修正（chuenli2006.github.io/kosugi-f-zukan.github.io）
-    const DEFAULT_REPO = "chuenli2006.github.io/kosugi-f-zukan.github.io";
+    // 正しいリポジトリ名 (owner/repo)
+    const DEFAULT_REPO = "chuenli2006/kosugi-f-zukan";
 
     let currentUserName = localStorage.getItem('app_user_name') || '童貞';
     let storageMode = localStorage.getItem('app_storage_mode') || 'local';
@@ -1259,6 +1322,16 @@
     function getUserFileName(name) {
       const safeName = (name || currentUserName || 'user').trim().replace(/[\/\\?%*:|"<>]/g, '_');
       return `data_${safeName}.json`;
+    }
+
+    /* 🧹 自動でリポジトリ名を正規化する関数 */
+    function cleanRepoName(repoStr) {
+      if (!repoStr) return DEFAULT_REPO;
+      let clean = repoStr.trim();
+      clean = clean.replace(/^https?:\/\/github\.com\//i, '');
+      clean = clean.replace(/\.github\.io/gi, '');
+      if (!clean.includes('/')) return DEFAULT_REPO;
+      return clean;
     }
 
     function isKosugi(name) {
@@ -1297,7 +1370,8 @@
     /* ☁️ GitHubからのデータ自動取得 */
     async function loadFromGitHub() {
       const token = localStorage.getItem('gh_token');
-      const repo = localStorage.getItem('gh_repo') || DEFAULT_REPO;
+      const rawRepo = localStorage.getItem('gh_repo');
+      const repo = cleanRepoName(rawRepo);
       const fileName = getUserFileName(currentUserName);
 
       if (!token) return false;
@@ -1327,7 +1401,8 @@
     /* ☁️ GitHubへのデータ自動保存 */
     async function saveToGitHub() {
       const token = localStorage.getItem('gh_token');
-      const repo = localStorage.getItem('gh_repo') || DEFAULT_REPO;
+      const rawRepo = localStorage.getItem('gh_repo');
+      const repo = cleanRepoName(rawRepo);
       const fileName = getUserFileName(currentUserName);
 
       if (!token) return;
@@ -1394,12 +1469,16 @@
     function updateUIHeader() {
       const titleText = currentUserName + "の風俗履歴図鑑";
       document.getElementById('headerTitle').innerText = titleText;
-      document.getElementById('pageTitle').innerText = titleText;
+      document.getElementById('pageTitle').innerText = titleText + " [DEV a15.2]";
       document.getElementById('currentUserNameDisplay').innerText = currentUserName;
     }
 
     function updateSharedCount() {
       document.getElementById('sharedCount').innerText = sharedRecords.length;
+    }
+
+    function openDevInfoModal() {
+      document.getElementById('devInfoModal').style.display = 'flex';
     }
 
     /* リセット機能 */
@@ -1688,7 +1767,9 @@
       document.getElementById('modeLocal').checked = storageMode !== 'github';
 
       document.getElementById('ghToken').value = localStorage.getItem('gh_token') || '';
-      document.getElementById('ghRepo').value = localStorage.getItem('gh_repo') || DEFAULT_REPO;
+      
+      const savedRepo = localStorage.getItem('gh_repo');
+      document.getElementById('ghRepo').value = savedRepo ? cleanRepoName(savedRepo) : DEFAULT_REPO;
 
       toggleStorageModeUI();
       document.getElementById('userModal').style.display = 'flex';
@@ -1709,7 +1790,7 @@
       if (storageMode === 'github') {
         localStorage.setItem('gh_token', document.getElementById('ghToken').value.trim());
         const inputRepo = document.getElementById('ghRepo').value.trim();
-        localStorage.setItem('gh_repo', inputRepo || DEFAULT_REPO);
+        localStorage.setItem('gh_repo', cleanRepoName(inputRepo));
       }
 
       saveData();
