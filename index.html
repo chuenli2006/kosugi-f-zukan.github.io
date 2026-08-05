@@ -844,7 +844,7 @@
 
         <div class="help-box">
           <h4>📲 4. データのバックアップ・共有</h4>
-          <p>「👤 ユーザー」ボタン内からワンタップで全データのバックアップコードを発行・コピーできます。友達への共有や機種変更に便利です。</p>
+          <p>キャストのカード内「履歴シェア」を押すとそのキャスト単体の記録コードをコピーできます。受け取った人は「👤 ユーザー」画面から貼り付けて読み込めます。</p>
         </div>
 
       </div>
@@ -868,16 +868,16 @@
         </div>
       </form>
 
-      <!-- 📦 バックアップ・復元エリア (案2) -->
+      <!-- 📦 バックアップ・復元エリア -->
       <div class="backup-section">
-        <h4>📦 データのバックアップ・コード発行</h4>
-        <p style="font-size:0.7rem; color:#666; margin-bottom:6px;">現在の全データをコード化してコピーします。</p>
-        <button class="close-btn" style="width:100%; margin-top:0; background:linear-gradient(135deg, #4dabf7, #339af0);" onclick="copyBackupCode()">📋 コードを発行してコピー</button>
+        <h4>📦 全データのバックアップ発行</h4>
+        <p style="font-size:0.7rem; color:#666; margin-bottom:6px;">現在の全キャスト・全利用履歴をコード化してコピーします。</p>
+        <button class="close-btn" style="width:100%; margin-top:0; background:linear-gradient(135deg, #4dabf7, #339af0);" onclick="copyBackupCode()">📋 全データコードを発行してコピー</button>
 
         <h4 style="margin-top:12px;">📥 データの復元・読み込み</h4>
-        <p style="font-size:0.7rem; color:#666; margin-bottom:4px;">受け取ったコードを貼り付けて復元できます。</p>
-        <textarea class="backup-code-box" id="importCodeInput" placeholder="ここにバックアップコードを貼り付け..."></textarea>
-        <button class="close-btn" style="width:100%; margin-top:6px; background:#5c7cfa;" onclick="importBackupCode()">データを復元・読み込み</button>
+        <p style="font-size:0.7rem; color:#666; margin-bottom:4px;">受け取ったコード（全データ／キャスト単体）を貼り付けて読み込みます。</p>
+        <textarea class="backup-code-box" id="importCodeInput" placeholder="全データコード、またはシェアされたキャスト単体コードを貼り付け..."></textarea>
+        <button class="close-btn" style="width:100%; margin-top:6px; background:#5c7cfa;" onclick="importBackupCode()">コードを読み込む</button>
       </div>
 
     </div>
@@ -954,17 +954,6 @@
       </div>
 
       <button class="close-btn" id="gachaCloseBtn" onclick="closeModal('gachaModal')" disabled>抽選中...</button>
-    </div>
-  </div>
-
-  <!-- 💬 履歴シェア制限バブルダイアログ -->
-  <div class="modal-overlay" id="shareAlertModal">
-    <div class="modal-content">
-      <h3>💬 お知らせ</h3>
-      <p class="modal-desc">
-        制作仕様のため、Chromeなど新型のブラウザでは履歴シェア機能をご利用できません。
-      </p>
-      <button class="close-btn" onclick="closeModal('shareAlertModal')">閉じる</button>
     </div>
   </div>
 
@@ -1149,9 +1138,38 @@
       }
     }
 
-    /* 📦 バックアップコード発行・クリップボードコピー (案2) */
+    /* 🔗 キャスト単体シェアコード発行機能 */
+    function shareSingleCast(event, name) {
+      event.preventDefault(); event.stopPropagation();
+
+      const visits = historyList.filter(h => h.name === name);
+      const info = castData[name] || {};
+
+      const singleExportObject = {
+        type: 'single_cast_share',
+        name: name,
+        info: info,
+        visits: visits
+      };
+
+      try {
+        const jsonStr = JSON.stringify(singleExportObject);
+        const base64Code = btoa(unescape(encodeURIComponent(jsonStr)));
+
+        navigator.clipboard.writeText(base64Code).then(() => {
+          alert("📋 「" + name + "」さんの履歴シェアコードをコピーしました！\nLINE等で友達に送って「👤 ユーザー」画面から読み込んでもらってください。");
+        }).catch(() => {
+          prompt("以下のシェアコードを全選択してコピーしてください：", base64Code);
+        });
+      } catch (err) {
+        alert("シェアコードの発行に失敗しました。");
+      }
+    }
+
+    /* 📦 全データバックアップコード発行 */
     function copyBackupCode() {
       const exportObject = {
+        type: 'full_backup',
         userName: currentUserName,
         historyList: historyList,
         castData: castData
@@ -1159,7 +1177,6 @@
       
       try {
         const jsonStr = JSON.stringify(exportObject);
-        // UTF-8エンコード対応Base64変換
         const base64Code = btoa(unescape(encodeURIComponent(jsonStr)));
         
         navigator.clipboard.writeText(base64Code).then(() => {
@@ -1172,31 +1189,61 @@
       }
     }
 
-    /* 📥 バックアップコード復元・読み込み (案2) */
+    /* 📥 コード復元・読み込み（全データ / キャスト単体 両対応） */
     function importBackupCode() {
       const input = document.getElementById('importCodeInput').value.trim();
-      if (!input) return alert("バックアップコードを貼り付けてください！");
+      if (!input) return alert("コードを貼り付けてください！");
 
       try {
         const jsonStr = decodeURIComponent(escape(atob(input)));
         const importedData = JSON.parse(jsonStr);
 
-        if (!importedData.historyList || !importedData.castData) {
-          throw new Error("Invalid format");
+        // パターンA: キャスト単体シェアの読み込み
+        if (importedData.type === 'single_cast_share' || (importedData.name && importedData.visits)) {
+          const name = importedData.name;
+          if (confirm("「" + name + "」さんの利用履歴（" + importedData.visits.length + "回分）を図鑑に追加しますか？")) {
+            // 1. キャスト詳細の統合
+            if (!castData[name]) {
+              castData[name] = importedData.info || { link: "", notes: "", oldName: "", letters: [] };
+            } else {
+              if (importedData.info.link) castData[name].link = importedData.info.link;
+              if (importedData.info.notes) castData[name].notes = importedData.info.notes;
+              if (importedData.info.oldName) castData[name].oldName = importedData.info.oldName;
+            }
+
+            // 2. 利用履歴の追加（重複しないように統合）
+            importedData.visits.forEach(v => {
+              historyList.push(v);
+            });
+
+            saveData();
+            initUserData();
+            render();
+            closeModal('userModal');
+            document.getElementById('importCodeInput').value = '';
+            alert("✨ 「" + name + "」さんのデータを図鑑に追加しました！");
+          }
+          return;
         }
 
-        if (confirm("「" + (importedData.userName || "読み込みデータ") + "」のデータで上書き読み込みしますか？")) {
-          currentUserName = importedData.userName || '復元ユーザー';
-          historyList = importedData.historyList;
-          castData = importedData.castData;
+        // パターンB: 全データバックアップの読み込み
+        if (importedData.historyList && importedData.castData) {
+          if (confirm("「" + (importedData.userName || "読み込みデータ") + "」の全データで上書き読み込みしますか？")) {
+            currentUserName = importedData.userName || '復元ユーザー';
+            historyList = importedData.historyList;
+            castData = importedData.castData;
 
-          saveData();
-          initUserData();
-          render();
-          closeModal('userModal');
-          document.getElementById('importCodeInput').value = '';
-          alert("✨ データの復元・読み込みが完了しました！");
+            saveData();
+            initUserData();
+            render();
+            closeModal('userModal');
+            document.getElementById('importCodeInput').value = '';
+            alert("✨ データの全復元・読み込みが完了しました！");
+          }
+          return;
         }
+
+        throw new Error("Invalid format");
       } catch (err) {
         alert("⚠️ 無効なコードです。コードが正しくコピーされているか確認してください。");
       }
@@ -1253,11 +1300,6 @@
     function openLink(event, url) {
       event.preventDefault(); event.stopPropagation();
       window.open(url, '_blank');
-    }
-
-    function showShareAlert(event) {
-      event.preventDefault(); event.stopPropagation();
-      document.getElementById('shareAlertModal').style.display = 'flex';
     }
 
     /* ➕ 記録追加モーダルを開く・保存処理 */
@@ -1514,7 +1556,8 @@
           ? '<button class="link-btn" onclick="openLink(event, \'' + url + '\')">プロフ</button>' 
           : '';
 
-        const copyBtnHtml = '<button class="copy-btn" onclick="showShareAlert(event)">履歴シェア</button>';
+        /* 単体シェア用ボタン */
+        const copyBtnHtml = '<button class="copy-btn" onclick="shareSingleCast(event, \'' + c.name + '\')">履歴シェア</button>';
 
         const letterBtnHtml = hasLetters 
           ? '<button class="letter-btn" onclick="openLetterModal(event, \'' + c.name + '\')">💌 手紙 (' + validLetters.length + ')</button>' 
