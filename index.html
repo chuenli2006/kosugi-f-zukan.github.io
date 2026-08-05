@@ -76,7 +76,6 @@
 
     .help-btn { background: #fff; }
 
-    /* メイン切り替えタブ（マイ図鑑 vs 共有履歴） */
     .tab-nav {
       display: flex;
       margin-bottom: 12px;
@@ -100,7 +99,6 @@
       border-bottom: 3px solid var(--accent-pink);
     }
 
-    /* アナリティクスパネル */
     .dashboard {
       background: #fff;
       border: 1px solid var(--border-color);
@@ -127,7 +125,6 @@
     .dash-val { font-size: 1.1rem; font-weight: bold; color: var(--accent-pink); }
     .dash-lbl { font-size: 0.65rem; color: var(--light-text); }
 
-    /* コントロール */
     .controls {
       background: var(--card-bg);
       padding: 12px;
@@ -191,7 +188,6 @@
     }
     .btn-toggle.active { background: var(--primary-pink); color: white; border-color: var(--primary-pink); }
 
-    /* 凡例折りたたみ */
     .legend-details { margin-bottom: 12px; text-align: center; }
     .legend-details summary {
       color: var(--primary-pink);
@@ -213,7 +209,6 @@
       text-align: left;
     }
 
-    /* カード */
     .grid { display: flex; flex-direction: column; gap: 8px; }
     details.cast-card {
       background: var(--card-bg);
@@ -299,7 +294,6 @@
     .days-ago-tag { font-size: 0.7rem; color: var(--light-text); text-align: right; }
     .history-row { display: flex; justify-content: space-between; background: #fff; border: 1px solid var(--border-color); padding: 5px 8px; border-radius: 6px; font-size: 0.8rem; }
 
-    /* モーダル */
     .modal-overlay {
       display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
@@ -341,7 +335,6 @@
     .backup-section { margin-top: 15px; padding-top: 12px; border-top: 1px dashed var(--border-color); text-align: left; }
     .backup-section h4 { font-size: 0.8rem; color: var(--accent-pink); margin-bottom: 6px; }
 
-    /* 共有カードスタイル */
     .shared-card {
       background: #ffffff;
       border: 1px solid var(--soft-pink);
@@ -373,14 +366,12 @@
     </div>
   </header>
 
-  <!-- 📱 マイ図鑑 vs 共有履歴 切り替えタブ -->
   <div class="tab-nav">
     <button class="tab-btn active" id="tabMyRecords" onclick="switchMainTab('my')">👤 マイ図鑑</button>
     <button class="tab-btn" id="tabSharedRecords" onclick="switchMainTab('shared')">👥 共有された履歴 (<span id="sharedCount">0</span>)</button>
   </div>
 
   <div id="myTabArea">
-    <!-- 📊 ダッシュボード -->
     <details class="dashboard">
       <summary style="font-size:0.8rem; font-weight:bold; color:var(--accent-pink); cursor:pointer;">📊 利用統計ダッシュボードを表示／非表示</summary>
       <div class="dash-grid" style="margin-top:10px;">
@@ -394,7 +385,6 @@
       </div>
     </details>
 
-    <!-- 🎛 コントロール -->
     <div class="controls">
       <div class="search-row">
         <div class="search-box">
@@ -423,7 +413,6 @@
       </div>
     </div>
 
-    <!-- 凡例 -->
     <details class="legend-details">
       <summary>マークの意味（凡例）を表示／非表示</summary>
       <div class="legend-box">
@@ -445,30 +434,26 @@
       </div>
     </details>
 
-    <!-- メイン表示エリア -->
     <div id="mainContent"></div>
   </div>
 
-  <!-- 👥 共有された履歴表示エリア -->
   <div id="sharedTabArea" style="display:none;">
     <div id="sharedContent"></div>
   </div>
 
   <button class="fab-add" onclick="openAddModal()" title="新しい利用記録を追加">＋</button>
 
-  <!-- 📖 使い方ダイアログ -->
   <div class="modal-overlay" id="helpModal">
     <div class="modal-content">
       <h3>📖 風俗履歴図鑑のご利用ガイド</h3>
       <div class="help-section" style="text-align:left; font-size:0.8rem;">
-        <p><strong>📂 ファイル保存＆読み込み:</strong> データはテキストやQRコードを使わず、スマートなJSONファイルでバックアップ／復元・共有が可能です。</p>
-        <p style="margin-top:6px;"><strong>👥 共有された履歴:</strong> 友達から送られたキャストデータは「共有された履歴」タブに保存され、自分の本図鑑と混ざらず安全に閲覧できます。</p>
+        <p><strong>📂 ファイル保存＆読み込み:</strong> データはJSONファイルでバックアップ／復元・共有が可能です。</p>
+        <p style="margin-top:6px;"><strong>👥 共有された履歴:</strong> 友達から送られたデータは「共有された履歴」タブに保存され、自分の本図鑑と混ざらず安全に閲覧できます。</p>
       </div>
       <button class="close-btn" onclick="closeModal('helpModal')">はい</button>
     </div>
   </div>
 
-  <!-- 👤 ユーザー設定＆ファイルバックアップモーダル -->
   <div class="modal-overlay" id="userModal">
     <div class="modal-content">
       <h3>👤 ユーザー設定＆ファイル管理</h3>
@@ -480,7 +465,6 @@
         <button type="submit" class="close-btn" style="width:100%;">名前を保存</button>
       </form>
 
-      <!-- 📁 JSONファイル保存・読み込みエリア -->
       <div class="backup-section">
         <h4>📁 バックアップの保存（JSONファイル）</h4>
         <p style="font-size:0.7rem; color:#666; margin-bottom:6px;">全データをファイルとしてダウンロード保存します。</p>
@@ -489,14 +473,14 @@
         <h4 style="margin-top:12px;">📥 ファイルの復元・友達のデータ読み込み</h4>
         <p style="font-size:0.7rem; color:#666; margin-bottom:6px;">バックアップファイル（.json）を選択して読み込みます。</p>
         <button class="close-btn" style="width:100%; margin-top:0; background:#20c997;" onclick="triggerJSONFileInput()">📂 JSONファイルを選択</button>
-        <input type="file" id="jsonFileInput" accept=".json" style="display:none;" onchange="importJSONFile(event)">
+        <!-- 📱 Android互換性強化のためのaccept指定拡張 -->
+        <input type="file" id="jsonFileInput" accept=".json,application/json,text/plain" style="display:none;" onchange="importJSONFile(event)">
       </div>
 
       <button class="close-btn" style="background:#ccc; width:100%; margin-top:12px;" onclick="closeModal('userModal')">閉じる</button>
     </div>
   </div>
 
-  <!-- 📝 利用記録追加モーダル -->
   <div class="modal-overlay" id="addModal">
     <div class="modal-content">
       <h3>✨ 利用記録を追加</h3>
@@ -520,10 +504,10 @@
         <div class="form-group">
           <label>スリーサイズ（スタイルデータ）</label>
           <div class="style-grid-compact">
-            <input type="text" id="addStyleT" placeholder="T" oninput="updateInputColor(this, 'T')">
-            <input type="text" id="addStyleB" placeholder="B" oninput="updateInputColor(this, 'B')">
-            <input type="text" id="addStyleW" placeholder="W" oninput="updateInputColor(this, 'W')">
-            <input type="text" id="addStyleH" placeholder="H" oninput="updateInputColor(this, 'H')">
+            <input type="text" id="addStyleT" placeholder="T">
+            <input type="text" id="addStyleB" placeholder="B">
+            <input type="text" id="addStyleW" placeholder="W">
+            <input type="text" id="addStyleH" placeholder="H">
           </div>
         </div>
 
@@ -569,7 +553,6 @@
   </div>
 
   <script>
-    // こすぎ専用 Masterデータ
     const kosugiHistoryList = [
       { year: "2025", month: "8月", name: "ゆあ", flags: "🆂" },
       { year: "2025", month: "8月", name: "じゅり", flags: "⚔⚔" },
@@ -588,7 +571,7 @@
 
     const kosugiCastData = {
       "ゆあ": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/lipsokinawa/girlid-60270238/", notes: "", oldName: "", style: "T:154cm B:80(A) W:53 H:84" },
-      "さきna": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3335", notes: "", oldName: "", style: "" },
+      "さきな": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3335", notes: "", oldName: "", style: "" },
       "モカ": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3367", notes: "", oldName: "", style: "" },
       "カルア": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3451", notes: "", oldName: "菜乃花", style: "" }
     };
@@ -596,7 +579,7 @@
     let currentUserName = localStorage.getItem('app_user_name') || '童貞';
     let historyList = [];
     let castData = {};
-    let sharedRecords = JSON.parse(localStorage.getItem('user_shared_list_' + currentUserName) || '[]');
+    let sharedRecords = [];
 
     function isKosugi(name) {
       if (!name) return false;
@@ -614,7 +597,10 @@
         historyList = savedHist ? JSON.parse(savedHist) : [];
         castData = savedCast ? JSON.parse(savedCast) : {};
       }
-      sharedRecords = JSON.parse(localStorage.getItem('user_shared_list_' + currentUserName) || '[]');
+      
+      const savedShared = localStorage.getItem('user_shared_list_' + currentUserName);
+      sharedRecords = savedShared ? JSON.parse(savedShared) : [];
+
       updateUIHeader();
       updateSharedCount();
     }
@@ -640,7 +626,29 @@
       updateSharedCount();
     }
 
-    /* 📁 JSONファイルのダウンロード（書き出し） */
+    /* 完全初期化（童貞に戻す） */
+    function resetData() {
+      if (confirm("現在の記録を完全に消去して「童貞」に戻しますか？")) {
+        // 現在のユーザーデータをローカルストレージから完全削除
+        localStorage.removeItem('user_hist_' + currentUserName);
+        localStorage.removeItem('user_cast_' + currentUserName);
+        localStorage.removeItem('user_shared_list_' + currentUserName);
+
+        currentUserName = '童貞';
+        localStorage.setItem('app_user_name', currentUserName);
+        
+        historyList = [];
+        castData = {};
+        sharedRecords = [];
+
+        saveData();
+        initUserData();
+        render();
+        renderSharedArea();
+        alert("完全にリセットし、「童貞」状態に戻りました。");
+      }
+    }
+
     function exportJSONFile() {
       const exportObject = {
         app: "風俗履歴図鑑",
@@ -660,7 +668,6 @@
       downloadAnchor.remove();
     }
 
-    /* キャスト単体シェアファイルの出力 */
     function shareSingleCast(event, name) {
       event.preventDefault(); event.stopPropagation();
       const visits = historyList.filter(h => h.name === name);
@@ -684,7 +691,6 @@
       alert(`「${name}」さんの共有ファイル（.json）を出力しました！LINEなどで友達に送信してください。`);
     }
 
-    /* 📥 JSONファイルの読み込み（復元 / 共有データ取り込み） */
     function triggerJSONFileInput() {
       document.getElementById('jsonFileInput').click();
     }
@@ -698,7 +704,6 @@
         try {
           const imported = JSON.parse(e.target.result);
 
-          // キャスト単体データの読み込み -> 「共有された履歴」タブに追加
           if (imported.app === "風俗履歴図鑑_単体" || imported.castName) {
             sharedRecords.unshift({
               fromUser: imported.sharedBy || "友達",
@@ -711,13 +716,12 @@
             renderSharedArea();
             closeModal('userModal');
             switchMainTab('shared');
-            alert(`👥 ${imported.sharedBy || '友達'}さんから共有された「${imported.castName}」さんの履歴を「共有された履歴」タブに追加しました！`);
+            alert(`👥 ${imported.sharedBy || '友達'}さんから共有された「${imported.castName}」さんの履歴を追加しました！`);
             return;
           }
 
-          // 全データ復元
           if (imported.historyList && imported.castData) {
-            if (confirm(`「${imported.userName || 'バックアップ'}」の全データで図鑑を上書き復元しますか？`)) {
+            if (confirm(`「${imported.userName || 'バックアップ'}」の全データで図鑑を復元しますか？`)) {
               currentUserName = imported.userName || '復元ユーザー';
               historyList = imported.historyList;
               castData = imported.castData;
@@ -732,14 +736,13 @@
 
           alert("⚠️ 無効なファイルフォーマットです。");
         } catch (err) {
-          alert("⚠️ ファイルの読み込みに失敗しました。");
+          alert("⚠️ ファイルの解析に失敗しました。正しくダウンロードされたJSONファイルか確認してください。");
         }
       };
       reader.readAsText(file);
       event.target.value = '';
     }
 
-    /* タブ切り替え（マイ図鑑 vs 共有履歴） */
     function switchMainTab(type) {
       const myArea = document.getElementById('myTabArea');
       const sharedArea = document.getElementById('sharedTabArea');
@@ -760,7 +763,6 @@
       }
     }
 
-    /* 👥 共有された履歴タブの描画 */
     function renderSharedArea() {
       const container = document.getElementById('sharedContent');
       container.innerHTML = '';
@@ -800,7 +802,6 @@
       });
     }
 
-    /* 共有履歴から自分の図鑑へ取り込み */
     function copySharedToMyCatalog(index) {
       const item = sharedRecords[index];
       if (confirm(`「${item.castName}」さんのデータをあなたのマイ図鑑に追加しますか？`)) {
@@ -814,24 +815,8 @@
       }
     }
 
-    /* マーク操作 */
     function addFlagChar(char) { document.getElementById('addFlags').value += char; }
     function clearFlagsInput() { document.getElementById('addFlags').value = ''; }
-
-    function updateInputColor(inputElem, type) {
-      const val = inputElem.value.trim().toUpperCase();
-      const numMatch = val.match(/\d+/);
-      if (!numMatch) {
-        inputElem.style.background = "var(--bg-color)";
-        return;
-      }
-      const num = parseInt(numMatch[0], 10);
-      if (type === 'T') {
-        inputElem.style.background = num < 155 ? "#ebfbee" : "#fff9db";
-      } else if (type === 'B') {
-        inputElem.style.background = num >= 85 ? "#ffdeeb" : "#fff0f6";
-      }
-    }
 
     function renderStyleTags(styleStr) {
       if (!styleStr || !styleStr.trim()) return '<div class="style-row"><span class="style-none">スタイルなし</span></div>';
@@ -847,7 +832,8 @@
 
     function saveUserName(e) {
       e.preventDefault();
-      currentUserName = document.getElementById('inputUserName').value.trim() || '童貞';
+      const inputName = document.getElementById('inputUserName').value.trim() || '童貞';
+      currentUserName = inputName;
       saveData();
       initUserData();
       closeModal('userModal');
@@ -888,15 +874,6 @@
       saveData();
       closeModal('addModal');
       render();
-    }
-
-    function resetData() {
-      if (confirm("初期化しますか？")) {
-        currentUserName = '童貞';
-        saveData();
-        initUserData();
-        render();
-      }
     }
 
     function render() {
