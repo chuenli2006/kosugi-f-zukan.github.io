@@ -802,6 +802,19 @@
       flex: 1;
     }
 
+    /* スリーサイズ 4列入力グリッド */
+    .style-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .style-grid input {
+      padding: 6px;
+      text-align: center;
+      font-size: 0.8rem;
+    }
+
     /* 時系列モード */
     .month-section { margin-bottom: 16px; }
     .month-title {
@@ -833,7 +846,7 @@
     <h1 id="headerTitle">風俗履歴図鑑</h1>
     <p>マイ キャスト＆プレイレコード</p>
     <div class="header-btns">
-      <button class="user-tag-btn" onclick="openUserModal()">👤 ユーザー: <span id="currentUserNameDisplay">名無し</span></button>
+      <button class="user-tag-btn" onclick="openUserModal()">👤 ユーザー: <span id="currentUserNameDisplay">童貞</span></button>
       <button class="help-btn" onclick="openHelpModal()">❓ 使い方</button>
     </div>
   </header>
@@ -848,7 +861,7 @@
       <div class="dash-item"><div class="dash-val" id="stFavRate">0%</div><div class="dash-lbl">オキニ率</div></div>
     </div>
     <div style="text-align:right; margin-top:8px;">
-      <button onclick="resetData()" style="font-size:0.65rem; color:#aaa; background:none; border:none; text-decoration:underline; cursor:pointer;">⚠️ 記録を初期化して「名無し」に戻す</button>
+      <button onclick="resetData()" style="font-size:0.65rem; color:#aaa; background:none; border:none; text-decoration:underline; cursor:pointer;">⚠️ 記録を初期化して「童貞」に戻す</button>
     </div>
   </details>
 
@@ -1000,9 +1013,23 @@
           <input type="text" id="addName" placeholder="例: ゆあ" required>
         </div>
 
+        <!-- 💃 スリーサイズ 個別分割入力枠 -->
         <div class="form-group">
-          <label>スリーサイズ/スタイルデータ</label>
-          <input type="text" id="addStyle" placeholder="例: T:154cm B:80(A) W:53 H:84">
+          <label>スリーサイズ（スタイルデータ）</label>
+          <div class="style-grid">
+            <div class="form-group">
+              <input type="text" id="addStyleT" placeholder="T:154">
+            </div>
+            <div class="form-group">
+              <input type="text" id="addStyleB" placeholder="B:80(A)">
+            </div>
+            <div class="form-group">
+              <input type="text" id="addStyleW" placeholder="W:53">
+            </div>
+            <div class="form-group">
+              <input type="text" id="addStyleH" placeholder="H:84">
+            </div>
+          </div>
         </div>
 
         <div class="form-group">
@@ -1175,7 +1202,7 @@
       "める": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/okinawa-naminouesougoubyouin/girlid-44817013/", notes: "", oldName: "", style: "", letters: [] },
       "ゆず": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3523", notes: "", oldName: "", style: "", letters: [{ date: "2026年3月", imageUrl: "https://i.imgur.com/GtHdniF.jpeg", text: "ジュン君　今日は出会えて　よかった♡　また会いたいです！　ゆず" }] },
       "ななみ": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/okinawa-nursejyogakuen/girlid-65139298/", notes: "", oldName: "", style: "", letters: [] },
-      "なるみ": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/Eq6COe4.jpeg", text: "ありがとう♡　またきてね　大学がんばってね！{なるみ" }] },
+      "なるみ": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/Eq6COe4.jpeg", text: "ありがとう♡　またきてね　大学がんばってね！　なるみ" }] },
       "ひびき": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3454", notes: "", oldName: "", style: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/bNSgBmz.jpeg", text: "今日はありがとう♡　たくさんお話できて楽しかったです！　また遊びに来てください❕️　ひびき" }] },
       "せいな": { link: "https://www.cityheaven.net/tokyo/A1312/A131201/uenolip/girlid-52762713/?mygirl=1&lo=1", notes: "", oldName: "", style: "", letters: [] },
       "きほ": { link: "https://www.cityheaven.net/tokyo/A1304/A130401/a-crystal/girlid-65756780/", notes: "", oldName: "", style: "", letters: [] },
@@ -1184,7 +1211,8 @@
       "ゆうか": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3504", notes: "", oldName: "ここみ", style: "", letters: [{ date: "2026年7月", imageUrl: "https://i.imgur.com/vcJpOyD.jpeg", text: "今日はありがとう〜まさかの二度目ましてでおもろかった(笑ナースの時よりも少し風俗慣れてた気がして寂しい気もするけど会えて良かった!))" }] }
     };
 
-    let currentUserName = localStorage.getItem('app_user_name') || '名無し';
+    /* 初期ユーザーネームを「童貞」に変更 */
+    let currentUserName = localStorage.getItem('app_user_name') || '童貞';
     let historyList = [];
     let castData = {};
 
@@ -1228,14 +1256,14 @@
     }
 
     function resetData() {
-      if (confirm("現在の記録をクリアして「名無し」に戻しますか？")) {
+      if (confirm("現在の記録をクリアして「童貞」に戻しますか？")) {
         localStorage.removeItem('user_hist_' + currentUserName);
         localStorage.removeItem('user_cast_' + currentUserName);
-        currentUserName = '名無し';
+        currentUserName = '童貞';
         localStorage.setItem('app_user_name', currentUserName);
         initUserData();
         render();
-        alert("「名無し」状態に初期化しました。");
+        alert("「童貞」状態に初期化しました。");
       }
     }
 
@@ -1424,7 +1452,7 @@
     }
 
     function openUserModal() {
-      document.getElementById('inputUserName').value = currentUserName === '名無し' ? '' : currentUserName;
+      document.getElementById('inputUserName').value = currentUserName === '童貞' ? '' : currentUserName;
       document.getElementById('userModal').style.display = 'flex';
     }
 
@@ -1489,7 +1517,20 @@
       const year = document.getElementById('addYear').value.trim();
       const month = document.getElementById('addMonth').value.trim();
       const name = document.getElementById('addName').value.trim();
-      const style = document.getElementById('addStyle').value.trim();
+      
+      // スリーサイズ個別枠の結合処理
+      let rawT = document.getElementById('addStyleT').value.trim();
+      let rawB = document.getElementById('addStyleB').value.trim();
+      let rawW = document.getElementById('addStyleW').value.trim();
+      let rawH = document.getElementById('addStyleH').value.trim();
+
+      const parts = [];
+      if (rawT) parts.push(rawT.toLowerCase().startsWith('t') ? rawT : 'T:' + rawT + (rawT.includes('cm') ? '' : 'cm'));
+      if (rawB) parts.push(rawB.toLowerCase().startsWith('b') ? rawB : 'B:' + rawB);
+      if (rawW) parts.push(rawW.toLowerCase().startsWith('w') ? rawW : 'W:' + rawW);
+      if (rawH) parts.push(rawH.toLowerCase().startsWith('h') ? rawH : 'H:' + rawH);
+
+      const style = parts.join(' ');
       const flags = document.getElementById('addFlags').value.trim();
       const oldName = document.getElementById('addOldName').value.trim();
       const link = document.getElementById('addLink').value.trim();
@@ -1528,7 +1569,10 @@
 
       // フォーム初期化
       document.getElementById('addName').value = '';
-      document.getElementById('addStyle').value = '';
+      document.getElementById('addStyleT').value = '';
+      document.getElementById('addStyleB').value = '';
+      document.getElementById('addStyleW').value = '';
+      document.getElementById('addStyleH').value = '';
       document.getElementById('addFlags').value = '';
       document.getElementById('addOldName').value = '';
       document.getElementById('addLink').value = '';
