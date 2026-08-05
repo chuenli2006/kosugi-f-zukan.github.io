@@ -939,7 +939,7 @@
       "モカ": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3367", notes: "", oldName: "", letters: [{ date: "2026年7月", imageUrl: "https://i.imgur.com/XbmVYZm.jpeg", text: "モカです❣️明日から大学生活！たのしんでね　いつもモカに会いに来てくれていろんなお話きかせてくれてありがと　ファイトー!!また待ってるねん〜♡" },{ date: "2025年11月", imageUrl: "https://i.imgur.com/TfScpzj.jpeg", text: "はじめまして！モカです♡　モカをえらんであいにきてくれてありがと～！　としちかいお兄さん初めてて楽しすぎた✨　また待ってるねん😄" }] },
       "カルア": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3451", notes: "", oldName: "菜乃花", letters: [{ date: "2026年2月", imageUrl: "https://i.imgur.com/wlffBij.jpeg", text: "じゅんくんへ💕　今日はなのかのところに来てくれてありがとう! いつもBiGニュースを持ってきて楽しそうに話すじゅんくんを見るのが幸せです😌♡　言葉えらび面白くてついついよく笑っちゃってます✨　いつも笑顔でプレイしてくれてすなおなじゅんくんでいてくれてありがとう!!" }] },
       "まりあ": { link: "", notes: "", oldName: "", letters: [{ date: "2025年", imageUrl: "https://i.imgur.com/Ofhz9gl.jpeg", text: "" },{ date: "2025年", imageUrl: "https://i.imgur.com/qtpVpTE.jpeg", text: "" },{ date: "2025年", imageUrl: "https://i.imgur.com/ZZZdW0C.jpeg", text: "" },{ date: "2025年", imageUrl: "https://i.imgur.com/mOkhVsi.jpeg", text: "" }] },
-      "もも": { link: "", notes: "", oldName: "", letters: [{ date: "2026年2月", imageUrl: "https://i.imgur.com/x7K08ve.jpeg", text: "じゅんくん♡　いつも仲良くしてくれてありがとう〜！！　中国語もべんきょうしとくネ！！　大学ファイトだよ！人生これからスタートだネ放イト♡　もも" }] },
+      "もも": { link: "", notes: "", oldName: "", letters: [{ date: "2026年2月", imageUrl: "https://i.imgur.com/x7K08ve.jpeg", text: "じゅんくん♡　いつも仲良くしてくれてありがとう〜！！　中国語もべんきょうしとくネ！！　大学ファイトだよ！人生これからスタートだネ　ファイト♡　もも" }] },
       "ことり": { link: "https://www.cityheaven.net/aichi/A2301/A230104/jj-shinsakae/girlid-48589728/?mygirl=1&lo=1", notes: "", oldName: "", letters: [] },
       "四葉": { link: "", notes: "", oldName: "", letters: [] },
       "ひまわり": { link: "", notes: "", oldName: "", letters: [] },
@@ -961,7 +961,7 @@
       "ゆず": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3523", notes: "", oldName: "", letters: [{ date: "2026年3月", imageUrl: "https://i.imgur.com/GtHdniF.jpeg", text: "ジュン君　今日は出会えて　よかった♡　また会いたいです！　ゆず" }] },
       "ななみ": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/okinawa-nursejyogakuen/girlid-65139298/?mygirl=1&lo=1", notes: "", oldName: "", letters: [] },
       "なるみ": { link: "", notes: "", oldName: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/Eq6COe4.jpeg", text: "ありがとう♡　またきてね　大学がんばってね！　なるみ" }] },
-      "ひびき": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3454", notes: "", oldName: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/bNSgBmz.jpeg", text: "今日はありがとう♡　たくさんお話できて楽しかったです！　また遊びに来てください❕️　ひびき" }] },
+      "ひびき": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3454", notes: "", oldName: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/bNSgBmz.jpeg", text: "今日はありがとう♡　たくさんお話できて楽しかったです！tまた遊びに来てください❕️　ひびき" }] },
       "せいな": { link: "https://www.cityheaven.net/tokyo/A1312/A131201/uenolip/girlid-52762713/?mygirl=1&lo=1", notes: "", oldName: "", letters: [] },
       "きほ": { link: "https://www.cityheaven.net/tokyo/A1304/A130401/a-crystal/girlid-65756780/?mygirl=1&lo=1", notes: "", oldName: "", letters: [] },
       "アクア": { link: "https://www.cityheaven.net/tokyo/A1303/A130301/sc-crystal/girlid-64589705/", notes: "", oldName: "", letters: [] },
@@ -969,33 +969,29 @@
       "ゆうか": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3504", notes: "", oldName: "ここみ", letters: [{ date: "2026年7月", imageUrl: "https://i.imgur.com/vcJpOyD.jpeg", text: "今日はありがとう〜まさかの二度目ましてでおもろかった(笑ナースの時よりも少し風俗慣れてた気がして寂しい気もするけど会えて良かった!))" }] }
     };
 
-    // ユーザー状態の読み込み（デフォルトは「名無し」）
     let currentUserName = localStorage.getItem('app_user_name') || '名無し';
-    
     let historyList = [];
     let castData = {};
 
-    // 「こすぎ」「じゅん」「kosugi」などの判定強化関数
     function isKosugi(name) {
       if (!name) return false;
       const lower = name.trim().toLowerCase();
-      return lower === 'こすぎ' || lower === 'ジュン' || lower === 'じゅん' || lower === 'kosugi' || lower.includes('こすぎ');
+      return lower === 'こすぎ' || lower === 'ジュン' || lower === 'じゅん' || lower === 'kosugi';
     }
 
     function initUserData() {
       if (isKosugi(currentUserName)) {
-        // こすぎ（本人）の場合は常にマスターデータをロード
+        // 本人の名前ならマスターデータをロード
         historyList = JSON.parse(JSON.stringify(kosugiHistoryList));
         castData = JSON.parse(JSON.stringify(kosugiCastData));
       } else {
-        const savedHist = localStorage.getItem('my_fuzoku_history_' + currentUserName);
-        const savedCast = localStorage.getItem('my_fuzoku_casts_' + currentUserName);
-
+        // 本人以外の名前（ささ等）なら以前保存した自身のデータがあれば読み込み、なければ完全な空にする
+        const savedHist = localStorage.getItem('user_hist_' + currentUserName);
+        const savedCast = localStorage.getItem('user_cast_' + currentUserName);
         if (savedHist && savedCast) {
           historyList = JSON.parse(savedHist);
           castData = JSON.parse(savedCast);
         } else {
-          // 他の新規ユーザーは空状態からスタート
           historyList = [];
           castData = {};
         }
@@ -1013,15 +1009,15 @@
     function saveData() {
       localStorage.setItem('app_user_name', currentUserName);
       if (!isKosugi(currentUserName)) {
-        localStorage.setItem('my_fuzoku_history_' + currentUserName, JSON.stringify(historyList));
-        localStorage.setItem('my_fuzoku_casts_' + currentUserName, JSON.stringify(castData));
+        localStorage.setItem('user_hist_' + currentUserName, JSON.stringify(historyList));
+        localStorage.setItem('user_cast_' + currentUserName, JSON.stringify(castData));
       }
     }
 
     function resetData() {
-      if (confirm("現在の記録をクリアして初期化しますか？")) {
-        localStorage.removeItem('my_fuzoku_history_' + currentUserName);
-        localStorage.removeItem('my_fuzoku_casts_' + currentUserName);
+      if (confirm("現在の記録をクリアして「名無し」に戻しますか？")) {
+        localStorage.removeItem('user_hist_' + currentUserName);
+        localStorage.removeItem('user_cast_' + currentUserName);
         currentUserName = '名無し';
         localStorage.setItem('app_user_name', currentUserName);
         initUserData();
@@ -1045,7 +1041,6 @@
       initUserData();
       closeModal('userModal');
       render();
-      alert("ユーザーを「" + currentUserName + "」に切り替えました！");
     }
 
     let currentView = 'cast';
