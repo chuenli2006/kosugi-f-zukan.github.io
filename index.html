@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title id="pageTitle">風俗履歴図鑑</title>
+  
+  <!-- 🗜️ LZ-String 圧縮ライブラリ & 📲 QRコード生成・解析ライブラリ -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+
   <style>
     :root {
       --bg-color: #fdfbfb;
@@ -554,6 +560,32 @@
       font-size: 1.1rem;
     }
 
+    /* 📲 QRコード表示エリア用スタイル */
+    .qr-container-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #fffdfd;
+      border: 2px dashed var(--primary-pink);
+      border-radius: 12px;
+      padding: 12px;
+      margin: 10px 0;
+    }
+
+    #qrcodeDisplay img, #qrcodeDisplay canvas {
+      border: 4px solid #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin: 0 auto;
+    }
+
+    .qr-subtext {
+      font-size: 0.7rem;
+      color: #888;
+      margin-top: 6px;
+    }
+
     /* 📖 使い方ダイアログ用スタイル */
     .help-section {
       text-align: left;
@@ -620,7 +652,7 @@
 
     .backup-code-box {
       width: 100%;
-      height: 60px;
+      height: 50px;
       padding: 6px;
       font-size: 0.7rem;
       border: 1px solid var(--border-color);
@@ -698,13 +730,6 @@
     .roulette-container.winner .modal-cast-name {
       color: var(--accent-pink);
       font-size: 1.7rem;
-    }
-
-    .modal-desc {
-      font-size: 0.8rem;
-      color: #666;
-      line-height: 1.5;
-      margin: 10px 0;
     }
 
     .close-btn {
@@ -798,7 +823,7 @@
       flex: 1;
     }
 
-    /* 📏 スリーサイズ 4列コンパクトグリッド（スクロール絶対防止） */
+    /* 📏 スリーサイズ 4列コンパクト（スクロールなしでピッタリ収まる） */
     .style-grid-compact {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -811,7 +836,7 @@
       text-align: center;
       font-size: 0.78rem;
       font-weight: bold;
-      min-width: 0; /* フレックス/グリッドはみ出し防止 */
+      min-width: 0;
       box-sizing: border-box;
       transition: all 0.2s;
     }
@@ -980,10 +1005,10 @@
 
         <div class="help-box">
           <h4>📲 4. データの共有・プライバシーに関する</h4>
-          <p>「👤 ユーザー」画面ではデータのバックアップ・復元ができます。機種変更時に便利です。また、キャストのカード内「履歴シェア」を押すとそのキャスト単体の記録コードをコピーできます。受け取った人は「👤 ユーザー」画面から貼り付けて読み込めます。データはすべてLocalストレージにしか保存しないためバックアップ・シェア機能利用しない限りほかのユーザー（こすぎ含めて）はあなたのデータをみることありませんのでご安心ください。</p>
+          <p>「👤 ユーザー」画面ではデータのバックアップ・復元ができます。機種変更時に便利です。また、キャストのカード内「履歴シェア」を押すとQRコードや圧縮コードが発行できます。受け取った人はカメラや画像選択から簡単に読み込めます。</p>
         </div>
 
-        <!-- 🐙 GitHubリンク追加 -->
+        <!-- 🐙 GitHubリンク -->
         <div class="github-link-box">
           <a href="https://github.com/chuenli2006/kosugi-f-zukan.github.io" target="_blank" rel="noopener noreferrer">
             🐙 GitHub リポジトリ（ソースコード）
@@ -1013,16 +1038,42 @@
 
       <!-- 📦 バックアップ・復元エリア -->
       <div class="backup-section">
-        <h4>📦 全データのバックアップ発行</h4>
-        <p style="font-size:0.7rem; color:#666; margin-bottom:6px;">現在の全キャスト・全利用履歴をコード化してコピーします。</p>
-        <button class="close-btn" style="width:100%; margin-top:0; background:linear-gradient(135deg, #4dabf7, #339af0);" onclick="copyBackupCode()">📋 全データコードを発行してコピー</button>
+        <h4>📦 全データのバックアップ・QR生成</h4>
+        <p style="font-size:0.7rem; color:#666; margin-bottom:6px;">全キャスト・全利用履歴を圧縮コード＆QRで発行します。</p>
+        <button class="close-btn" style="width:100%; margin-top:0; background:linear-gradient(135deg, #4dabf7, #339af0);" onclick="copyBackupCode()">📱 QRコード＆超短縮コードを発行</button>
 
         <h4 style="margin-top:12px;">📥 データの復元・読み込み</h4>
-        <p style="font-size:0.7rem; color:#666; margin-bottom:4px;">受け取ったコード（全データ／キャスト単体）を貼り付けて読み込みます。</p>
-        <textarea class="backup-code-box" id="importCodeInput" placeholder="全データコード、またはシェアされたキャスト単体コードを貼り付け..."></textarea>
-        <button class="close-btn" style="width:100%; margin-top:6px; background:#5c7cfa;" onclick="importBackupCode()">コードを読み込む</button>
+        <p style="font-size:0.7rem; color:#666; margin-bottom:4px;">コード貼り付け、またはQR画像を選択して読み込みます。</p>
+        
+        <textarea class="backup-code-box" id="importCodeInput" placeholder="圧縮コードを貼り付け..."></textarea>
+        
+        <div style="display:flex; gap:6px; margin-top:6px;">
+          <button class="close-btn" style="flex:1; margin-top:0; background:#5c7cfa; font-size:0.75rem;" onclick="importBackupCode()">コードで読み込み</button>
+          <button class="close-btn" style="flex:1; margin-top:0; background:#20c997; font-size:0.75rem;" onclick="triggerQRFileInput()">📷 QR画像を選択</button>
+        </div>
+        <input type="file" id="qrFileInput" accept="image/*" style="display:none;" onchange="readQRFromImage(event)">
       </div>
 
+    </div>
+  </div>
+
+  <!-- 📱 QRコード＆シェア用モーダル -->
+  <div class="modal-overlay" id="qrModal">
+    <div class="modal-content">
+      <h3 id="qrModalTitle">📱 履歴シェア・QRコード</h3>
+      
+      <div class="qr-container-box">
+        <div id="qrcodeDisplay"></div>
+        <div class="qr-subtext">スマホのカメラ等で直接読み取れます</div>
+      </div>
+
+      <div class="form-group">
+        <label style="font-size:0.7rem;">LINE送信用 超短縮コード</label>
+        <textarea class="backup-code-box" id="qrCodeTextDisplay" readonly></textarea>
+      </div>
+
+      <button class="close-btn" style="width:100%; margin-top:8px;" onclick="copyQRTextToClipboard()">📋 テキストコードをコピー</button>
+      <button class="close-btn" style="background:#ccc; width:100%; margin-top:6px;" onclick="closeModal('qrModal')">閉じる</button>
     </div>
   </div>
 
@@ -1047,7 +1098,7 @@
           <input type="text" id="addName" placeholder="例: ゆあ" required>
         </div>
 
-        <!-- 📐 スリーサイズ 4列コンパクト（スクロールなしでピッタリ収まる） -->
+        <!-- 📐 スリーサイズ 4列コンパクト -->
         <div class="form-group">
           <label>スリーサイズ（スタイルデータ）</label>
           <div class="style-grid-compact">
@@ -1242,7 +1293,7 @@
       "ゆず": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3523", notes: "", oldName: "", style: "", letters: [{ date: "2026年3月", imageUrl: "https://i.imgur.com/GtHdniF.jpeg", text: "ジュン君　今日は出会えて　よかった♡　また会いたいです！　ゆず" }] },
       "ななみ": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/okinawa-nursejyogakuen/girlid-65139298/", notes: "", oldName: "", style: "", letters: [] },
       "なるみ": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/Eq6COe4.jpeg", text: "ありがとう♡　またきてね　大学がんばってね！　なるみ" }] },
-      "ひびき": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3454", notes: "", oldName: "", style: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/bNSgBmz.jpeg", text: "今日はありがとう♡　たくさんお話できて楽しかったです！　また遊びに来てください❕️　ひびき" }] },
+      "ひびき": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3454", notes: "", oldName: "", style: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/bNSgBmz.jpeg", text: "今日はありがとう♡　たくさんお話できて楽しかったです！tまた遊びに来てください❕️　ひびき" }] },
       "せいな": { link: "https://www.cityheaven.net/tokyo/A1312/A131201/uenolip/girlid-52762713/?mygirl=1&lo=1", notes: "", oldName: "", style: "", letters: [] },
       "きほ": { link: "https://www.cityheaven.net/tokyo/A1304/A130401/a-crystal/girlid-65756780/", notes: "", oldName: "", style: "", letters: [] },
       "アクア": { link: "https://www.cityheaven.net/tokyo/A1303/A130301/sc-crystal/girlid-64589705/", notes: "", oldName: "", style: "", letters: [] },
@@ -1250,7 +1301,6 @@
       "ゆうか": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3504", notes: "", oldName: "ここみ", style: "", letters: [{ date: "2026年7月", imageUrl: "https://i.imgur.com/vcJpOyD.jpeg", text: "今日はありがとう〜まさかの二度目ましてでおもろかった(笑ナースの時よりも少し風俗慣れてた気がして寂しい気もするけど会えて良かった!))" }] }
     };
 
-    /* 初期ユーザーネームを「童貞」に変更 */
     let currentUserName = localStorage.getItem('app_user_name') || '童貞';
     let historyList = [];
     let castData = {};
@@ -1345,7 +1395,7 @@
       }
     }
 
-    /* 💃 手書きイラストに基づく「分割カプセル型」タグ生成関数 */
+    /* 💃 スタイルタグ生成関数 */
     function renderStyleTags(styleStr) {
       if (!styleStr || !styleStr.trim()) {
         return '<div class="style-row"><span class="style-none">スタイルデータなし</span></div>';
@@ -1359,7 +1409,6 @@
 
       let tagsHtml = '<div class="style-row">';
 
-      // 身長 (T)
       if (tMatch) {
         const height = parseInt(tMatch[1], 10);
         let colorClass = "p-blue";
@@ -1367,14 +1416,9 @@
         else if (height >= 155 && height < 160) colorClass = "p-yellow";
         else if (height >= 160) colorClass = "p-purple";
 
-        tagsHtml += 
-          '<div class="style-pill ' + colorClass + '">' +
-            '<span class="style-pill-label">T</span>' +
-            '<span class="style-pill-val">' + height + 'cm</span>' +
-          '</div>';
+        tagsHtml += '<div class="style-pill ' + colorClass + '"><span class="style-pill-label">T</span><span class="style-pill-val">' + height + 'cm</span></div>';
       }
 
-      // バスト (B)
       if (bMatch) {
         const bust = parseInt(bMatch[1], 10);
         const cup = bMatch[2] ? bMatch[2].replace(/[\(\)]/g, '') : '';
@@ -1382,42 +1426,83 @@
         if (bust >= 85) colorClass = "p-pink2";
         if (bust >= 90) colorClass = "p-pink3";
 
-        tagsHtml += 
-          '<div class="style-pill ' + colorClass + '">' +
-            '<span class="style-pill-label">B</span>' +
-            '<span class="style-pill-val">' + bust + (cup ? '(' + cup + ')' : '') + '</span>' +
-          '</div>';
+        tagsHtml += '<div class="style-pill ' + colorClass + '"><span class="style-pill-label">B</span><span class="style-pill-val">' + bust + (cup ? '(' + cup + ')' : '') + '</span></div>';
       }
 
-      // ウエスト (W)
       if (wMatch) {
         const waist = parseInt(wMatch[1], 10);
         let colorClass = waist <= 55 ? "p-green" : "p-yellow";
-
-        tagsHtml += 
-          '<div class="style-pill ' + colorClass + '">' +
-            '<span class="style-pill-label">W</span>' +
-            '<span class="style-pill-val">' + waist + '</span>' +
-          '</div>';
+        tagsHtml += '<div class="style-pill ' + colorClass + '"><span class="style-pill-label">W</span><span class="style-pill-val">' + waist + '</span></div>';
       }
 
-      // ヒップ (H)
       if (hMatch) {
         const hip = parseInt(hMatch[1], 10);
         let colorClass = hip <= 85 ? "p-green" : "p-yellow";
-
-        tagsHtml += 
-          '<div class="style-pill ' + colorClass + '">' +
-            '<span class="style-pill-label">H</span>' +
-            '<span class="style-pill-val">' + hip + '</span>' +
-          '</div>';
+        tagsHtml += '<div class="style-pill ' + colorClass + '"><span class="style-pill-label">H</span><span class="style-pill-val">' + hip + '</span></div>';
       }
 
       tagsHtml += '</div>';
       return tagsHtml;
     }
 
-    /* 🔗 キャスト単体シェアコード発行機能 */
+    /* 🗜️ LZ-String 圧縮 & 解凍ユーティリティ */
+    function compressData(obj) {
+      try {
+        const jsonStr = JSON.stringify(obj);
+        return "FZ1:" + LZString.compressToEncodedURIComponent(jsonStr);
+      } catch (e) {
+        console.error(e);
+        return null;
+      }
+    }
+
+    function decompressData(str) {
+      try {
+        if (str.startsWith("FZ1:")) {
+          const rawCompressed = str.slice(4);
+          const decompressedStr = LZString.decompressFromEncodedURIComponent(rawCompressed);
+          return JSON.parse(decompressedStr);
+        } else {
+          // 旧互換（Base64形式）
+          const jsonStr = decodeURIComponent(escape(atob(str)));
+          return JSON.parse(jsonStr);
+        }
+      } catch (e) {
+        console.error(e);
+        return null;
+      }
+    }
+
+    /* 📱 QRコード生成表示モーダル呼び出し */
+    function showQRCodeModal(title, codeText) {
+      document.getElementById('qrModalTitle').innerText = title;
+      document.getElementById('qrCodeTextDisplay').value = codeText;
+
+      const qrContainer = document.getElementById('qrcodeDisplay');
+      qrContainer.innerHTML = '';
+
+      new QRCode(qrContainer, {
+        text: codeText,
+        width: 180,
+        height: 180,
+        colorDark : "#f72585",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.M
+      });
+
+      document.getElementById('qrModal').style.display = 'flex';
+    }
+
+    function copyQRTextToClipboard() {
+      const text = document.getElementById('qrCodeTextDisplay').value;
+      navigator.clipboard.writeText(text).then(() => {
+        alert("📋 テキストコードをコピーしました！");
+      }).catch(() => {
+        prompt("以下のコードをコピーしてください：", text);
+      });
+    }
+
+    /* 🔗 キャスト単体シェア機能（圧縮＆QR化） */
     function shareSingleCast(event, name) {
       event.preventDefault(); event.stopPropagation();
 
@@ -1431,21 +1516,15 @@
         visits: visits
       };
 
-      try {
-        const jsonStr = JSON.stringify(singleExportObject);
-        const base64Code = btoa(unescape(encodeURIComponent(jsonStr)));
-
-        navigator.clipboard.writeText(base64Code).then(() => {
-          alert("📋 「" + name + "」さんの履歴シェアコードをコピーしました！\nLINE等で友達に送って「👤 ユーザー」画面から読み込んでもらってください。");
-        }).catch(() => {
-          prompt("以下のシェアコードを全選択してコピーしてください：", base64Code);
-        });
-      } catch (err) {
+      const compressedCode = compressData(singleExportObject);
+      if (compressedCode) {
+        showQRCodeModal("📱 「" + name + "」さんの履歴QR", compressedCode);
+      } else {
         alert("シェアコードの発行に失敗しました。");
       }
     }
 
-    /* 📦 全データバックアップコード発行 */
+    /* 📦 全データバックアップコード発行（圧縮＆QR化） */
     function copyBackupCode() {
       const exportObject = {
         type: 'full_backup',
@@ -1454,79 +1533,109 @@
         castData: castData
       };
       
-      try {
-        const jsonStr = JSON.stringify(exportObject);
-        const base64Code = btoa(unescape(encodeURIComponent(jsonStr)));
-        
-        navigator.clipboard.writeText(base64Code).then(() => {
-          alert("📋 バックアップコードをコピーしました！\nLINEなどに貼り付けて保存・送信できます。");
-        }).catch(() => {
-          prompt("以下のコードを全選択してコピーしてください：", base64Code);
-        });
-      } catch (err) {
+      const compressedCode = compressData(exportObject);
+      if (compressedCode) {
+        showQRCodeModal("📦 全データバックアップQR", compressedCode);
+      } else {
         alert("コードの発行に失敗しました。");
       }
     }
 
-    /* 📥 コード復元・読み込み（全データ / キャスト単体 両対応） */
+    /* 📥 共通データ読み込み処理 */
+    function processImportData(importedData) {
+      if (!importedData) {
+        alert("⚠️ 無効なデータです。コードやQR画像が正しくありません。");
+        return;
+      }
+
+      // パターンA: キャスト単体シェアの読み込み
+      if (importedData.type === 'single_cast_share' || (importedData.name && importedData.visits)) {
+        const name = importedData.name;
+        if (confirm("「" + name + "」さんの利用履歴（" + importedData.visits.length + "回分）を図鑑に追加しますか？")) {
+          if (!castData[name]) {
+            castData[name] = importedData.info || { link: "", notes: "", oldName: "", style: "", letters: [] };
+          } else {
+            if (importedData.info.link) castData[name].link = importedData.info.link;
+            if (importedData.info.notes) castData[name].notes = importedData.info.notes;
+            if (importedData.info.oldName) castData[name].oldName = importedData.info.oldName;
+            if (importedData.info.style) castData[name].style = importedData.info.style;
+          }
+
+          importedData.visits.forEach(v => {
+            historyList.push(v);
+          });
+
+          saveData();
+          initUserData();
+          render();
+          closeModal('userModal');
+          document.getElementById('importCodeInput').value = '';
+          alert("✨ 「" + name + "」さんのデータを図鑑に追加しました！");
+        }
+        return;
+      }
+
+      // パターンB: 全データバックアップの読み込み
+      if (importedData.historyList && importedData.castData) {
+        if (confirm("「" + (importedData.userName || "読み込みデータ") + "」の全データで上書き読み込みしますか？")) {
+          currentUserName = importedData.userName || '復元ユーザー';
+          historyList = importedData.historyList;
+          castData = importedData.castData;
+
+          saveData();
+          initUserData();
+          render();
+          closeModal('userModal');
+          document.getElementById('importCodeInput').value = '';
+          alert("✨ データの全復元・読み込みが完了しました！");
+        }
+        return;
+      }
+
+      alert("⚠️ 不明なデータ形式です。");
+    }
+
+    /* コード入力からの読み込み */
     function importBackupCode() {
       const input = document.getElementById('importCodeInput').value.trim();
       if (!input) return alert("コードを貼り付けてください！");
+      const data = decompressData(input);
+      processImportData(data);
+    }
 
-      try {
-        const jsonStr = decodeURIComponent(escape(atob(input)));
-        const importedData = JSON.parse(jsonStr);
+    /* 📷 QR画像選択トリガー＆解読処理 */
+    function triggerQRFileInput() {
+      document.getElementById('qrFileInput').click();
+    }
 
-        // パターンA: キャスト単体シェアの読み込み
-        if (importedData.type === 'single_cast_share' || (importedData.name && importedData.visits)) {
-          const name = importedData.name;
-          if (confirm("「" + name + "」さんの利用履歴（" + importedData.visits.length + "回分）を図鑑に追加しますか？")) {
-            // 1. キャスト詳細の統合
-            if (!castData[name]) {
-              castData[name] = importedData.info || { link: "", notes: "", oldName: "", style: "", letters: [] };
-            } else {
-              if (importedData.info.link) castData[name].link = importedData.info.link;
-              if (importedData.info.notes) castData[name].notes = importedData.info.notes;
-              if (importedData.info.oldName) castData[name].oldName = importedData.info.oldName;
-              if (importedData.info.style) castData[name].style = importedData.info.style;
-            }
+    function readQRFromImage(event) {
+      const file = event.target.files[0];
+      if (!file) return;
 
-            // 2. 利用履歴の追加（重複しないように統合）
-            importedData.visits.forEach(v => {
-              historyList.push(v);
-            });
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0, img.width, img.height);
+          
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const code = jsQR(imageData.data, imageData.width, imageData.height);
 
-            saveData();
-            initUserData();
-            render();
-            closeModal('userModal');
-            document.getElementById('importCodeInput').value = '';
-            alert("✨ 「" + name + "」さんのデータを図鑑に追加しました！");
+          if (code) {
+            const data = decompressData(code.data);
+            processImportData(data);
+          } else {
+            alert("⚠️ QRコードが検出できませんでした。別の画像を試してみてください。");
           }
-          return;
-        }
-
-        // パターンB: 全データバックアップの読み込み
-        if (importedData.historyList && importedData.castData) {
-          if (confirm("「" + (importedData.userName || "読み込みデータ") + "」の全データで上書き読み込みしますか？")) {
-            currentUserName = importedData.userName || '復元ユーザー';
-            historyList = importedData.historyList;
-            castData = importedData.castData;
-
-            saveData();
-            initUserData();
-            render();
-            closeModal('userModal');
-            document.getElementById('importCodeInput').value = '';
-            alert("✨ データの全復元・読み込みが完了しました！");
-          }
-          return;
-        }
-
-        throw new Error("Invalid format");
-      } catch (err) {
-        alert("⚠️ 無効なコードです。コードが正しくコピーされているか確認してください。");
-      }
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+      event.target.value = ''; // ファイルリセット
     }
 
     function openUserModal() {
@@ -1596,7 +1705,6 @@
       const month = document.getElementById('addMonth').value.trim();
       const name = document.getElementById('addName').value.trim();
       
-      // スリーサイズ個別枠の結合処理
       let rawT = document.getElementById('addStyleT').value.trim();
       let rawB = document.getElementById('addStyleB').value.trim();
       let rawW = document.getElementById('addStyleW').value.trim();
@@ -1617,10 +1725,8 @@
 
       if (!year || !month || !name) return alert("年、月、キャスト名は必須です！");
 
-      // 1. 利用履歴の追加
       historyList.push({ year, month, name, flags });
 
-      // 2. キャスト詳細の更新・新規追加
       if (!castData[name]) {
         castData[name] = { link: link, notes: notes, oldName: oldName, style: style, letters: [] };
       } else {
@@ -1630,7 +1736,6 @@
         if (style) castData[name].style = style;
       }
 
-      // 手紙画像の追加
       if (letterImg) {
         if (!castData[name].letters) castData[name].letters = [];
         castData[name].letters.push({
@@ -1645,7 +1750,6 @@
       render();
       alert(name + " さんの利用記録を追加・保存しました！");
 
-      // フォーム初期化
       document.getElementById('addName').value = '';
       ['addStyleT', 'addStyleB', 'addStyleW', 'addStyleH'].forEach(id => {
         const elem = document.getElementById(id);
@@ -1796,13 +1900,11 @@
 
       let list = Object.values(map);
 
-      /* フィルター処理 */
       if (currentFilter === 'active') list = list.filter(c => castData[c.name] && castData[c.name].link && castData[c.name].link.trim() !== "");
       if (currentFilter === 'fav') list = list.filter(c => c.favCount >= 1);
       if (currentFilter === 'super') list = list.filter(c => c.favCount >= 5);
       if (currentFilter === 'bad') list = list.filter(c => c.hasBad);
 
-      /* キーワード検索 */
       if (keyword) {
         list = list.filter(c => {
           const info = castData[c.name] || {};
@@ -1815,7 +1917,6 @@
         });
       }
 
-      /* ソート */
       if (currentSort === 'count') {
         list.sort((a,b) => b.visits.length - a.visits.length || b.lastIdx - a.lastIdx);
       } else if (currentSort === 'recent') {
@@ -1861,7 +1962,6 @@
           ? '<button class="link-btn" onclick="openLink(event, \'' + url + '\')">プロフ</button>' 
           : '';
 
-        /* 単体シェア用ボタン */
         const copyBtnHtml = '<button class="copy-btn" onclick="shareSingleCast(event, \'' + c.name + '\')">履歴シェア</button>';
 
         const letterBtnHtml = hasLetters 
@@ -1957,7 +2057,6 @@
       });
     }
 
-    // 初回アクセス時の案内ポップアップ制御
     if (!localStorage.getItem('fuzoku_app_visited')) {
       openHelpModal();
       localStorage.setItem('fuzoku_app_visited', 'true');
