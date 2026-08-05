@@ -18,6 +18,7 @@
       --shadow: 0 4px 15px rgba(255, 133, 162, 0.1);
       --radius: 12px;
 
+      /* 金色（超オキニ）用カラー */
       --gold-bg-start: #fff9e6;
       --gold-bg-end: #fff0c2;
       --gold-border: #f3c642;
@@ -79,8 +80,11 @@
       gap: 4px;
     }
 
-    .help-btn { background: #fff; }
+    .help-btn {
+      background: #fff;
+    }
 
+    /* メインナビゲーションタブ */
     .tab-nav {
       display: flex;
       margin-bottom: 12px;
@@ -104,6 +108,7 @@
       border-bottom: 3px solid var(--accent-pink);
     }
 
+    /* アナリティクスパネル */
     .dashboard {
       background: #fff;
       border: 1px solid var(--border-color);
@@ -127,9 +132,18 @@
       border: 1px solid var(--border-color);
     }
 
-    .dash-val { font-size: 1.1rem; font-weight: bold; color: var(--accent-pink); }
-    .dash-lbl { font-size: 0.65rem; color: var(--light-text); }
+    .dash-val {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: var(--accent-pink);
+    }
 
+    .dash-lbl {
+      font-size: 0.65rem;
+      color: var(--light-text);
+    }
+
+    /* コントロール */
     .controls {
       background: var(--card-bg);
       padding: 12px;
@@ -142,8 +156,15 @@
       gap: 8px;
     }
 
-    .search-row { display: flex; gap: 6px; }
-    .search-box { flex: 1; }
+    .search-row {
+      display: flex;
+      gap: 6px;
+    }
+
+    .search-box {
+      flex: 1;
+    }
+
     .search-box input {
       width: 100%;
       padding: 8px 12px;
@@ -164,9 +185,21 @@
       font-size: 0.85rem;
       cursor: pointer;
       white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(247, 37, 133, 0.3);
+      transition: transform 0.1s;
     }
 
-    .filter-tags { display: flex; gap: 4px; overflow-x: auto; padding-bottom: 2px; }
+    .btn-gacha:active {
+      transform: scale(0.95);
+    }
+
+    .filter-tags {
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
     .ftag {
       font-size: 0.75rem;
       padding: 3px 10px;
@@ -177,9 +210,18 @@
       cursor: pointer;
       white-space: nowrap;
     }
-    .ftag.active { background: var(--accent-pink); color: #fff; border-color: var(--accent-pink); }
 
-    .btn-group { display: flex; gap: 6px; }
+    .ftag.active {
+      background: var(--accent-pink);
+      color: #fff;
+      border-color: var(--accent-pink);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 6px;
+    }
+
     .btn-toggle {
       flex: 1;
       padding: 5px 8px;
@@ -192,21 +234,79 @@
       cursor: pointer;
       text-align: center;
     }
-    .btn-toggle.active { background: var(--primary-pink); color: white; border-color: var(--primary-pink); }
 
-    .grid { display: flex; flex-direction: column; gap: 8px; }
+    .btn-toggle.active {
+      background: var(--primary-pink);
+      color: white;
+      border-color: var(--primary-pink);
+    }
+
+    /* 凡例折りたたみ */
+    .legend-details {
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .legend-details summary {
+      color: var(--primary-pink);
+      font-size: 0.75rem;
+      text-decoration: underline;
+      cursor: pointer;
+      list-style: none;
+    }
+
+    .legend-box {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 4px;
+      background: var(--card-bg);
+      padding: 8px;
+      border-radius: var(--radius);
+      margin-top: 6px;
+      font-size: 0.7rem;
+      border: 1px solid var(--border-color);
+      text-align: left;
+    }
+
+    /* カード */
+    .grid {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
     details.cast-card {
       background: var(--card-bg);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       border: 1px solid var(--border-color);
       overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
-    details.cast-card.favorite { border-left: 5px solid var(--accent-pink); }
+
+    details.cast-card.favorite {
+      border-left: 5px solid var(--accent-pink);
+    }
+
     details.cast-card.super-favorite {
       background: linear-gradient(135deg, var(--gold-bg-start), var(--gold-bg-end));
       border: 1px solid var(--gold-border);
       border-left: 6px solid var(--gold-border);
+      box-shadow: 0 4px 15px rgba(230, 161, 0, 0.25);
+    }
+
+    details.cast-card .anim-wrapper {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    details.cast-card[open] .anim-wrapper {
+      grid-template-rows: 1fr;
+    }
+
+    .anim-inner {
+      overflow: hidden;
     }
 
     summary.card-btn {
@@ -215,33 +315,145 @@
       align-items: center;
       padding: 12px 14px;
       cursor: pointer;
+      user-select: none;
       list-style: none;
       font-weight: bold;
+      background: transparent;
+      transition: background-color 0.2s;
     }
-    summary.card-btn::-webkit-details-marker { display: none; }
 
-    .cast-info { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-    .status-badge { font-size: 0.65rem; padding: 1px 5px; border-radius: 8px; font-weight: bold; }
-    .status-active { background: #e6fcf5; color: #0ca678; border: 1px solid #20c997; }
-    .status-retired { background: #f1f3f5; color: #868e96; border: 1px solid #ced4da; }
-    .old-name-badge { font-size: 0.65rem; background: #f1f3f5; color: #6c757d; padding: 1px 6px; border-radius: 6px; }
-    .super-tag { font-size: 0.65rem; background: var(--gold-border); color: #fff; padding: 1px 5px; border-radius: 8px; }
-    .badge-count { background: var(--soft-pink); color: var(--accent-pink); font-weight: bold; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem; }
+    summary.card-btn:active {
+      background-color: rgba(0, 0, 0, 0.03);
+    }
+
+    summary.card-btn::-webkit-details-marker {
+      display: none;
+    }
+
+    .arrow-icon {
+      font-size: 0.75rem;
+      color: #8d8d8d;
+      display: inline-block;
+      transition: transform 0.3s ease;
+    }
+
+    details[open] summary .arrow-icon {
+      transform: rotate(180deg);
+      color: var(--accent-pink);
+    }
+
+    .cast-info {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .status-badge {
+      font-size: 0.65rem;
+      padding: 1px 5px;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+
+    .status-active {
+      background: #e6fcf5;
+      color: #0ca678;
+      border: 1px solid #20c997;
+    }
+
+    .status-retired {
+      background: #f1f3f5;
+      color: #868e96;
+      border: 1px solid #ced4da;
+    }
+
+    .old-name-badge {
+      font-size: 0.65rem;
+      background: #f1f3f5;
+      color: #6c757d;
+      padding: 1px 6px;
+      border-radius: 6px;
+      border: 1px solid #dee2e6;
+      font-weight: normal;
+    }
+
+    .super-tag {
+      font-size: 0.65rem;
+      background: var(--gold-border);
+      color: #fff;
+      padding: 1px 5px;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+
+    .badge-count {
+      background: var(--soft-pink);
+      color: var(--accent-pink);
+      font-weight: bold;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 0.75rem;
+    }
+
+    .super-favorite .badge-count {
+      background: #fff0a6;
+      color: var(--gold-text);
+      border: 1px solid var(--gold-border);
+    }
+
+    .badge-count.bad-count {
+      background: #e9ecef !important;
+      color: #6c757d !important;
+      border: 1px solid #ced4da !important;
+    }
 
     .card-body {
       padding: 10px 14px 12px;
       border-top: 1px dashed var(--border-color);
+      background-color: rgba(255, 255, 255, 0.6);
       display: flex;
       flex-direction: column;
       gap: 8px;
     }
 
-    .style-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-    .style-pill {
-      display: inline-flex; align-items: center; border-radius: 8px; overflow: hidden; font-size: 0.7rem; font-weight: bold; border: 1px solid rgba(0,0,0,0.08);
+    .style-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 2px;
     }
-    .style-pill-label { padding: 2px 7px; color: #ffffff; }
-    .style-pill-val { padding: 2px 8px; }
+
+    .style-pill {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 8px;
+      overflow: hidden;
+      font-size: 0.7rem;
+      font-weight: bold;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+
+    .style-pill-label {
+      padding: 2px 7px;
+      color: #ffffff;
+      font-family: inherit;
+    }
+
+    .style-pill-val {
+      padding: 2px 8px;
+    }
+
+    .style-none {
+      font-size: 0.68rem;
+      color: #a0a0a0;
+      background: #f1f3f5;
+      padding: 2px 8px;
+      border-radius: 6px;
+      border: 1px solid #e9ecef;
+    }
 
     .p-blue .style-pill-label { background-color: #339af0; }
     .p-blue .style-pill-val   { background-color: #e7f5ff; color: #1c7ed6; }
@@ -253,76 +465,381 @@
     .p-purple .style-pill-val   { background-color: #f3d9fa; color: #9c36b5; }
     .p-pink1 .style-pill-label { background-color: #ff85a2; }
     .p-pink1 .style-pill-val   { background-color: #fff0f6; color: #d6336c; }
+    .p-pink2 .style-pill-label { background-color: #f72585; }
+    .p-pink2 .style-pill-val   { background-color: #ffdeeb; color: #c2255c; }
+    .p-pink3 .style-pill-label { background-color: #b5179e; }
+    .p-pink3 .style-pill-val   { background-color: #fcc2d7; color: #a61e4d; }
 
-    .card-middle-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-    .notes-box { font-size: 0.75rem; color: #666; background: #fdf8f9; padding: 4px 8px; border-radius: 6px; border: 1px solid #f2e3e6; flex: 1; }
-    .btn-action-group { display: flex; gap: 4px; }
+    .card-middle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .notes-box {
+      font-size: 0.75rem;
+      color: #666;
+      background: #fdf8f9;
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid #f2e3e6;
+      flex: 1;
+    }
+
+    .btn-action-group {
+      display: flex;
+      gap: 4px;
+    }
+
     .link-btn, .copy-btn, .letter-btn {
-      font-size: 0.7rem; padding: 3px 8px; border-radius: 10px; cursor: pointer; border: 1px solid var(--primary-pink); background: #fff; color: var(--accent-pink); white-space: nowrap;
-    }
-
-    .modal-overlay {
-      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); justify-content: center; align-items: center; z-index: 1000;
-    }
-    .modal-content {
-      background: #fff; padding: 20px 16px; border-radius: 20px; text-align: center; max-width: 380px; width: 92%; box-shadow: 0 10px 30px rgba(247, 37, 133, 0.3); border: 2px solid var(--soft-pink); max-height: 85vh; overflow-y: auto;
-    }
-    .modal-content h3 { color: var(--accent-pink); margin-bottom: 8px; font-size: 1.1rem; }
-
-    .close-btn {
-      background: linear-gradient(135deg, #ff85a2, #f72585); color: white; border: none; padding: 8px 22px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; cursor: pointer; margin-top: 10px;
-    }
-
-    .fab-add {
-      position: fixed; bottom: 20px; right: 20px; width: 56px; height: 56px; border-radius: 28px; background: linear-gradient(135deg, #ff85a2, #f72585); color: white; border: none; font-size: 1.6rem; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(247, 37, 133, 0.4); cursor: pointer; z-index: 900;
-    }
-
-    .add-form { display: flex; flex-direction: column; gap: 10px; text-align: left; margin-top: 10px; }
-    .form-group { display: flex; flex-direction: column; gap: 4px; }
-    .form-group label { font-size: 0.75rem; font-weight: bold; color: var(--accent-pink); }
-    .form-group input, .form-group select, .form-group textarea {
-      padding: 8px 10px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.85rem; outline: none; background: var(--bg-color); width: 100%;
-    }
-
-    .style-grid-compact { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; width: 100%; }
-    .style-grid-compact input { padding: 6px 2px; text-align: center; font-size: 0.78rem; font-weight: bold; min-width: 0; }
-
-    .flag-picker { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 4px; }
-    .flag-btn { font-size: 0.72rem; padding: 4px 8px; border-radius: 12px; border: 1px solid var(--border-color); background: #fff; cursor: pointer; }
-
-    .backup-section { margin-top: 15px; padding-top: 12px; border-top: 1px dashed var(--border-color); text-align: left; }
-    .backup-section h4 { font-size: 0.8rem; color: var(--accent-pink); margin-bottom: 6px; }
-
-    .storage-selector-box {
-      background: var(--soft-pink);
+      font-size: 0.7rem;
+      padding: 3px 8px;
+      border-radius: 10px;
+      cursor: pointer;
       border: 1px solid var(--primary-pink);
+      background: #fff;
+      color: var(--accent-pink);
+      white-space: nowrap;
+      transition: transform 0.1s;
+    }
+
+    .link-btn:active, .copy-btn:active, .letter-btn:active {
+      transform: scale(0.95);
+    }
+
+    .letter-btn {
+      background: var(--soft-pink);
+      border-color: var(--primary-pink);
+      font-weight: bold;
+    }
+
+    .days-ago-tag {
+      font-size: 0.7rem;
+      color: var(--light-text);
+      text-align: right;
+    }
+
+    .history-row {
+      display: flex;
+      justify-content: space-between;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      padding: 5px 8px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+    }
+
+    /* モーダル共通 */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(4px);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: #fff;
+      padding: 20px 16px;
+      border-radius: 20px;
+      text-align: center;
+      max-width: 380px;
+      width: 92%;
+      box-shadow: 0 10px 30px rgba(247, 37, 133, 0.3);
+      border: 2px solid var(--soft-pink);
+      position: relative;
+      max-height: 85vh;
+      overflow-y: auto;
+      animation: modalFadeIn 0.25s ease-out forwards;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-content h3 {
+      color: var(--accent-pink);
+      margin-bottom: 8px;
+      font-size: 1.1rem;
+    }
+
+    .help-section {
+      text-align: left;
+      font-size: 0.8rem;
+      color: #4a4a4a;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 10px 0;
+    }
+
+    .help-box {
+      background: #fffdfd;
+      border: 1px solid var(--soft-pink);
       padding: 10px;
       border-radius: 10px;
-      margin-bottom: 12px;
     }
 
-    .radio-group {
+    .help-box h4 {
+      font-size: 0.85rem;
+      color: var(--accent-pink);
+      margin-bottom: 4px;
       display: flex;
-      gap: 12px;
-      font-size: 0.8rem;
-      font-weight: bold;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .github-link-box {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      padding: 8px 10px;
+      border-radius: 8px;
+      text-align: center;
       margin-top: 4px;
     }
 
-    .github-inputs {
-      margin-top: 8px;
-      padding-top: 8px;
-      border-top: 1px dashed var(--primary-pink);
-      display: flex;
-      flex-direction: column;
+    .github-link-box a {
+      color: #24292e;
+      font-weight: bold;
+      font-size: 0.75rem;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
       gap: 6px;
     }
 
-    .sync-status {
-      font-size: 0.7rem;
-      color: #0ca678;
+    .backup-section {
+      margin-top: 15px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--border-color);
+      text-align: left;
+    }
+
+    .backup-section h4 {
+      font-size: 0.8rem;
+      color: var(--accent-pink);
+      margin-bottom: 6px;
+    }
+
+    .letter-card-item {
+      background: #fffdfa;
+      border: 1px solid #f3e5d8;
+      border-radius: 12px;
+      padding: 10px;
+      margin-top: 10px;
+      text-align: left;
+    }
+
+    .letter-date {
+      font-size: 0.75rem;
+      color: #888;
       font-weight: bold;
-      text-align: right;
+      margin-bottom: 6px;
+    }
+
+    .letter-img {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid #eee;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .letter-text-box {
+      font-size: 0.8rem;
+      color: #4a4a4a;
+      background: #fff;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px dashed #f0d0db;
+      line-height: 1.4;
+      white-space: pre-wrap;
+    }
+
+    .roulette-container {
+      background: #fff0f5;
+      border: 2px dashed var(--primary-pink);
+      border-radius: 14px;
+      padding: 16px 8px;
+      margin: 14px 0;
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .roulette-container.winner {
+      background: linear-gradient(135deg, #fff9e6, #fff0c2);
+      border: 2px solid var(--gold-border);
+      box-shadow: 0 0 15px rgba(243, 198, 66, 0.6);
+      transform: scale(1.03);
+    }
+
+    .modal-cast-name {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--text-color);
+    }
+
+    .roulette-container.winner .modal-cast-name {
+      color: var(--accent-pink);
+      font-size: 1.7rem;
+    }
+
+    .close-btn {
+      background: linear-gradient(135deg, #ff85a2, #f72585);
+      color: white;
+      border: none;
+      padding: 8px 22px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      cursor: pointer;
+      margin-top: 10px;
+      box-shadow: 0 3px 10px rgba(247, 37, 133, 0.3);
+    }
+
+    .close-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .fab-add {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 56px;
+      height: 56px;
+      border-radius: 28px;
+      background: linear-gradient(135deg, #ff85a2, #f72585);
+      color: white;
+      border: none;
+      font-size: 1.6rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(247, 37, 133, 0.4);
+      cursor: pointer;
+      z-index: 900;
+    }
+
+    .add-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      text-align: left;
+      margin-top: 10px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .form-group label {
+      font-size: 0.75rem;
+      font-weight: bold;
+      color: var(--accent-pink);
+    }
+
+    .form-group input, .form-group select, .form-group textarea {
+      padding: 8px 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      outline: none;
+      background: var(--bg-color);
+      width: 100%;
+    }
+
+    .style-grid-compact {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      width: 100%;
+    }
+
+    .style-grid-compact input {
+      padding: 6px 2px;
+      text-align: center;
+      font-size: 0.78rem;
+      font-weight: bold;
+      min-width: 0;
+    }
+
+    .flag-picker {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 4px;
+    }
+
+    .flag-btn {
+      font-size: 0.72rem;
+      padding: 4px 8px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      background: #fff;
+      color: var(--text-color);
+      cursor: pointer;
+    }
+
+    .flag-btn-clear {
+      background: #f1f3f5;
+      color: #868e96;
+      border-color: #dee2e6;
+    }
+
+    .month-section { margin-bottom: 16px; }
+    .month-title {
+      font-size: 0.95rem;
+      color: var(--accent-pink);
+      margin-bottom: 6px;
+      padding-left: 6px;
+      border-left: 3px solid var(--primary-pink);
+    }
+    .month-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 6px;
+    }
+    .month-item {
+      background: var(--card-bg);
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      font-size: 0.8rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* 👥 共有された履歴専用スタイル */
+    .shared-card {
+      background: #ffffff;
+      border: 1px solid var(--soft-pink);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 10px;
+      box-shadow: var(--shadow);
+    }
+    .shared-header {
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: var(--accent-pink);
+      margin-bottom: 6px;
+      padding-bottom: 4px;
+      border-bottom: 1px dashed var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
   </style>
 </head>
@@ -337,12 +854,14 @@
     </div>
   </header>
 
+  <!-- 📱 マイ図鑑 vs 共有履歴 切り替えタブ -->
   <div class="tab-nav">
     <button class="tab-btn active" id="tabMyRecords" onclick="switchMainTab('my')">👤 マイ図鑑</button>
     <button class="tab-btn" id="tabSharedRecords" onclick="switchMainTab('shared')">👥 共有された履歴 (<span id="sharedCount">0</span>)</button>
   </div>
 
   <div id="myTabArea">
+    <!-- 📊 ダッシュボード -->
     <details class="dashboard">
       <summary style="font-size:0.8rem; font-weight:bold; color:var(--accent-pink); cursor:pointer;">📊 利用統計ダッシュボードを表示／非表示</summary>
       <div class="dash-grid" style="margin-top:10px;">
@@ -356,6 +875,7 @@
       </div>
     </details>
 
+    <!-- 🎛 コントロール -->
     <div class="controls">
       <div class="search-row">
         <div class="search-box">
@@ -364,6 +884,7 @@
         <button class="btn-gacha" onclick="runGacha()">🎰 ガチャ</button>
       </div>
 
+      <!-- 🏷 フィルタータグ -->
       <div class="filter-tags">
         <div class="ftag active" id="ftAll" onclick="setFilter('all')">すべて</div>
         <div class="ftag" id="ftActive" onclick="setFilter('active')">🟢 在籍のみ</div>
@@ -384,69 +905,96 @@
       </div>
     </div>
 
+    <!-- 凡例 -->
+    <details class="legend-details">
+      <summary>マークの意味（凡例）を表示／非表示</summary>
+      <div class="legend-box">
+        <div>🈠 デビュー/初出勤</div>
+        <div>🆂 当たりもしくはオキニ </div>
+        <div>✈ 県外</div>
+        <div>⚔ 次ナシ</div>
+        <div>🈘 交配</div>
+        <div>🄽 生交配</div>
+        <div>㍁ ＡＦ</div>
+        <div>⑱ 18歳</div>
+        <div>㋑ イメージプレイ（コスプレなど）</div>
+        <div>㋗ クレーム案件</div>
+        <div>ｴ 風エステ</div>
+        <div>❀ 卒業の出勤</div>
+        <div>ｄ 出前</div>
+        <div>❖ ヘルス2万円超</div>
+        <div>❑ 社交飲食店</div>
+      </div>
+    </details>
+
+    <!-- 表示エリア -->
     <div id="mainContent"></div>
   </div>
 
+  <!-- 👥 共有された履歴エリア -->
   <div id="sharedTabArea" style="display:none;">
     <div id="sharedContent"></div>
   </div>
 
+  <!-- ➕ フローティング追加ボタン -->
   <button class="fab-add" onclick="openAddModal()" title="新しい利用記録を追加">＋</button>
 
+  <!-- 📖 使い方ダイアログ -->
   <div class="modal-overlay" id="helpModal">
     <div class="modal-content">
       <h3>📖 風俗履歴図鑑のご利用ガイド</h3>
-      <div class="help-section" style="text-align:left; font-size:0.8rem;">
-        <p><strong>☁️ GitHubストレージ連携:</strong> 設定画面からGitHub Personal Access Tokenを設定すると、全端末で完全同期できます！</p>
-        <p style="margin-top:6px;"><strong>📂 従来のJSON保存:</strong> オフラインで使いたい場合は「ローカル保存」のままJSONファイルをダウンロード／読み込み可能です。</p>
+      <div class="help-section">
+        <div class="help-box">
+          <h4>👤 1. あなただけのアプリとして使う</h4>
+          <p>ヘッダーの「👤 ユーザー」ボタンからお名前を設定してください。タイトルが切り替わります。</p>
+        </div>
+        <div class="help-box">
+          <h4>📂 2. ファイル保存＆復元・共有</h4>
+          <p>バックアップ機能はJSONファイルでダウンロード保存されます。友達に送信して共有することもできます。</p>
+        </div>
+        <div class="help-box">
+          <h4>💡 3. こすぎ さんのデータを参照する</h4>
+          <p>ユーザー名を 「こすぎ」（または `じゅん` / `ジュン`）に変更すると、主さんの全利用記録と手紙画像が見れます！</p>
+        </div>
       </div>
       <button class="close-btn" onclick="closeModal('helpModal')">はい</button>
     </div>
   </div>
 
-  <!-- 👤 ユーザー設定＆ストレージ設定モーダル -->
+  <!-- 👤 ユーザー設定 & バックアップモーダル -->
   <div class="modal-overlay" id="userModal">
     <div class="modal-content">
-      <h3>👤 ユーザー設定＆データ保存先設定</h3>
-      
-      <!-- 保存先選択パネル -->
-      <div class="storage-selector-box">
-        <label style="font-size:0.75rem; font-weight:bold; color:var(--accent-pink);">💾 保存先モード選択</label>
-        <div class="radio-group">
-          <label><input type="radio" name="storageMode" value="local" id="modeLocal" onchange="toggleStorageModeUI()"> 🏠 ローカル保存</label>
-          <label><input type="radio" name="storageMode" value="github" id="modeGithub" onchange="toggleStorageModeUI()"> ☁️ GitHub連携</label>
-        </div>
-
-        <div class="github-inputs" id="githubConfigBox" style="display:none;">
-          <input type="password" id="ghToken" placeholder="GitHub Personal Access Token (ghp_...)" style="font-size:0.75rem;">
-          <input type="text" id="ghRepo" placeholder="GitHubユーザー名/リポジトリ名 (例: username/my-zukan)" style="font-size:0.75rem;">
-          <input type="text" id="ghPath" placeholder="ファイルパス (例: data.json)" value="data.json" style="font-size:0.75rem;">
-          <div class="sync-status" id="ghStatusText"></div>
-        </div>
-      </div>
-
-      <form class="add-form" onsubmit="saveUserSettings(event)">
+      <h3>👤 ユーザー切り替え・名前変更</h3>
+      <p style="font-size:0.75rem; color:#666; margin-bottom:10px;">名前を入力するとタイトルが切り替わります。</p>
+      <form class="add-form" onsubmit="saveUserName(event)">
         <div class="form-group">
-          <label>お名前</label>
-          <input type="text" id="inputUserName" required>
+          <label>お名前（例: こすぎ、たろう）</label>
+          <input type="text" id="inputUserName" placeholder="名前を入力..." required>
         </div>
-        <button type="submit" class="close-btn" style="width:100%;">設定を保存＆同期</button>
+        <div style="display:flex; gap:8px;">
+          <button type="submit" class="close-btn" style="flex:1;">保存する</button>
+          <button type="button" class="close-btn" onclick="closeModal('userModal')" style="background:#ccc; flex:1;">キャンセル</button>
+        </div>
       </form>
 
+      <!-- 📁 JSONファイル保存・読み込みエリア -->
       <div class="backup-section">
-        <h4>📁 JSONファイルのダウンロード / 手動読み込み</h4>
-        <p style="font-size:0.7rem; color:#666; margin-bottom:6px;">既存の data.json やバックアップファイルを読み込んで同期・使用できます。</p>
-        <div style="display:flex; gap:6px;">
-          <button class="close-btn" style="flex:1; margin-top:0; background:#339af0; font-size:0.75rem;" onclick="exportJSONFile()">💾 ダウンロード</button>
-          <button class="close-btn" style="flex:1; margin-top:0; background:#20c997; font-size:0.75rem;" onclick="triggerJSONFileInput()">📂 JSONを選択</button>
-        </div>
+        <h4>📁 バックアップの保存（JSONファイル）</h4>
+        <p style="font-size:0.7rem; color:#666; margin-bottom:6px;">全データをファイルとしてダウンロード保存します。</p>
+        <button class="close-btn" style="width:100%; margin-top:0; background:linear-gradient(135deg, #4dabf7, #339af0);" onclick="exportJSONFile()">💾 JSONファイルをダウンロード</button>
+
+        <h4 style="margin-top:12px;">📥 ファイルの復元・友達のデータ読み込み</h4>
+        <p style="font-size:0.7rem; color:#666; margin-bottom:4px;">バックアップファイル（.json）を選択して読み込みます。</p>
+        
+        <button class="close-btn" style="width:100%; margin-top:0; background:#20c997;" onclick="triggerJSONFileInput()">📂 JSONファイルを選択</button>
+        <!-- 📱 Android互換性向上のための広範なaccept指定 -->
         <input type="file" id="jsonFileInput" accept=".json,application/json,text/plain" style="display:none;" onchange="importJSONFile(event)">
       </div>
 
-      <button class="close-btn" style="background:#ccc; width:100%; margin-top:12px;" onclick="closeModal('userModal')">閉じる</button>
     </div>
   </div>
 
+  <!-- 📝 利用記録追加モーダル -->
   <div class="modal-overlay" id="addModal">
     <div class="modal-content">
       <h3>✨ 利用記録を追加</h3>
@@ -463,22 +1011,22 @@
         </div>
 
         <div class="form-group">
-          <label>キャスト名</label>
+          <label>キャスト名（現・源氏名）</label>
           <input type="text" id="addName" placeholder="例: ゆあ" required>
         </div>
 
         <div class="form-group">
-          <label>スリーサイズ</label>
+          <label>スリーサイズ（スタイルデータ）</label>
           <div class="style-grid-compact">
-            <input type="text" id="addStyleT" placeholder="T">
-            <input type="text" id="addStyleB" placeholder="B">
-            <input type="text" id="addStyleW" placeholder="W">
-            <input type="text" id="addStyleH" placeholder="H">
+            <input type="text" id="addStyleT" placeholder="T" oninput="updateInputColor(this, 'T')">
+            <input type="text" id="addStyleB" placeholder="B" oninput="updateInputColor(this, 'B')">
+            <input type="text" id="addStyleW" placeholder="W" oninput="updateInputColor(this, 'W')">
+            <input type="text" id="addStyleH" placeholder="H" oninput="updateInputColor(this, 'H')">
           </div>
         </div>
 
         <div class="form-group">
-          <label>マーク・フラグ</label>
+          <label>マーク・フラグ（タップで追加）</label>
           <div class="flag-picker">
             <button type="button" class="flag-btn" onclick="addFlagChar('🆂')">🆂 当たり</button>
             <button type="button" class="flag-btn" onclick="addFlagChar('⚔')">⚔ 次ナシ</button>
@@ -487,14 +1035,16 @@
             <button type="button" class="flag-btn" onclick="addFlagChar('❖')">❖ 2万超</button>
             <button type="button" class="flag-btn" onclick="addFlagChar('❀')">❀ 卒業</button>
             <button type="button" class="flag-btn" onclick="addFlagChar('🈠')">🈠 初出勤</button>
-            <button type="button" class="flag-btn" onclick="clearFlagsInput()">クリア</button>
+            <button type="button" class="flag-btn" onclick="addFlagChar('㋑')">㋑ コス</button>
+            <button type="button" class="flag-btn" onclick="addFlagChar('ｴ')">ｴ エステ</button>
+            <button type="button" class="flag-btn flag-btn-clear" onclick="clearFlagsInput()">クリア</button>
           </div>
-          <input type="text" id="addFlags" placeholder="マークが入ります">
+          <input type="text" id="addFlags" placeholder="タップしたマークが入ります（直接編集もOK）">
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label>旧・源氏名</label>
+            <label>旧・源氏名（あれば）</label>
             <input type="text" id="addOldName" placeholder="例: ここみ">
           </div>
           <div class="form-group">
@@ -508,11 +1058,39 @@
           <input type="text" id="addNotes" placeholder="接客メモなど">
         </div>
 
+        <div class="form-group">
+          <label>手紙・カード画像URL（あれば）</label>
+          <input type="url" id="addLetterImg" placeholder="https://i.imgur.com/...">
+        </div>
+
         <div style="display:flex; gap:8px; margin-top:10px;">
           <button type="submit" class="close-btn" style="flex:1;">保存する</button>
           <button type="button" class="close-btn" onclick="closeModal('addModal')" style="background:#ccc; flex:1;">キャンセル</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- 🎰 ガチャモーダル -->
+  <div class="modal-overlay" id="gachaModal">
+    <div class="modal-content">
+      <h3 id="gachaTitle">🎰 運命の指名抽選中...</h3>
+      <p style="font-size:0.75rem; color:#888;" id="gachaSub">在籍中のキャストから選出中！</p>
+      
+      <div class="roulette-container" id="rouletteBox">
+        <div class="modal-cast-name" id="gachaResultName">???</div>
+      </div>
+
+      <button class="close-btn" id="gachaCloseBtn" onclick="closeModal('gachaModal')" disabled>抽選中...</button>
+    </div>
+  </div>
+
+  <!-- 💌 メッセージカードモーダル -->
+  <div class="modal-overlay" id="letterModal">
+    <div class="modal-content">
+      <h3 id="letterModalTitle">💌 メッセージカード</h3>
+      <div id="letterModalContainer"></div>
+      <button class="close-btn" onclick="closeModal('letterModal')">閉じる</button>
     </div>
   </div>
 
@@ -594,22 +1172,50 @@
       { year: "2026", month: "7月", name: "さきな", flags: "🆂㋑" },
       { year: "2026", month: "7月", name: "ゆうか", flags: "ｴ(旧ここみ)" },
       { year: "2026", month: "7月", name: "ゆあ", flags: "🆂㋑" },
-      { year: "2026", month: "7月", name: "ゆあ", flags: "🆂" }
+      { year: "2026", month: "7月", name: "ゆあ", flags: "🆂" },
+      { year: "2026", month: "8月", name: "ゆあ", flags: "🆂" }
     ];
 
     const kosugiCastData = {
-      "ゆあ": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/lipsokinawa/girlid-60270238/", notes: "", oldName: "", style: "T:154cm B:80(A) W:53 H:84", letters: [] },
-      "さきな": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3335", notes: "", oldName: "", style: "", letters: [{ date: "2026年7月", imageUrl: "https://i.imgur.com/HQGHmMO.jpeg", text: "じゅんくんへ♡" }] },
-      "モカ": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3367", notes: "", oldName: "", style: "", letters: [{ date: "2026年7月", imageUrl: "https://i.imgur.com/XbmVYZm.jpeg", text: "モカです❣️" }] },
-      "カルア": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3451", notes: "", oldName: "菜乃花", style: "" }
+      "ゆあ": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/lipsokinawa/girlid-60270238/", notes: "", oldName: "", style: "T:156cm B:78(C) W:56 H:79", letters: [] },
+      "さきな": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3335", notes: "", oldName: "", style: "T:154cm B:79(B) W:50 H:76", letters: [{ date: "2026年7月", imageUrl: "https://i.imgur.com/HQGHmMO.jpeg", text: "じゅんくんへ♡今日は久しぶりに会えてさきなとってもうれしかったよ〜！！また遊ぼうね♡さきなより" }] },
+      "モカ": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3367", notes: "", oldName: "", style: "T:152cm B:75(C) W:58 H:82", letters: [{ date: "2026年7月", imageUrl: "https://i.imgur.com/XbmVYZm.jpeg", text: "モカです❣️明日から大学生活！たのしんでね　いつもモカに会いに来てくれていろんなお話きかせてくれてありがと　ファイトー!!また待ってるねん〜♡" },{ date: "2025年11月", imageUrl: "https://i.imgur.com/TfScpzj.jpeg", text: "はじめまして！モカです♡　モカをえらんであいにきてくれてありがと～！　としちかいお兄さん初めてて楽しすぎた✨　また待ってるねん😄" }] },
+      "カルア": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3451", notes: "", oldName: "菜乃花", style: "T:148cm B:73(A) W:56 H:83", letters: [{ date: "2026年2月", imageUrl: "https://i.imgur.com/wlffBij.jpeg", text: "じゅんくんへ💕　今日はなのかのところに来てくれてありがとう! いつもBiGニュースを持ってきて楽しそうに話すじゅんくんを見るのが幸せです😌♡　言葉えらび面白くてついついよく笑っちゃってます✨　いつも笑顔でプレイしてくれてすなおなじゅんくんでいてくれてありがとう!!" }] },
+      "まりあ": { link: "", notes: "", oldName: "", style: "T:149cm B:79(B) W:52 H:76", letters: [{ date: "2025年", imageUrl: "https://i.imgur.com/Ofhz9gl.jpeg", text: "" },{ date: "2025年", imageUrl: "https://i.imgur.com/qtpVpTE.jpeg", text: "" },{ date: "2025年", imageUrl: "https://i.imgur.com/ZZZdW0C.jpeg", text: "" },{ date: "2025年", imageUrl: "https://i.imgur.com/mOkhVsi.jpeg", text: "" }] },
+      "もも": { link: "", notes: "", oldName: "", style: "T:156cm B:72(B) W:52 H:78", letters: [{ date: "2026年2月", imageUrl: "https://i.imgur.com/x7K08ve.jpeg", text: "じゅんくん♡　いつも仲良くしてくれてありがとう〜！！　中国語もべんきょうしとくネ！！　大学ファイトだよ！人生これからスタートだネ　ファイト♡　もも" }] },
+      "ことり": { link: "https://www.cityheaven.net/aichi/A2301/A230104/jj-shinsakae/girlid-48589728/?mygirl=1&lo=1", notes: "", oldName: "", style: "T:150cm B:80(C) W:55 H:83", letters: [] },
+      "四葉": { link: "", notes: "", oldName: "", style: "", letters: [] },
+      "ひまわり": { link: "", notes: "", oldName: "", style: "", letters: [] },
+      "じゅり": { link: "", notes: "", oldName: "", style: "", letters: [] },
+      "みく": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2025年9月", imageUrl: "https://i.imgur.com/TgzWUea.jpeg", text: "" },{ date: "2025年9月", imageUrl: "https://i.imgur.com/9fTgP4R.jpeg", text: "" }] },
+      "れい": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=2937", notes: "", oldName: "", style: "", letters: [] },
+      "れみ": { link: "", notes: "", oldName: "", style: "", letters: [] },
+      "みゅーず": { link: "https://www.cityheaven.net/aichi/A2301/A230103/amsd_nishiki/girlid-54164272/", notes: "", oldName: "", style: "", letters: [] },
+      "るる": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3288", notes: "", oldName: "", style: "", letters: [{ date: "2025年10月", imageUrl: "https://i.imgur.com/Z9EQ2Tz.jpeg", text: "じゅんくん　今日は会いに来てくれてありがとう！友達みたいに楽しかったしじゅんくんが明るい人だから話しやすかった！お仕事無理しないようにね♡　るる" }] },
+      "ゆい": { link: "", notes: "", oldName: "", style: "", letters: [] },
+      "みみ": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=2965", notes: "", oldName: "", style: "", letters: [] },
+      "アンナ": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2026年1月", imageUrl: "https://i.imgur.com/Mg0q2ot.jpeg", text: "ジュン君。　今日は、来てくれてありがとう！！　同じ年なのに、おとなっぽくて、一緒にいて楽しかった！！　また、会えたら嬉しいです♡　アンナ" }] },
+      "あい": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3394", notes: "", oldName: "", style: "", letters: [] },
+      "さな": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2026年2月", imageUrl: "https://i.imgur.com/YoaqJJO.jpeg", text: "いっぱいガンバッててえらいよ🙂　むりしないでまた来てね💮" }] },
+      "るか": { link: "https://www.cityheaven.net/tokyo/A1304/A130401/a-crystal/girlid-64506913/?mygirl=1&lo=1", notes: "", oldName: "", style: "", letters: [] },
+      "ミノリ": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2026年2月", imageUrl: "https://i.imgur.com/KNNzZ7H.jpeg", text: "バレンタイン♡♡" }] },
+      "さら": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/okinawa-naminouejyogakuin/girlid-62305727/", notes: "", oldName: "", style: "", letters: [] },
+      "める": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/okinawa-naminouesougoubyouin/girlid-44817013/", notes: "", oldName: "", style: "", letters: [] },
+      "ゆず": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3523", notes: "", oldName: "", style: "", letters: [{ date: "2026年3月", imageUrl: "https://i.imgur.com/GtHdniF.jpeg", text: "ジュン君　今日は出会えて　よかった♡　また会いたいです！　ゆず" }] },
+      "ななみ": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/okinawa-nursejyogakuen/girlid-65139298/", notes: "", oldName: "", style: "", letters: [] },
+      "なるみ": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/Eq6COe4.jpeg", text: "ありがとう♡　またきてね　大学がんばってね！　なるみ" }] },
+      "ひびき": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3454", notes: "", oldName: "", style: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/bNSgBmz.jpeg", text: "今日はありがとう♡　たくさんお話できて楽しかったです！tまた遊びに来てください❕️　ひびき" }] },
+      "せいな": { link: "https://www.cityheaven.net/tokyo/A1312/A131201/uenolip/girlid-52762713/?mygirl=1&lo=1", notes: "", oldName: "", style: "", letters: [] },
+      "きほ": { link: "https://www.cityheaven.net/tokyo/A1304/A130401/a-crystal/girlid-65756780/", notes: "", oldName: "", style: "", letters: [] },
+      "アクア": { link: "https://www.cityheaven.net/tokyo/A1303/A130301/sc-crystal/girlid-64589705/", notes: "", oldName: "", style: "", letters: [] },
+      "伏見みなお": { link: "https://ranking-deli.jp/tokyo/area30/style4/32002/2706377/", notes: "", oldName: "", style: "", letters: [{ date: "2026年6月", imageUrl: "https://i.imgur.com/ZtmEUr8.jpeg", text: "試験お疲れ様！今日は来てくれてありがとー♡またあそびに来てくださーい🥰" }] },
+      "ゆうか": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3504", notes: "", oldName: "ここみ", style: "", letters: [{ date: "2026年7月", imageUrl: "https://i.imgur.com/vcJpOyD.jpeg", text: "今日はありがとう〜まさかの二度目ましてでおもろかった(笑ナースの時よりも少し風俗慣れてた気がして寂しい気もするけど会えて良かった!))" }] }
     };
 
     let currentUserName = localStorage.getItem('app_user_name') || '童貞';
-    let storageMode = localStorage.getItem('app_storage_mode') || 'local';
     let historyList = [];
     let castData = {};
     let sharedRecords = [];
-    let currentSha = null; // GitHub API用
 
     function isKosugi(name) {
       if (!name) return false;
@@ -617,23 +1223,7 @@
       return lower === 'こすぎ' || lower === 'ジュン' || lower === 'じゅん' || lower === 'kosugi';
     }
 
-    async function initUserData() {
-      if (storageMode === 'github') {
-        const success = await loadFromGitHub();
-        if (!success) {
-          alert("GitHubからのデータ読み込みに失敗しました。ローカルデータを使用します。");
-          loadLocalData();
-        }
-      } else {
-        loadLocalData();
-      }
-
-      updateUIHeader();
-      updateSharedCount();
-      render();
-    }
-
-    function loadLocalData() {
+    function initUserData() {
       if (isKosugi(currentUserName)) {
         historyList = JSON.parse(JSON.stringify(kosugiHistoryList));
         castData = JSON.parse(JSON.stringify(kosugiCastData));
@@ -643,127 +1233,12 @@
         historyList = savedHist ? JSON.parse(savedHist) : [];
         castData = savedCast ? JSON.parse(savedCast) : {};
       }
+      
       const savedShared = localStorage.getItem('user_shared_list_' + currentUserName);
       sharedRecords = savedShared ? JSON.parse(savedShared) : [];
-    }
 
-    /* ☁️ GitHub API: データの取得 */
-    async function loadFromGitHub() {
-      const token = localStorage.getItem('gh_token');
-      const repo = localStorage.getItem('gh_repo');
-      const path = localStorage.getItem('gh_path') || 'data.json';
-
-      if (!token || !repo) return false;
-
-      try {
-        const res = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
-          headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
-        });
-
-        if (res.status === 200) {
-          const json = await res.json();
-          currentSha = json.sha;
-          // UTF-8デコード対応
-          const decodedContent = decodeURIComponent(escape(atob(json.content.replace(/\n/g, ''))));
-          const data = JSON.parse(decodedContent);
-
-          historyList = data.historyList || [];
-          castData = data.castData || {};
-          currentUserName = data.userName || currentUserName;
-          document.getElementById('ghStatusText').innerText = "🟢 GitHubと完全同期中";
-          return true;
-        }
-      } catch (err) {
-        console.error("GitHub取得エラー:", err);
-      }
-      document.getElementById('ghStatusText').innerText = "🔴 GitHub同期エラー";
-      return false;
-    }
-
-    /* ☁️ GitHub API: データの保存 */
-    async function saveToGitHub() {
-      const token = localStorage.getItem('gh_token');
-      const repo = localStorage.getItem('gh_repo');
-      const path = localStorage.getItem('gh_path') || 'data.json';
-
-      if (!token || !repo) return;
-
-      const exportObject = {
-        app: "風俗履歴図鑑",
-        version: "2.0",
-        exportDate: new Date().toISOString(),
-        userName: currentUserName,
-        historyList: historyList,
-        castData: castData
-      };
-
-      const contentStr = JSON.stringify(exportObject, null, 2);
-      // UTF-8ベース64エンコード
-      const base64Content = btoa(unescape(encodeURIComponent(contentStr)));
-
-      try {
-        const bodyData = {
-          message: `Update data.json by ${currentUserName}`,
-          content: base64Content
-        };
-        if (currentSha) bodyData.sha = currentSha;
-
-        const res = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `token ${token}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(bodyData)
-        });
-
-        if (res.ok) {
-          const resJson = await res.json();
-          currentSha = resJson.content.sha;
-          document.getElementById('ghStatusText').innerText = "🟢 GitHubコミット完了";
-        }
-      } catch (err) {
-        console.error("GitHub保存エラー:", err);
-      }
-    }
-
-    function saveData() {
-      localStorage.setItem('app_user_name', currentUserName);
-      localStorage.setItem('app_storage_mode', storageMode);
-
-      if (storageMode === 'local') {
-        if (!isKosugi(currentUserName)) {
-          localStorage.setItem('user_hist_' + currentUserName, JSON.stringify(historyList));
-          localStorage.setItem('user_cast_' + currentUserName, JSON.stringify(castData));
-        }
-      } else if (storageMode === 'github') {
-        saveToGitHub();
-      }
-
-      localStorage.setItem('user_shared_list_' + currentUserName, JSON.stringify(sharedRecords));
+      updateUIHeader();
       updateSharedCount();
-    }
-
-    function toggleStorageModeUI() {
-      const isGithub = document.getElementById('modeGithub').checked;
-      document.getElementById('githubConfigBox').style.display = isGithub ? 'flex' : 'none';
-    }
-
-    function saveUserSettings(e) {
-      e.preventDefault();
-      currentUserName = document.getElementById('inputUserName').value.trim() || '童貞';
-      storageMode = document.getElementById('modeGithub').checked ? 'github' : 'local';
-
-      if (storageMode === 'github') {
-        localStorage.setItem('gh_token', document.getElementById('ghToken').value.trim());
-        localStorage.setItem('gh_repo', document.getElementById('ghRepo').value.trim());
-        localStorage.setItem('gh_path', document.getElementById('ghPath').value.trim() || 'data.json');
-      }
-
-      saveData();
-      initUserData();
-      closeModal('userModal');
-      alert("設定を保存しました。");
     }
 
     function updateUIHeader() {
@@ -777,33 +1252,83 @@
       document.getElementById('sharedCount').innerText = sharedRecords.length;
     }
 
+    function saveData() {
+      localStorage.setItem('app_user_name', currentUserName);
+      if (!isKosugi(currentUserName)) {
+        localStorage.setItem('user_hist_' + currentUserName, JSON.stringify(historyList));
+        localStorage.setItem('user_cast_' + currentUserName, JSON.stringify(castData));
+      }
+      localStorage.setItem('user_shared_list_' + currentUserName, JSON.stringify(sharedRecords));
+      updateSharedCount();
+    }
+
+    /* リセット機能 */
     function resetData() {
       if (confirm("現在の記録を完全にクリアして「童貞」に戻しますか？")) {
         localStorage.removeItem('user_hist_' + currentUserName);
         localStorage.removeItem('user_cast_' + currentUserName);
+        localStorage.removeItem('user_shared_list_' + currentUserName);
+
         currentUserName = '童貞';
         localStorage.setItem('app_user_name', currentUserName);
+        
+        historyList = [];
+        castData = {};
+        sharedRecords = [];
+
+        saveData();
         initUserData();
+        render();
+        renderSharedArea();
         alert("「童貞」状態に初期化しました。");
       }
     }
 
+    /* 💾 JSONファイルとしてバックアップ保存（ダウンロード） */
     function exportJSONFile() {
       const exportObject = {
         app: "風俗履歴図鑑",
+        version: "2.0",
+        exportDate: new Date().toISOString(),
         userName: currentUserName,
         historyList: historyList,
         castData: castData
       };
+
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObject, null, 2));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `data.json`);
+      downloadAnchor.setAttribute("download", `風俗履歴図鑑_${currentUserName}_backup.json`);
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
       downloadAnchor.remove();
     }
 
+    /* 🔗 キャスト単体共有用JSONダウンロード */
+    function shareSingleCast(event, name) {
+      event.preventDefault(); event.stopPropagation();
+      const visits = historyList.filter(h => h.name === name);
+      const info = castData[name] || {};
+
+      const singleExportObject = {
+        app: "風俗履歴図鑑_単体",
+        sharedBy: currentUserName,
+        castName: name,
+        info: info,
+        visits: visits
+      };
+
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(singleExportObject, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `キャスト共有_${name}_(from_${currentUserName}).json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      alert(`「${name}」さんの共有ファイル（.json）をダウンロードしました！LINE等で友達に共有できます。`);
+    }
+
+    /* 📥 JSONファイルの選択＆読み込み */
     function triggerJSONFileInput() {
       document.getElementById('jsonFileInput').click();
     }
@@ -816,56 +1341,259 @@
       reader.onload = function(e) {
         try {
           const imported = JSON.parse(e.target.result);
+
+          // パターンA: キャスト単体シェアファイルの読み込み -> 「共有された履歴」タブへ
+          if (imported.app === "風俗履歴図鑑_単体" || imported.castName) {
+            sharedRecords.unshift({
+              fromUser: imported.sharedBy || "友達",
+              castName: imported.castName,
+              info: imported.info || {},
+              visits: imported.visits || [],
+              date: new Date().toLocaleDateString()
+            });
+            saveData();
+            renderSharedArea();
+            closeModal('userModal');
+            switchMainTab('shared');
+            alert(`👥 ${imported.sharedBy || '友達'}さんから共有された「${imported.castName}」さんの履歴を追加しました！`);
+            return;
+          }
+
+          // パターンB: 全データバックアップファイルの復元
           if (imported.historyList && imported.castData) {
-            if (confirm("選択したJSONファイルでデータを上書きロードしますか？")) {
+            if (confirm(`「${imported.userName || 'バックアップ'}」の全データで図鑑を復元しますか？`)) {
+              currentUserName = imported.userName || '復元ユーザー';
               historyList = imported.historyList;
               castData = imported.castData;
-              if (imported.userName) currentUserName = imported.userName;
               saveData();
+              initUserData();
               render();
               closeModal('userModal');
-              alert("✨ データを読み込み・同期しました！");
+              alert("✨ データの全復元が完了しました！");
             }
+            return;
           }
+
+          alert("⚠️ 無効なファイル形式です。");
         } catch (err) {
-          alert("⚠️ JSONファイルの解析に失敗しました。");
+          alert("⚠️ ファイルの読み込みに失敗しました。正しいJSONファイルを選択してください。");
         }
       };
       reader.readAsText(file);
       event.target.value = '';
     }
 
-    function openUserModal() {
-      document.getElementById('inputUserName').value = currentUserName === '童貞' ? '' : currentUserName;
-      
-      if (storageMode === 'github') {
-        document.getElementById('modeGithub').checked = true;
+    /* メインエリアタブ切り替え */
+    function switchMainTab(type) {
+      const myArea = document.getElementById('myTabArea');
+      const sharedArea = document.getElementById('sharedTabArea');
+      const btnMy = document.getElementById('tabMyRecords');
+      const btnShared = document.getElementById('tabSharedRecords');
+
+      if (type === 'my') {
+        myArea.style.display = 'block';
+        sharedArea.style.display = 'none';
+        btnMy.classList.add('active');
+        btnShared.classList.remove('active');
       } else {
-        document.getElementById('modeLocal').checked = true;
+        myArea.style.display = 'none';
+        sharedArea.style.display = 'block';
+        btnMy.classList.remove('active');
+        btnShared.classList.add('active');
+        renderSharedArea();
+      }
+    }
+
+    /* 👥 共有された履歴の表示描画 */
+    function renderSharedArea() {
+      const container = document.getElementById('sharedContent');
+      container.innerHTML = '';
+
+      if (sharedRecords.length === 0) {
+        container.innerHTML = '<div style="text-align:center; color:#aaa; padding:40px 10px; font-size:0.85rem;">共有された履歴がまだありません。<br>友達から送られてきた .json ファイルを「ユーザー設定」から読み込むとここに表示されます！</div>';
+        return;
       }
 
-      document.getElementById('ghToken').value = localStorage.getItem('gh_token') || '';
-      document.getElementById('ghRepo').value = localStorage.getItem('gh_repo') || '';
-      document.getElementById('ghPath').value = localStorage.getItem('gh_path') || 'data.json';
+      sharedRecords.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = 'shared-card';
 
-      toggleStorageModeUI();
+        let visitRows = '';
+        item.visits.forEach(v => {
+          visitRows += `<div class="history-row" style="margin-top:4px;">
+            <span>${v.year}年 ${v.month}</span>
+            <span>${v.flags || '通常'}</span>
+          </div>`;
+        });
+
+        card.innerHTML = `
+          <div class="shared-header">
+            <span>👤 共有者: ${item.fromUser} さん</span>
+            <button onclick="copySharedToMyCatalog(${index})" style="font-size:0.65rem; background:var(--soft-pink); color:var(--accent-pink); border:1px solid var(--primary-pink); border-radius:10px; padding:2px 6px; cursor:pointer;">➕ 自分の図鑑にコピー</button>
+          </div>
+          <div style="font-size:0.95rem; font-weight:bold; color:var(--text-color); margin:4px 0;">
+            💕 ${item.castName} 
+            ${item.info.oldName ? `<span class="old-name-badge">旧:${item.info.oldName}</span>` : ''}
+          </div>
+          ${renderStyleTags(item.info.style || '')}
+          <div style="font-size:0.75rem; color:#666; margin-top:4px;">メモ: ${item.info.notes || 'なし'}</div>
+          <div style="margin-top:6px;">${visitRows}</div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    function copySharedToMyCatalog(index) {
+      const item = sharedRecords[index];
+      if (confirm(`「${item.castName}」さんのデータをあなたのマイ図鑑に追加しますか？`)) {
+        if (!castData[item.castName]) {
+          castData[item.castName] = item.info;
+        }
+        item.visits.forEach(v => historyList.push(v));
+        saveData();
+        render();
+        alert(`✨ 「${item.castName}」さんをマイ図鑑に追加しました！`);
+      }
+    }
+
+    function addFlagChar(char) {
+      const input = document.getElementById('addFlags');
+      input.value = (input.value || '') + char;
+    }
+
+    function clearFlagsInput() {
+      document.getElementById('addFlags').value = '';
+    }
+
+    function updateInputColor(inputElem, type) {
+      const val = inputElem.value.trim().toUpperCase();
+      const numMatch = val.match(/\d+/);
+
+      if (!numMatch) {
+        inputElem.style.background = "var(--bg-color)";
+        inputElem.style.borderColor = "var(--border-color)";
+        inputElem.style.color = "var(--text-color)";
+        return;
+      }
+
+      const num = parseInt(numMatch[0], 10);
+
+      if (type === 'T') {
+        if (num < 150) { inputElem.style.background = "#e7f5ff"; inputElem.style.borderColor = "#a5d8ff"; inputElem.style.color = "#1c7ed6"; }
+        else if (num < 155) { inputElem.style.background = "#ebfbee"; inputElem.style.borderColor = "#b2f2bb"; inputElem.style.color = "#2b8a3e"; }
+        else if (num < 160) { inputElem.style.background = "#fff9db"; inputElem.style.borderColor = "#ffec99"; inputElem.style.color = "#d9480f"; }
+        else { inputElem.style.background = "#f3d9fa"; inputElem.style.borderColor = "#eebefa"; inputElem.style.color = "#9c36b5"; }
+      } else if (type === 'B') {
+        if (num < 85) { inputElem.style.background = "#fff0f6"; inputElem.style.borderColor = "#fcc2d7"; inputElem.style.color = "#d6336c"; }
+        else if (num < 90) { inputElem.style.background = "#ffdeeb"; inputElem.style.borderColor = "#faa2c1"; inputElem.style.color = "#c2255c"; }
+        else { inputElem.style.background = "#fcc2d7"; inputElem.style.borderColor = "#f783ac"; inputElem.style.color = "#a61e4d"; }
+      } else if (type === 'W' || type === 'H') {
+        if (num <= 55 || (type === 'H' && num <= 85)) { inputElem.style.background = "#ebfbee"; inputElem.style.borderColor = "#b2f2bb"; inputElem.style.color = "#2b8a3e"; }
+        else { inputElem.style.background = "#fff9db"; inputElem.style.borderColor = "#ffec99"; inputElem.style.color = "#d9480f"; }
+      }
+    }
+
+    function renderStyleTags(styleStr) {
+      if (!styleStr || !styleStr.trim()) {
+        return '<div class="style-row"><span class="style-none">スタイルデータなし</span></div>';
+      }
+
+      const str = styleStr.toUpperCase();
+      const tMatch = str.match(/T\s*:?\s*(\d+)/i);
+      const bMatch = str.match(/B\s*:?\s*(\d+)\s*(\([A-Z\+]+\))?/i);
+      const wMatch = str.match(/W\s*:?\s*(\d+)/i);
+      const hMatch = str.match(/H\s*:?\s*(\d+)/i);
+
+      let tagsHtml = '<div class="style-row">';
+
+      if (tMatch) {
+        const height = parseInt(tMatch[1], 10);
+        let colorClass = "p-blue";
+        if (height >= 150 && height < 155) colorClass = "p-green";
+        else if (height >= 155 && height < 160) colorClass = "p-yellow";
+        else if (height >= 160) colorClass = "p-purple";
+
+        tagsHtml += '<div class="style-pill ' + colorClass + '"><span class="style-pill-label">T</span><span class="style-pill-val">' + height + 'cm</span></div>';
+      }
+
+      if (bMatch) {
+        const bust = parseInt(bMatch[1], 10);
+        const cup = bMatch[2] ? bMatch[2].replace(/[\(\)]/g, '') : '';
+        let colorClass = "p-pink1";
+        if (bust >= 85) colorClass = "p-pink2";
+        if (bust >= 90) colorClass = "p-pink3";
+
+        tagsHtml += '<div class="style-pill ' + colorClass + '"><span class="style-pill-label">B</span><span class="style-pill-val">' + bust + (cup ? '(' + cup + ')' : '') + '</span></div>';
+      }
+
+      if (wMatch) {
+        const waist = parseInt(wMatch[1], 10);
+        let colorClass = waist <= 55 ? "p-green" : "p-yellow";
+        tagsHtml += '<div class="style-pill ' + colorClass + '"><span class="style-pill-label">W</span><span class="style-pill-val">' + waist + '</span></div>';
+      }
+
+      if (hMatch) {
+        const hip = parseInt(hMatch[1], 10);
+        let colorClass = hip <= 85 ? "p-green" : "p-yellow";
+        tagsHtml += '<div class="style-pill ' + colorClass + '"><span class="style-pill-label">H</span><span class="style-pill-val">' + hip + '</span></div>';
+      }
+
+      tagsHtml += '</div>';
+      return tagsHtml;
+    }
+
+    function openUserModal() {
+      document.getElementById('inputUserName').value = currentUserName === '童貞' ? '' : currentUserName;
       document.getElementById('userModal').style.display = 'flex';
     }
 
-    function openHelpModal() { document.getElementById('helpModal').style.display = 'flex'; }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    function openHelpModal() {
+      document.getElementById('helpModal').style.display = 'flex';
+    }
 
-    let currentView = 'cast', currentSort = 'count', currentFilter = 'all';
+    function saveUserName(event) {
+      event.preventDefault();
+      const input = document.getElementById('inputUserName').value.trim();
+      if (!input) return alert("お名前を入力してください！");
 
-    function changeView(m) { currentView = m; render(); }
-    function changeSort(s) { currentSort = s; render(); }
-    function setFilter(f) { currentFilter = f; render(); }
+      currentUserName = input;
+      saveData();
+      initUserData();
+      closeModal('userModal');
+      render();
+    }
 
-    function switchMainTab(type) {
-      document.getElementById('myTabArea').style.display = type === 'my' ? 'block' : 'none';
-      document.getElementById('sharedTabArea').style.display = type === 'shared' ? 'block' : 'none';
-      document.getElementById('tabMyRecords').className = 'tab-btn' + (type === 'my' ? ' active' : '');
-      document.getElementById('tabSharedRecords').className = 'tab-btn' + (type === 'shared' ? ' active' : '');
+    let currentView = 'cast';
+    let currentSort = 'count';
+    let currentFilter = 'all';
+
+    function changeView(mode) {
+      currentView = mode;
+      document.getElementById('viewCast').className = 'btn-toggle' + (mode === 'cast' ? ' active' : '');
+      document.getElementById('viewTimeline').className = 'btn-toggle' + (mode === 'timeline' ? ' active' : '');
+      document.getElementById('sortGroup').style.display = (mode === 'cast') ? 'flex' : 'none';
+      render();
+    }
+
+    function changeSort(sort) {
+      currentSort = sort;
+      document.getElementById('sortCount').className = 'btn-toggle' + (sort === 'count' ? ' active' : '');
+      document.getElementById('sortRecent').className = 'btn-toggle' + (sort === 'recent' ? ' active' : '');
+      document.getElementById('sortName').className = 'btn-toggle' + (sort === 'name' ? ' active' : '');
+      render();
+    }
+
+    function setFilter(filter) {
+      currentFilter = filter;
+      document.querySelectorAll('.ftag').forEach(el => el.classList.remove('active'));
+      document.getElementById('ft' + filter.charAt(0).toUpperCase() + filter.slice(1)).classList.add('active');
+      render();
+    }
+
+    function openLink(event, url) {
+      event.preventDefault(); event.stopPropagation();
+      window.open(url, '_blank');
     }
 
     function openAddModal() {
@@ -875,74 +1603,367 @@
       document.getElementById('addModal').style.display = 'flex';
     }
 
-    function saveNewRecord(e) {
-      e.preventDefault();
+    function saveNewRecord(event) {
+      event.preventDefault();
       const year = document.getElementById('addYear').value.trim();
       const month = document.getElementById('addMonth').value.trim();
       const name = document.getElementById('addName').value.trim();
-      if (!year || !month || !name) return alert("必須項目を入力してください");
+      
+      let rawT = document.getElementById('addStyleT').value.trim();
+      let rawB = document.getElementById('addStyleB').value.trim();
+      let rawW = document.getElementById('addStyleW').value.trim();
+      let rawH = document.getElementById('addStyleH').value.trim();
 
-      historyList.push({ year, month, name, flags: document.getElementById('addFlags').value.trim() });
+      const parts = [];
+      if (rawT) parts.push(rawT.toLowerCase().startsWith('t') ? rawT : 'T:' + rawT + (rawT.includes('cm') ? '' : 'cm'));
+      if (rawB) parts.push(rawB.toLowerCase().startsWith('b') ? rawB : 'B:' + rawB);
+      if (rawW) parts.push(rawW.toLowerCase().startsWith('w') ? rawW : 'W:' + rawW);
+      if (rawH) parts.push(rawH.toLowerCase().startsWith('h') ? rawH : 'H:' + rawH);
+
+      const style = parts.join(' ');
+      const flags = document.getElementById('addFlags').value.trim();
+      const oldName = document.getElementById('addOldName').value.trim();
+      const link = document.getElementById('addLink').value.trim();
+      const notes = document.getElementById('addNotes').value.trim();
+      const letterImg = document.getElementById('addLetterImg').value.trim();
+
+      if (!year || !month || !name) return alert("年、月、キャスト名は必須です！");
+
+      historyList.push({ year, month, name, flags });
+
       if (!castData[name]) {
-        castData[name] = {
-          link: document.getElementById('addLink').value.trim(),
-          notes: document.getElementById('addNotes').value.trim(),
-          oldName: document.getElementById('addOldName').value.trim(),
-          style: document.getElementById('addStyleT').value ? `T:${document.getElementById('addStyleT').value}` : ""
-        };
+        castData[name] = { link: link, notes: notes, oldName: oldName, style: style, letters: [] };
+      } else {
+        if (link) castData[name].link = link;
+        if (notes) castData[name].notes = notes;
+        if (oldName) castData[name].oldName = oldName;
+        if (style) castData[name].style = style;
       }
+
+      if (letterImg) {
+        if (!castData[name].letters) castData[name].letters = [];
+        castData[name].letters.push({
+          date: year + "年" + month,
+          imageUrl: letterImg,
+          text: ""
+        });
+      }
+
       saveData();
       closeModal('addModal');
       render();
+      alert(name + " さんの利用記録を追加・保存しました！");
+
+      document.getElementById('addName').value = '';
+      ['addStyleT', 'addStyleB', 'addStyleW', 'addStyleH'].forEach(id => {
+        const elem = document.getElementById(id);
+        elem.value = '';
+        elem.style.background = 'var(--bg-color)';
+        elem.style.borderColor = 'var(--border-color)';
+        elem.style.color = 'var(--text-color)';
+      });
+      document.getElementById('addFlags').value = '';
+      document.getElementById('addOldName').value = '';
+      document.getElementById('addLink').value = '';
+      document.getElementById('addNotes').value = '';
+      document.getElementById('addLetterImg').value = '';
+    }
+
+    function openLetterModal(event, name) {
+      event.preventDefault(); event.stopPropagation();
+      const info = castData[name];
+      if (!info || !info.letters) return;
+
+      const validLetters = info.letters.filter(item => (item.imageUrl && item.imageUrl.trim() !== "") || (item.text && item.text.trim() !== ""));
+      if (validLetters.length === 0) return;
+
+      document.getElementById('letterModalTitle').innerText = "💌 " + name + " さんの手紙";
+      const container = document.getElementById('letterModalContainer');
+      container.innerHTML = '';
+
+      validLetters.forEach(item => {
+        let imgHtml = (item.imageUrl && item.imageUrl.trim() !== "") ? '<img src="' + item.imageUrl + '" class="letter-img" alt="手紙画像">' : '';
+        let textHtml = (item.text && item.text.trim() !== "") ? '<div class="letter-text-box">' + item.text + '</div>' : '';
+        
+        container.innerHTML += 
+          '<div class="letter-card-item">' +
+            '<div class="letter-date">📅 ' + (item.date || '日付不明') + '</div>' +
+            imgHtml +
+            textHtml +
+          '</div>';
+      });
+
+      document.getElementById('letterModal').style.display = 'flex';
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).style.display = 'none';
+    }
+
+    function runGacha() {
+      const activeList = Object.keys(castData).filter(name => castData[name].link && castData[name].link.trim() !== "");
+      if (activeList.length === 0) return alert("現在在籍中のキャストがいません！");
+
+      const modal = document.getElementById('gachaModal');
+      const box = document.getElementById('rouletteBox');
+      const nameElem = document.getElementById('gachaResultName');
+      const titleElem = document.getElementById('gachaTitle');
+      const subElem = document.getElementById('gachaSub');
+      const closeBtn = document.getElementById('gachaCloseBtn');
+
+      box.classList.remove('winner');
+      titleElem.innerText = "🎰 運命の指名抽選中...";
+      subElem.innerText = "在籍中のキャストから選出中！";
+      closeBtn.disabled = true;
+      closeBtn.innerText = "抽選中...";
+      modal.style.display = 'flex';
+
+      const winner = activeList[Math.floor(Math.random() * activeList.length)];
+      
+      let speed = 50;
+      let count = 0;
+      const maxCount = 25;
+
+      function shuffle() {
+        const tempName = activeList[Math.floor(Math.random() * activeList.length)];
+        nameElem.innerText = tempName;
+        count++;
+
+        if (count < maxCount) {
+          speed += count * 4;
+          setTimeout(shuffle, speed);
+        } else {
+          nameElem.innerText = winner;
+          box.classList.add('winner');
+          titleElem.innerText = "🎉 本日の指名確定！";
+          subElem.innerText = "運命のキャストが選ばれました！";
+          closeBtn.disabled = false;
+          closeBtn.innerText = "決定！";
+        }
+      }
+
+      shuffle();
+    }
+
+    function calcMonthsAgo(lastYearStr, lastMonthStr) {
+      const lastYear = parseInt(lastYearStr, 10);
+      const lastMonth = parseInt(lastMonthStr.replace('月',''), 10);
+      const now = new Date();
+      const diffMonths = (now.getFullYear() - lastYear) * 12 + ((now.getMonth() + 1) - lastMonth);
+      if (diffMonths <= 0) return "最近イッた記録あり。";
+      return diffMonths + "ヶ月前";
+    }
+
+    function updateStats(map) {
+      const list = Object.values(map);
+      document.getElementById('stTotalVisits').innerText = historyList.length;
+      document.getElementById('stTotalCasts').innerText = list.length;
+      const activeCount = list.filter(c => castData[c.name] && castData[c.name].link && castData[c.name].link.trim() !== "").length;
+      document.getElementById('stActiveCasts').innerText = activeCount;
+      const favCount = list.filter(c => c.favCount >= 1).length;
+      const favRate = list.length > 0 ? Math.round((favCount / list.length) * 100) : 0;
+      document.getElementById('stFavRate').innerText = favRate + "%";
     }
 
     function render() {
       const target = document.getElementById('mainContent');
+      const keyword = (document.getElementById('searchKeyword').value || '').trim().toLowerCase();
       target.innerHTML = '';
 
       if (historyList.length === 0) {
-        target.innerHTML = '<div style="text-align:center; color:#aaa; padding:40px;">記録がありません。「＋」から追加してください。</div>';
+        target.innerHTML = '<div style="text-align:center; color:#aaa; padding:40px 10px; font-size:0.85rem;">記録がまだありません。<br>右下の「＋」ボタンから追加するか、<br>上のボタンからお名前を「こすぎ」に変更して参考にしてみてください。</div>';
+        updateStats({});
         return;
       }
 
+      if (currentView === 'cast') {
+        renderCastView(target, keyword);
+      } else {
+        renderTimelineView(target, keyword);
+      }
+    }
+
+    function renderCastView(target, keyword) {
       const map = {};
       historyList.forEach((item, idx) => {
-        if (!map[item.name]) map[item.name] = { name: item.name, visits: [], lastVisit: item };
+        if (!map[item.name]) {
+          map[item.name] = { name: item.name, visits: [], lastIdx: idx, favCount: 0, hasBad: false, lastVisit: item };
+        }
         map[item.name].visits.push(item);
+        map[item.name].lastIdx = idx;
+        map[item.name].lastVisit = item;
+        if (item.flags && item.flags.includes('🆂')) map[item.name].favCount++;
+        if (item.flags && item.flags.includes('⚔')) map[item.name].hasBad = true;
       });
+
+      updateStats(map);
+
+      let list = Object.values(map);
+
+      if (currentFilter === 'active') list = list.filter(c => castData[c.name] && castData[c.name].link && castData[c.name].link.trim() !== "");
+      if (currentFilter === 'fav') list = list.filter(c => c.favCount >= 1);
+      if (currentFilter === 'super') list = list.filter(c => c.favCount >= 5);
+      if (currentFilter === 'bad') list = list.filter(c => c.hasBad);
+
+      if (keyword) {
+        list = list.filter(c => {
+          const info = castData[c.name] || {};
+          const oldName = (info.oldName || '').toLowerCase();
+          const style = (info.style || '').toLowerCase();
+          return c.name.toLowerCase().includes(keyword) ||
+                 oldName.includes(keyword) ||
+                 style.includes(keyword) ||
+                 c.visits.some(v => (v.year + v.month + v.flags).toLowerCase().includes(keyword));
+        });
+      }
+
+      if (currentSort === 'count') {
+        list.sort((a,b) => b.visits.length - a.visits.length || b.lastIdx - a.lastIdx);
+      } else if (currentSort === 'recent') {
+        list.sort((a,b) => b.lastIdx - a.lastIdx);
+      } else if (currentSort === 'name') {
+        list.sort((a,b) => a.name.localeCompare(b.name, 'ja'));
+      }
 
       const grid = document.createElement('div');
       grid.className = 'grid';
 
-      Object.values(map).forEach(c => {
+      list.forEach(c => {
         const details = document.createElement('details');
-        details.className = 'cast-card';
-        const info = castData[c.name] || {};
+        const isSuperFav = c.favCount >= 5;
+        const isFav = c.favCount >= 1;
+
+        let cardClass = 'cast-card';
+        if (isSuperFav) cardClass += ' super-favorite';
+        else if (isFav) cardClass += ' favorite';
+        details.className = cardClass;
+
+        const info = castData[c.name] || { link: "", notes: "", oldName: "", style: "", letters: [] };
+        const url = info.link;
+        const notes = info.notes || "";
+        const oldName = info.oldName || "";
+        const style = info.style || "";
+        const isActive = url && url.trim() !== "";
+        
+        const validLetters = (info.letters || []).filter(item => (item.imageUrl && item.imageUrl.trim() !== "") || (item.text && item.text.trim() !== ""));
+        const hasLetters = validLetters.length > 0;
+
+        const statusBadgeHtml = isActive 
+          ? '<span class="status-badge status-active">在籍中</span>' 
+          : '<span class="status-badge status-retired">卒業済み</span>';
+
+        const oldNameBadgeHtml = oldName 
+          ? '<span class="old-name-badge">旧: ' + oldName + '</span>' 
+          : '';
+
+        const badgeClass = "badge-count" + (c.hasBad ? " bad-count" : "");
+
+        const linkBtnHtml = isActive 
+          ? '<button class="link-btn" onclick="openLink(event, \'' + url + '\')">プロフ</button>' 
+          : '';
+
+        const copyBtnHtml = '<button class="copy-btn" onclick="shareSingleCast(event, \'' + c.name + '\')">💾 共有ファイル作成</button>';
+
+        const letterBtnHtml = hasLetters 
+          ? '<button class="letter-btn" onclick="openLetterModal(event, \'' + c.name + '\')">💌 手紙 (' + validLetters.length + ')</button>' 
+          : '';
 
         let rowsHtml = '';
         c.visits.forEach(v => {
-          rowsHtml += `<div class="history-row"><span>${v.year}年 ${v.month}</span><span>${v.flags||'通常'}</span></div>`;
+          rowsHtml += '<div class="history-row">' +
+            '<span class="history-date">' + v.year.slice(2) + '年 ' + v.month + '</span>' +
+            '<span class="history-flags">' + (v.flags || '通常') + '</span>' +
+          '</div>';
         });
 
-        details.innerHTML = `
-          <summary class="card-btn">
-            <div class="cast-info"><span>▼</span><span>${c.name}</span></div>
-            <span class="badge-count">${c.visits.length}回</span>
-          </summary>
-          <div class="card-body">
-            <div class="card-middle-row">
-              <div class="notes-box">${info.notes || 'メモなし'}</div>
-            </div>
-            ${rowsHtml}
-          </div>
-        `;
+        const superBadgeHtml = isSuperFav ? '<span class="super-tag">オキニ</span>' : '';
+        const notesHtml = '<div class="notes-box"> ' + (notes ? notes : '備考なし') + '</div>';
+        const styleHtml = renderStyleTags(style);
+        const daysAgoText = calcMonthsAgo(c.lastVisit.year, c.lastVisit.month);
+
+        details.innerHTML = 
+          '<summary class="card-btn">' +
+            '<div class="cast-info">' +
+              '<span class="arrow-icon">▼</span> ' +
+              '<span>' + c.name + '</span> ' +
+              oldNameBadgeHtml + ' ' +
+              statusBadgeHtml + ' ' +
+              superBadgeHtml +
+            '</div>' +
+            '<span class="' + badgeClass + '">' + c.visits.length + '回</span>' +
+          '</summary>' +
+          '<div class="anim-wrapper">' +
+            '<div class="anim-inner">' +
+              '<div class="card-body">' +
+                styleHtml +
+                '<div class="card-middle-row">' +
+                  notesHtml +
+                  '<div class="btn-action-group">' +
+                    letterBtnHtml +
+                    copyBtnHtml +
+                    linkBtnHtml +
+                  '</div>' +
+                '</div>' +
+                '<div class="days-ago-tag">最終利用: ' + daysAgoText + '</div>' +
+                rowsHtml +
+              '</div>' +
+            '</div>' +
+          '</div>';
         grid.appendChild(details);
       });
 
       target.appendChild(grid);
     }
 
+    function renderTimelineView(target, keyword) {
+      const groups = {};
+      historyList.forEach(item => {
+        const key = item.year + '年 ' + item.month;
+        if (!groups[key]) groups[key] = [];
+        groups[key].push(item);
+      });
+
+      const keys = Object.keys(groups).reverse();
+
+      keys.forEach(key => {
+        let items = groups[key];
+        if (keyword) {
+          items = items.filter(i => 
+            i.name.toLowerCase().includes(keyword) || 
+            (i.flags && i.flags.toLowerCase().includes(keyword)) ||
+            key.toLowerCase().includes(keyword)
+          );
+        }
+
+        if (items.length > 0) {
+          const sec = document.createElement('div');
+          sec.className = 'month-section';
+          sec.innerHTML = '<div class="month-title">' + key + '</div>';
+
+          const mGrid = document.createElement('div');
+          mGrid.className = 'month-grid';
+
+          items.forEach(i => {
+            mGrid.innerHTML += 
+              '<div class="month-item">' +
+                '<strong>' + i.name + '</strong>' +
+                '<span>' + (i.flags || '通常') + '</span>' +
+              '</div>';
+          });
+
+          sec.appendChild(mGrid);
+          target.appendChild(sec);
+        }
+      });
+    }
+
+    if (!localStorage.getItem('fuzoku_app_visited')) {
+      openHelpModal();
+      localStorage.setItem('fuzoku_app_visited', 'true');
+    }
+
     initUserData();
+    render();
   </script>
 </body>
 </html>
