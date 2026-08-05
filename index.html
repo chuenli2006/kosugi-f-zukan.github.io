@@ -395,24 +395,34 @@
       gap: 8px;
     }
 
-    /* 💃 スリーサイズ（スタイル）タグデザイン */
+    /* 💃 手書き風・分割スタイルタグデザイン */
     .style-row {
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
       flex-wrap: wrap;
       margin-bottom: 2px;
     }
 
-    .style-tag {
-      font-size: 0.68rem;
-      font-weight: bold;
-      padding: 2px 7px;
-      border-radius: 6px;
+    .style-pill {
       display: inline-flex;
       align-items: center;
-      gap: 3px;
-      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 8px;
+      overflow: hidden;
+      font-size: 0.7rem;
+      font-weight: bold;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+
+    .style-pill-label {
+      padding: 2px 7px;
+      color: #ffffff;
+      font-family: inherit;
+    }
+
+    .style-pill-val {
+      padding: 2px 8px;
     }
 
     .style-none {
@@ -424,21 +434,32 @@
       border: 1px solid #e9ecef;
     }
 
-    /* パステルグラデーションカラーパターン */
-    /* 身長 */
-    .p-blue   { background-color: #e7f5ff; color: #1c7ed6; border-color: #a5d8ff; } /* 140-150 */
-    .p-green  { background-color: #ebfbee; color: #2b8a3e; border-color: #b2f2bb; } /* 150-155 */
-    .p-yellow { background-color: #fff9db; color: #e67700; border-color: #ffec99; } /* 155-160 */
-    .p-purple { background-color: #f3d9fa; color: #9c36b5; border-color: #eebefa; } /* 160+ */
+    /* パステル・分割カラー定義（左: アクセント / 右: パステル） */
+    /* 青系 (140-150cm / 標準) */
+    .p-blue .style-pill-label { background-color: #339af0; }
+    .p-blue .style-pill-val   { background-color: #e7f5ff; color: #1c7ed6; }
 
-    /* バスト */
-    .p-pink1  { background-color: #fff0f6; color: #d6336c; border-color: #fcc2d7; }
-    .p-pink2  { background-color: #ffdeeb; color: #c2255c; border-color: #faa2c1; }
-    .p-pink3  { background-color: #fcc2d7; color: #a61e4d; border-color: #f783ac; }
+    /* 緑系 (150-155cm / ウエスト・ヒップ標準) */
+    .p-green .style-pill-label { background-color: #51cf66; }
+    .p-green .style-pill-val   { background-color: #ebfbee; color: #2b8a3e; }
 
-    /* ウエスト */
-    .p-mint   { background-color: #e6fcf5; color: #0ca678; border-color: #96f2d7; }
-    .p-orange { background-color: #fff4e6; color: #d9480f; border-color: #ffd8a8; }
+    /* 黄・オレンジ系 (155-160cm / ウエスト・ヒップ高め) */
+    .p-yellow .style-pill-label { background-color: #fcc419; }
+    .p-yellow .style-pill-val   { background-color: #fff9db; color: #d9480f; }
+
+    /* 紫系 (160cm~) */
+    .p-purple .style-pill-label { background-color: #cc5de8; }
+    .p-purple .style-pill-val   { background-color: #f3d9fa; color: #9c36b5; }
+
+    /* バスト用（ピンクグラデーション） */
+    .p-pink1 .style-pill-label { background-color: #ff85a2; }
+    .p-pink1 .style-pill-val   { background-color: #fff0f6; color: #d6336c; }
+
+    .p-pink2 .style-pill-label { background-color: #f72585; }
+    .p-pink2 .style-pill-val   { background-color: #ffdeeb; color: #c2255c; }
+
+    .p-pink3 .style-pill-label { background-color: #b5179e; }
+    .p-pink3 .style-pill-val   { background-color: #fcc2d7; color: #a61e4d; }
 
     .card-middle-row {
       display: flex;
@@ -1154,7 +1175,7 @@
       "める": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/okinawa-naminouesougoubyouin/girlid-44817013/", notes: "", oldName: "", style: "", letters: [] },
       "ゆず": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3523", notes: "", oldName: "", style: "", letters: [{ date: "2026年3月", imageUrl: "https://i.imgur.com/GtHdniF.jpeg", text: "ジュン君　今日は出会えて　よかった♡　また会いたいです！　ゆず" }] },
       "ななみ": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/okinawa-nursejyogakuen/girlid-65139298/", notes: "", oldName: "", style: "", letters: [] },
-      "なるみ": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/Eq6COe4.jpeg", text: "ありがとう♡　またきてね　大学がんばってね！　なるみ" }] },
+      "なるみ": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/Eq6COe4.jpeg", text: "ありがとう♡　またきてね　大学がんばってね！{なるみ" }] },
       "ひびき": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3454", notes: "", oldName: "", style: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/bNSgBmz.jpeg", text: "今日はありがとう♡　たくさんお話できて楽しかったです！　また遊びに来てください❕️　ひびき" }] },
       "せいな": { link: "https://www.cityheaven.net/tokyo/A1312/A131201/uenolip/girlid-52762713/?mygirl=1&lo=1", notes: "", oldName: "", style: "", letters: [] },
       "きほ": { link: "https://www.cityheaven.net/tokyo/A1304/A130401/a-crystal/girlid-65756780/", notes: "", oldName: "", style: "", letters: [] },
@@ -1218,7 +1239,7 @@
       }
     }
 
-    /* 💃 スリーサイズ（スタイル）数値判別 ＆ パステルタグ生成関数 */
+    /* 💃 手書きイラストに基づく「分割カプセル型」タグ生成関数 */
     function renderStyleTags(styleStr) {
       if (!styleStr || !styleStr.trim()) {
         return '<div class="style-row"><span class="style-none">スタイルデータなし</span></div>';
@@ -1239,7 +1260,12 @@
         if (height >= 150 && height < 155) colorClass = "p-green";
         else if (height >= 155 && height < 160) colorClass = "p-yellow";
         else if (height >= 160) colorClass = "p-purple";
-        tagsHtml += '<span class="style-tag ' + colorClass + '">【T | ' + height + 'cm】</span>';
+
+        tagsHtml += 
+          '<div class="style-pill ' + colorClass + '">' +
+            '<span class="style-pill-label">T</span>' +
+            '<span class="style-pill-val">' + height + 'cm</span>' +
+          '</div>';
       }
 
       // バスト (B)
@@ -1249,22 +1275,36 @@
         let colorClass = "p-pink1";
         if (bust >= 85) colorClass = "p-pink2";
         if (bust >= 90) colorClass = "p-pink3";
-        const label = '【B | ' + bust + (cup ? '(' + cup + ')' : '') + '】';
-        tagsHtml += '<span class="style-tag ' + colorClass + '">' + label + '</span>';
+
+        tagsHtml += 
+          '<div class="style-pill ' + colorClass + '">' +
+            '<span class="style-pill-label">B</span>' +
+            '<span class="style-pill-val">' + bust + (cup ? '(' + cup + ')' : '') + '</span>' +
+          '</div>';
       }
 
       // ウエスト (W)
       if (wMatch) {
         const waist = parseInt(wMatch[1], 10);
-        let colorClass = waist <= 55 ? "p-mint" : "p-orange";
-        tagsHtml += '<span class="style-tag ' + colorClass + '">【W | ' + waist + '】</span>';
+        let colorClass = waist <= 55 ? "p-green" : "p-yellow";
+
+        tagsHtml += 
+          '<div class="style-pill ' + colorClass + '">' +
+            '<span class="style-pill-label">W</span>' +
+            '<span class="style-pill-val">' + waist + '</span>' +
+          '</div>';
       }
 
       // ヒップ (H)
       if (hMatch) {
         const hip = parseInt(hMatch[1], 10);
-        let colorClass = hip <= 85 ? "p-mint" : "p-orange";
-        tagsHtml += '<span class="style-tag ' + colorClass + '">【H | ' + hip + '】</span>';
+        let colorClass = hip <= 85 ? "p-green" : "p-yellow";
+
+        tagsHtml += 
+          '<div class="style-pill ' + colorClass + '">' +
+            '<span class="style-pill-label">H</span>' +
+            '<span class="style-pill-val">' + hip + '</span>' +
+          '</div>';
       }
 
       tagsHtml += '</div>';
