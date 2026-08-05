@@ -435,23 +435,18 @@
     }
 
     /* パステル・分割カラー定義（左: アクセント / 右: パステル） */
-    /* 青系 (140-150cm / 標準) */
     .p-blue .style-pill-label { background-color: #339af0; }
     .p-blue .style-pill-val   { background-color: #e7f5ff; color: #1c7ed6; }
 
-    /* 緑系 (150-155cm / ウエスト・ヒップ標準) */
     .p-green .style-pill-label { background-color: #51cf66; }
     .p-green .style-pill-val   { background-color: #ebfbee; color: #2b8a3e; }
 
-    /* 黄・オレンジ系 (155-160cm / ウエスト・ヒップ高め) */
     .p-yellow .style-pill-label { background-color: #fcc419; }
     .p-yellow .style-pill-val   { background-color: #fff9db; color: #d9480f; }
 
-    /* 紫系 (160cm~) */
     .p-purple .style-pill-label { background-color: #cc5de8; }
     .p-purple .style-pill-val   { background-color: #f3d9fa; color: #9c36b5; }
 
-    /* バスト用（ピンクグラデーション） */
     .p-pink1 .style-pill-label { background-color: #ff85a2; }
     .p-pink1 .style-pill-val   { background-color: #fff0f6; color: #d6336c; }
 
@@ -815,6 +810,39 @@
       font-size: 0.8rem;
     }
 
+    /* 🏷️ フラグ選択チップエリア */
+    .flag-picker {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 4px;
+    }
+
+    .flag-btn {
+      font-size: 0.72rem;
+      padding: 4px 8px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      background: #fff;
+      color: var(--text-color);
+      cursor: pointer;
+      transition: all 0.1s;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .flag-btn:active {
+      transform: scale(0.92);
+      background: var(--soft-pink);
+    }
+
+    .flag-btn-clear {
+      background: #f1f3f5;
+      color: #868e96;
+      border-color: #dee2e6;
+    }
+
     /* 時系列モード */
     .month-section { margin-bottom: 16px; }
     .month-title {
@@ -1032,9 +1060,22 @@
           </div>
         </div>
 
+        <!-- 🏷️ マーク・フラグ ワンタップ追加機能 -->
         <div class="form-group">
-          <label>マーク・フラグ（例: 🆂❖）</label>
-          <input type="text" id="addFlags" placeholder="🆂 / ⚔ / ✈ / ⑱ など">
+          <label>マーク・フラグ（タップで追加）</label>
+          <div class="flag-picker">
+            <button type="button" class="flag-btn" onclick="addFlagChar('🆂')">🆂 当たり</button>
+            <button type="button" class="flag-btn" onclick="addFlagChar('⚔')">⚔ 次ナシ</button>
+            <button type="button" class="flag-btn" onclick="addFlagChar('✈')">✈ 県外</button>
+            <button type="button" class="flag-btn" onclick="addFlagChar('⑱')">⑱ 18歳</button>
+            <button type="button" class="flag-btn" onclick="addFlagChar('❖')">❖ 2万超</button>
+            <button type="button" class="flag-btn" onclick="addFlagChar('❀')">❀ 卒業</button>
+            <button type="button" class="flag-btn" onclick="addFlagChar('🈠')">🈠 初出勤</button>
+            <button type="button" class="flag-btn" onclick="addFlagChar('㋑')">㋑ コス</button>
+            <button type="button" class="flag-btn" onclick="addFlagChar('ｴ')">ｴ エステ</button>
+            <button type="button" class="flag-btn flag-btn-clear" onclick="clearFlagsInput()">クリア</button>
+          </div>
+          <input type="text" id="addFlags" placeholder="タップしたマークが入ります（直接編集もOK）">
         </div>
 
         <div class="form-row">
@@ -1176,13 +1217,13 @@
     ];
 
     const kosugiCastData = {
-      "ゆあ": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/lipsokinawa/girlid-60270238/", notes: "", oldName: "", style: "T:156cm B:78(C) W:56 H:79", letters: [] },
-      "さきな": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3335", notes: "", oldName: "", style: "T:154cm B:79(B) W:50 H:76", letters: [{ date: "2026年7月", imageUrl: "https://i.imgur.com/HQGHmMO.jpeg", text: "じゅんくんへ♡今日は久しぶりに会えてさきなとってもうれしかったよ〜！！また遊ぼうね♡さきなより" }] },
-      "モカ": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3367", notes: "", oldName: "", style: "T:152cm B:75(C) W:58 H:82", letters: [{ date: "2026年7月", imageUrl: "https://i.imgur.com/XbmVYZm.jpeg", text: "モカです❣️明日から大学生活！たのしんでね　いつもモカに会いに来てくれていろんなお話きかせてくれてありがと　ファイトー!!また待ってるねん〜♡" },{ date: "2025年11月", imageUrl: "https://i.imgur.com/TfScpzj.jpeg", text: "はじめまして！モカです♡　モカをえらんであいにきてくれてありがと～！　としちかいお兄さん初めてて楽しすぎた✨　また待ってるねん😄" }] },
-      "カルア": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3451", notes: "", oldName: "菜乃花", style: "T:148cm B:73(A) W:56 H:83", letters: [{ date: "2026年2月", imageUrl: "https://i.imgur.com/wlffBij.jpeg", text: "じゅんくんへ💕　今日はなのかのところに来てくれてありがとう! いつもBiGニュースを持ってきて楽しそうに話すじゅんくんを見るのが幸せです😌♡　言葉えらび面白くてついついよく笑っちゃってます✨　いつも笑顔でプレイしてくれてすなおなじゅんくんでいてくれてありがとう!!" }] },
-      "まりあ": { link: "", notes: "", oldName: "", style: "T:149cm B:79(B) W:52 H:76", letters: [{ date: "2025年", imageUrl: "https://i.imgur.com/Ofhz9gl.jpeg", text: "" },{ date: "2025年", imageUrl: "https://i.imgur.com/qtpVpTE.jpeg", text: "" },{ date: "2025年", imageUrl: "https://i.imgur.com/ZZZdW0C.jpeg", text: "" },{ date: "2025年", imageUrl: "https://i.imgur.com/mOkhVsi.jpeg", text: "" }] },
-      "もも": { link: "", notes: "", oldName: "", style: "T:156cm B:72(B) W:52 H:78", letters: [{ date: "2026年2月", imageUrl: "https://i.imgur.com/x7K08ve.jpeg", text: "じゅんくん♡　いつも仲良くしてくれてありがとう〜！！　中国語もべんきょうしとくネ！！　大学ファイトだよ！人生これからスタートだネ　ファイト♡　もも" }] },
-      "ことり": { link: "https://www.cityheaven.net/aichi/A2301/A230104/jj-shinsakae/girlid-48589728/?mygirl=1&lo=1", notes: "", oldName: "", style: "T:150cm B:80(C) W:55 H:83", letters: [] },
+      "ゆあ": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/lipsokinawa/girlid-60270238/", notes: "", oldName: "", style: "T:154cm B:80(A) W:53 H:84", letters: [] },
+      "さきな": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3335", notes: "", oldName: "", style: "", letters: [{ date: "2026年7月", imageUrl: "https://i.imgur.com/HQGHmMO.jpeg", text: "じゅんくんへ♡今日は久しぶりに会えてさきなとってもうれしかったよ〜！！また遊ぼうね♡さきなより" }] },
+      "モカ": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3367", notes: "", oldName: "", style: "", letters: [{ date: "2026年7月", imageUrl: "https://i.imgur.com/XbmVYZm.jpeg", text: "モカです❣️明日から大学生活！たのしんでね　いつもモカに会いに来てくれていろんなお話きかせてくれてありがと　ファイトー!!また待ってるねん〜♡" },{ date: "2025年11月", imageUrl: "https://i.imgur.com/TfScpzj.jpeg", text: "はじめまして！モカです♡　モカをえらんであいにきてくれてありがと～！　としちかいお兄さん初めてて楽しすぎた✨　また待ってるねん😄" }] },
+      "カルア": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3451", notes: "", oldName: "菜乃花", style: "", letters: [{ date: "2026年2月", imageUrl: "https://i.imgur.com/wlffBij.jpeg", text: "じゅんくんへ💕　今日はなのかのところに来てくれてありがとう! いつもBiGニュースを持ってきて楽しそうに話すじゅんくんを見るのが幸せです😌♡　言葉えらび面白くてついついよく笑っちゃってます✨　いつも笑顔でプレイしてくれてすなおなじゅんくんでいてくれてありがとう!!" }] },
+      "まりあ": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2025年", imageUrl: "https://i.imgur.com/Ofhz9gl.jpeg", text: "" },{ date: "2025年", imageUrl: "https://i.imgur.com/qtpVpTE.jpeg", text: "" },{ date: "2025年", imageUrl: "https://i.imgur.com/ZZZdW0C.jpeg", text: "" },{ date: "2025年", imageUrl: "https://i.imgur.com/mOkhVsi.jpeg", text: "" }] },
+      "もも": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2026年2月", imageUrl: "https://i.imgur.com/x7K08ve.jpeg", text: "じゅんくん♡　いつも仲良くしてくれてありがとう〜！！　中国語もべんきょうしとくネ！！　大学ファイトだよ！人生これからスタートだネ　ファイト♡　もも" }] },
+      "ことり": { link: "https://www.cityheaven.net/aichi/A2301/A230104/jj-shinsakae/girlid-48589728/?mygirl=1&lo=1", notes: "", oldName: "", style: "", letters: [] },
       "四葉": { link: "", notes: "", oldName: "", style: "", letters: [] },
       "ひまわり": { link: "", notes: "", oldName: "", style: "", letters: [] },
       "じゅり": { link: "", notes: "", oldName: "", style: "", letters: [] },
@@ -1203,7 +1244,7 @@
       "ゆず": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3523", notes: "", oldName: "", style: "", letters: [{ date: "2026年3月", imageUrl: "https://i.imgur.com/GtHdniF.jpeg", text: "ジュン君　今日は出会えて　よかった♡　また会いたいです！　ゆず" }] },
       "ななみ": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/okinawa-nursejyogakuen/girlid-65139298/", notes: "", oldName: "", style: "", letters: [] },
       "なるみ": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/Eq6COe4.jpeg", text: "ありがとう♡　またきてね　大学がんばってね！　なるみ" }] },
-      "ひびき": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3454", notes: "", oldName: "", style: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/bNSgBmz.jpeg", text: "今日はありがとう♡　たくさんお話できて楽しかったです！　また遊びに来てください❕️　ひびき" }] },
+      "ひびき": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3454", notes: "", oldName: "", style: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/bNSgBmz.jpeg", text: "今日はありがとう♡　たくさんお話できて楽しかったです！　また遊びに来てください❕️ひびき" }] },
       "せいな": { link: "https://www.cityheaven.net/tokyo/A1312/A131201/uenolip/girlid-52762713/?mygirl=1&lo=1", notes: "", oldName: "", style: "", letters: [] },
       "きほ": { link: "https://www.cityheaven.net/tokyo/A1304/A130401/a-crystal/girlid-65756780/", notes: "", oldName: "", style: "", letters: [] },
       "アクア": { link: "https://www.cityheaven.net/tokyo/A1303/A130301/sc-crystal/girlid-64589705/", notes: "", oldName: "", style: "", letters: [] },
@@ -1265,6 +1306,16 @@
         render();
         alert("「童貞」状態に初期化しました。");
       }
+    }
+
+    /* 🏷️ マーク追加補助関数 */
+    function addFlagChar(char) {
+      const input = document.getElementById('addFlags');
+      input.value = (input.value || '') + char;
+    }
+
+    function clearFlagsInput() {
+      document.getElementById('addFlags').value = '';
     }
 
     /* 💃 手書きイラストに基づく「分割カプセル型」タグ生成関数 */
