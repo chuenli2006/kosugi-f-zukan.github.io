@@ -607,7 +607,7 @@
       margin-bottom: 6px;
     }
 
-    /* 💾 GitHubストレージ設定エリアの追加スタイル */
+    /* 💾 GitHubストレージ設定エリア */
     .storage-selector-box {
       background: var(--soft-pink);
       border: 1px solid var(--primary-pink);
@@ -965,7 +965,7 @@
         </div>
         <div class="help-box">
           <h4>☁️ 2. GitHub連携による自動同期</h4>
-          <p>ユーザー設定でGitHub連携を設定すると、自動的に <code>data_ユーザー名.json</code> として安全にクラウド同期されます。</p>
+          <p>ユーザー設定でGitHub Tokenを入力すると、自動的に <code>data_ユーザー名.json</code> としてリポジトリに安全同期されます。</p>
         </div>
         <div class="help-box">
           <h4>💡 3. こすぎ さんのデータを参照する</h4>
@@ -981,7 +981,7 @@
     <div class="modal-content">
       <h3>👤 ユーザー切り替え・保存先設定</h3>
       
-      <!-- 💾 GitHub連携モード切替ボックス（追加要素） -->
+      <!-- 💾 GitHub連携モード切替ボックス（特定リポジトリ名デフォルト指定） -->
       <div class="storage-selector-box">
         <label style="font-size:0.75rem; font-weight:bold; color:var(--accent-pink);">💾 保存先モード選択</label>
         <div class="radio-group">
@@ -991,7 +991,7 @@
 
         <div class="github-inputs" id="githubConfigBox" style="display:none;">
           <input type="password" id="ghToken" placeholder="GitHub Token (ghp_...)" style="font-size:0.75rem;">
-          <input type="text" id="ghRepo" placeholder="ユーザー名/リポジトリ名 (例: chuenli2006/kosugi-f-zukan)" style="font-size:0.75rem;">
+          <input type="text" id="ghRepo" placeholder="chuenli2006.github.io/kosugi-f-zukan.github.io" style="font-size:0.75rem;">
           <div style="font-size:0.7rem; color:#666; margin-top:2px;">
             保存ファイル名: <strong id="ghFileNamePreview">data_童貞.json</strong>
           </div>
@@ -1236,7 +1236,7 @@
       "める": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/okinawa-naminouesougoubyouin/girlid-44817013/", notes: "", oldName: "", style: "", letters: [] },
       "ゆず": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3523", notes: "", oldName: "", style: "", letters: [{ date: "2026年3月", imageUrl: "https://i.imgur.com/GtHdniF.jpeg", text: "ジュン君　今日は出会えて　よかった♡　また会いたいです！　ゆず" }] },
       "ななみ": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/okinawa-nursejyogakuen/girlid-65139298/", notes: "", oldName: "", style: "", letters: [] },
-      "なるみ": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/Eq6COe4.jpeg", text: "ありがとう♡　またきてね　大学がんばってね！{なるみ" }] },
+      "なるみ": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/Eq6COe4.jpeg", text: "ありがとう♡　またきてね　大学がんばってね！　なるみ" }] },
       "ひびき": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3454", notes: "", oldName: "", style: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/bNSgBmz.jpeg", text: "今日はありがとう♡　たくさんお話できて楽しかったです！tまた遊びに来てください❕️　ひびき" }] },
       "せいな": { link: "https://www.cityheaven.net/tokyo/A1312/A131201/uenolip/girlid-52762713/?mygirl=1&lo=1", notes: "", oldName: "", style: "", letters: [] },
       "きほ": { link: "https://www.cityheaven.net/tokyo/A1304/A130401/a-crystal/girlid-65756780/", notes: "", oldName: "", style: "", letters: [] },
@@ -1245,6 +1245,9 @@
       "ゆうか": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3504", notes: "", oldName: "ここみ", style: "", letters: [{ date: "2026年7月", imageUrl: "https://i.imgur.com/vcJpOyD.jpeg", text: "今日はありがとう〜まさかの二度目ましてでおもろかった(笑ナースの時よりも少し風俗慣れてた気がして寂しい気もするけど会えて良かった!))" }] }
     };
 
+    // デフォルトのリポジトリを修正（chuenli2006.github.io/kosugi-f-zukan.github.io）
+    const DEFAULT_REPO = "chuenli2006.github.io/kosugi-f-zukan.github.io";
+
     let currentUserName = localStorage.getItem('app_user_name') || '童貞';
     let storageMode = localStorage.getItem('app_storage_mode') || 'local';
     let historyList = [];
@@ -1252,7 +1255,7 @@
     let sharedRecords = [];
     let currentSha = null;
 
-    /* 🛡️ 案A: ユーザー名から一意なファイル名を自動生成する関数 */
+    /* 🛡️ ユーザー名から一意なファイル名を自動生成する関数 */
     function getUserFileName(name) {
       const safeName = (name || currentUserName || 'user').trim().replace(/[\/\\?%*:|"<>]/g, '_');
       return `data_${safeName}.json`;
@@ -1291,13 +1294,13 @@
       sharedRecords = savedShared ? JSON.parse(savedShared) : [];
     }
 
-    /* ☁️ GitHubからのデータ自動取得（data_ユーザー名.json を読み込み） */
+    /* ☁️ GitHubからのデータ自動取得 */
     async function loadFromGitHub() {
       const token = localStorage.getItem('gh_token');
-      const repo = localStorage.getItem('gh_repo');
+      const repo = localStorage.getItem('gh_repo') || DEFAULT_REPO;
       const fileName = getUserFileName(currentUserName);
 
-      if (!token || !repo) return false;
+      if (!token) return false;
 
       try {
         const res = await fetch(`https://api.github.com/repos/${repo}/contents/${fileName}`, {
@@ -1321,13 +1324,13 @@
       return false;
     }
 
-    /* ☁️ GitHubへのデータ自動保存（data_ユーザー名.json へコミット） */
+    /* ☁️ GitHubへのデータ自動保存 */
     async function saveToGitHub() {
       const token = localStorage.getItem('gh_token');
-      const repo = localStorage.getItem('gh_repo');
+      const repo = localStorage.getItem('gh_repo') || DEFAULT_REPO;
       const fileName = getUserFileName(currentUserName);
 
-      if (!token || !repo) return;
+      if (!token) return;
 
       const exportObject = {
         app: "風俗履歴図鑑",
@@ -1480,7 +1483,6 @@
         try {
           const imported = JSON.parse(e.target.result);
 
-          // パターンA: キャスト単体シェアファイルの読み込み -> 「共有された履歴」タブへ
           if (imported.app === "風俗履歴図鑑_単体" || imported.castName) {
             sharedRecords.unshift({
               fromUser: imported.sharedBy || "友達",
@@ -1497,7 +1499,6 @@
             return;
           }
 
-          // パターンB: 全データバックアップファイルの復元
           if (imported.historyList && imported.castData) {
             if (confirm(`「${imported.userName || 'バックアップ'}」の全データで図鑑を復元しますか？`)) {
               currentUserName = imported.userName || '復元ユーザー';
@@ -1687,7 +1688,7 @@
       document.getElementById('modeLocal').checked = storageMode !== 'github';
 
       document.getElementById('ghToken').value = localStorage.getItem('gh_token') || '';
-      document.getElementById('ghRepo').value = localStorage.getItem('gh_repo') || '';
+      document.getElementById('ghRepo').value = localStorage.getItem('gh_repo') || DEFAULT_REPO;
 
       toggleStorageModeUI();
       document.getElementById('userModal').style.display = 'flex';
@@ -1707,7 +1708,8 @@
 
       if (storageMode === 'github') {
         localStorage.setItem('gh_token', document.getElementById('ghToken').value.trim());
-        localStorage.setItem('gh_repo', document.getElementById('ghRepo').value.trim());
+        const inputRepo = document.getElementById('ghRepo').value.trim();
+        localStorage.setItem('gh_repo', inputRepo || DEFAULT_REPO);
       }
 
       saveData();
