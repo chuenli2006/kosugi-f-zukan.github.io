@@ -530,11 +530,11 @@
 
     .modal-content {
       background: #fff;
-      padding: 20px;
+      padding: 20px 16px;
       border-radius: 20px;
       text-align: center;
       max-width: 380px;
-      width: 90%;
+      width: 92%;
       box-shadow: 0 10px 30px rgba(247, 37, 133, 0.3);
       border: 2px solid var(--soft-pink);
       position: relative;
@@ -780,6 +780,7 @@
       font-size: 0.85rem;
       outline: none;
       background: var(--bg-color);
+      width: 100%;
     }
 
     .form-group input:disabled {
@@ -797,18 +798,21 @@
       flex: 1;
     }
 
-    /* スリーサイズ 2×2 グリッド（スマホ横スクロール防止） */
-    .style-grid-2x2 {
+    /* 📏 スリーサイズ 4列コンパクトグリッド（スクロール絶対防止） */
+    .style-grid-compact {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      width: 100%;
     }
 
-    .style-grid-2x2 input {
-      padding: 8px;
+    .style-grid-compact input {
+      padding: 6px 2px;
       text-align: center;
-      font-size: 0.85rem;
+      font-size: 0.78rem;
       font-weight: bold;
+      min-width: 0; /* フレックス/グリッドはみ出し防止 */
+      box-sizing: border-box;
       transition: all 0.2s;
     }
 
@@ -1043,14 +1047,14 @@
           <input type="text" id="addName" placeholder="例: ゆあ" required>
         </div>
 
-        <!-- 💃 スリーサイズ 2×2 配置（リアルタイム色変化対応） -->
+        <!-- 📐 スリーサイズ 4列コンパクト（スクロールなしでピッタリ収まる） -->
         <div class="form-group">
           <label>スリーサイズ（スタイルデータ）</label>
-          <div class="style-grid-2x2">
-            <input type="text" id="addStyleT" placeholder="T: 154" oninput="updateInputColor(this, 'T')">
-            <input type="text" id="addStyleB" placeholder="B: 80(A)" oninput="updateInputColor(this, 'B')">
-            <input type="text" id="addStyleW" placeholder="W: 53" oninput="updateInputColor(this, 'W')">
-            <input type="text" id="addStyleH" placeholder="H: 84" oninput="updateInputColor(this, 'H')">
+          <div class="style-grid-compact">
+            <input type="text" id="addStyleT" placeholder="T" oninput="updateInputColor(this, 'T')">
+            <input type="text" id="addStyleB" placeholder="B" oninput="updateInputColor(this, 'B')">
+            <input type="text" id="addStyleW" placeholder="W" oninput="updateInputColor(this, 'W')">
+            <input type="text" id="addStyleH" placeholder="H" oninput="updateInputColor(this, 'H')">
           </div>
         </div>
 
