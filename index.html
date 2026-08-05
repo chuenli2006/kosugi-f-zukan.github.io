@@ -45,6 +45,7 @@
       margin-bottom: 12px;
       padding-bottom: 8px;
       border-bottom: 2px solid var(--soft-pink);
+      position: relative;
     }
 
     header h1 {
@@ -57,17 +58,29 @@
       color: var(--light-text);
     }
 
-    .user-tag-btn {
+    .header-btns {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
       margin-top: 6px;
+    }
+
+    .user-tag-btn, .help-btn {
       background: var(--soft-pink);
       color: var(--accent-pink);
       border: 1px solid var(--primary-pink);
-      padding: 4px 14px;
+      padding: 4px 12px;
       border-radius: 15px;
       font-size: 0.75rem;
       font-weight: bold;
       cursor: pointer;
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .help-btn {
+      background: #fff;
     }
 
     /* アナリティクスパネル */
@@ -459,7 +472,7 @@
       padding: 20px;
       border-radius: 20px;
       text-align: center;
-      max-width: 360px;
+      max-width: 380px;
       width: 90%;
       box-shadow: 0 10px 30px rgba(247, 37, 133, 0.3);
       border: 2px solid var(--soft-pink);
@@ -478,6 +491,33 @@
       color: var(--accent-pink);
       margin-bottom: 8px;
       font-size: 1.1rem;
+    }
+
+    /* 📖 使い方ダイアログ用スタイル */
+    .help-section {
+      text-align: left;
+      font-size: 0.8rem;
+      color: #4a4a4a;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 10px 0;
+    }
+
+    .help-box {
+      background: #fffdfd;
+      border: 1px solid var(--soft-pink);
+      padding: 10px;
+      border-radius: 10px;
+    }
+
+    .help-box h4 {
+      font-size: 0.85rem;
+      color: var(--accent-pink);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
 
     /* メッセージカードモーダル用スタイル */
@@ -670,7 +710,10 @@
   <header>
     <h1 id="headerTitle">風俗履歴図鑑</h1>
     <p>マイ キャスト＆プレイレコード</p>
-    <button class="user-tag-btn" onclick="openUserModal()">👤 ユーザー: <span id="currentUserNameDisplay">名無し</span> （名前を変更）</button>
+    <div class="header-btns">
+      <button class="user-tag-btn" onclick="openUserModal()">👤 ユーザー: <span id="currentUserNameDisplay">名無し</span></button>
+      <button class="help-btn" onclick="openHelpModal()">❓ 使い方</button>
+    </div>
   </header>
 
   <!-- 📊 ダッシュボード -->
@@ -745,6 +788,37 @@
   <!-- ➕ フローティング追加ボタン -->
   <button class="fab-add" onclick="openAddModal()" title="新しい利用記録を追加">＋</button>
 
+  <!-- 📖 使い方・ご利用ガイドモーダル -->
+  <div class="modal-overlay" id="helpModal">
+    <div class="modal-content">
+      <h3>📖 風俗履歴図鑑のご利用ガイド</h3>
+      <div class="help-section">
+        
+        <div class="help-box">
+          <h4>👤 1. あなた専用のアプリとして使う</h4>
+          <p>ヘッダーの「👤 ユーザー」ボタンから**あなたのお名前**を設定してください。タイトルが「〇〇の風俗履歴図鑑」に変わり、あなただけのプレイ日記・図鑑として使えます。</p>
+        </div>
+
+        <div class="help-box">
+          <h4>➕ 2. 記録を追加する</h4>
+          <p>画面右下の「**＋**」ボタンから、遊びに行ったキャスト名、日付、お店のプロフURL、印象マークなどを自由に記録・保存できます。</p>
+        </div>
+
+        <div class="help-box">
+          <h4>👑 3. こすぎ さんのデータを参照する</h4>
+          <p>ユーザー名を **「こすぎ」**（または `じゅん` / `ジュン`）に変更すると、管理者の全利用記録と手紙画像データが全復元されます！</p>
+        </div>
+
+        <div class="help-box">
+          <h4>🔒 4. プライバシーと保存について</h4>
+          <p>入力したデータはお使いのスマホ・PCのブラウザ（LocalStorage）にのみ安全に保存されます。他の人に見られる心配はありません。</p>
+        </div>
+
+      </div>
+      <button class="close-btn" onclick="closeModal('helpModal')">理解した！</button>
+    </div>
+  </div>
+
   <!-- 👤 ユーザー設定モーダル -->
   <div class="modal-overlay" id="userModal">
     <div class="modal-content">
@@ -795,14 +869,14 @@
             <input type="text" id="addOldName" placeholder="例: ここみ">
           </div>
           <div class="form-group">
-            <label>プロフURL（在籍状況）</label>
+            <label>プロフURL</label>
             <input type="url" id="addLink" placeholder="https://...">
           </div>
         </div>
 
         <div class="form-group">
           <label>メモ・備考</label>
-          <input type="text" id="addNotes" placeholder="おっぱいでかかった、NEW林の色など">
+          <input type="text" id="addNotes" placeholder="接客メモなど">
         </div>
 
         <div class="form-group">
@@ -837,7 +911,7 @@
     <div class="modal-content">
       <h3>💬 お知らせ</h3>
       <p class="modal-desc">
-        制作仕様のため、現在Chromeなど新型のブラウザでは履歴シェア機能をご利用できません。ご不便をおかけして大変申し訳ございません。
+        制作仕様のため、Chromeなど新型のブラウザでは履歴シェア機能をご利用できません。
       </p>
       <button class="close-btn" onclick="closeModal('shareAlertModal')">閉じる</button>
     </div>
@@ -961,7 +1035,7 @@
       "ゆず": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3523", notes: "", oldName: "", letters: [{ date: "2026年3月", imageUrl: "https://i.imgur.com/GtHdniF.jpeg", text: "ジュン君　今日は出会えて　よかった♡　また会いたいです！　ゆず" }] },
       "ななみ": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/okinawa-nursejyogakuen/girlid-65139298/?mygirl=1&lo=1", notes: "", oldName: "", letters: [] },
       "なるみ": { link: "", notes: "", oldName: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/Eq6COe4.jpeg", text: "ありがとう♡　またきてね　大学がんばってね！　なるみ" }] },
-      "ひびき": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3454", notes: "", oldName: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/bNSgBmz.jpeg", text: "今日はありがとう♡　たくさんお話できて楽しかったです！tまた遊びに来てください❕️　ひびき" }] },
+      "ひびき": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3454", notes: "", oldName: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/bNSgBmz.jpeg", text: "今日はありがとう♡　たくさんお話できて楽しかったです！　また遊びに来てください❕️　ひびき" }] },
       "せいな": { link: "https://www.cityheaven.net/tokyo/A1312/A131201/uenolip/girlid-52762713/?mygirl=1&lo=1", notes: "", oldName: "", letters: [] },
       "きほ": { link: "https://www.cityheaven.net/tokyo/A1304/A130401/a-crystal/girlid-65756780/?mygirl=1&lo=1", notes: "", oldName: "", letters: [] },
       "アクア": { link: "https://www.cityheaven.net/tokyo/A1303/A130301/sc-crystal/girlid-64589705/", notes: "", oldName: "", letters: [] },
@@ -981,11 +1055,9 @@
 
     function initUserData() {
       if (isKosugi(currentUserName)) {
-        // 本人の名前ならマスターデータをロード
         historyList = JSON.parse(JSON.stringify(kosugiHistoryList));
         castData = JSON.parse(JSON.stringify(kosugiCastData));
       } else {
-        // 本人以外の名前（ささ等）なら以前保存した自身のデータがあれば読み込み、なければ完全な空にする
         const savedHist = localStorage.getItem('user_hist_' + currentUserName);
         const savedCast = localStorage.getItem('user_cast_' + currentUserName);
         if (savedHist && savedCast) {
@@ -1029,6 +1101,10 @@
     function openUserModal() {
       document.getElementById('inputUserName').value = currentUserName === '名無し' ? '' : currentUserName;
       document.getElementById('userModal').style.display = 'flex';
+    }
+
+    function openHelpModal() {
+      document.getElementById('helpModal').style.display = 'flex';
     }
 
     function saveUserName(event) {
@@ -1426,6 +1502,12 @@
           target.appendChild(sec);
         }
       });
+    }
+
+    // 初回アクセス時の案内ポップアップ制御
+    if (!localStorage.getItem('fuzoku_app_visited')) {
+      openHelpModal();
+      localStorage.setItem('fuzoku_app_visited', 'true');
     }
 
     initUserData();
