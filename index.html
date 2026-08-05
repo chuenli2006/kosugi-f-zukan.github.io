@@ -520,6 +520,33 @@
       gap: 4px;
     }
 
+    /* バックアップ・復元エリア用スタイル */
+    .backup-section {
+      margin-top: 15px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--border-color);
+      text-align: left;
+    }
+
+    .backup-section h4 {
+      font-size: 0.8rem;
+      color: var(--accent-pink);
+      margin-bottom: 6px;
+    }
+
+    .backup-code-box {
+      width: 100%;
+      height: 60px;
+      padding: 6px;
+      font-size: 0.7rem;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--bg-color);
+      word-break: break-all;
+      resize: none;
+      outline: none;
+    }
+
     /* メッセージカードモーダル用スタイル */
     .letter-card-item {
       background: #fffdfa;
@@ -816,8 +843,8 @@
         </div>
 
         <div class="help-box">
-          <h4>🔒 4. プライバシーと保存について</h4>
-          <p>入力したデータはお使いのスマホ・PCのブラウザ（LocalStorage）にのみ安全に保存されます。他の人に見られる心配はありません。</p>
+          <h4>📲 4. データのバックアップ・共有</h4>
+          <p>「👤 ユーザー」ボタン内からワンタップで全データのバックアップコードを発行・コピーできます。友達への共有や機種変更に便利です。</p>
         </div>
 
       </div>
@@ -825,7 +852,7 @@
     </div>
   </div>
 
-  <!-- 👤 ユーザー設定モーダル -->
+  <!-- 👤 ユーザー設定 & バックアップモーダル -->
   <div class="modal-overlay" id="userModal">
     <div class="modal-content">
       <h3>👤 ユーザー切り替え・名前変更</h3>
@@ -835,11 +862,24 @@
           <label>お名前（例: こすぎ、たろう）</label>
           <input type="text" id="inputUserName" placeholder="名前を入力..." required>
         </div>
-        <div style="display:flex; gap:8px; margin-top:10px;">
+        <div style="display:flex; gap:8px;">
           <button type="submit" class="close-btn" style="flex:1;">保存する</button>
           <button type="button" class="close-btn" onclick="closeModal('userModal')" style="background:#ccc; flex:1;">キャンセル</button>
         </div>
       </form>
+
+      <!-- 📦 バックアップ・復元エリア (案2) -->
+      <div class="backup-section">
+        <h4>📦 データのバックアップ・コード発行</h4>
+        <p style="font-size:0.7rem; color:#666; margin-bottom:6px;">現在の全データをコード化してコピーします。</p>
+        <button class="close-btn" style="width:100%; margin-top:0; background:linear-gradient(135deg, #4dabf7, #339af0);" onclick="copyBackupCode()">📋 コードを発行してコピー</button>
+
+        <h4 style="margin-top:12px;">📥 データの復元・読み込み</h4>
+        <p style="font-size:0.7rem; color:#666; margin-bottom:4px;">受け取ったコードを貼り付けて復元できます。</p>
+        <textarea class="backup-code-box" id="importCodeInput" placeholder="ここにバックアップコードを貼り付け..."></textarea>
+        <button class="close-btn" style="width:100%; margin-top:6px; background:#5c7cfa;" onclick="importBackupCode()">データを復元・読み込み</button>
+      </div>
+
     </div>
   </div>
 
@@ -1106,6 +1146,59 @@
         initUserData();
         render();
         alert("「名無し」状態に初期化しました。");
+      }
+    }
+
+    /* 📦 バックアップコード発行・クリップボードコピー (案2) */
+    function copyBackupCode() {
+      const exportObject = {
+        userName: currentUserName,
+        historyList: historyList,
+        castData: castData
+      };
+      
+      try {
+        const jsonStr = JSON.stringify(exportObject);
+        // UTF-8エンコード対応Base64変換
+        const base64Code = btoa(unescape(encodeURIComponent(jsonStr)));
+        
+        navigator.clipboard.writeText(base64Code).then(() => {
+          alert("📋 バックアップコードをコピーしました！\nLINEなどに貼り付けて保存・送信できます。");
+        }).catch(() => {
+          prompt("以下のコードを全選択してコピーしてください：", base64Code);
+        });
+      } catch (err) {
+        alert("コードの発行に失敗しました。");
+      }
+    }
+
+    /* 📥 バックアップコード復元・読み込み (案2) */
+    function importBackupCode() {
+      const input = document.getElementById('importCodeInput').value.trim();
+      if (!input) return alert("バックアップコードを貼り付けてください！");
+
+      try {
+        const jsonStr = decodeURIComponent(escape(atob(input)));
+        const importedData = JSON.parse(jsonStr);
+
+        if (!importedData.historyList || !importedData.castData) {
+          throw new Error("Invalid format");
+        }
+
+        if (confirm("「" + (importedData.userName || "読み込みデータ") + "」のデータで上書き読み込みしますか？")) {
+          currentUserName = importedData.userName || '復元ユーザー';
+          historyList = importedData.historyList;
+          castData = importedData.castData;
+
+          saveData();
+          initUserData();
+          render();
+          closeModal('userModal');
+          document.getElementById('importCodeInput').value = '';
+          alert("✨ データの復元・読み込みが完了しました！");
+        }
+      } catch (err) {
+        alert("⚠️ 無効なコードです。コードが正しくコピーされているか確認してください。");
       }
     }
 
@@ -1439,7 +1532,6 @@
         const notesHtml = '<div class="notes-box"> ' + (notes ? notes : '備考なし') + '</div>';
         const daysAgoText = calcMonthsAgo(c.lastVisit.year, c.lastVisit.month);
 
-        /* 🎬 元のレイアウト構造に完全復元 */
         details.innerHTML = 
           '<summary class="card-btn">' +
             '<div class="cast-info">' +
