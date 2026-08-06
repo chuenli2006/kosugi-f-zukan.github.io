@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title id="pageTitle">風俗履歴図鑑 [DEV a17.0]</title>
+  <title id="pageTitle">風俗履歴図鑑 [DEV a19.0]</title>
   
   <style>
     /* 🎨 CSS変数：テーマ10種類のカラー定義 */
     :root {
-      /* デフォルト: 🌸 1. ぴんく (Default Light) */
+      /* デフォルト: 🌸 ぴんく (Default Light) */
       --bg-color: #fdfbfb;
       --card-bg: #ffffff;
       --primary-pink: #ff85a2;
@@ -31,7 +31,7 @@
       --gold-text: #8a6200;
     }
 
-    /* 🌙 ミッドナイト・ローズ (Midnight Rose) */
+    /* 🌙 ミッドナイト・ローズ */
     [data-theme="midnight"] {
       --bg-color: #121218;
       --card-bg: #1a1a24;
@@ -52,7 +52,7 @@
       --gold-text: #ffd700;
     }
 
-    /* 🖤 ベルベット・ブラック (Velvet Black) */
+    /* 🖤 ベルベット・ブラック */
     [data-theme="velvet"] {
       --bg-color: #0d0d0d;
       --card-bg: #171717;
@@ -73,7 +73,7 @@
       --gold-text: #ffe566;
     }
 
-    /* 🍇 スモーキー・ベリー (Smoky Berry) */
+    /* 🍇 スモーキー・ベリー */
     [data-theme="berry"] {
       --bg-color: #181116;
       --card-bg: #231821;
@@ -94,7 +94,7 @@
       --gold-text: #f0c978;
     }
 
-    /* 🌃 サイバー・ネオン (Cyber Neon) */
+    /* 🌃 サイバー・ネオン */
     [data-theme="cyber"] {
       --bg-color: #080914;
       --card-bg: #0f1123;
@@ -115,7 +115,7 @@
       --gold-text: #ffff80;
     }
 
-    /* ☕️ ダーク・モカ (Dark Mocha) */
+    /* ☕️ ダーク・モカ */
     [data-theme="mocha"] {
       --bg-color: #1c1816;
       --card-bg: #26211e;
@@ -136,7 +136,7 @@
       --gold-text: #f2c779;
     }
 
-    /* 💎 エメラルド・ラグジュアリー (Emerald Luxury) */
+    /* 💎 エメラルド・ラグジュアリー */
     [data-theme="emerald"] {
       --bg-color: #f7faf9;
       --card-bg: #ffffff;
@@ -157,7 +157,7 @@
       --gold-text: #8a6200;
     }
 
-    /* 👑 シャンパン・ゴールド (Champagne Gold) */
+    /* 👑 シャンパン・ゴールド */
     [data-theme="champagne"] {
       --bg-color: #fdfbf7;
       --card-bg: #ffffff;
@@ -178,7 +178,7 @@
       --gold-text: #665200;
     }
 
-    /* 💜 ヴァイオレット・アイリス (Violet Iris) */
+    /* 💜 ヴァイオレット・アイリス */
     [data-theme="violet"] {
       --bg-color: #faf8ff;
       --card-bg: #ffffff;
@@ -199,7 +199,7 @@
       --gold-text: #8a6200;
     }
 
-    /* 🍑 ピーチ・アプリコット (Peach Apricot) */
+    /* 🍑 ピーチ・アプリコット */
     [data-theme="peach"] {
       --bg-color: #fffaf8;
       --card-bg: #ffffff;
@@ -250,36 +250,25 @@
       color: var(--accent-pink);
     }
 
+    /* 🌅 スッキリ自然なダイナミック挨拶（ユーザー名部分のみタップ可能） */
     .greeting-text {
-      font-size: 0.82rem;
+      font-size: 0.85rem;
       color: var(--text-color);
       font-weight: bold;
-      margin-top: 2px;
+      margin-top: 4px;
     }
 
-    .header-btns {
-      display: flex;
-      justify-content: center;
-      margin-top: 6px;
-    }
-
-    .settings-btn {
-      background: var(--soft-pink);
+    .clickable-username {
       color: var(--accent-pink);
-      border: 1px solid var(--primary-pink);
-      padding: 4px 16px;
-      border-radius: 15px;
-      font-size: 0.78rem;
-      font-weight: bold;
       cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-      transition: transform 0.1s;
+      text-decoration: underline;
+      text-decoration-style: dotted;
+      padding: 0 2px;
     }
 
-    .settings-btn:active { transform: scale(0.95); }
+    .clickable-username:active {
+      opacity: 0.7;
+    }
 
     /* 🧪 画面左下バージョン表記バッジ */
     .dev-version-badge {
@@ -628,7 +617,7 @@
       font-weight: bold;
     }
 
-    /* 🎨 ダークモード自動最適化 回数バッジ */
+    /* 回数バッジ */
     .badge-count {
       background: var(--badge-bg);
       color: var(--badge-color);
@@ -909,7 +898,7 @@
       font-size: 1.15rem;
     }
 
-    /* ⚙️ 設定モーダル内アコーディオンカード構造 */
+    /* ⚙️ 設定モーダル内アコーディオンカード */
     details.settings-acc-card {
       background: var(--bg-color);
       border: 1px solid var(--border-color);
@@ -1122,7 +1111,7 @@
       font-size: 0.72rem;
       padding: 4px 8px;
       border-radius: 12px;
-      border: 1px solid var(--border-color);
+      border: 1.5px solid var(--border-color);
       background: var(--card-bg);
       color: var(--text-color);
       cursor: pointer;
@@ -1153,17 +1142,32 @@
       justify-content: space-between;
       align-items: center;
     }
+
+    /* 💡 初回用ガイドポップアップ風ボックス */
+    .guide-tip-box {
+      background: var(--soft-pink);
+      border: 1.5px dashed var(--primary-pink);
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 0.75rem;
+      color: var(--accent-pink);
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
   </style>
 </head>
 <body>
 
   <header>
     <h1 id="headerTitle">風俗履歴図鑑</h1>
-    <!-- 🌅 ダイナミック挨拶表記 -->
-    <div class="greeting-text" id="dynamicGreetingDisplay">童貞 さん、こんにちは！</div>
     
-    <div class="header-btns">
-      <button class="settings-btn" onclick="openSettingsModal()">⚙️ アプリ設定</button>
+    <!-- 🌅 自然なダイナミック挨拶テキスト（名前だけタップ可能） -->
+    <div class="greeting-text">
+      <span id="greetingTimeIcon">☀️</span>
+      <span class="clickable-username" onclick="openSettingsModal()" title="タップしてアプリ設定を開く" id="currentUserNameDisplay">童貞</span>
+      <span id="greetingTimeSuffix">さん、こんにちは！</span>
     </div>
   </header>
 
@@ -1252,7 +1256,7 @@
   <!-- 🧪 左下フローティング・バージョンバッジ -->
   <div class="dev-version-badge" onclick="openDevInfoModal()">
     <span class="dev-dot"></span>
-    <span>DEV VERSION a17.0</span>
+    <span>DEV VERSION a19.0</span>
   </div>
 
   <!-- ➕ フローティング追加ボタン -->
@@ -1309,6 +1313,9 @@
         </summary>
         <div class="settings-acc-body">
           <div class="help-section" style="margin:0;">
+            <div class="guide-tip-box" style="margin-bottom:8px;">
+              <span>💡 挨拶の上にある「お名前」をタップすると、いつでもこの設定画面を開けます！</span>
+            </div>
             <div class="help-box">
               <h4>👤 あなただけのアプリとして使う</h4>
               <p>お名前を設定すると、挨拶やタイトルが自動変更されます。</p>
@@ -1376,12 +1383,12 @@
   <!-- 🧪 サンドボックス版案内モーダル -->
   <div class="modal-overlay" id="devInfoModal">
     <div class="modal-content">
-      <h3>🧪 サンドボックス環境（a17.0）</h3>
+      <h3>🧪 サンドボックス環境（a19.0）</h3>
       <div class="help-section">
         <div class="help-box" style="border-color:var(--primary-pink);">
           <p style="font-size:0.8rem; line-height:1.5;">
-            現在は開発・検証用の<strong>サンドボックス（Dev）バージョン a17.0</strong>です。<br><br>
-            ダイナミック挨拶、集約型設定モーダル（アコーディオン）、ダークモード回数バッジ色調整がテスト可能です。
+            現在は開発・検証用の<strong>サンドボックス（Dev）バージョン a19.0</strong>です。<br><br>
+            ヘッダー挨拶テキスト内の「お名前」タップ起動、アコーディオン設定メニュー、ダークモード対応バッジがテスト可能です。
           </p>
         </div>
       </div>
@@ -1594,7 +1601,7 @@
       "るる": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3288", notes: "", oldName: "", style: "", letters: [{ date: "2025年10月", imageUrl: "https://i.imgur.com/Z9EQ2Tz.jpeg", text: "じゅんくん　今日は会いに来てくれてありがとう！友達みたいに楽しかったしじゅんくんが明るい人だから話しやすかった！お仕事無理しないようにね♡　るる" }] },
       "ゆい": { link: "", notes: "", oldName: "", style: "", letters: [] },
       "みみ": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=2965", notes: "", oldName: "", style: "", letters: [] },
-      "アンナ": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2026年1月", imageUrl: "https://i.imgur.com/Mg0q2ot.jpeg", text: "ジュン君。　今日は、来てくれてありがとう！！　同じ年なのに、おとなっぽくて、一緒にいて楽しかった！！化また、会えたら嬉しいです♡アンナ" }] },
+      "アンナ": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2026年1月", imageUrl: "https://i.imgur.com/Mg0q2ot.jpeg", text: "ジュン君。　今日は、来てくれてありがとう！！　同じ年なのに、おとなっぽくて、一緒にいて楽しかった！！　また、会えたら嬉しいです♡アンナ" }] },
       "あい": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3394", notes: "", oldName: "", style: "", letters: [] },
       "さな": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2026年2月", imageUrl: "https://i.imgur.com/YoaqJJO.jpeg", text: "いっぱいガンバッててえらいよ🙂　むりしないでまた来てね💮" }] },
       "るか": { link: "https://www.cityheaven.net/tokyo/A1304/A130401/a-crystal/girlid-64506913/?mygirl=1&lo=1", notes: "", oldName: "", style: "", letters: [] },
@@ -1618,8 +1625,8 @@
     let castData = {};
     let sharedRecords = [];
 
-    /* 🌅 時間帯別ダイナミック挨拶の生成 */
-    function getDynamicGreeting() {
+    /* 🌅 時間帯別ダイナミック挨拶更新 */
+    function updateGreetingDisplay() {
       const hour = new Date().getHours();
       let text = "こんにちは！";
       let icon = "☀️";
@@ -1634,7 +1641,9 @@
         text = "こんばんは！"; icon = "🌙";
       }
 
-      return `${icon} ${currentUserName} さん、${text}`;
+      document.getElementById('greetingTimeIcon').innerText = icon;
+      document.getElementById('greetingTimeSuffix').innerText = text;
+      document.getElementById('currentUserNameDisplay').innerText = currentUserName;
     }
 
     function applyTheme(themeName) {
@@ -1690,8 +1699,8 @@
     function updateUIHeader() {
       const titleText = currentUserName + "の風俗履歴図鑑";
       document.getElementById('headerTitle').innerText = titleText;
-      document.getElementById('pageTitle').innerText = titleText + " [DEV a17.0]";
-      document.getElementById('dynamicGreetingDisplay').innerText = getDynamicGreeting();
+      document.getElementById('pageTitle').innerText = titleText + " [DEV a19.0]";
+      updateGreetingDisplay();
     }
 
     function updateSharedCount() {
@@ -2231,7 +2240,7 @@
       target.innerHTML = '';
 
       if (historyList.length === 0) {
-        target.innerHTML = '<div style="text-align:center; color:var(--light-text); padding:40px 10px; font-size:0.85rem;">記録がまだありません。<br>右下の「＋」ボタンから追加するか、<br>「⚙️ アプリ設定」からお名前を「こすぎ」に変更して参考にしてみてください。</div>';
+        target.innerHTML = '<div style="text-align:center; color:var(--light-text); padding:40px 10px; font-size:0.85rem;">記録がまだありません。<br>右下の「＋」ボタンから追加するか、<br>挨拶の「名前」をタップして「こすぎ」に変更してみてください。</div>';
         updateStats({});
         return;
       }
