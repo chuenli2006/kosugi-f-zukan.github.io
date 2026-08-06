@@ -1247,13 +1247,13 @@
 
   <header>
     <!-- タイトル -->
-    <h1 id="headerTitle">こすぎの風俗履歴図鑑</h1>
+    <h1 id="headerTitle">童貞の風俗履歴図鑑</h1>
     <div class="header-sub">マイ キャスト ＆ プレイレコード</div>
     
     <!-- 🎀 丸カプセルボタンエリア -->
     <div class="header-btn-row">
       <button class="pill-btn" onclick="openSettingsModal()" title="ユーザー設定・テーマ変更">
-        <span>👤 ユーザー: <span id="currentUserNameDisplay">こすぎ</span></span>
+        <span>👤 ユーザー: <span id="currentUserNameDisplay">童貞</span></span>
       </button>
 
       <button class="pill-btn" onclick="openHelpModal()" title="使い方・ヘルプ">
@@ -1497,7 +1497,7 @@
       <div class="help-section" style="display:flex; flex-direction:column; gap:8px;">
         <div class="help-box">
           <h4>👤 自分専用の図鑑にする</h4>
-          <p>ヘッダーの「👤 ユーザー: 〇〇」ボタンから、お好きなユーザー名に変更できます。（例: 「こすぎ」にすると76件のサンプルデータも読み込めます！）</p>
+          <p>ヘッダーの「👤 ユーザー: 〇〇」ボタンから、お好きなユーザー名に変更できます。（例: 「こすぎ」にするとサンプルデータも読み込めます！）</p>
         </div>
         <div class="help-box">
           <h4>🎨 気分でテーマを着せ替える</h4>
@@ -1760,16 +1760,17 @@
       "める": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/okinawa-naminouesougoubyouin/girlid-44817013/", notes: "", oldName: "", style: "", letters: [] },
       "ゆず": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3523", notes: "", oldName: "", style: "", letters: [{ date: "2026年3月", imageUrl: "https://i.imgur.com/GtHdniF.jpeg", text: "ジュン君　今日は出会えて　よかった♡　また会いたいです！ゆず" }] },
       "ななみ": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/okinawa-nursejyogakuen/girlid-65139298/", notes: "", oldName: "", style: "", letters: [] },
-      "なるみ": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/Eq6COe4.jpeg", text: "ありがとう♡　またきてね　大学がんばってね！　なるみ" }] },
+      "なるみ": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3519", notes: "", oldName: "", style: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/Eq6COe4.jpeg", text: "ありがとう♡　またきてね　大学がんばってね！　なるみ" }] },
       "ひびき": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3454", notes: "", oldName: "", style: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/bNSgBmz.jpeg", text: "今日はありがとう♡　たくさんお話できて楽しかったです！tまた遊びに来てください❕️　ひびき" }] },
       "せいな": { link: "https://www.cityheaven.net/tokyo/A1312/A131201/uenolip/girlid-52762713/?mygirl=1&lo=1", notes: "", oldName: "", style: "", letters: [] },
       "きほ": { link: "https://www.cityheaven.net/tokyo/A1304/A130401/a-crystal/girlid-65756780/", notes: "", oldName: "", style: "", letters: [] },
       "アクア": { link: "https://www.cityheaven.net/tokyo/A1303/A130301/sc-crystal/girlid-64589705/", notes: "", oldName: "", style: "", letters: [] },
-      "伏見みなお": { link: "https://ranking-deli.jp/tokyo/area30/style4/32002/2706377/", notes: "", oldName: "", style: "", letters: [{ date: "2026年6月", imageUrl: "https://i.imgur.com/ZtmEUr8.jpeg", text: "試験お疲れ様！今日は来てくれてありがとー♡またあそびに来てくださ-い🥰" }] },
+      "伏見みなお": { link: "https://ranking-deli.jp/tokyo/area30/style4/32002/2706377/", notes: "", oldName: "", style: "", letters: [{ date: "2026年6月", imageUrl: "https://i.imgur.com/ZtmEUr8.jpeg", text: "試験お疲れ様！今日は来てくれてありがとー♡またあそびに来てくださーい🥰" }] },
       "ゆうか": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3504", notes: "", oldName: "ここみ", style: "", letters: [{ date: "2026年7月", imageUrl: "https://i.imgur.com/vcJpOyD.jpeg", text: "今日はありがとう〜まさかの二度目ましてでおもろかった(笑ナースの時よりも少し風俗慣れてた気がして寂しい気もするけど会えて良かった!))" }] }
     };
 
-    let currentUserName = localStorage.getItem('app_user_name') || 'こすぎ';
+    // 修正：初期値のフォールバックを '童貞' に変更
+    let currentUserName = localStorage.getItem('app_user_name') || '童貞';
     let currentTheme = localStorage.getItem('app_theme') || 'default';
     let historyList = [];
     let castData = {};
@@ -1795,7 +1796,7 @@
     }
 
     function openSettingsModal() {
-      document.getElementById('inputUserName').value = currentUserName === 'こすぎ' ? '' : currentUserName;
+      document.getElementById('inputUserName').value = currentUserName === '童貞' ? '' : currentUserName;
       document.getElementById('settingsModal').style.display = 'flex';
     }
 
