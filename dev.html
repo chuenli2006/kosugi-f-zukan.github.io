@@ -608,7 +608,7 @@
       font-weight: bold;
     }
 
-    /* 友だちがイッたことあるバッジ */
+    /* 友達がイッたことあるバッジ */
     .friend-visited-badge {
       font-size: 0.65rem;
       background: #fff3bf;
@@ -1759,11 +1759,7 @@
     function openImportModal() { document.getElementById('importModal').style.display = 'flex'; }
 
     const LATEST_VERSION_KEY = 'app_version_v17.0_shown';
-    function checkWhatsNew() {
-      if (!localStorage.getItem(LATEST_VERSION_KEY)) {
-        // 初回のみ必要に応じてモーダルなど
-      }
-    }
+    function checkWhatsNew() {}
 
     function isKosugi(name) {
       if (!name) return false;
