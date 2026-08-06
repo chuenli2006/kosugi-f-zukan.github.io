@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title id="pageTitle">風俗履歴図鑑 [DEV a21.0]</title>
+  <title id="pageTitle">風俗履歴図鑑 [DEV a22.0]</title>
   
   <style>
     /* 🎨 CSS変数：テーマ10種類のカラー定義 */
@@ -258,7 +258,7 @@
       margin-bottom: 8px;
     }
 
-    /* 🎀 ピンク丸カプセル型ボタンエリア */
+    /* 🎀 丸カプセル型ボタンエリア */
     .header-btn-row {
       display: flex;
       align-items: center;
@@ -909,7 +909,6 @@
       align-items: center;
     }
 
-    /* 💡 案C：0件のときのウェルカム・ガイドカード */
     .empty-shared-box {
       background: var(--card-bg);
       border: 2px dashed var(--primary-pink);
@@ -931,7 +930,6 @@
       line-height: 1.5;
     }
 
-    /* 📥 案B：モーダル内のドラッグ＆ドロップ風アップロードエリア */
     .dropzone-box {
       background: var(--bg-color);
       border: 2px dashed var(--primary-pink);
@@ -1236,6 +1234,31 @@
       color: var(--accent-pink);
       margin-bottom: 4px;
     }
+
+    .step-box {
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px 12px;
+      text-align: left;
+      font-size: 0.78rem;
+      margin-bottom: 8px;
+    }
+    .step-box strong {
+      color: var(--accent-pink);
+    }
+    .file-name-highlight {
+      display: inline-block;
+      background: var(--soft-pink);
+      color: var(--accent-pink);
+      font-family: monospace;
+      font-weight: bold;
+      padding: 2px 8px;
+      border-radius: 6px;
+      border: 1px dashed var(--primary-pink);
+      word-break: break-all;
+      margin: 4px 0;
+    }
   </style>
 </head>
 <body>
@@ -1346,11 +1369,41 @@
   <!-- 🧪 左下フローティング・バージョンバッジ -->
   <div class="dev-version-badge" onclick="openDevInfoModal()">
     <span class="dev-dot"></span>
-    <span>DEV VERSION a21.0</span>
+    <span>DEV VERSION a22.0</span>
   </div>
 
   <!-- ➕ フローティング追加ボタン -->
   <button class="fab-add" onclick="openAddModal()" title="新しい利用記録を追加">＋</button>
+
+  <!-- 📤 友だちへ共有モーダル（説明 ＋ ダウンロードボタン） -->
+  <div class="modal-overlay" id="exportCastModal">
+    <div class="modal-content">
+      <h3>📤 友だちへ共有</h3>
+      <p style="font-size:0.8rem; color:var(--light-text); margin-bottom:10px;">
+        「<strong id="exportModalCastName" style="color:var(--accent-pink);">---</strong>」さんのデータを友達に送信します。
+      </p>
+
+      <div class="step-box">
+        <strong>STEP 1:</strong> 以下のボタンを押して共有ファイルをダウンロードします。<br>
+        <div style="text-align:center; margin-top:4px;">
+          <span class="file-name-highlight" id="exportModalFileName">キャスト共有_...json</span>
+        </div>
+      </div>
+
+      <div class="step-box">
+        <strong>STEP 2:</strong> ダウンロードした `.json` ファイルを LINE や Discord 等で友達にそのまま送信してください。
+      </div>
+
+      <div class="step-box">
+        <strong>STEP 3:</strong> 友達側は「👥 共有された履歴」タブからファイルを読み込むことで、図鑑に保存・登録できます！
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:6px; margin-top:12px;">
+        <button class="close-btn" onclick="executeCastDownload()" style="width:100%; margin-top:0;">💾 ファイルをダウンロード</button>
+        <button class="close-btn" onclick="closeModal('exportCastModal')" style="background:#888; width:100%; margin-top:0;">キャンセル</button>
+      </div>
+    </div>
+  </div>
 
   <!-- ⚙️ アプリ設定統合モーダル -->
   <div class="modal-overlay" id="settingsModal">
@@ -1413,7 +1466,7 @@
     </div>
   </div>
 
-  <!-- 📥 案B：友達の履歴ファイルを読み込むモーダル -->
+  <!-- 📥 友達の履歴ファイルを読み込むモーダル -->
   <div class="modal-overlay" id="importModal">
     <div class="modal-content">
       <h3>📂 友達の履歴を読み込む</h3>
@@ -1445,7 +1498,7 @@
         </div>
         <div class="help-box">
           <h4>📂 データの保存と友達への共有</h4>
-          <p>「共有ファイル作成」でキャスト単体のデータを友達に送信したり、「共有された履歴」タブから受け取ったJSONを読み込んで図鑑に取り込めます。</p>
+          <p>「友だちへ共有」でキャスト単体のデータを友達に送信したり、「共有された履歴」タブから受け取ったJSONを読み込んで図鑑に取り込めます。</p>
         </div>
       </div>
       <button class="close-btn" onclick="closeModal('helpModal')">了解して閉じる</button>
@@ -1489,12 +1542,12 @@
   <!-- 🧪 サンドボックス版案内モーダル -->
   <div class="modal-overlay" id="devInfoModal">
     <div class="modal-content">
-      <h3>🧪 サンドボックス環境（a21.0）</h3>
+      <h3>🧪 サンドボックス環境（a22.0）</h3>
       <div class="help-section">
         <div class="help-box" style="border-color:var(--primary-pink);">
           <p style="font-size:0.8rem; line-height:1.5;">
-            現在は開発・検証用の<strong>サンドボックス（Dev）バージョン a21.0</strong>です。<br><br>
-            「共有された履歴」タブでの簡単インポート（案B・案C）およびマスターデータ完全保持に対応しました。
+            現在は開発・検証用の<strong>サンドボックス（Dev）バージョン a22.0</strong>です。<br><br>
+            「友だちへ共有」モーダル案内およびダウンロード手順の改善に対応しました。
           </p>
         </div>
       </div>
@@ -1730,6 +1783,7 @@
     let historyList = [];
     let castData = {};
     let sharedRecords = [];
+    let targetExportCastName = "";
 
     function applyTheme(themeName) {
       currentTheme = themeName;
@@ -1796,7 +1850,7 @@
     function updateUIHeader() {
       const titleText = currentUserName + "の風俗履歴図鑑";
       document.getElementById('headerTitle').innerText = titleText;
-      document.getElementById('pageTitle').innerText = titleText + " [DEV a21.0]";
+      document.getElementById('pageTitle').innerText = titleText + " [DEV a22.0]";
       document.getElementById('currentUserNameDisplay').innerText = currentUserName;
     }
 
@@ -1854,8 +1908,23 @@
       downloadAnchor.remove();
     }
 
-    function shareSingleCast(event, name) {
+    /* 📤 「友だちへ共有」ボタンタップ時のモーダルオープン処理 */
+    function openExportCastModal(event, name) {
       event.preventDefault(); event.stopPropagation();
+      targetExportCastName = name;
+
+      const fileName = `キャスト共有_${name}_(from_${currentUserName}).json`;
+
+      document.getElementById('exportModalCastName').innerText = name;
+      document.getElementById('exportModalFileName').innerText = fileName;
+      document.getElementById('exportCastModal').style.display = 'flex';
+    }
+
+    /* 💾 モーダル内からのファイルダウンロード実行 */
+    function executeCastDownload() {
+      if (!targetExportCastName) return;
+
+      const name = targetExportCastName;
       const visits = historyList.filter(h => h.name === name);
       const info = castData[name] || {};
 
@@ -1867,14 +1936,17 @@
         visits: visits
       };
 
+      const fileName = `キャスト共有_${name}_(from_${currentUserName}).json`;
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(singleExportObject, null, 2));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `キャスト共有_${name}_(from_${currentUserName}).json`);
+      downloadAnchor.setAttribute("download", fileName);
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
       downloadAnchor.remove();
-      alert(`「${name}」さんの共有ファイル（.json）をダウンロードしました！LINE等で友達に共有できます。`);
+
+      closeModal('exportCastModal');
+      alert(`✨ 「${fileName}」をダウンロードしました！LINE等で友達に送信してください。`);
     }
 
     function triggerJSONFileInput() {
@@ -1955,7 +2027,6 @@
       }
     }
 
-    /* 👥 共有タブ描画（案C：0件時はウェルカムボックス表示） */
     function renderSharedArea() {
       const container = document.getElementById('sharedContent');
       container.innerHTML = '';
@@ -2450,7 +2521,7 @@
           ? '<button class="link-btn" onclick="openLink(event, \'' + url + '\')">プロフ</button>' 
           : '';
 
-        const copyBtnHtml = '<button class="copy-btn" onclick="shareSingleCast(event, \'' + c.name + '\')">📤 再共有</button>';
+        const copyBtnHtml = '<button class="copy-btn" onclick="openExportCastModal(event, \'' + c.name + '\')">📤 友だちへ共有</button>';
 
         const letterBtnHtml = hasLetters 
           ? '<button class="letter-btn" onclick="openLetterModal(event, \'' + c.name + '\')">💌 手紙 (' + validLetters.length + ')</button>' 
