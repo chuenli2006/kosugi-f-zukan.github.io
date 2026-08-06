@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title id="pageTitle">風俗履歴図鑑 [DEV a15.2]</title>
+  <title id="pageTitle">風俗履歴図鑑 [DEV a15.3]</title>
   
   <style>
     :root {
@@ -84,7 +84,7 @@
       background: #fff;
     }
 
-    /* 🧪 画面左下バージョン表記バッジ（ダイアログ風） */
+    /* 🧪 画面左下バージョン表記バッジ */
     .dev-version-badge {
       position: fixed;
       bottom: 20px;
@@ -103,12 +103,10 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition: transform 0.2s;
     }
 
-    .dev-version-badge:active {
-      transform: scale(0.95);
-    }
+    .dev-version-badge:active { transform: scale(0.95); }
 
     .dev-dot {
       width: 8px;
@@ -522,8 +520,8 @@
       font-size: 0.75rem;
       color: #666;
       background: #fdf8f9;
-      padding: 4px 8px;
-      border-radius: 6px;
+      padding: 6px 10px;
+      border-radius: 8px;
       border: 1px solid #f2e3e6;
       flex: 1;
     }
@@ -564,11 +562,117 @@
     .history-row {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       background: #ffffff;
       border: 1px solid var(--border-color);
       padding: 5px 8px;
       border-radius: 6px;
       font-size: 0.8rem;
+    }
+
+    /* 🏷️ WEBレポートありバッジ（世界観に合わせたデザイン） */
+    .report-badge {
+      font-size: 0.65rem;
+      color: var(--accent-pink);
+      background: var(--soft-pink);
+      border: 1px solid var(--primary-pink);
+      padding: 1px 7px;
+      border-radius: 10px;
+      font-weight: bold;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    /* ✏️ 薄灰色のペンアイコンボタン */
+    .edit-icon-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 2px 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #b0b0b0;
+      transition: color 0.2s;
+    }
+    .edit-icon-btn:hover, .edit-icon-btn:active { color: #666666; }
+    .edit-icon-btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* 📅 月別タイムラインアコーディオン */
+    .month-section { margin-bottom: 16px; }
+    .month-title {
+      font-size: 0.95rem;
+      color: var(--accent-pink);
+      margin-bottom: 6px;
+      padding-left: 6px;
+      border-left: 3px solid var(--primary-pink);
+      font-weight: bold;
+    }
+    details.timeline-item {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      margin-bottom: 6px;
+      overflow: hidden;
+    }
+    summary.timeline-summary {
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-size: 0.85rem;
+      list-style: none;
+    }
+    summary.timeline-summary::-webkit-details-marker { display: none; }
+    .timeline-body {
+      padding: 8px 12px 10px;
+      border-top: 1px dashed var(--border-color);
+      background: #fdfbfb;
+      font-size: 0.78rem;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .report-link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.72rem;
+      color: var(--accent-pink);
+      background: #fff;
+      border: 1px solid var(--primary-pink);
+      padding: 3px 10px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: bold;
+      width: fit-content;
+    }
+
+    /* 過去メモ折りたたみリスト */
+    details.past-notes-details {
+      margin-top: 4px;
+    }
+    summary.past-notes-summary {
+      font-size: 0.72rem;
+      color: var(--accent-pink);
+      cursor: pointer;
+      font-weight: bold;
+      padding: 2px 0;
+    }
+    .past-notes-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 4px;
+      padding-left: 6px;
+      border-left: 2px solid var(--soft-pink);
+    }
+    .past-note-item {
+      font-size: 0.72rem;
+      color: #555;
     }
 
     /* モーダル共通 */
@@ -646,40 +750,6 @@
       font-size: 0.8rem;
       color: var(--accent-pink);
       margin-bottom: 6px;
-    }
-
-    /* 💾 GitHubストレージ設定エリア */
-    .storage-selector-box {
-      background: var(--soft-pink);
-      border: 1px solid var(--primary-pink);
-      padding: 10px;
-      border-radius: 10px;
-      margin-bottom: 12px;
-      text-align: left;
-    }
-
-    .radio-group {
-      display: flex;
-      gap: 12px;
-      font-size: 0.8rem;
-      font-weight: bold;
-      margin-top: 4px;
-    }
-
-    .github-inputs {
-      margin-top: 8px;
-      padding-top: 8px;
-      border-top: 1px dashed var(--primary-pink);
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .sync-status {
-      font-size: 0.7rem;
-      color: #0ca678;
-      font-weight: bold;
-      text-align: right;
     }
 
     .letter-card-item {
@@ -854,29 +924,6 @@
       border-color: #dee2e6;
     }
 
-    .month-section { margin-bottom: 16px; }
-    .month-title {
-      font-size: 0.95rem;
-      color: var(--accent-pink);
-      margin-bottom: 6px;
-      padding-left: 6px;
-      border-left: 3px solid var(--primary-pink);
-    }
-    .month-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 6px;
-    }
-    .month-item {
-      background: var(--card-bg);
-      padding: 6px 10px;
-      border-radius: 6px;
-      border: 1px solid var(--border-color);
-      font-size: 0.8rem;
-      display: flex;
-      justify-content: space-between;
-    }
-
     /* 👥 共有された履歴専用スタイル */
     .shared-card {
       background: #ffffff;
@@ -995,21 +1042,55 @@
   <!-- 🧪 左下フローティング・バージョンバッジ -->
   <div class="dev-version-badge" onclick="openDevInfoModal()">
     <span class="dev-dot"></span>
-    <span>DEV VERSION a15.2</span>
+    <span>DEV VERSION a15.3</span>
   </div>
 
   <!-- ➕ フローティング追加ボタン -->
   <button class="fab-add" onclick="openAddModal()" title="新しい利用記録を追加">＋</button>
 
+  <!-- ✏️ 利用記録の個別修正モーダル -->
+  <div class="modal-overlay" id="editRecordModal">
+    <div class="modal-content">
+      <h3>✏️ 記録の編集・メモ作成</h3>
+      <form class="add-form" onsubmit="saveEditedRecord(event)">
+        <input type="hidden" id="editRecordIndex">
+        <div class="form-group">
+          <label>キャスト名 / 日付</label>
+          <div id="editRecordHeader" style="font-size:0.85rem; font-weight:bold; color:#555;"></div>
+        </div>
+
+        <div class="form-group">
+          <label>マーク・フラグ</label>
+          <input type="text" id="editFlags" placeholder="マークを入力">
+        </div>
+
+        <div class="form-group">
+          <label>この回のメモ・感想</label>
+          <textarea id="editVisitNote" rows="3" placeholder="プレイ内容や印象などを記録..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>WEBレポートURL（noteなど）</label>
+          <input type="url" id="editReportUrl" placeholder="https://note.com/...">
+        </div>
+
+        <div style="display:flex; gap:8px; margin-top:10px;">
+          <button type="submit" class="close-btn" style="flex:1;">更新して保存</button>
+          <button type="button" class="close-btn" onclick="closeModal('editRecordModal')" style="background:#ccc; flex:1;">キャンセル</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- 🧪 サンドボックス版案内モーダル -->
   <div class="modal-overlay" id="devInfoModal">
     <div class="modal-content">
-      <h3>🧪 サンドボックス環境（a15.2）</h3>
+      <h3>🧪 サンドボックス環境（a15.3）</h3>
       <div class="help-section">
         <div class="help-box" style="border-color:var(--primary-pink); background:#fffafb;">
           <p style="font-size:0.8rem; line-height:1.5;">
-            現在は開発・検証用の<strong>サンドボックス（Dev）バージョン a15.2</strong>です。<br><br>
-            新しい機能の実験やテストを行っている環境のため、一部動作が安定しない場合があります。
+            現在は開発・検証用の<strong>サンドボックス（Dev）バージョン a15.3</strong>です。<br><br>
+            月別タイムラインの「アコーディオン展開」「薄灰色編集アイコン」「レポートありバッジ」機能が有効化されたテスト環境です。
           </p>
         </div>
       </div>
@@ -1027,8 +1108,8 @@
           <p>ヘッダーの「👤 ユーザー」ボタンからお名前を設定してください。タイトルが切り替わります。</p>
         </div>
         <div class="help-box">
-          <h4>☁️ 2. GitHub連携による自動同期</h4>
-          <p>ユーザー設定でGitHub Tokenを入力すると、自動的に <code>data_ユーザー名.json</code> としてリポジトリに安全同期されます。</p>
+          <h4>📂 2. ファイル保存＆復元・共有</h4>
+          <p>バックアップ機能はJSONファイルでダウンロード保存されます。友達に送信して共有することもできます。</p>
         </div>
         <div class="help-box">
           <h4>💡 3. こすぎ さんのデータを参照する</h4>
@@ -1042,33 +1123,15 @@
   <!-- 👤 ユーザー設定 & バックアップモーダル -->
   <div class="modal-overlay" id="userModal">
     <div class="modal-content">
-      <h3>👤 ユーザー切り替え・保存先設定</h3>
-      
-      <!-- 💾 GitHub連携モード切替ボックス（正しいリポジトリ名デフォルト指定） -->
-      <div class="storage-selector-box">
-        <label style="font-size:0.75rem; font-weight:bold; color:var(--accent-pink);">💾 保存先モード選択</label>
-        <div class="radio-group">
-          <label><input type="radio" name="storageMode" value="local" id="modeLocal" onchange="toggleStorageModeUI()"> 🏠 ローカル保存</label>
-          <label><input type="radio" name="storageMode" value="github" id="modeGithub" onchange="toggleStorageModeUI()"> ☁️ GitHub連携</label>
-        </div>
-
-        <div class="github-inputs" id="githubConfigBox" style="display:none;">
-          <input type="password" id="ghToken" placeholder="GitHub Token (ghp_...)" style="font-size:0.75rem;">
-          <input type="text" id="ghRepo" placeholder="chuenli2006/kosugi-f-zukan" style="font-size:0.75rem;">
-          <div style="font-size:0.7rem; color:#666; margin-top:2px;">
-            保存ファイル名: <strong id="ghFileNamePreview">data_童貞.json</strong>
-          </div>
-          <div class="sync-status" id="ghStatusText"></div>
-        </div>
-      </div>
-
+      <h3>👤 ユーザー切り替え・名前変更</h3>
+      <p style="font-size:0.75rem; color:#666; margin-bottom:10px;">名前を入力するとタイトルが切り替わります。</p>
       <form class="add-form" onsubmit="saveUserName(event)">
         <div class="form-group">
           <label>お名前（例: こすぎ、たろう）</label>
-          <input type="text" id="inputUserName" placeholder="名前を入力..." oninput="updateFileNamePreview()" required>
+          <input type="text" id="inputUserName" placeholder="名前を入力..." required>
         </div>
         <div style="display:flex; gap:8px;">
-          <button type="submit" class="close-btn" style="flex:1;">設定を保存＆同期</button>
+          <button type="submit" class="close-btn" style="flex:1;">保存する</button>
           <button type="button" class="close-btn" onclick="closeModal('userModal')" style="background:#ccc; flex:1;">キャンセル</button>
         </div>
       </form>
@@ -1095,12 +1158,12 @@
     <div class="modal-content">
       <h3>✨ 利用記録を追加</h3>
       <form class="add-form" onsubmit="saveNewRecord(event)">
-        <div class="form-row">
-          <div class="form-group">
+        <div class="form-row" style="display:flex; gap:6px;">
+          <div class="form-group" style="flex:1;">
             <label>年</label>
             <input type="text" id="addYear" placeholder="2026" required>
           </div>
-          <div class="form-group">
+          <div class="form-group" style="flex:1;">
             <label>月</label>
             <input type="text" id="addMonth" placeholder="8月" required>
           </div>
@@ -1138,20 +1201,25 @@
           <input type="text" id="addFlags" placeholder="タップしたマークが入ります（直接編集もOK）">
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label>旧・源氏名（あれば）</label>
-            <input type="text" id="addOldName" placeholder="例: ここみ">
-          </div>
-          <div class="form-group">
-            <label>プロフURL</label>
-            <input type="url" id="addLink" placeholder="https://...">
-          </div>
+        <div class="form-group">
+          <label>この回のメモ・感想</label>
+          <input type="text" id="addVisitNote" placeholder="接客メモなど">
         </div>
 
         <div class="form-group">
-          <label>メモ・備考</label>
-          <input type="text" id="addNotes" placeholder="接客メモなど">
+          <label>WEBレポートURL（あれば）</label>
+          <input type="url" id="addReportUrl" placeholder="https://note.com/...">
+        </div>
+
+        <div class="form-row" style="display:flex; gap:6px;">
+          <div class="form-group" style="flex:1;">
+            <label>旧・源氏名</label>
+            <input type="text" id="addOldName" placeholder="例: ここみ">
+          </div>
+          <div class="form-group" style="flex:1;">
+            <label>プロフURL</label>
+            <input type="url" id="addLink" placeholder="https://...">
+          </div>
         </div>
 
         <div class="form-group">
@@ -1193,83 +1261,83 @@
   <script>
     // こすぎ専用 Masterデータ（全76件完全版）
     const kosugiHistoryList = [
-      { year: "2025", month: "8月", name: "ゆあ", flags: "🆂" },
-      { year: "2025", month: "8月", name: "じゅり", flags: "⚔⚔" },
-      { year: "2025", month: "8月", name: "みく", flags: "" },
-      { year: "2025", month: "8月", name: "みく", flags: "" },
-      { year: "2025", month: "8月", name: "まりあ", flags: "" },
-      { year: "2025", month: "8月", name: "ゆあ", flags: "🆂" },
-      { year: "2025", month: "8月", name: "まりあ", flags: "" },
-      { year: "2025", month: "8月", name: "ひまわり", flags: "A" },
-      { year: "2025", month: "8月", name: "まりあ", flags: "" },
-      { year: "2025", month: "9月", name: "れい", flags: "⚔⚔" },
-      { year: "2025", month: "9月", name: "まりあ", flags: "" },
-      { year: "2025", month: "9月", name: "れみ", flags: "" },
-      { year: "2025", month: "9月", name: "ことり", flags: "✈🆂" },
-      { year: "2025", month: "9月", name: "みゅーず", flags: "✈⚔" },
-      { year: "2025", month: "9月", name: "もも", flags: "" },
-      { year: "2025", month: "9月", name: "さきな", flags: "🈠⑱🆂" },
-      { year: "2025", month: "10月", name: "ゆあ", flags: "🆂" },
-      { year: "2025", month: "10月", name: "るる", flags: "⚔" },
-      { year: "2025", month: "10月", name: "ゆい", flags: "" },
-      { year: "2025", month: "10月", name: "もも", flags: "" },
-      { year: "2025", month: "10月", name: "ゆあ", flags: "🆂" },
-      { year: "2025", month: "10月", name: "さきな", flags: "⑱🆂" },
-      { year: "2025", month: "11月", name: "まりあ", flags: "" },
-      { year: "2025", month: "11月", name: "まりあ", flags: "" },
-      { year: "2025", month: "11月", name: "まりあ", flags: "❖" },
-      { year: "2025", month: "11月", name: "ゆあ", flags: "🆂" },
-      { year: "2025", month: "11月", name: "みく", flags: "" },
-      { year: "2025", month: "11月", name: "モカ", flags: "🆂" },
-      { year: "2025", month: "12月", name: "ゆあ", flags: "🆂" },
-      { year: "2025", month: "12月", name: "カルア", flags: "🆂" },
-      { year: "2025", month: "12月", name: "ゆあ", flags: "🆂❖" },
-      { year: "2025", month: "12月", name: "モカ", flags: "🆂" },
-      { year: "2025", month: "12月", name: "モカ", flags: "🆂" },
-      { year: "2025", month: "12月", name: "みみ", flags: "⚔⚔" },
-      { year: "2026", month: "1月", name: "アンナ", flags: "" },
-      { year: "2026", month: "1月", name: "もも", flags: "" },
-      { year: "2026", month: "1月", name: "あい", flags: "" },
-      { year: "2026", month: "1月", name: "ゆあ", flags: "🆂❖" },
-      { year: "2026", month: "1月", name: "モカ", flags: "🆂" },
-      { year: "2026", month: "2月", name: "もも", flags: "❀" },
-      { year: "2026", month: "2月", name: "さな", flags: "⚔" },
-      { year: "2026", month: "2月", name: "るか", flags: "✈🆂" },
-      { year: "2026", month: "2月", name: "ミノリ", flags: "✈🆂" },
-      { year: "2026", month: "2月", name: "ことり", flags: "✈🆂" },
-      { year: "2026", month: "2月", name: "ひまわり", flags: "✈B" },
-      { year: "2026", month: "2月", name: "カルア", flags: "🆂" },
-      { year: "2026", month: "3月", name: "ゆうか", flags: "" },
-      { year: "2026", month: "3月", name: "モカ", flags: "🆂" },
-      { year: "2026", month: "3月", name: "さら", flags: "⚔⚔⚔" },
-      { year: "2026", month: "3月", name: "める", flags: "" },
-      { year: "2026", month: "3月", name: "カルア", flags: "🆂" },
-      { year: "2026", month: "3月", name: "カルア", flags: "🆂" },
-      { year: "2026", month: "3月", name: "四葉", flags: "🆂" },
-      { year: "2026", month: "3月", name: "四葉", flags: "" },
-      { year: "2026", month: "3月", name: "ゆず", flags: "" },
-      { year: "2026", month: "3月", name: "モカ", flags: "🆂" },
-      { year: "2026", month: "4月", name: "モカ", flags: "🆂" },
-      { year: "2026", month: "4月", name: "カルア", flags: "🆂㋑" },
-      { year: "2026", month: "4月", name: "ゆあ", flags: "🆂" },
-      { year: "2026", month: "4月", name: "ななみ", flags: "⚔㋗" },
-      { year: "2026", month: "4月", name: "なるみ", flags: "🆂❀" },
-      { year: "2026", month: "4月", name: "ひびき", flags: "⑱ｴ" },
-      { year: "2026", month: "4月", name: "せいな", flags: "✈ｄ" },
-      { year: "2026", month: "4月", name: "きほ", flags: "✈⑱" },
-      { year: "2026", month: "5月", name: "アクア", flags: "✈" },
-      { year: "2026", month: "5月", name: "モカ", flags: "🆂" },
-      { year: "2026", month: "5月", name: "ゆあ", flags: "🆂" },
-      { year: "2026", month: "6月", name: "さきな", flags: "🆂❖" },
-      { year: "2026", month: "6月", name: "ゆあ", flags: "🆂" },
-      { year: "2026", month: "6月", name: "伏見みなお", flags: "✈❑" },
-      { year: "2026", month: "6月", name: "さきな", flags: "🆂㋑" },
-      { year: "2026", month: "6月", name: "ゆあ", flags: "🆂" },
-      { year: "2026", month: "7月", name: "さきな", flags: "🆂㋑" },
-      { year: "2026", month: "7月", name: "ゆうか", flags: "ｴ(旧ここみ)" },
-      { year: "2026", month: "7月", name: "ゆあ", flags: "🆂㋑" },
-      { year: "2026", month: "7月", name: "ゆあ", flags: "🆂" },
-      { year: "2026", month: "8月", name: "ゆあ", flags: "🆂" }
+      { year: "2025", month: "8月", name: "ゆあ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "8月", name: "じゅり", flags: "⚔⚔", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "8月", name: "みく", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "8月", name: "みく", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "8月", name: "まりあ", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "8月", name: "ゆあ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "8月", name: "まりあ", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "8月", name: "ひまわり", flags: "A", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "8月", name: "まりあ", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "9月", name: "れい", flags: "⚔⚔", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "9月", name: "まりあ", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "9月", name: "れみ", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "9月", name: "ことり", flags: "✈🆂", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "9月", name: "みゅーず", flags: "✈⚔", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "9月", name: "もも", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "9月", name: "さきな", flags: "🈠⑱🆂", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "10月", name: "ゆあ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "10月", name: "るる", flags: "⚔", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "10月", name: "ゆい", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "10月", name: "もも", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "10月", name: "ゆあ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "10月", name: "さきな", flags: "⑱🆂", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "11月", name: "まりあ", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "11月", name: "まりあ", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "11月", name: "まりあ", flags: "❖", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "11月", name: "ゆあ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "11月", name: "みく", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "11月", name: "モカ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "12月", name: "ゆあ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "12月", name: "カルア", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "12月", name: "ゆあ", flags: "🆂❖", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "12月", name: "モカ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "12月", name: "モカ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "12月", name: "みみ", flags: "⚔⚔", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "1月", name: "アンナ", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "1月", name: "もも", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "1月", name: "あい", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "1月", name: "ゆあ", flags: "🆂❖", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "1月", name: "モカ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "2月", name: "もも", flags: "❀", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "2月", name: "さな", flags: "⚔", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "2月", name: "るか", flags: "✈🆂", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "2月", name: "ミノリ", flags: "✈🆂", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "2月", name: "ことり", flags: "✈🆂", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "2月", name: "ひまわり", flags: "✈B", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "2月", name: "カルア", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "3月", name: "ゆうか", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "3月", name: "モカ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "3月", name: "さら", flags: "⚔⚔⚔", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "3月", name: "める", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "3月", name: "カルア", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "3月", name: "カルア", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "3月", name: "四葉", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "3月", name: "四葉", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "3月", name: "ゆず", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "3月", name: "モカ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "4月", name: "モカ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "4月", name: "カルア", flags: "🆂㋑", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "4月", name: "ゆあ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "4月", name: "ななみ", flags: "⚔㋗", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "4月", name: "なるみ", flags: "🆂❀", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "4月", name: "ひびき", flags: "⑱ｴ", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "4月", name: "せいな", flags: "✈ｄ", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "4月", name: "きほ", flags: "✈⑱", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "5月", name: "アクア", flags: "✈", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "5月", name: "モカ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "5月", name: "ゆあ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "6月", name: "さきな", flags: "🆂❖", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "6月", name: "ゆあ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "6月", name: "伏見みなお", flags: "✈❑", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "6月", name: "さきな", flags: "🆂㋑", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "6月", name: "ゆあ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "7月", name: "さきな", flags: "🆂㋑", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "7月", name: "ゆうか", flags: "ｴ(旧ここみ)", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "7月", name: "ゆあ", flags: "🆂㋑", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "7月", name: "ゆあ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "8月", name: "ゆあ", flags: "🆂", visitNote: "", reportUrl: "" }
     ];
 
     const kosugiCastData = {
@@ -1290,7 +1358,7 @@
       "るる": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3288", notes: "", oldName: "", style: "", letters: [{ date: "2025年10月", imageUrl: "https://i.imgur.com/Z9EQ2Tz.jpeg", text: "じゅんくん　今日は会いに来てくれてありがとう！友達みたいに楽しかったしじゅんくんが明るい人だから話しやすかった！お仕事無理しないようにね♡　るる" }] },
       "ゆい": { link: "", notes: "", oldName: "", style: "", letters: [] },
       "みみ": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=2965", notes: "", oldName: "", style: "", letters: [] },
-      "アンナ": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2026年1月", imageUrl: "https://i.imgur.com/Mg0q2ot.jpeg", text: "ジュン君。　今日は、来てくれてありがとう！！　同じ年なのに、おとなっぽくて、一緒にいて楽しかった！！　また、会えたら嬉しいです♡　アンナ" }] },
+      "アンナ": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2026年1月", imageUrl: "https://i.imgur.com/Mg0q2ot.jpeg", text: "ジュン君。　今日は、来てくれてありがとう！！　同じ年なのに、おとなっぽくて、一緒にいて楽しかった！！　また、会えたら嬉しいです♡发アンナ" }] },
       "あい": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3394", notes: "", oldName: "", style: "", letters: [] },
       "さな": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2026年2月", imageUrl: "https://i.imgur.com/YoaqJJO.jpeg", text: "いっぱいガンバッててえらいよ🙂　むりしないでまた来てね💮" }] },
       "るか": { link: "https://www.cityheaven.net/tokyo/A1304/A130401/a-crystal/girlid-64506913/?mygirl=1&lo=1", notes: "", oldName: "", style: "", letters: [] },
@@ -1308,31 +1376,10 @@
       "ゆうか": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3504", notes: "", oldName: "ここみ", style: "", letters: [{ date: "2026年7月", imageUrl: "https://i.imgur.com/vcJpOyD.jpeg", text: "今日はありがとう〜まさかの二度目ましてでおもろかった(笑ナースの時よりも少し風俗慣れてた気がして寂しい気もするけど会えて良かった!))" }] }
     };
 
-    // 正しいリポジトリ名 (owner/repo)
-    const DEFAULT_REPO = "chuenli2006/kosugi-f-zukan";
-
     let currentUserName = localStorage.getItem('app_user_name') || '童貞';
-    let storageMode = localStorage.getItem('app_storage_mode') || 'local';
     let historyList = [];
     let castData = {};
     let sharedRecords = [];
-    let currentSha = null;
-
-    /* 🛡️ ユーザー名から一意なファイル名を自動生成する関数 */
-    function getUserFileName(name) {
-      const safeName = (name || currentUserName || 'user').trim().replace(/[\/\\?%*:|"<>]/g, '_');
-      return `data_${safeName}.json`;
-    }
-
-    /* 🧹 自動でリポジトリ名を正規化する関数 */
-    function cleanRepoName(repoStr) {
-      if (!repoStr) return DEFAULT_REPO;
-      let clean = repoStr.trim();
-      clean = clean.replace(/^https?:\/\/github\.com\//i, '');
-      clean = clean.replace(/\.github\.io/gi, '');
-      if (!clean.includes('/')) return DEFAULT_REPO;
-      return clean;
-    }
 
     function isKosugi(name) {
       if (!name) return false;
@@ -1340,19 +1387,7 @@
       return lower === 'こすぎ' || lower === 'ジュン' || lower === 'じゅん' || lower === 'kosugi';
     }
 
-    async function initUserData() {
-      if (storageMode === 'github') {
-        const success = await loadFromGitHub();
-        if (!success) loadLocalData();
-      } else {
-        loadLocalData();
-      }
-      updateUIHeader();
-      updateSharedCount();
-      render();
-    }
-
-    function loadLocalData() {
+    function initUserData() {
       if (isKosugi(currentUserName)) {
         historyList = JSON.parse(JSON.stringify(kosugiHistoryList));
         castData = JSON.parse(JSON.stringify(kosugiCastData));
@@ -1365,111 +1400,16 @@
       
       const savedShared = localStorage.getItem('user_shared_list_' + currentUserName);
       sharedRecords = savedShared ? JSON.parse(savedShared) : [];
-    }
 
-    /* ☁️ GitHubからのデータ自動取得 */
-    async function loadFromGitHub() {
-      const token = localStorage.getItem('gh_token');
-      const rawRepo = localStorage.getItem('gh_repo');
-      const repo = cleanRepoName(rawRepo);
-      const fileName = getUserFileName(currentUserName);
-
-      if (!token) return false;
-
-      try {
-        const res = await fetch(`https://api.github.com/repos/${repo}/contents/${fileName}`, {
-          headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
-        });
-        if (res.status === 200) {
-          const json = await res.json();
-          currentSha = json.sha;
-          const decodedContent = decodeURIComponent(escape(atob(json.content.replace(/\n/g, ''))));
-          const data = JSON.parse(decodedContent);
-          historyList = data.historyList || [];
-          castData = data.castData || {};
-          currentUserName = data.userName || currentUserName;
-          const el = document.getElementById('ghStatusText');
-          if (el) el.innerText = `🟢 ${fileName} と同期中`;
-          return true;
-        }
-      } catch (err) { console.error(err); }
-      const el = document.getElementById('ghStatusText');
-      if (el) el.innerText = "🔴 GitHub同期エラー（新規作成可能）";
-      return false;
-    }
-
-    /* ☁️ GitHubへのデータ自動保存 */
-    async function saveToGitHub() {
-      const token = localStorage.getItem('gh_token');
-      const rawRepo = localStorage.getItem('gh_repo');
-      const repo = cleanRepoName(rawRepo);
-      const fileName = getUserFileName(currentUserName);
-
-      if (!token) return;
-
-      const exportObject = {
-        app: "風俗履歴図鑑",
-        version: "2.0",
-        exportDate: new Date().toISOString(),
-        userName: currentUserName,
-        historyList: historyList,
-        castData: castData
-      };
-
-      const contentStr = JSON.stringify(exportObject, null, 2);
-      const base64Content = btoa(unescape(encodeURIComponent(contentStr)));
-
-      try {
-        const bodyData = { message: `Update ${fileName} by ${currentUserName}`, content: base64Content };
-        if (currentSha) bodyData.sha = currentSha;
-
-        const res = await fetch(`https://api.github.com/repos/${repo}/contents/${fileName}`, {
-          method: 'PUT',
-          headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify(bodyData)
-        });
-        if (res.ok) {
-          const resJson = await res.json();
-          currentSha = resJson.content.sha;
-          const el = document.getElementById('ghStatusText');
-          if (el) el.innerText = `🟢 ${fileName} コミット完了`;
-        }
-      } catch (err) { console.error(err); }
-    }
-
-    function saveData() {
-      localStorage.setItem('app_user_name', currentUserName);
-      localStorage.setItem('app_storage_mode', storageMode);
-
-      if (storageMode === 'local') {
-        if (!isKosugi(currentUserName)) {
-          localStorage.setItem('user_hist_' + currentUserName, JSON.stringify(historyList));
-          localStorage.setItem('user_cast_' + currentUserName, JSON.stringify(castData));
-        }
-      } else if (storageMode === 'github') {
-        saveToGitHub();
-      }
-
-      localStorage.setItem('user_shared_list_' + currentUserName, JSON.stringify(sharedRecords));
+      updateUIHeader();
       updateSharedCount();
-    }
-
-    function toggleStorageModeUI() {
-      const isGithub = document.getElementById('modeGithub').checked;
-      document.getElementById('githubConfigBox').style.display = isGithub ? 'flex' : 'none';
-      updateFileNamePreview();
-    }
-
-    function updateFileNamePreview() {
-      const inputName = document.getElementById('inputUserName').value.trim() || currentUserName;
-      const previewElem = document.getElementById('ghFileNamePreview');
-      if (previewElem) previewElem.innerText = getUserFileName(inputName);
+      render();
     }
 
     function updateUIHeader() {
       const titleText = currentUserName + "の風俗履歴図鑑";
       document.getElementById('headerTitle').innerText = titleText;
-      document.getElementById('pageTitle').innerText = titleText + " [DEV a15.2]";
+      document.getElementById('pageTitle').innerText = titleText + " [DEV a15.3]";
       document.getElementById('currentUserNameDisplay').innerText = currentUserName;
     }
 
@@ -1477,9 +1417,17 @@
       document.getElementById('sharedCount').innerText = sharedRecords.length;
     }
 
-    function openDevInfoModal() {
-      document.getElementById('devInfoModal').style.display = 'flex';
+    function saveData() {
+      localStorage.setItem('app_user_name', currentUserName);
+      if (!isKosugi(currentUserName)) {
+        localStorage.setItem('user_hist_' + currentUserName, JSON.stringify(historyList));
+        localStorage.setItem('user_cast_' + currentUserName, JSON.stringify(castData));
+      }
+      localStorage.setItem('user_shared_list_' + currentUserName, JSON.stringify(sharedRecords));
+      updateSharedCount();
     }
+
+    function openDevInfoModal() { document.getElementById('devInfoModal').style.display = 'flex'; }
 
     /* リセット機能 */
     function resetData() {
@@ -1505,7 +1453,6 @@
 
     /* 💾 JSONファイルとしてバックアップ保存（ダウンロード） */
     function exportJSONFile() {
-      const fileName = getUserFileName(currentUserName);
       const exportObject = {
         app: "風俗履歴図鑑",
         version: "2.0",
@@ -1518,7 +1465,7 @@
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObject, null, 2));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", fileName);
+      downloadAnchor.setAttribute("download", `風俗履歴図鑑_${currentUserName}_backup.json`);
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
       downloadAnchor.remove();
@@ -1763,15 +1710,6 @@
 
     function openUserModal() {
       document.getElementById('inputUserName').value = currentUserName === '童貞' ? '' : currentUserName;
-      document.getElementById('modeGithub').checked = storageMode === 'github';
-      document.getElementById('modeLocal').checked = storageMode !== 'github';
-
-      document.getElementById('ghToken').value = localStorage.getItem('gh_token') || '';
-      
-      const savedRepo = localStorage.getItem('gh_repo');
-      document.getElementById('ghRepo').value = savedRepo ? cleanRepoName(savedRepo) : DEFAULT_REPO;
-
-      toggleStorageModeUI();
       document.getElementById('userModal').style.display = 'flex';
     }
 
@@ -1785,14 +1723,6 @@
       if (!input) return alert("お名前を入力してください！");
 
       currentUserName = input;
-      storageMode = document.getElementById('modeGithub').checked ? 'github' : 'local';
-
-      if (storageMode === 'github') {
-        localStorage.setItem('gh_token', document.getElementById('ghToken').value.trim());
-        const inputRepo = document.getElementById('ghRepo').value.trim();
-        localStorage.setItem('gh_repo', cleanRepoName(inputRepo));
-      }
-
       saveData();
       initUserData();
       closeModal('userModal');
@@ -1857,20 +1787,20 @@
 
       const style = parts.join(' ');
       const flags = document.getElementById('addFlags').value.trim();
+      const visitNote = document.getElementById('addVisitNote').value.trim();
+      const reportUrl = document.getElementById('addReportUrl').value.trim();
       const oldName = document.getElementById('addOldName').value.trim();
       const link = document.getElementById('addLink').value.trim();
-      const notes = document.getElementById('addNotes').value.trim();
       const letterImg = document.getElementById('addLetterImg').value.trim();
 
       if (!year || !month || !name) return alert("年、月、キャスト名は必須です！");
 
-      historyList.push({ year, month, name, flags });
+      historyList.push({ year, month, name, flags, visitNote, reportUrl });
 
       if (!castData[name]) {
-        castData[name] = { link: link, notes: notes, oldName: oldName, style: style, letters: [] };
+        castData[name] = { link: link, notes: "", oldName: oldName, style: style, letters: [] };
       } else {
         if (link) castData[name].link = link;
-        if (notes) castData[name].notes = notes;
         if (oldName) castData[name].oldName = oldName;
         if (style) castData[name].style = style;
       }
@@ -1898,10 +1828,40 @@
         elem.style.color = 'var(--text-color)';
       });
       document.getElementById('addFlags').value = '';
+      document.getElementById('addVisitNote').value = '';
+      document.getElementById('addReportUrl').value = '';
       document.getElementById('addOldName').value = '';
       document.getElementById('addLink').value = '';
-      document.getElementById('addNotes').value = '';
       document.getElementById('addLetterImg').value = '';
+    }
+
+    /* ✏️ 利用記録の編集モーダルを開く */
+    function openEditRecordModal(event, index) {
+      event.preventDefault(); event.stopPropagation();
+      const rec = historyList[index];
+      if (!rec) return;
+
+      document.getElementById('editRecordIndex').value = index;
+      document.getElementById('editRecordHeader').innerText = `${rec.year}年 ${rec.month} - ${rec.name} さん`;
+      document.getElementById('editFlags').value = rec.flags || '';
+      document.getElementById('editVisitNote').value = rec.visitNote || '';
+      document.getElementById('editReportUrl').value = rec.reportUrl || '';
+
+      document.getElementById('editRecordModal').style.display = 'flex';
+    }
+
+    function saveEditedRecord(e) {
+      e.preventDefault();
+      const index = parseInt(document.getElementById('editRecordIndex').value, 10);
+      const rec = historyList[index];
+      if (rec) {
+        rec.flags = document.getElementById('editFlags').value.trim();
+        rec.visitNote = document.getElementById('editVisitNote').value.trim();
+        rec.reportUrl = document.getElementById('editReportUrl').value.trim();
+        saveData();
+        render();
+        closeModal('editRecordModal');
+      }
     }
 
     function openLetterModal(event, name) {
@@ -2018,12 +1978,14 @@
       }
     }
 
+    /* 🎨 キャスト別図鑑の描画（過去メモ折りたたみ表示対応） */
     function renderCastView(target, keyword) {
       const map = {};
       historyList.forEach((item, idx) => {
         if (!map[item.name]) {
           map[item.name] = { name: item.name, visits: [], lastIdx: idx, favCount: 0, hasBad: false, lastVisit: item };
         }
+        item.originalIndex = idx; // 元の配列インデックスを保存
         map[item.name].visits.push(item);
         map[item.name].lastIdx = idx;
         map[item.name].lastVisit = item;
@@ -2048,7 +2010,7 @@
           return c.name.toLowerCase().includes(keyword) ||
                  oldName.includes(keyword) ||
                  style.includes(keyword) ||
-                 c.visits.some(v => (v.year + v.month + v.flags).toLowerCase().includes(keyword));
+                 c.visits.some(v => (v.year + v.month + v.flags + (v.visitNote || '')).toLowerCase().includes(keyword));
         });
       }
 
@@ -2075,7 +2037,6 @@
 
         const info = castData[c.name] || { link: "", notes: "", oldName: "", style: "", letters: [] };
         const url = info.link;
-        const notes = info.notes || "";
         const oldName = info.oldName || "";
         const style = info.style || "";
         const isActive = url && url.trim() !== "";
@@ -2103,16 +2064,52 @@
           ? '<button class="letter-btn" onclick="openLetterModal(event, \'' + c.name + '\')">💌 手紙 (' + validLetters.length + ')</button>' 
           : '';
 
+        /* メモの集計（最新メモ ＋ 過去メモアコーディオン） */
+        const notesWithDate = c.visits
+          .filter(v => v.visitNote && v.visitNote.trim() !== '')
+          .reverse();
+
+        const latestNote = notesWithDate.length > 0 ? notesWithDate[0] : null;
+        const pastNotes = notesWithDate.length > 1 ? notesWithDate.slice(1) : [];
+
+        let notesContentHtml = '';
+        if (latestNote) {
+          notesContentHtml += `<div><strong>📌 最新メモ (${latestNote.year}年${latestNote.month}):</strong> ${latestNote.visitNote}</div>`;
+        } else {
+          notesContentHtml += `<div style="color:#aaa;">メモなし</div>`;
+        }
+
+        if (pastNotes.length > 0) {
+          let pastItemsHtml = '';
+          pastNotes.forEach(pn => {
+            pastItemsHtml += `<div class="past-note-item">📅 ${pn.year}年${pn.month}: ${pn.visitNote}</div>`;
+          });
+
+          notesContentHtml += `
+            <details class="past-notes-details">
+              <summary class="past-notes-summary">… 過去のメモを表示 (${pastNotes.length}件)</summary>
+              <div class="past-notes-list">${pastItemsHtml}</div>
+            </details>
+          `;
+        }
+
         let rowsHtml = '';
         c.visits.forEach(v => {
-          rowsHtml += '<div class="history-row">' +
-            '<span class="history-date">' + v.year.slice(2) + '年 ' + v.month + '</span>' +
-            '<span class="history-flags">' + (v.flags || '通常') + '</span>' +
-          '</div>';
+          const reportTag = v.reportUrl ? '<span class="report-badge">レポートあり</span>' : '';
+          rowsHtml += `
+            <div class="history-row">
+              <span class="history-date">${v.year.slice(2)}年 ${v.month} ${reportTag}</span>
+              <div style="display:flex; align-items:center; gap:6px;">
+                <span class="history-flags">${v.flags || '通常'}</span>
+                <button class="edit-icon-btn" onclick="openEditRecordModal(event, ${v.originalIndex})" title="編集">
+                  <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                </button>
+              </div>
+            </div>`;
         });
 
         const superBadgeHtml = isSuperFav ? '<span class="super-tag">オキニ</span>' : '';
-        const notesHtml = '<div class="notes-box"> ' + (notes ? notes : '備考なし') + '</div>';
+        const notesHtml = '<div class="notes-box">' + notesContentHtml + '</div>';
         const styleHtml = renderStyleTags(style);
         const daysAgoText = calcMonthsAgo(c.lastVisit.year, c.lastVisit.month);
 
@@ -2150,9 +2147,11 @@
       target.appendChild(grid);
     }
 
+    /* 📅 月別タイムラインの描画（アコーディオン＋編集アイコン＋レポートあり文字バッジ） */
     function renderTimelineView(target, keyword) {
       const groups = {};
-      historyList.forEach(item => {
+      historyList.forEach((item, idx) => {
+        item.originalIndex = idx;
         const key = item.year + '年 ' + item.month;
         if (!groups[key]) groups[key] = [];
         groups[key].push(item);
@@ -2166,6 +2165,7 @@
           items = items.filter(i => 
             i.name.toLowerCase().includes(keyword) || 
             (i.flags && i.flags.toLowerCase().includes(keyword)) ||
+            (i.visitNote && i.visitNote.toLowerCase().includes(keyword)) ||
             key.toLowerCase().includes(keyword)
           );
         }
@@ -2175,18 +2175,37 @@
           sec.className = 'month-section';
           sec.innerHTML = '<div class="month-title">' + key + '</div>';
 
-          const mGrid = document.createElement('div');
-          mGrid.className = 'month-grid';
-
           items.forEach(i => {
-            mGrid.innerHTML += 
-              '<div class="month-item">' +
-                '<strong>' + i.name + '</strong>' +
-                '<span>' + (i.flags || '通常') + '</span>' +
-              '</div>';
+            const details = document.createElement('details');
+            details.className = 'timeline-item';
+
+            const hasReport = i.reportUrl && i.reportUrl.trim() !== '';
+            const reportBadgeHtml = hasReport ? '<span class="report-badge">レポートあり</span>' : '';
+            const reportLinkHtml = hasReport ? `<a href="${i.reportUrl}" target="_blank" class="report-link-btn">📄 WEBレポートを読む</a>` : '';
+            const noteHtml = i.visitNote ? `<div>📝 <strong>メモ:</strong> ${i.visitNote}</div>` : '<div style="color:#aaa;">📝 メモなし</div>';
+
+            details.innerHTML = `
+              <summary class="timeline-summary">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+                  <strong>${i.name}</strong>
+                  <span>${i.flags || '通常'}</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:6px;">
+                  ${reportBadgeHtml}
+                  <button class="edit-icon-btn" onclick="openEditRecordModal(event, ${i.originalIndex})" title="編集">
+                    <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                  </button>
+                </div>
+              </summary>
+              <div class="timeline-body">
+                ${reportLinkHtml}
+                ${noteHtml}
+              </div>
+            `;
+            sec.appendChild(details);
           });
 
-          sec.appendChild(mGrid);
           target.appendChild(sec);
         }
       });
