@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title id="pageTitle">風俗履歴図鑑 [DEV a16.0]</title>
+  <title id="pageTitle">風俗履歴図鑑 [DEV a17.0]</title>
   
   <style>
     /* 🎨 CSS変数：テーマ10種類のカラー定義 */
@@ -20,6 +20,10 @@
       --shadow: 0 4px 15px rgba(255, 133, 162, 0.1);
       --radius: 12px;
 
+      /* バッジ用変数 */
+      --badge-bg: var(--soft-pink);
+      --badge-color: var(--accent-pink);
+
       /* 超オキニ（ゴールド） */
       --gold-bg-start: #fff9e6;
       --gold-bg-end: #fff0c2;
@@ -27,7 +31,7 @@
       --gold-text: #8a6200;
     }
 
-    /* 🌙 2. ミッドナイト・ローズ (Midnight Rose) */
+    /* 🌙 ミッドナイト・ローズ (Midnight Rose) */
     [data-theme="midnight"] {
       --bg-color: #121218;
       --card-bg: #1a1a24;
@@ -39,13 +43,16 @@
       --border-color: #2e2e3d;
       --shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
 
+      --badge-bg: #3a2233;
+      --badge-color: #ff6b8b;
+
       --gold-bg-start: #2e2612;
       --gold-bg-end: #1f190a;
       --gold-border: #d4af37;
       --gold-text: #ffd700;
     }
 
-    /* 🖤 3. ベルベット・ブラック (Velvet Black) */
+    /* 🖤 ベルベット・ブラック (Velvet Black) */
     [data-theme="velvet"] {
       --bg-color: #0d0d0d;
       --card-bg: #171717;
@@ -57,13 +64,16 @@
       --border-color: #2a2a2a;
       --shadow: 0 4px 15px rgba(0,0,0,0.7);
 
+      --badge-bg: #3a0d25;
+      --badge-color: #ff3399;
+
       --gold-bg-start: #262000;
       --gold-bg-end: #141100;
       --gold-border: #ffd700;
       --gold-text: #ffe566;
     }
 
-    /* 🍇 4. スモーキー・ベリー (Smoky Berry) */
+    /* 🍇 スモーキー・ベリー (Smoky Berry) */
     [data-theme="berry"] {
       --bg-color: #181116;
       --card-bg: #231821;
@@ -75,13 +85,16 @@
       --border-color: #3b2937;
       --shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
 
+      --badge-bg: #402035;
+      --badge-color: #ff80b3;
+
       --gold-bg-start: #332615;
       --gold-bg-end: #21180d;
       --gold-border: #c9a050;
       --gold-text: #f0c978;
     }
 
-    /* 🌃 5. サイバー・ネオン (Cyber Neon) */
+    /* 🌃 サイバー・ネオン (Cyber Neon) */
     [data-theme="cyber"] {
       --bg-color: #080914;
       --card-bg: #0f1123;
@@ -93,13 +106,16 @@
       --border-color: #1f2545;
       --shadow: 0 4px 20px rgba(0, 240, 255, 0.15);
 
+      --badge-bg: #102a45;
+      --badge-color: #00f0ff;
+
       --gold-bg-start: #1f1b00;
       --gold-bg-end: #0f0d00;
       --gold-border: #ffe600;
       --gold-text: #ffff80;
     }
 
-    /* ☕️ 6. ダーク・モカ (Dark Mocha) */
+    /* ☕️ ダーク・モカ (Dark Mocha) */
     [data-theme="mocha"] {
       --bg-color: #1c1816;
       --card-bg: #26211e;
@@ -111,13 +127,16 @@
       --border-color: #3d332e;
       --shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
 
+      --badge-bg: #423028;
+      --badge-color: #e8a992;
+
       --gold-bg-start: #33291a;
       --gold-bg-end: #211a10;
       --gold-border: #d1a153;
       --gold-text: #f2c779;
     }
 
-    /* 💎 7. エメラルド・ラグジュアリー (Emerald Luxury) */
+    /* 💎 エメラルド・ラグジュアリー (Emerald Luxury) */
     [data-theme="emerald"] {
       --bg-color: #f7faf9;
       --card-bg: #ffffff;
@@ -129,13 +148,16 @@
       --border-color: #d3f9ed;
       --shadow: 0 4px 15px rgba(12, 166, 120, 0.08);
 
+      --badge-bg: var(--soft-pink);
+      --badge-color: var(--accent-pink);
+
       --gold-bg-start: #fff9e6;
       --gold-bg-end: #fff0c2;
       --gold-border: #f3c642;
       --gold-text: #8a6200;
     }
 
-    /* 👑 8. シャンパン・ゴールド (Champagne Gold) */
+    /* 👑 シャンパン・ゴールド (Champagne Gold) */
     [data-theme="champagne"] {
       --bg-color: #fdfbf7;
       --card-bg: #ffffff;
@@ -147,13 +169,16 @@
       --border-color: #f5e8c4;
       --shadow: 0 4px 15px rgba(212, 175, 55, 0.12);
 
+      --badge-bg: var(--soft-pink);
+      --badge-color: var(--accent-pink);
+
       --gold-bg-start: #fff5cc;
       --gold-bg-end: #ffe680;
       --gold-border: #d4af37;
       --gold-text: #665200;
     }
 
-    /* 💜 9. ヴァイオレット・アイリス (Violet Iris) */
+    /* 💜 ヴァイオレット・アイリス (Violet Iris) */
     [data-theme="violet"] {
       --bg-color: #faf8ff;
       --card-bg: #ffffff;
@@ -165,13 +190,16 @@
       --border-color: #e5dbff;
       --shadow: 0 4px 15px rgba(132, 94, 247, 0.1);
 
+      --badge-bg: var(--soft-pink);
+      --badge-color: var(--accent-pink);
+
       --gold-bg-start: #fff9e6;
       --gold-bg-end: #fff0c2;
       --gold-border: #f3c642;
       --gold-text: #8a6200;
     }
 
-    /* 🍑 10. ピーチ・アプリコット (Peach Apricot) */
+    /* 🍑 ピーチ・アプリコット (Peach Apricot) */
     [data-theme="peach"] {
       --bg-color: #fffaf8;
       --card-bg: #ffffff;
@@ -182,6 +210,9 @@
       --light-text: #9c8978;
       --border-color: #ffe8cc;
       --shadow: 0 4px 15px rgba(247, 103, 7, 0.08);
+
+      --badge-bg: var(--soft-pink);
+      --badge-color: var(--accent-pink);
 
       --gold-bg-start: #fff9e6;
       --gold-bg-end: #fff0c2;
@@ -219,36 +250,36 @@
       color: var(--accent-pink);
     }
 
-    header p {
-      font-size: 0.8rem;
-      color: var(--light-text);
+    .greeting-text {
+      font-size: 0.82rem;
+      color: var(--text-color);
+      font-weight: bold;
+      margin-top: 2px;
     }
 
     .header-btns {
       display: flex;
       justify-content: center;
-      gap: 8px;
       margin-top: 6px;
-      flex-wrap: wrap;
     }
 
-    .user-tag-btn, .help-btn, .theme-btn {
+    .settings-btn {
       background: var(--soft-pink);
       color: var(--accent-pink);
       border: 1px solid var(--primary-pink);
-      padding: 4px 12px;
+      padding: 4px 16px;
       border-radius: 15px;
-      font-size: 0.75rem;
+      font-size: 0.78rem;
       font-weight: bold;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      transition: transform 0.1s;
     }
 
-    .help-btn {
-      background: var(--card-bg);
-    }
+    .settings-btn:active { transform: scale(0.95); }
 
     /* 🧪 画面左下バージョン表記バッジ */
     .dev-version-badge {
@@ -597,13 +628,15 @@
       font-weight: bold;
     }
 
+    /* 🎨 ダークモード自動最適化 回数バッジ */
     .badge-count {
-      background: var(--soft-pink);
-      color: var(--accent-pink);
+      background: var(--badge-bg);
+      color: var(--badge-color);
       font-weight: bold;
       padding: 2px 8px;
       border-radius: 10px;
       font-size: 0.75rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     .super-favorite .badge-count {
@@ -741,7 +774,6 @@
       font-size: 0.8rem;
     }
 
-    /* 🏷️ WEBレポートありバッジ */
     .report-badge {
       font-size: 0.65rem;
       color: var(--accent-pink);
@@ -755,7 +787,6 @@
       gap: 3px;
     }
 
-    /* ✏️ 薄灰色のペンアイコンボタン */
     .edit-icon-btn {
       background: none;
       border: none;
@@ -770,7 +801,6 @@
     .edit-icon-btn:hover, .edit-icon-btn:active { color: var(--accent-pink); }
     .edit-icon-btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
-    /* 📅 月別タイムラインアコーディオン */
     .month-section { margin-bottom: 16px; }
     .month-title {
       font-size: 0.95rem;
@@ -822,10 +852,7 @@
       width: fit-content;
     }
 
-    /* 過去メモ折りたたみリスト */
-    details.past-notes-details {
-      margin-top: 4px;
-    }
+    details.past-notes-details { margin-top: 4px; }
     summary.past-notes-summary {
       font-size: 0.72rem;
       color: var(--accent-pink);
@@ -841,10 +868,7 @@
       padding-left: 6px;
       border-left: 2px solid var(--soft-pink);
     }
-    .past-note-item {
-      font-size: 0.72rem;
-      color: var(--light-text);
-    }
+    .past-note-item { font-size: 0.72rem; color: var(--light-text); }
 
     /* モーダル共通 */
     .modal-overlay {
@@ -864,7 +888,7 @@
       padding: 20px 16px;
       border-radius: 20px;
       text-align: center;
-      max-width: 380px;
+      max-width: 400px;
       width: 92%;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
       border: 2px solid var(--soft-pink);
@@ -881,61 +905,50 @@
 
     .modal-content h3 {
       color: var(--accent-pink);
-      margin-bottom: 8px;
-      font-size: 1.1rem;
+      margin-bottom: 12px;
+      font-size: 1.15rem;
     }
 
-    .help-section {
-      text-align: left;
-      font-size: 0.8rem;
-      color: var(--text-color);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin: 10px 0;
-    }
-
-    .help-box {
+    /* ⚙️ 設定モーダル内アコーディオンカード構造 */
+    details.settings-acc-card {
       background: var(--bg-color);
-      border: 1px solid var(--soft-pink);
-      padding: 10px;
-      border-radius: 10px;
-    }
-
-    .help-box h4 {
-      font-size: 0.85rem;
-      color: var(--accent-pink);
-      margin-bottom: 4px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .backup-section {
-      margin-top: 15px;
-      padding-top: 12px;
-      border-top: 1px dashed var(--border-color);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      margin-bottom: 8px;
       text-align: left;
+      overflow: hidden;
     }
 
-    .backup-section h4 {
-      font-size: 0.8rem;
+    summary.settings-acc-summary {
+      padding: 10px 12px;
+      font-size: 0.85rem;
+      font-weight: bold;
       color: var(--accent-pink);
-      margin-bottom: 6px;
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    summary.settings-acc-summary::-webkit-details-marker { display: none; }
+
+    .settings-acc-body {
+      padding: 10px 12px 12px;
+      border-top: 1px dashed var(--border-color);
+      font-size: 0.8rem;
     }
 
     .theme-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 8px;
-      margin: 10px 0;
     }
 
     .theme-item-btn {
       padding: 8px;
       border-radius: 10px;
       border: 1.5px solid var(--border-color);
-      background: var(--bg-color);
+      background: var(--card-bg);
       color: var(--text-color);
       font-size: 0.75rem;
       font-weight: bold;
@@ -949,6 +962,7 @@
     .theme-item-btn.active {
       border-color: var(--accent-pink);
       box-shadow: 0 0 8px rgba(247, 37, 133, 0.4);
+      background: var(--soft-pink);
     }
 
     .letter-card-item {
@@ -1030,10 +1044,7 @@
       box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
     }
 
-    .close-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+    .close-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
     .fab-add {
       position: fixed;
@@ -1060,7 +1071,6 @@
       flex-direction: column;
       gap: 10px;
       text-align: left;
-      margin-top: 10px;
     }
 
     .form-group {
@@ -1124,7 +1134,6 @@
       border-color: var(--border-color);
     }
 
-    /* 👥 共有された履歴専用スタイル */
     .shared-card {
       background: var(--card-bg);
       border: 1px solid var(--soft-pink);
@@ -1150,11 +1159,11 @@
 
   <header>
     <h1 id="headerTitle">風俗履歴図鑑</h1>
-    <p>マイ キャスト＆プレイレコード</p>
+    <!-- 🌅 ダイナミック挨拶表記 -->
+    <div class="greeting-text" id="dynamicGreetingDisplay">童貞 さん、こんにちは！</div>
+    
     <div class="header-btns">
-      <button class="user-tag-btn" onclick="openUserModal()">👤 ユーザー: <span id="currentUserNameDisplay">童貞</span></button>
-      <button class="theme-btn" onclick="openThemeModal()">🎨 テーマ</button>
-      <button class="help-btn" onclick="openHelpModal()">❓ 使い方</button>
+      <button class="settings-btn" onclick="openSettingsModal()">⚙️ アプリ設定</button>
     </div>
   </header>
 
@@ -1243,32 +1252,90 @@
   <!-- 🧪 左下フローティング・バージョンバッジ -->
   <div class="dev-version-badge" onclick="openDevInfoModal()">
     <span class="dev-dot"></span>
-    <span>DEV VERSION a16.0</span>
+    <span>DEV VERSION a17.0</span>
   </div>
 
   <!-- ➕ フローティング追加ボタン -->
   <button class="fab-add" onclick="openAddModal()" title="新しい利用記録を追加">＋</button>
 
-  <!-- 🎨 テーマ設定モーダル -->
-  <div class="modal-overlay" id="themeModal">
+  <!-- ⚙️ アプリ設定統合モーダル -->
+  <div class="modal-overlay" id="settingsModal">
     <div class="modal-content">
-      <h3>🎨 カラーテーマの着せ替え</h3>
-      <p style="font-size:0.75rem; color:var(--light-text); margin-bottom:10px;">全10種類のデザインからお気に入りを選べます。</p>
-      
-      <div class="theme-grid">
-        <button class="theme-item-btn" id="btnThemeDefault" onclick="setTheme('default')">🌸 1. ぴんく</button>
-        <button class="theme-item-btn" id="btnThemeMidnight" onclick="setTheme('midnight')">🌙 2. ミッドナイト</button>
-        <button class="theme-item-btn" id="btnThemeVelvet" onclick="setTheme('velvet')">🖤 3. ベルベット</button>
-        <button class="theme-item-btn" id="btnThemeBerry" onclick="setTheme('berry')">🍇 4. ベリー</button>
-        <button class="theme-item-btn" id="btnThemeCyber" onclick="setTheme('cyber')">🌃 5. サイバー</button>
-        <button class="theme-item-btn" id="btnThemeMocha" onclick="setTheme('mocha')">☕️ 6. モカ</button>
-        <button class="theme-item-btn" id="btnThemeEmerald" onclick="setTheme('emerald')">💎 7. エメラルド</button>
-        <button class="theme-item-btn" id="btnThemeChampagne" onclick="setTheme('champagne')">👑 8. ゴールド</button>
-        <button class="theme-item-btn" id="btnThemeViolet" onclick="setTheme('violet')">💜 9. ヴァイオレット</button>
-        <button class="theme-item-btn" id="btnThemePeach" onclick="setTheme('peach')">🍑 10. ピーチ</button>
-      </div>
+      <h3>⚙️ アプリ設定</h3>
 
-      <button class="close-btn" onclick="closeModal('themeModal')" style="width:100%;">閉じる</button>
+      <!-- 👤 1. ユーザー名設定 -->
+      <details class="settings-acc-card" open>
+        <summary class="settings-acc-summary">
+          <span>👤 ユーザー名の変更</span>
+          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+        </summary>
+        <div class="settings-acc-body">
+          <form class="add-form" onsubmit="saveUserName(event)">
+            <div class="form-group">
+              <input type="text" id="inputUserName" placeholder="お名前を入力..." required>
+            </div>
+            <button type="submit" class="close-btn" style="margin-top:4px; padding:6px; font-size:0.8rem; width:100%;">保存する</button>
+          </form>
+        </div>
+      </details>
+
+      <!-- 🎨 2. テーマ着せ替え -->
+      <details class="settings-acc-card">
+        <summary class="settings-acc-summary">
+          <span>🎨 カラーテーマの着せ替え</span>
+          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+        </summary>
+        <div class="settings-acc-body">
+          <div class="theme-grid">
+            <button class="theme-item-btn" id="btnThemeDefault" onclick="setTheme('default')">🌸 ぴんく</button>
+            <button class="theme-item-btn" id="btnThemeMidnight" onclick="setTheme('midnight')">🌙 ミッドナイト</button>
+            <button class="theme-item-btn" id="btnThemeVelvet" onclick="setTheme('velvet')">🖤 ベルベット</button>
+            <button class="theme-item-btn" id="btnThemeBerry" onclick="setTheme('berry')">🍇 ベリー</button>
+            <button class="theme-item-btn" id="btnThemeCyber" onclick="setTheme('cyber')">🌃 サイバー</button>
+            <button class="theme-item-btn" id="btnThemeMocha" onclick="setTheme('mocha')">☕️ モカ</button>
+            <button class="theme-item-btn" id="btnThemeEmerald" onclick="setTheme('emerald')">💎 エメラルド</button>
+            <button class="theme-item-btn" id="btnThemeChampagne" onclick="setTheme('champagne')">👑 ゴールド</button>
+            <button class="theme-item-btn" id="btnThemeViolet" onclick="setTheme('violet')">💜 ヴァイオレット</button>
+            <button class="theme-item-btn" id="btnThemePeach" onclick="setTheme('peach')">🍑 ピーチ</button>
+          </div>
+        </div>
+      </details>
+
+      <!-- 📖 3. ご利用ガイド -->
+      <details class="settings-acc-card">
+        <summary class="settings-acc-summary">
+          <span>📖 ご利用ガイド</span>
+          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+        </summary>
+        <div class="settings-acc-body">
+          <div class="help-section" style="margin:0;">
+            <div class="help-box">
+              <h4>👤 あなただけのアプリとして使う</h4>
+              <p>お名前を設定すると、挨拶やタイトルが自動変更されます。</p>
+            </div>
+            <div class="help-box" style="margin-top:6px;">
+              <h4>📂 バックアップと復元</h4>
+              <p>JSONファイルでいつでも保存・友達との共有が可能です。</p>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <!-- 📂 4. バックアップ & 復元 -->
+      <details class="settings-acc-card">
+        <summary class="settings-acc-summary">
+          <span>📂 バックアップ & データ管理</span>
+          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+        </summary>
+        <div class="settings-acc-body">
+          <p style="font-size:0.7rem; color:var(--light-text); margin-bottom:6px;">全データをファイルとして保存・復元できます。</p>
+          <button class="close-btn" style="width:100%; margin-top:0; font-size:0.75rem; padding:6px; background:linear-gradient(135deg, #4dabf7, #339af0);" onclick="exportJSONFile()">💾 JSONダウンロード</button>
+          <button class="close-btn" style="width:100%; margin-top:6px; font-size:0.75rem; padding:6px; background:#20c997;" onclick="triggerJSONFileInput()">📂 JSONファイルを選択して復元</button>
+          <input type="file" id="jsonFileInput" accept=".json,application/json,text/plain" style="display:none;" onchange="importJSONFile(event)">
+        </div>
+      </details>
+
+      <button class="close-btn" onclick="closeModal('settingsModal')" style="width:100%; margin-top:10px;">閉じる</button>
     </div>
   </div>
 
@@ -1309,70 +1376,16 @@
   <!-- 🧪 サンドボックス版案内モーダル -->
   <div class="modal-overlay" id="devInfoModal">
     <div class="modal-content">
-      <h3>🧪 サンドボックス環境（a16.0）</h3>
+      <h3>🧪 サンドボックス環境（a17.0）</h3>
       <div class="help-section">
         <div class="help-box" style="border-color:var(--primary-pink);">
           <p style="font-size:0.8rem; line-height:1.5;">
-            現在は開発・検証用の<strong>サンドボックス（Dev）バージョン a16.0</strong>です。<br><br>
-            全10種類のカラーテーマ着せ替え（ダークモード5種含む）、月別タイムラインアコーディオン、過去メモ折りたたみがテスト可能です。
+            現在は開発・検証用の<strong>サンドボックス（Dev）バージョン a17.0</strong>です。<br><br>
+            ダイナミック挨拶、集約型設定モーダル（アコーディオン）、ダークモード回数バッジ色調整がテスト可能です。
           </p>
         </div>
       </div>
       <button class="close-btn" onclick="closeModal('devInfoModal')">了解して閉じる</button>
-    </div>
-  </div>
-
-  <!-- 📖 使い方ダイアログ -->
-  <div class="modal-overlay" id="helpModal">
-    <div class="modal-content">
-      <h3>📖 風俗履歴図鑑のご利用ガイド</h3>
-      <div class="help-section">
-        <div class="help-box">
-          <h4>👤 1. あなただけのアプリとして使う</h4>
-          <p>ヘッダーの「👤 ユーザー」ボタンからお名前を設定してください。タイトルが切り替わります。</p>
-        </div>
-        <div class="help-box">
-          <h4>🎨 2. カラーテーマの着せ替え</h4>
-          <p>「🎨 テーマ」ボタンからダークモード含む10色のテーマを切り替えられます！</p>
-        </div>
-        <div class="help-box">
-          <h4>📂 3. ファイル保存＆復元・共有</h4>
-          <p>バックアップ機能はJSONファイルでダウンロード保存されます。友達に送信して共有することもできます。</p>
-        </div>
-      </div>
-      <button class="close-btn" onclick="closeModal('helpModal')">はい</button>
-    </div>
-  </div>
-
-  <!-- 👤 ユーザー設定 & バックアップモーダル -->
-  <div class="modal-overlay" id="userModal">
-    <div class="modal-content">
-      <h3>👤 ユーザー切り替え・名前変更</h3>
-      <p style="font-size:0.75rem; color:var(--light-text); margin-bottom:10px;">名前を入力するとタイトルが切り替わります。</p>
-      <form class="add-form" onsubmit="saveUserName(event)">
-        <div class="form-group">
-          <label>お名前（例: こすぎ、たろう）</label>
-          <input type="text" id="inputUserName" placeholder="名前を入力..." required>
-        </div>
-        <div style="display:flex; gap:8px;">
-          <button type="submit" class="close-btn" style="flex:1;">保存する</button>
-          <button type="button" class="close-btn" onclick="closeModal('userModal')" style="background:#888; flex:1;">キャンセル</button>
-        </div>
-      </form>
-
-      <!-- 📁 JSONファイル保存・読み込みエリア -->
-      <div class="backup-section">
-        <h4>📁 バックアップの保存（JSONファイル）</h4>
-        <p style="font-size:0.7rem; color:var(--light-text); margin-bottom:6px;">全データをファイルとしてダウンロード保存します。</p>
-        <button class="close-btn" style="width:100%; margin-top:0; background:linear-gradient(135deg, #4dabf7, #339af0);" onclick="exportJSONFile()">💾 JSONファイルをダウンロード</button>
-
-        <h4 style="margin-top:12px;">📥 ファイルの復元・友達のデータ読み込み</h4>
-        <p style="font-size:0.7rem; color:var(--light-text); margin-bottom:4px;">バックアップファイル（.json）を選択して読み込みます。</p>
-        
-        <button class="close-btn" style="width:100%; margin-top:0; background:#20c997;" onclick="triggerJSONFileInput()">📂 JSONファイルを選択</button>
-        <input type="file" id="jsonFileInput" accept=".json,application/json,text/plain" style="display:none;" onchange="importJSONFile(event)">
-      </div>
-
     </div>
   </div>
 
@@ -1581,16 +1594,16 @@
       "るる": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3288", notes: "", oldName: "", style: "", letters: [{ date: "2025年10月", imageUrl: "https://i.imgur.com/Z9EQ2Tz.jpeg", text: "じゅんくん　今日は会いに来てくれてありがとう！友達みたいに楽しかったしじゅんくんが明るい人だから話しやすかった！お仕事無理しないようにね♡　るる" }] },
       "ゆい": { link: "", notes: "", oldName: "", style: "", letters: [] },
       "みみ": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=2965", notes: "", oldName: "", style: "", letters: [] },
-      "アンナ": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2026年1月", imageUrl: "https://i.imgur.com/Mg0q2ot.jpeg", text: "ジュン君。　今日は、来てくれてありがとう！！　同じ年なのに、おとなっぽくて、一緒にいて楽しかった！！　また、会えたら嬉しいです♡アンナ" }] },
+      "アンナ": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2026年1月", imageUrl: "https://i.imgur.com/Mg0q2ot.jpeg", text: "ジュン君。　今日は、来てくれてありがとう！！　同じ年なのに、おとなっぽくて、一緒にいて楽しかった！！化また、会えたら嬉しいです♡アンナ" }] },
       "あい": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3394", notes: "", oldName: "", style: "", letters: [] },
       "さな": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2026年2月", imageUrl: "https://i.imgur.com/YoaqJJO.jpeg", text: "いっぱいガンバッててえらいよ🙂　むりしないでまた来てね💮" }] },
       "るか": { link: "https://www.cityheaven.net/tokyo/A1304/A130401/a-crystal/girlid-64506913/?mygirl=1&lo=1", notes: "", oldName: "", style: "", letters: [] },
       "ミノリ": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2026年2月", imageUrl: "https://i.imgur.com/KNNzZ7H.jpeg", text: "バレンタイン♡♡" }] },
       "さら": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/okinawa-naminouejyogakuin/girlid-62305727/", notes: "", oldName: "", style: "", letters: [] },
       "める": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/okinawa-naminouesougoubyouin/girlid-44817013/", notes: "", oldName: "", style: "", letters: [] },
-      "ゆず": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3523", notes: "", oldName: "", style: "", letters: [{ date: "2026年3月", imageUrl: "https://i.imgur.com/GtHdniF.jpeg", text: "ジュン君　今日は出会えて　よかった♡　また会いたいです！　ゆず" }] },
+      "ゆず": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3523", notes: "", oldName: "", style: "", letters: [{ date: "2026年3月", imageUrl: "https://i.imgur.com/GtHdniF.jpeg", text: "ジュン君　今日は出会えて　よかった♡　また会いたいです！ゆず" }] },
       "ななみ": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/okinawa-nursejyogakuen/girlid-65139298/", notes: "", oldName: "", style: "", letters: [] },
-      "なるみ": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/Eq6COe4.jpeg", text: "ありがとう♡　またきてね　大学がんばってね！{なるみ" }] },
+      "なるみ": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/Eq6COe4.jpeg", text: "ありがとう♡　またきてね　大学がんばってね！　なるみ" }] },
       "ひびき": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3454", notes: "", oldName: "", style: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/bNSgBmz.jpeg", text: "今日はありがとう♡　たくさんお話できて楽しかったです！tまた遊びに来てください❕️　ひびき" }] },
       "せいな": { link: "https://www.cityheaven.net/tokyo/A1312/A131201/uenolip/girlid-52762713/?mygirl=1&lo=1", notes: "", oldName: "", style: "", letters: [] },
       "きほ": { link: "https://www.cityheaven.net/tokyo/A1304/A130401/a-crystal/girlid-65756780/", notes: "", oldName: "", style: "", letters: [] },
@@ -1605,6 +1618,25 @@
     let castData = {};
     let sharedRecords = [];
 
+    /* 🌅 時間帯別ダイナミック挨拶の生成 */
+    function getDynamicGreeting() {
+      const hour = new Date().getHours();
+      let text = "こんにちは！";
+      let icon = "☀️";
+
+      if (hour >= 5 && hour < 12) {
+        text = "おはようございます！"; icon = "🌅";
+      } else if (hour >= 12 && hour < 17) {
+        text = "こんにちは！"; icon = "☀️";
+      } else if (hour >= 17 && hour < 19) {
+        text = "お疲れ様です！"; icon = "🌆";
+      } else {
+        text = "こんばんは！"; icon = "🌙";
+      }
+
+      return `${icon} ${currentUserName} さん、${text}`;
+    }
+
     function applyTheme(themeName) {
       currentTheme = themeName;
       if (themeName === 'default') {
@@ -1614,7 +1646,6 @@
       }
       localStorage.setItem('app_theme', themeName);
 
-      // ボタンハイライト表示の更新
       document.querySelectorAll('.theme-item-btn').forEach(btn => btn.classList.remove('active'));
       const activeBtn = document.getElementById('btnTheme' + themeName.charAt(0).toUpperCase() + themeName.slice(1));
       if (activeBtn) activeBtn.classList.add('active');
@@ -1624,8 +1655,9 @@
       applyTheme(themeName);
     }
 
-    function openThemeModal() {
-      document.getElementById('themeModal').style.display = 'flex';
+    function openSettingsModal() {
+      document.getElementById('inputUserName').value = currentUserName === '童貞' ? '' : currentUserName;
+      document.getElementById('settingsModal').style.display = 'flex';
     }
 
     function isKosugi(name) {
@@ -1658,8 +1690,8 @@
     function updateUIHeader() {
       const titleText = currentUserName + "の風俗履歴図鑑";
       document.getElementById('headerTitle').innerText = titleText;
-      document.getElementById('pageTitle').innerText = titleText + " [DEV a16.0]";
-      document.getElementById('currentUserNameDisplay').innerText = currentUserName;
+      document.getElementById('pageTitle').innerText = titleText + " [DEV a17.0]";
+      document.getElementById('dynamicGreetingDisplay').innerText = getDynamicGreeting();
     }
 
     function updateSharedCount() {
@@ -1764,7 +1796,7 @@
             });
             saveData();
             renderSharedArea();
-            closeModal('userModal');
+            closeModal('settingsModal');
             switchMainTab('shared');
             alert(`👥 ${imported.sharedBy || '友達'}さんから共有された「${imported.castName}」さんの履歴を追加しました！`);
             return;
@@ -1778,7 +1810,7 @@
               saveData();
               initUserData();
               render();
-              closeModal('userModal');
+              closeModal('settingsModal');
               alert("✨ データの全復元が完了しました！");
             }
             return;
@@ -1951,15 +1983,6 @@
       return tagsHtml;
     }
 
-    function openUserModal() {
-      document.getElementById('inputUserName').value = currentUserName === '童貞' ? '' : currentUserName;
-      document.getElementById('userModal').style.display = 'flex';
-    }
-
-    function openHelpModal() {
-      document.getElementById('helpModal').style.display = 'flex';
-    }
-
     function saveUserName(event) {
       event.preventDefault();
       const input = document.getElementById('inputUserName').value.trim();
@@ -1968,7 +1991,7 @@
       currentUserName = input;
       saveData();
       initUserData();
-      closeModal('userModal');
+      closeModal('settingsModal');
       render();
     }
 
@@ -2208,7 +2231,7 @@
       target.innerHTML = '';
 
       if (historyList.length === 0) {
-        target.innerHTML = '<div style="text-align:center; color:var(--light-text); padding:40px 10px; font-size:0.85rem;">記録がまだありません。<br>右下の「＋」ボタンから追加するか、<br>上のボタンからお名前を「こすぎ」に変更して参考にしてみてください。</div>';
+        target.innerHTML = '<div style="text-align:center; color:var(--light-text); padding:40px 10px; font-size:0.85rem;">記録がまだありません。<br>右下の「＋」ボタンから追加するか、<br>「⚙️ アプリ設定」からお名前を「こすぎ」に変更して参考にしてみてください。</div>';
         updateStats({});
         return;
       }
@@ -2448,11 +2471,6 @@
           target.appendChild(sec);
         }
       });
-    }
-
-    if (!localStorage.getItem('fuzoku_app_visited')) {
-      openHelpModal();
-      localStorage.setItem('fuzoku_app_visited', 'true');
     }
 
     initUserData();
