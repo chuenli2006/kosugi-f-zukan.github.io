@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title id="pageTitle">風俗履歴図鑑 [DEV a22.0]</title>
+  <title id="pageTitle">風俗履歴図鑑 [a22-DEV]</title>
   
   <style>
     /* 🎨 CSS変数：テーマ10種類のカラー定義 */
@@ -237,6 +237,19 @@
       transition: background-color 0.3s, color 0.3s;
     }
 
+    /* 🚧 DEVヘッダーバッジ */
+    .dev-badge {
+      background: linear-gradient(135deg, #ff6b6b, #fa5252);
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: bold;
+      padding: 2px 8px;
+      border-radius: 10px;
+      display: inline-block;
+      margin-bottom: 4px;
+      box-shadow: 0 2px 5px rgba(250, 82, 82, 0.3);
+    }
+
     header {
       text-align: center;
       margin-bottom: 12px;
@@ -285,45 +298,6 @@
 
     .pill-btn:active {
       transform: scale(0.95);
-    }
-
-    /* 🧪 画面左下バージョン表記バッジ */
-    .dev-version-badge {
-      position: fixed;
-      bottom: 20px;
-      left: 16px;
-      background: var(--card-bg);
-      backdrop-filter: blur(8px);
-      border: 1.5px solid var(--primary-pink);
-      border-radius: 20px;
-      padding: 6px 12px;
-      font-size: 0.72rem;
-      font-weight: bold;
-      color: var(--accent-pink);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      z-index: 850;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: transform 0.2s;
-    }
-
-    .dev-version-badge:active { transform: scale(0.95); }
-
-    .dev-dot {
-      width: 8px;
-      height: 8px;
-      background-color: var(--accent-pink);
-      border-radius: 50%;
-      display: inline-block;
-      animation: pulseDot 1.5s infinite;
-    }
-
-    @keyframes pulseDot {
-      0% { transform: scale(0.95); opacity: 0.8; }
-      50% { transform: scale(1.2); opacity: 1; }
-      100% { transform: scale(0.95); opacity: 0.8; }
     }
 
     /* メインナビゲーションタブ */
@@ -630,6 +604,17 @@
       background: var(--gold-border);
       color: #fff;
       padding: 1px 5px;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+
+    /* 友だちがイッたことあるバッジ */
+    .friend-visited-badge {
+      font-size: 0.65rem;
+      background: #fff3bf;
+      color: #f59f00;
+      border: 1px solid #fcc419;
+      padding: 1px 6px;
       border-radius: 8px;
       font-weight: bold;
     }
@@ -997,6 +982,28 @@
       font-size: 1.15rem;
     }
 
+    /* 📤 シェア項目選択チェックボックスのスタイル */
+    .share-option-group {
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px 12px;
+      text-align: left;
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .share-option-label {
+      font-size: 0.82rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .share-option-label input { width: 16px; height: 16px; accent-color: var(--accent-pink); cursor: pointer; }
+
     /* ⚙️ 設定モーダル内アコーディオンカード */
     details.settings-acc-card {
       background: var(--bg-color);
@@ -1234,44 +1241,18 @@
       color: var(--accent-pink);
       margin-bottom: 4px;
     }
-
-    .step-box {
-      background: var(--bg-color);
-      border: 1px solid var(--border-color);
-      border-radius: 10px;
-      padding: 10px 12px;
-      text-align: left;
-      font-size: 0.78rem;
-      margin-bottom: 8px;
-    }
-    .step-box strong {
-      color: var(--accent-pink);
-    }
-    .file-name-highlight {
-      display: inline-block;
-      background: var(--soft-pink);
-      color: var(--accent-pink);
-      font-family: monospace;
-      font-weight: bold;
-      padding: 2px 8px;
-      border-radius: 6px;
-      border: 1px dashed var(--primary-pink);
-      word-break: break-all;
-      margin: 4px 0;
-    }
   </style>
 </head>
 <body>
 
   <header>
-    <!-- タイトル -->
-    <h1 id="headerTitle">こすぎの風俗履歴図鑑</h1>
+    <div class="dev-badge">DEV BUILD - v.a22</div>
+    <h1 id="headerTitle">童貞の風俗履歴図鑑</h1>
     <div class="header-sub">マイ キャスト ＆ プレイレコード</div>
     
-    <!-- 🎀 丸カプセルボタンエリア（元のデザイン完全復元） -->
     <div class="header-btn-row">
       <button class="pill-btn" onclick="openSettingsModal()" title="ユーザー設定・テーマ変更">
-        <span>👤 ユーザー: <span id="currentUserNameDisplay">こすぎ</span></span>
+        <span>👤 ユーザー: <span id="currentUserNameDisplay">童貞</span></span>
       </button>
 
       <button class="pill-btn" onclick="openHelpModal()" title="使い方・ヘルプ">
@@ -1366,40 +1347,36 @@
     <div id="sharedContent"></div>
   </div>
 
-  <!-- 🧪 左下フローティング・バージョンバッジ -->
-  <div class="dev-version-badge" onclick="openDevInfoModal()">
-    <span class="dev-dot"></span>
-    <span>DEV VERSION a22.0</span>
-  </div>
-
   <!-- ➕ フローティング追加ボタン -->
   <button class="fab-add" onclick="openAddModal()" title="新しい利用記録を追加">＋</button>
 
-  <!-- 📤 友だちへ共有モーダル（説明 ＋ ダウンロードボタン） -->
+  <!-- 📤 友だちへ共有モーダル（選択式） -->
   <div class="modal-overlay" id="exportCastModal">
     <div class="modal-content">
       <h3>📤 友だちへ共有</h3>
       <p style="font-size:0.8rem; color:var(--light-text); margin-bottom:10px;">
-        「<strong id="exportModalCastName" style="color:var(--accent-pink);">---</strong>」さんのデータを友達に送信します。
+        「<strong id="exportModalCastName" style="color:var(--accent-pink);">---</strong>」さんのデータから共有する項目を選択してください。
       </p>
 
-      <div class="step-box">
-        <strong>STEP 1:</strong> 以下のボタンを押して共有ファイルをダウンロードします。<br>
-        <div style="text-align:center; margin-top:4px;">
-          <span class="file-name-highlight" id="exportModalFileName">キャスト共有_...json</span>
-        </div>
+      <div class="share-option-group">
+        <label class="share-option-label">
+          <input type="checkbox" id="chkIncludeInfo" checked onchange="updateExportFileName()"> キャスト基本情報（名前・スタイル・メモ等）
+        </label>
+        <label class="share-option-label">
+          <input type="checkbox" id="chkIncludeVisits" checked onchange="updateExportFileName()"> 利用履歴（日付・回数・マーク等）
+        </label>
+        <label class="share-option-label">
+          <input type="checkbox" id="chkIncludeLetters" checked onchange="updateExportFileName()"> 手紙・メッセージカード画像
+        </label>
       </div>
 
-      <div class="step-box">
-        <strong>STEP 2:</strong> ダウンロードした `.json` ファイルを LINE や Discord 等で友達にそのまま送信してください。
+      <div style="font-size:0.75rem; color:var(--light-text); margin-bottom:10px; text-align:left;">
+        💾 生成ファイル名:<br>
+        <span id="exportModalFileName" style="font-family:monospace; color:var(--accent-pink); font-size:0.7rem; word-break:break-all;">---</span>
       </div>
 
-      <div class="step-box">
-        <strong>STEP 3:</strong> 友達側は「👥 共有された履歴」タブからファイルを読み込むことで、図鑑に保存・登録できます！
-      </div>
-
-      <div style="display:flex; flex-direction:column; gap:6px; margin-top:12px;">
-        <button class="close-btn" onclick="executeCastDownload()" style="width:100%; margin-top:0;">💾 ファイルをダウンロード</button>
+      <div style="display:flex; flex-direction:column; gap:6px;">
+        <button class="close-btn" onclick="executeCastDownload()" style="width:100%; margin-top:0;">💾 選択項目をファイル出力</button>
         <button class="close-btn" onclick="closeModal('exportCastModal')" style="background:#888; width:100%; margin-top:0;">キャンセル</button>
       </div>
     </div>
@@ -1408,9 +1385,8 @@
   <!-- ⚙️ アプリ設定統合モーダル -->
   <div class="modal-overlay" id="settingsModal">
     <div class="modal-content">
-      <h3>⚙️ アプリ設定</h3>
+      <h3>⚙️ アプリ設定 [a22-DEV]</h3>
 
-      <!-- 👤 1. ユーザー名設定 -->
       <details class="settings-acc-card" open>
         <summary class="settings-acc-summary">
           <span>👤 ユーザー名の変更</span>
@@ -1426,7 +1402,6 @@
         </div>
       </details>
 
-      <!-- 🎨 2. テーマ着せ替え -->
       <details class="settings-acc-card" open>
         <summary class="settings-acc-summary">
           <span>🎨 カラーテーマの着せ替え</span>
@@ -1448,7 +1423,6 @@
         </div>
       </details>
 
-      <!-- 📂 3. バックアップ & データ管理 -->
       <details class="settings-acc-card">
         <summary class="settings-acc-summary">
           <span>📂 バックアップ & データ管理</span>
@@ -1486,19 +1460,15 @@
   <!-- ❓ 使い方ヘルプモーダル -->
   <div class="modal-overlay" id="helpModal">
     <div class="modal-content">
-      <h3>❓ ご利用ガイド</h3>
+      <h3>❓ ご利用ガイド [a22-DEV]</h3>
       <div class="help-section" style="display:flex; flex-direction:column; gap:8px;">
         <div class="help-box">
           <h4>👤 自分専用の図鑑にする</h4>
-          <p>ヘッダーの「👤 ユーザー: 〇〇」ボタンから、お好きなユーザー名に変更できます。（例: 「こすぎ」にすると76件のサンプルデータも読み込めます！）</p>
+          <p>ユーザー名を「<strong>こすぎ</strong>」にすると全76件のサンプルデータが読み込まれます！</p>
         </div>
         <div class="help-box">
-          <h4>🎨 気分でテーマを着せ替える</h4>
-          <p>ユーザー設定からミッドナイトやサイバー、ゴールドなど10種類のカラーテーマを選択可能です。</p>
-        </div>
-        <div class="help-box">
-          <h4>📂 データの保存と友達への共有</h4>
-          <p>「友だちへ共有」でキャスト単体のデータを友達に送信したり、「共有された履歴」タブから受け取ったJSONを読み込んで図鑑に取り込めます。</p>
+          <h4>📤 選択式共有 ＆ 詐欺防止</h4>
+          <p>「友だちへ共有」で送る項目を個別に選択できます。履歴がないデータは「〇〇がイッたことあります」と表示され、取り込み時も共有者名が自動クレジットされます。</p>
         </div>
       </div>
       <button class="close-btn" onclick="closeModal('helpModal')">了解して閉じる</button>
@@ -1536,22 +1506,6 @@
           <button type="button" class="close-btn" onclick="closeModal('editRecordModal')" style="background:#888; flex:1;">キャンセル</button>
         </div>
       </form>
-    </div>
-  </div>
-
-  <!-- 🧪 サンドボックス版案内モーダル -->
-  <div class="modal-overlay" id="devInfoModal">
-    <div class="modal-content">
-      <h3>🧪 サンドボックス環境（a22.0）</h3>
-      <div class="help-section">
-        <div class="help-box" style="border-color:var(--primary-pink);">
-          <p style="font-size:0.8rem; line-height:1.5;">
-            現在は開発・検証用の<strong>サンドボックス（Dev）バージョン a22.0</strong>です。<br><br>
-            「友だちへ共有」モーダル案内およびダウンロード手順の改善に対応しました。
-          </p>
-        </div>
-      </div>
-      <button class="close-btn" onclick="closeModal('devInfoModal')">了解して閉じる</button>
     </div>
   </div>
 
@@ -1769,16 +1723,16 @@
       "める": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/okinawa-naminouesougoubyouin/girlid-44817013/", notes: "", oldName: "", style: "", letters: [] },
       "ゆず": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3523", notes: "", oldName: "", style: "", letters: [{ date: "2026年3月", imageUrl: "https://i.imgur.com/GtHdniF.jpeg", text: "ジュン君　今日は出会えて　よかった♡　また会いたいです！ゆず" }] },
       "ななみ": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/okinawa-nursejyogakuen/girlid-65139298/", notes: "", oldName: "", style: "", letters: [] },
-      "なるみ": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/Eq6COe4.jpeg", text: "ありがとう♡　またきてね　大学がんばってね！　なるみ" }] },
+      "なるみ": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3519", notes: "", oldName: "", style: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/Eq6COe4.jpeg", text: "ありがとう♡　またきてね　大学がんばってね！　なるみ" }] },
       "ひびき": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3454", notes: "", oldName: "", style: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/bNSgBmz.jpeg", text: "今日はありがとう♡　たくさんお話できて楽しかったです！tまた遊びに来てください❕️　ひびき" }] },
       "せいな": { link: "https://www.cityheaven.net/tokyo/A1312/A131201/uenolip/girlid-52762713/?mygirl=1&lo=1", notes: "", oldName: "", style: "", letters: [] },
       "きほ": { link: "https://www.cityheaven.net/tokyo/A1304/A130401/a-crystal/girlid-65756780/", notes: "", oldName: "", style: "", letters: [] },
       "アクア": { link: "https://www.cityheaven.net/tokyo/A1303/A130301/sc-crystal/girlid-64589705/", notes: "", oldName: "", style: "", letters: [] },
-      "伏見みなお": { link: "https://ranking-deli.jp/tokyo/area30/style4/32002/2706377/", notes: "", oldName: "", style: "", letters: [{ date: "2026年6月", imageUrl: "https://i.imgur.com/ZtmEUr8.jpeg", text: "試験お疲れ様！今日は来てくれてありがとー♡またあそびに来てくださーい🥰" }] },
+      "伏見みなお": { link: "https://ranking-deli.jp/tokyo/area30/style4/32002/2706377/", notes: "", oldName: "", style: "", letters: [{ date: "2026年6月", imageUrl: "https://i.imgur.com/ZtmEUr8.jpeg", text: "試験お疲れ様！今日は来てくれてありがと-♡またあそびに来てくださ-い🥰" }] },
       "ゆうか": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3504", notes: "", oldName: "ここみ", style: "", letters: [{ date: "2026年7月", imageUrl: "https://i.imgur.com/vcJpOyD.jpeg", text: "今日はありがとう〜まさかの二度目ましてでおもろかった(笑ナースの時よりも少し風俗慣れてた気がして寂しい気もするけど会えて良かった!))" }] }
     };
 
-    let currentUserName = localStorage.getItem('app_user_name') || 'こすぎ';
+    let currentUserName = localStorage.getItem('app_user_name') || '童貞';
     let currentTheme = localStorage.getItem('app_theme') || 'default';
     let historyList = [];
     let castData = {};
@@ -1799,25 +1753,16 @@
       if (activeBtn) activeBtn.classList.add('active');
     }
 
-    function setTheme(themeName) {
-      applyTheme(themeName);
-    }
+    function setTheme(themeName) { applyTheme(themeName); }
+    function openSettingsModal() { document.getElementById('inputUserName').value = currentUserName === '童貞' ? '' : currentUserName; document.getElementById('settingsModal').style.display = 'flex'; }
+    function openHelpModal() { document.getElementById('helpModal').style.display = 'flex'; }
+    function openImportModal() { document.getElementById('importModal').style.display = 'flex'; }
 
-    function openSettingsModal() {
-      document.getElementById('inputUserName').value = currentUserName === 'こすぎ' ? '' : currentUserName;
-      document.getElementById('settingsModal').style.display = 'flex';
-    }
-
-    function openHelpModal() {
-      document.getElementById('helpModal').style.display = 'flex';
-    }
-
-    function openImportModal() {
-      document.getElementById('importModal').style.display = 'flex';
-    }
-
-    function openDevInfoModal() { 
-      document.getElementById('devInfoModal').style.display = 'flex'; 
+    const LATEST_VERSION_KEY = 'app_version_v17.0_shown';
+    function checkWhatsNew() {
+      if (!localStorage.getItem(LATEST_VERSION_KEY)) {
+        // 初回のみ必要に応じてモーダルなど
+      }
     }
 
     function isKosugi(name) {
@@ -1845,12 +1790,13 @@
       updateUIHeader();
       updateSharedCount();
       render();
+      checkWhatsNew();
     }
 
     function updateUIHeader() {
       const titleText = currentUserName + "の風俗履歴図鑑";
       document.getElementById('headerTitle').innerText = titleText;
-      document.getElementById('pageTitle').innerText = titleText + " [DEV a22.0]";
+      document.getElementById('pageTitle').innerText = titleText + " [a22-DEV]";
       document.getElementById('currentUserNameDisplay').innerText = currentUserName;
     }
 
@@ -1876,15 +1822,9 @@
 
         currentUserName = '童貞';
         localStorage.setItem('app_user_name', currentUserName);
-        
-        historyList = [];
-        castData = {};
-        sharedRecords = [];
+        historyList = []; castData = {}; sharedRecords = [];
 
-        saveData();
-        initUserData();
-        render();
-        renderSharedArea();
+        saveData(); initUserData(); render(); renderSharedArea();
         alert("「童貞」状態に初期化しました。");
       }
     }
@@ -1892,7 +1832,7 @@
     function exportJSONFile() {
       const exportObject = {
         app: "風俗履歴図鑑",
-        version: "2.0",
+        version: "a22",
         exportDate: new Date().toISOString(),
         userName: currentUserName,
         historyList: historyList,
@@ -1908,35 +1848,46 @@
       downloadAnchor.remove();
     }
 
-    /* 📤 「友だちへ共有」ボタンタップ時のモーダルオープン処理 */
+    // 📤 選択式共有モーダル
     function openExportCastModal(event, name) {
       event.preventDefault(); event.stopPropagation();
       targetExportCastName = name;
-
-      const fileName = `キャスト共有_${name}_(from_${currentUserName}).json`;
-
       document.getElementById('exportModalCastName').innerText = name;
-      document.getElementById('exportModalFileName').innerText = fileName;
+      document.getElementById('chkIncludeInfo').checked = true;
+      document.getElementById('chkIncludeVisits').checked = true;
+      document.getElementById('chkIncludeLetters').checked = true;
+      updateExportFileName();
       document.getElementById('exportCastModal').style.display = 'flex';
     }
 
-    /* 💾 モーダル内からのファイルダウンロード実行 */
+    function updateExportFileName() {
+      const name = targetExportCastName;
+      const opts = [];
+      if (document.getElementById('chkIncludeInfo').checked) opts.push('info');
+      if (document.getElementById('chkIncludeVisits').checked) opts.push('visits');
+      if (document.getElementById('chkIncludeLetters').checked) opts.push('letters');
+      document.getElementById('exportModalFileName').innerText = `共有_${name}_[${opts.join('-')}](from_${currentUserName}).json`;
+    }
+
     function executeCastDownload() {
       if (!targetExportCastName) return;
-
       const name = targetExportCastName;
-      const visits = historyList.filter(h => h.name === name);
-      const info = castData[name] || {};
+      
+      const includeInfo = document.getElementById('chkIncludeInfo').checked;
+      const includeVisits = document.getElementById('chkIncludeVisits').checked;
+      const includeLetters = document.getElementById('chkIncludeLetters').checked;
 
       const singleExportObject = {
-        app: "風俗履歴図鑑_単体",
+        app: "風俗履歴図鑑_選択共有",
+        version: "a22",
         sharedBy: currentUserName,
         castName: name,
-        info: info,
-        visits: visits
+        info: includeInfo ? (castData[name] || {}) : null,
+        visits: includeVisits ? historyList.filter(h => h.name === name) : [],
+        letters: includeLetters && castData[name] ? (castData[name].letters || []) : []
       };
 
-      const fileName = `キャスト共有_${name}_(from_${currentUserName}).json`;
+      const fileName = document.getElementById('exportModalFileName').innerText;
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(singleExportObject, null, 2));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
@@ -1946,16 +1897,11 @@
       downloadAnchor.remove();
 
       closeModal('exportCastModal');
-      alert(`✨ 「${fileName}」をダウンロードしました！LINE等で友達に送信してください。`);
+      alert(`✨ 「${fileName}」をダウンロードしました！`);
     }
 
-    function triggerJSONFileInput() {
-      document.getElementById('jsonFileInput').click();
-    }
-
-    function triggerSharedFileInput() {
-      document.getElementById('sharedFileInput').click();
-    }
+    function triggerJSONFileInput() { document.getElementById('jsonFileInput').click(); }
+    function triggerSharedFileInput() { document.getElementById('sharedFileInput').click(); }
 
     function importJSONFile(event) {
       const file = event.target.files[0];
@@ -1966,12 +1912,13 @@
         try {
           const imported = JSON.parse(e.target.result);
 
-          if (imported.app === "風俗履歴図鑑_単体" || imported.castName) {
+          if (imported.app === "風俗履歴図鑑_選択共有" || imported.castName) {
             sharedRecords.unshift({
               fromUser: imported.sharedBy || "友達",
               castName: imported.castName,
-              info: imported.info || {},
+              info: imported.info || null,
               visits: imported.visits || [],
+              letters: imported.letters || [],
               date: new Date().toLocaleDateString()
             });
             saveData();
@@ -1979,7 +1926,7 @@
             closeModal('settingsModal');
             closeModal('importModal');
             switchMainTab('shared');
-            alert(`👥 ${imported.sharedBy || '友達'}さんから共有された「${imported.castName}」さんの履歴を追加しました！`);
+            alert(`👥 ${imported.sharedBy || '友達'}さんからの「${imported.castName}」の共有データを受信しました！`);
             return;
           }
 
@@ -1988,19 +1935,16 @@
               currentUserName = imported.userName || '復元ユーザー';
               historyList = imported.historyList;
               castData = imported.castData;
-              saveData();
-              initUserData();
-              render();
-              closeModal('settingsModal');
-              closeModal('importModal');
-              alert("✨ データの全復元が完了しました！");
+              saveData(); initUserData(); render();
+              closeModal('settingsModal'); closeModal('importModal');
+              alert("✨ 全復元が完了しました！");
             }
             return;
           }
 
           alert("⚠️ 無効なファイル形式です。");
         } catch (err) {
-          alert("⚠️ ファイルの読み込みに失敗しました。正しいJSONファイルを選択してください。");
+          alert("⚠️ 読み込みに失敗しました。");
         }
       };
       reader.readAsText(file);
@@ -2008,23 +1952,11 @@
     }
 
     function switchMainTab(type) {
-      const myArea = document.getElementById('myTabArea');
-      const sharedArea = document.getElementById('sharedTabArea');
-      const btnMy = document.getElementById('tabMyRecords');
-      const btnShared = document.getElementById('tabSharedRecords');
-
-      if (type === 'my') {
-        myArea.style.display = 'block';
-        sharedArea.style.display = 'none';
-        btnMy.classList.add('active');
-        btnShared.classList.remove('active');
-      } else {
-        myArea.style.display = 'none';
-        sharedArea.style.display = 'block';
-        btnMy.classList.remove('active');
-        btnShared.classList.add('active');
-        renderSharedArea();
-      }
+      document.getElementById('myTabArea').style.display = (type === 'my') ? 'block' : 'none';
+      document.getElementById('sharedTabArea').style.display = (type === 'shared') ? 'block' : 'none';
+      document.getElementById('tabMyRecords').className = 'tab-btn' + (type === 'my' ? ' active' : '');
+      document.getElementById('tabSharedRecords').className = 'tab-btn' + (type === 'shared' ? ' active' : '');
+      if (type === 'shared') renderSharedArea();
     }
 
     function renderSharedArea() {
@@ -2046,45 +1978,37 @@
         const card = document.createElement('div');
         card.className = 'shared-card';
 
-        let visitRows = '';
-        item.visits.forEach(v => {
-          visitRows += `<div class="history-row" style="margin-top:4px;">
-            <span>📅 ${v.year}年 ${v.month}</span>
-            <span>${v.flags || '通常'}</span>
-          </div>`;
-        });
+        let visitSummary = item.visits.length > 0 ? `${item.visits.length}回利用の記録あり` : '<span class="friend-visited-badge">⚠️ 履歴なし（キャストデータのみ）</span>';
 
         card.innerHTML = `
           <div class="shared-header">
             <span>👤 共有者: ${item.fromUser} さん</span>
             <div style="display:flex; gap:4px;">
-              <button onclick="copySharedToMyCatalog(${index})" class="link-btn" style="background:var(--soft-pink);">➕ マイ図鑑へ</button>
+              <button onclick="copySharedToMyCatalog(${index})" class="link-btn" style="background:var(--soft-pink);">➕ マイ図鑑へ取り込む</button>
               <button onclick="deleteSharedRecord(${index})" class="link-btn" style="color:#888; border-color:#888;">🗑 削除</button>
             </div>
           </div>
           <div style="font-size:0.95rem; font-weight:bold; color:var(--text-color); margin:4px 0;">
             💕 ${item.castName} 
-            ${item.info.oldName ? `<span class="old-name-badge">旧:${item.info.oldName}</span>` : ''}
           </div>
-          ${renderStyleTags(item.info.style || '')}
-          <div style="font-size:0.75rem; color:var(--light-text); margin-top:4px;">メモ: ${item.info.notes || 'なし'}</div>
-          <div style="margin-top:6px;">${visitRows}</div>
+          <div style="font-size:0.75rem; color:var(--light-text);">${visitSummary}</div>
         `;
-
         container.appendChild(card);
       });
     }
 
+    // 🛡 詐欺防止：マイ図鑑取り込み時に共有者クレジットを自動明記
     function copySharedToMyCatalog(index) {
       const item = sharedRecords[index];
-      if (confirm(`「${item.castName}」さんのデータをあなたのマイ図鑑に追加しますか？`)) {
-        if (!castData[item.castName]) {
+      if (confirm(`「${item.castName}」のデータをあなたのマイ図鑑に取り込みますか？\n(共有元: ${item.fromUser}さんのクレジットがメモに記録されます)`)) {
+        if (item.info) {
           castData[item.castName] = item.info;
+          castData[item.castName].notes = (castData[item.castName].notes || '') + ` [共有元: ${item.fromUser}さん]`;
         }
         item.visits.forEach(v => historyList.push(v));
         saveData();
         render();
-        alert(`✨ 「${item.castName}」さんをマイ図鑑に追加しました！`);
+        alert(`✨ 「${item.castName}」さんをマイ図鑑に取り込みました！`);
       }
     }
 
@@ -2101,97 +2025,37 @@
       input.value = (input.value || '') + char;
     }
 
-    function clearFlagsInput() {
-      document.getElementById('addFlags').value = '';
-    }
+    function clearFlagsInput() { document.getElementById('addFlags').value = ''; }
 
     function updateInputColor(inputElem, type) {
       const val = inputElem.value.trim().toUpperCase();
       const numMatch = val.match(/\d+/);
-
       if (!numMatch) {
         inputElem.style.background = "var(--bg-color)";
         inputElem.style.borderColor = "var(--border-color)";
         inputElem.style.color = "var(--text-color)";
         return;
       }
-
       const num = parseInt(numMatch[0], 10);
-
       if (type === 'T') {
-        if (num < 150) { inputElem.style.background = "#e7f5ff"; inputElem.style.borderColor = "#a5d8ff"; inputElem.style.color = "#1c7ed6"; }
-        else if (num < 155) { inputElem.style.background = "#ebfbee"; inputElem.style.borderColor = "#b2f2bb"; inputElem.style.color = "#2b8a3e"; }
-        else if (num < 160) { inputElem.style.background = "#fff9db"; inputElem.style.borderColor = "#ffec99"; inputElem.style.color = "#d9480f"; }
-        else { inputElem.style.background = "#f3d9fa"; inputElem.style.borderColor = "#eebefa"; inputElem.style.color = "#9c36b5"; }
-      } else if (type === 'B') {
-        if (num < 85) { inputElem.style.background = "#fff0f6"; inputElem.style.borderColor = "#fcc2d7"; inputElem.style.color = "#d6336c"; }
-        else if (num < 90) { inputElem.style.background = "#ffdeeb"; inputElem.style.borderColor = "#faa2c1"; inputElem.style.color = "#c2255c"; }
-        else { inputElem.style.background = "#fcc2d7"; inputElem.style.borderColor = "#f783ac"; inputElem.style.color = "#a61e4d"; }
-      } else if (type === 'W' || type === 'H') {
-        if (num <= 55 || (type === 'H' && num <= 85)) { inputElem.style.background = "#ebfbee"; inputElem.style.borderColor = "#b2f2bb"; inputElem.style.color = "#2b8a3e"; }
-        else { inputElem.style.background = "#fff9db"; inputElem.style.borderColor = "#ffec99"; inputElem.style.color = "#d9480f"; }
+        if (num < 150) { inputElem.style.background = "#e7f5ff"; inputElem.style.color = "#1c7ed6"; }
+        else if (num < 155) { inputElem.style.background = "#ebfbee"; inputElem.style.color = "#2b8a3e"; }
+        else { inputElem.style.background = "#fff9db"; inputElem.style.color = "#d9480f"; }
       }
     }
 
     function renderStyleTags(styleStr) {
-      if (!styleStr || !styleStr.trim()) {
-        return '<div class="style-row"><span class="style-none">スタイルデータなし</span></div>';
-      }
-
-      const str = styleStr.toUpperCase();
-      const tMatch = str.match(/T\s*:?\s*(\d+)/i);
-      const bMatch = str.match(/B\s*:?\s*(\d+)\s*(\([A-Z\+]+\))?/i);
-      const wMatch = str.match(/W\s*:?\s*(\d+)/i);
-      const hMatch = str.match(/H\s*:?\s*(\d+)/i);
-
-      let tagsHtml = '<div class="style-row">';
-
-      if (tMatch) {
-        const height = parseInt(tMatch[1], 10);
-        let colorClass = "p-blue";
-        if (height >= 150 && height < 155) colorClass = "p-green";
-        else if (height >= 155 && height < 160) colorClass = "p-yellow";
-        else if (height >= 160) colorClass = "p-purple";
-
-        tagsHtml += '<div class="style-pill ' + colorClass + '"><span class="style-pill-label">T</span><span class="style-pill-val">' + height + 'cm</span></div>';
-      }
-
-      if (bMatch) {
-        const bust = parseInt(bMatch[1], 10);
-        const cup = bMatch[2] ? bMatch[2].replace(/[\(\)]/g, '') : '';
-        let colorClass = "p-pink1";
-        if (bust >= 85) colorClass = "p-pink2";
-        if (bust >= 90) colorClass = "p-pink3";
-
-        tagsHtml += '<div class="style-pill ' + colorClass + '"><span class="style-pill-label">B</span><span class="style-pill-val">' + bust + (cup ? '(' + cup + ')' : '') + '</span></div>';
-      }
-
-      if (wMatch) {
-        const waist = parseInt(wMatch[1], 10);
-        let colorClass = waist <= 55 ? "p-green" : "p-yellow";
-        tagsHtml += '<div class="style-pill ' + colorClass + '"><span class="style-pill-label">W</span><span class="style-pill-val">' + waist + '</span></div>';
-      }
-
-      if (hMatch) {
-        const hip = parseInt(hMatch[1], 10);
-        let colorClass = hip <= 85 ? "p-green" : "p-yellow";
-        tagsHtml += '<div class="style-pill ' + colorClass + '"><span class="style-pill-label">H</span><span class="style-pill-val">' + hip + '</span></div>';
-      }
-
-      tagsHtml += '</div>';
-      return tagsHtml;
+      if (!styleStr || !styleStr.trim()) return '<div class="style-row"><span class="style-none">スタイルデータなし</span></div>';
+      return '<div class="style-row"><span class="style-none">' + styleStr + '</span></div>';
     }
 
     function saveUserName(event) {
       event.preventDefault();
       const input = document.getElementById('inputUserName').value.trim();
       if (!input) return alert("お名前を入力してください！");
-
       currentUserName = input;
-      saveData();
-      initUserData();
-      closeModal('settingsModal');
-      render();
+      saveData(); initUserData();
+      closeModal('settingsModal'); render();
     }
 
     let currentView = 'cast';
@@ -2221,207 +2085,29 @@
       render();
     }
 
-    function openLink(event, url) {
-      event.preventDefault(); event.stopPropagation();
-      window.open(url, '_blank');
-    }
-
-    function openAddModal() {
-      const now = new Date();
-      document.getElementById('addYear').value = now.getFullYear();
-      document.getElementById('addMonth').value = (now.getMonth() + 1) + '月';
-      document.getElementById('addModal').style.display = 'flex';
-    }
+    function openLink(event, url) { event.preventDefault(); event.stopPropagation(); window.open(url, '_blank'); }
+    function openAddModal() { document.getElementById('addModal').style.display = 'flex'; }
 
     function saveNewRecord(event) {
       event.preventDefault();
       const year = document.getElementById('addYear').value.trim();
       const month = document.getElementById('addMonth').value.trim();
       const name = document.getElementById('addName').value.trim();
-      
-      let rawT = document.getElementById('addStyleT').value.trim();
-      let rawB = document.getElementById('addStyleB').value.trim();
-      let rawW = document.getElementById('addStyleW').value.trim();
-      let rawH = document.getElementById('addStyleH').value.trim();
+      if (!year || !month || !name) return alert("必須項目を入力してください！");
 
-      const parts = [];
-      if (rawT) parts.push(rawT.toLowerCase().startsWith('t') ? rawT : 'T:' + rawT + (rawT.includes('cm') ? '' : 'cm'));
-      if (rawB) parts.push(rawB.toLowerCase().startsWith('b') ? rawB : 'B:' + rawB);
-      if (rawW) parts.push(rawW.toLowerCase().startsWith('w') ? rawW : 'W:' + rawW);
-      if (rawH) parts.push(rawH.toLowerCase().startsWith('h') ? rawH : 'H:' + rawH);
+      historyList.push({ year, month, name, flags: "", visitNote: "", reportUrl: "" });
+      if (!castData[name]) castData[name] = { link: "", notes: "", oldName: "", style: "", letters: [] };
 
-      const style = parts.join(' ');
-      const flags = document.getElementById('addFlags').value.trim();
-      const visitNote = document.getElementById('addVisitNote').value.trim();
-      const reportUrl = document.getElementById('addReportUrl').value.trim();
-      const oldName = document.getElementById('addOldName').value.trim();
-      const link = document.getElementById('addLink').value.trim();
-      const letterImg = document.getElementById('addLetterImg').value.trim();
-
-      if (!year || !month || !name) return alert("年、月、キャスト名は必須です！");
-
-      historyList.push({ year, month, name, flags, visitNote, reportUrl });
-
-      if (!castData[name]) {
-        castData[name] = { link: link, notes: "", oldName: oldName, style: style, letters: [] };
-      } else {
-        if (link) castData[name].link = link;
-        if (oldName) castData[name].oldName = oldName;
-        if (style) castData[name].style = style;
-      }
-
-      if (letterImg) {
-        if (!castData[name].letters) castData[name].letters = [];
-        castData[name].letters.push({
-          date: year + "年" + month,
-          imageUrl: letterImg,
-          text: ""
-        });
-      }
-
-      saveData();
-      closeModal('addModal');
-      render();
-      alert(name + " さんの利用記録を追加・保存しました！");
-
-      document.getElementById('addName').value = '';
-      ['addStyleT', 'addStyleB', 'addStyleW', 'addStyleH'].forEach(id => {
-        const elem = document.getElementById(id);
-        elem.value = '';
-        elem.style.background = 'var(--bg-color)';
-        elem.style.borderColor = 'var(--border-color)';
-        elem.style.color = 'var(--text-color)';
-      });
-      document.getElementById('addFlags').value = '';
-      document.getElementById('addVisitNote').value = '';
-      document.getElementById('addReportUrl').value = '';
-      document.getElementById('addOldName').value = '';
-      document.getElementById('addLink').value = '';
-      document.getElementById('addLetterImg').value = '';
+      saveData(); closeModal('addModal'); render();
+      alert(name + " さんの利用記録を追加しました！");
     }
 
-    function openEditRecordModal(event, index) {
-      event.preventDefault(); event.stopPropagation();
-      const rec = historyList[index];
-      if (!rec) return;
-
-      document.getElementById('editRecordIndex').value = index;
-      document.getElementById('editRecordHeader').innerText = `${rec.year}年 ${rec.month} - ${rec.name} さん`;
-      document.getElementById('editFlags').value = rec.flags || '';
-      document.getElementById('editVisitNote').value = rec.visitNote || '';
-      document.getElementById('editReportUrl').value = rec.reportUrl || '';
-
-      document.getElementById('editRecordModal').style.display = 'flex';
-    }
-
-    function saveEditedRecord(e) {
-      e.preventDefault();
-      const index = parseInt(document.getElementById('editRecordIndex').value, 10);
-      const rec = historyList[index];
-      if (rec) {
-        rec.flags = document.getElementById('editFlags').value.trim();
-        rec.visitNote = document.getElementById('editVisitNote').value.trim();
-        rec.reportUrl = document.getElementById('editReportUrl').value.trim();
-        saveData();
-        render();
-        closeModal('editRecordModal');
-      }
-    }
-
-    function openLetterModal(event, name) {
-      event.preventDefault(); event.stopPropagation();
-      const info = castData[name];
-      if (!info || !info.letters) return;
-
-      const validLetters = info.letters.filter(item => (item.imageUrl && item.imageUrl.trim() !== "") || (item.text && item.text.trim() !== ""));
-      if (validLetters.length === 0) return;
-
-      document.getElementById('letterModalTitle').innerText = "💌 " + name + " さんの手紙";
-      const container = document.getElementById('letterModalContainer');
-      container.innerHTML = '';
-
-      validLetters.forEach(item => {
-        let imgHtml = (item.imageUrl && item.imageUrl.trim() !== "") ? '<img src="' + item.imageUrl + '" class="letter-img" alt="手紙画像">' : '';
-        let textHtml = (item.text && item.text.trim() !== "") ? '<div class="letter-text-box">' + item.text + '</div>' : '';
-        
-        container.innerHTML += 
-          '<div class="letter-card-item">' +
-            '<div class="letter-date">📅 ' + (item.date || '日付不明') + '</div>' +
-            imgHtml +
-            textHtml +
-          '</div>';
-      });
-
-      document.getElementById('letterModal').style.display = 'flex';
-    }
-
-    function closeModal(id) {
-      document.getElementById(id).style.display = 'none';
-    }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
     function runGacha() {
-      const activeList = Object.keys(castData).filter(name => castData[name].link && castData[name].link.trim() !== "");
-      if (activeList.length === 0) return alert("現在在籍中のキャストがいません！");
-
-      const modal = document.getElementById('gachaModal');
-      const box = document.getElementById('rouletteBox');
-      const nameElem = document.getElementById('gachaResultName');
-      const titleElem = document.getElementById('gachaTitle');
-      const subElem = document.getElementById('gachaSub');
-      const closeBtn = document.getElementById('gachaCloseBtn');
-
-      box.classList.remove('winner');
-      titleElem.innerText = "🎰 運命の指名抽選中...";
-      subElem.innerText = "在籍中のキャストから選出中！";
-      closeBtn.disabled = true;
-      closeBtn.innerText = "抽選中...";
-      modal.style.display = 'flex';
-
-      const winner = activeList[Math.floor(Math.random() * activeList.length)];
-      
-      let speed = 50;
-      let count = 0;
-      const maxCount = 25;
-
-      function shuffle() {
-        const tempName = activeList[Math.floor(Math.random() * activeList.length)];
-        nameElem.innerText = tempName;
-        count++;
-
-        if (count < maxCount) {
-          speed += count * 4;
-          setTimeout(shuffle, speed);
-        } else {
-          nameElem.innerText = winner;
-          box.classList.add('winner');
-          titleElem.innerText = "🎉 本日の指名確定！";
-          subElem.innerText = "運命のキャストが選ばれました！";
-          closeBtn.disabled = false;
-          closeBtn.innerText = "決定！";
-        }
-      }
-
-      shuffle();
-    }
-
-    function calcMonthsAgo(lastYearStr, lastMonthStr) {
-      const lastYear = parseInt(lastYearStr, 10);
-      const lastMonth = parseInt(lastMonthStr.replace('月',''), 10);
-      const now = new Date();
-      const diffMonths = (now.getFullYear() - lastYear) * 12 + ((now.getMonth() + 1) - lastMonth);
-      if (diffMonths <= 0) return "最近イッた記録あり。";
-      return diffMonths + "ヶ月前";
-    }
-
-    function updateStats(map) {
-      const list = Object.values(map);
-      document.getElementById('stTotalVisits').innerText = historyList.length;
-      document.getElementById('stTotalCasts').innerText = list.length;
-      const activeCount = list.filter(c => castData[c.name] && castData[c.name].link && castData[c.name].link.trim() !== "").length;
-      document.getElementById('stActiveCasts').innerText = activeCount;
-      const favCount = list.filter(c => c.favCount >= 1).length;
-      const favRate = list.length > 0 ? Math.round((favCount / list.length) * 100) : 0;
-      document.getElementById('stFavRate').innerText = favRate + "%";
+      const activeList = Object.keys(castData);
+      if (activeList.length === 0) return alert("キャストがいません！");
+      alert("今日の指名: " + activeList[Math.floor(Math.random() * activeList.length)]);
     }
 
     function render() {
@@ -2430,250 +2116,64 @@
       target.innerHTML = '';
 
       if (historyList.length === 0) {
-        target.innerHTML = '<div style="text-align:center; color:var(--light-text); padding:40px 10px; font-size:0.85rem;">記録がまだありません。<br>右下の「＋」ボタンから追加するか、<br>ヘッダーの「ユーザー」ボタンを押して「こすぎ」に変更してみてください。</div>';
-        updateStats({});
+        target.innerHTML = '<div style="text-align:center; color:var(--light-text); padding:40px;">記録がありません。ユーザー名を「こすぎ」にするか、「＋」から追加してください。</div>';
         return;
       }
 
-      if (currentView === 'cast') {
-        renderCastView(target, keyword);
-      } else {
-        renderTimelineView(target, keyword);
-      }
-    }
-
-    function renderCastView(target, keyword) {
       const map = {};
       historyList.forEach((item, idx) => {
-        if (!map[item.name]) {
-          map[item.name] = { name: item.name, visits: [], lastIdx: idx, favCount: 0, hasBad: false, lastVisit: item };
-        }
-        item.originalIndex = idx;
+        if (!map[item.name]) map[item.name] = { name: item.name, visits: [], favCount: 0 };
         map[item.name].visits.push(item);
-        map[item.name].lastIdx = idx;
-        map[item.name].lastVisit = item;
         if (item.flags && item.flags.includes('🆂')) map[item.name].favCount++;
-        if (item.flags && item.flags.includes('⚔')) map[item.name].hasBad = true;
       });
-
-      updateStats(map);
-
-      let list = Object.values(map);
-
-      if (currentFilter === 'active') list = list.filter(c => castData[c.name] && castData[c.name].link && castData[c.name].link.trim() !== "");
-      if (currentFilter === 'fav') list = list.filter(c => c.favCount >= 1);
-      if (currentFilter === 'super') list = list.filter(c => c.favCount >= 5);
-      if (currentFilter === 'bad') list = list.filter(c => c.hasBad);
-
-      if (keyword) {
-        list = list.filter(c => {
-          const info = castData[c.name] || {};
-          const oldName = (info.oldName || '').toLowerCase();
-          const style = (info.style || '').toLowerCase();
-          return c.name.toLowerCase().includes(keyword) ||
-                 oldName.includes(keyword) ||
-                 style.includes(keyword) ||
-                 c.visits.some(v => (v.year + v.month + v.flags + (v.visitNote || '')).toLowerCase().includes(keyword));
-        });
-      }
-
-      if (currentSort === 'count') {
-        list.sort((a,b) => b.visits.length - a.visits.length || b.lastIdx - a.lastIdx);
-      } else if (currentSort === 'recent') {
-        list.sort((a,b) => b.lastIdx - a.lastIdx);
-      } else if (currentSort === 'name') {
-        list.sort((a,b) => a.name.localeCompare(b.name, 'ja'));
-      }
 
       const grid = document.createElement('div');
       grid.className = 'grid';
 
-      list.forEach(c => {
+      Object.values(map).forEach(c => {
+        if (keyword && !c.name.toLowerCase().includes(keyword)) return;
+
         const details = document.createElement('details');
-        const isSuperFav = c.favCount >= 5;
-        const isFav = c.favCount >= 1;
+        details.className = 'cast-card';
 
-        let cardClass = 'cast-card';
-        if (isSuperFav) cardClass += ' super-favorite';
-        else if (isFav) cardClass += ' favorite';
-        details.className = cardClass;
+        // 🌟 友達がイッたことある判定（自分の履歴が0回の場合）
+        let friendBadge = "";
+        let myVisitsCount = c.visits.length;
+        if (myVisitsCount === 0) {
+          friendBadge = '<span class="friend-visited-badge">友だちがイッたことあります</span>';
+        }
 
-        const info = castData[c.name] || { link: "", notes: "", oldName: "", style: "", letters: [] };
-        const url = info.link;
-        const oldName = info.oldName || "";
-        const style = info.style || "";
-        const isActive = url && url.trim() !== "";
-        
-        const validLetters = (info.letters || []).filter(item => (item.imageUrl && item.imageUrl.trim() !== "") || (item.text && item.text.trim() !== ""));
-        const hasLetters = validLetters.length > 0;
-
-        const statusBadgeHtml = isActive 
-          ? '<span class="status-badge status-active">在籍中</span>' 
-          : '<span class="status-badge status-retired">卒業済み</span>';
-
-        const oldNameBadgeHtml = oldName 
-          ? '<span class="old-name-badge">旧: ' + oldName + '</span>' 
-          : '';
-
-        const badgeClass = "badge-count" + (c.hasBad ? " bad-count" : "");
-
-        const linkBtnHtml = isActive 
-          ? '<button class="link-btn" onclick="openLink(event, \'' + url + '\')">プロフ</button>' 
-          : '';
-
+        const info = castData[c.name] || {};
         const copyBtnHtml = '<button class="copy-btn" onclick="openExportCastModal(event, \'' + c.name + '\')">📤 友だちへ共有</button>';
 
-        const letterBtnHtml = hasLetters 
-          ? '<button class="letter-btn" onclick="openLetterModal(event, \'' + c.name + '\')">💌 手紙 (' + validLetters.length + ')</button>' 
-          : '';
-
-        const notesWithDate = c.visits
-          .filter(v => v.visitNote && v.visitNote.trim() !== '')
-          .reverse();
-
-        const latestNote = notesWithDate.length > 0 ? notesWithDate[0] : null;
-        const pastNotes = notesWithDate.length > 1 ? notesWithDate.slice(1) : [];
-
-        let notesContentHtml = '';
-        if (latestNote) {
-          notesContentHtml += `<div><strong>📌 最新メモ (${latestNote.year}年${latestNote.month}):</strong> ${latestNote.visitNote}</div>`;
-        } else {
-          notesContentHtml += `<div style="color:var(--light-text);">メモなし</div>`;
-        }
-
-        if (pastNotes.length > 0) {
-          let pastItemsHtml = '';
-          pastNotes.forEach(pn => {
-            pastItemsHtml += `<div class="past-note-item">📅 ${pn.year}年${pn.month}: ${pn.visitNote}</div>`;
-          });
-
-          notesContentHtml += `
-            <details class="past-notes-details">
-              <summary class="past-notes-summary">… 過去のメモを表示 (${pastNotes.length}件)</summary>
-              <div class="past-notes-list">${pastItemsHtml}</div>
-            </details>
-          `;
-        }
-
-        let rowsHtml = '';
-        c.visits.forEach(v => {
-          const reportTag = v.reportUrl ? '<span class="report-badge">レポートあり</span>' : '';
-          rowsHtml += `
-            <div class="history-row">
-              <span class="history-date">${v.year.slice(2)}年 ${v.month} ${reportTag}</span>
-              <div style="display:flex; align-items:center; gap:6px;">
-                <span class="history-flags">${v.flags || '通常'}</span>
-                <button class="edit-icon-btn" onclick="openEditRecordModal(event, ${v.originalIndex})" title="編集">
-                  <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                </button>
+        details.innerHTML = `
+          <summary class="card-btn">
+            <div class="cast-info">
+              <span class="arrow-icon">▼</span>
+              <span>${c.name}</span>
+              ${friendBadge}
+            </div>
+            <div style="display:flex; gap:6px; align-items:center;">
+              ${copyBtnHtml}
+              <span class="badge-count">${myVisitsCount}回</span>
+            </div>
+          </summary>
+          <div class="anim-wrapper">
+            <div class="anim-inner">
+              <div class="card-body">
+                ${renderStyleTags(info.style || '')}
+                <div class="notes-box">メモ: ${info.notes || 'なし'}</div>
               </div>
-            </div>`;
-        });
-
-        const superBadgeHtml = isSuperFav ? '<span class="super-tag">オキニ</span>' : '';
-        const notesHtml = '<div class="notes-box">' + notesContentHtml + '</div>';
-        const styleHtml = renderStyleTags(style);
-        const daysAgoText = calcMonthsAgo(c.lastVisit.year, c.lastVisit.month);
-
-        details.innerHTML = 
-          '<summary class="card-btn">' +
-            '<div class="cast-info">' +
-              '<span class="arrow-icon">▼</span> ' +
-              '<span>' + c.name + '</span> ' +
-              oldNameBadgeHtml + ' ' +
-              statusBadgeHtml + ' ' +
-              superBadgeHtml +
-            '</div>' +
-            '<span class="' + badgeClass + '">' + c.visits.length + '回</span>' +
-          '</summary>' +
-          '<div class="anim-wrapper">' +
-            '<div class="anim-inner">' +
-              '<div class="card-body">' +
-                styleHtml +
-                '<div class="card-middle-row">' +
-                  notesHtml +
-                  '<div class="btn-action-group">' +
-                    letterBtnHtml +
-                    copyBtnHtml +
-                    linkBtnHtml +
-                  '</div>' +
-                '</div>' +
-                '<div class="days-ago-tag">最終利用: ' + daysAgoText + '</div>' +
-                rowsHtml +
-              '</div>' +
-            '</div>' +
-          '</div>';
+            </div>
+          </div>
+        `;
         grid.appendChild(details);
       });
 
       target.appendChild(grid);
     }
 
-    function renderTimelineView(target, keyword) {
-      const groups = {};
-      historyList.forEach((item, idx) => {
-        item.originalIndex = idx;
-        const key = item.year + '年 ' + item.month;
-        if (!groups[key]) groups[key] = [];
-        groups[key].push(item);
-      });
-
-      const keys = Object.keys(groups).reverse();
-
-      keys.forEach(key => {
-        let items = groups[key];
-        if (keyword) {
-          items = items.filter(i => 
-            i.name.toLowerCase().includes(keyword) || 
-            (i.flags && i.flags.toLowerCase().includes(keyword)) ||
-            (i.visitNote && i.visitNote.toLowerCase().includes(keyword)) ||
-            key.toLowerCase().includes(keyword)
-          );
-        }
-
-        if (items.length > 0) {
-          const sec = document.createElement('div');
-          sec.className = 'month-section';
-          sec.innerHTML = '<div class="month-title">' + key + '</div>';
-
-          items.forEach(i => {
-            const details = document.createElement('details');
-            details.className = 'timeline-item';
-
-            const hasReport = i.reportUrl && i.reportUrl.trim() !== '';
-            const reportBadgeHtml = hasReport ? '<span class="report-badge">レポートあり</span>' : '';
-            const reportLinkHtml = hasReport ? `<a href="${i.reportUrl}" target="_blank" class="report-link-btn">📄 WEBレポートを読む</a>` : '';
-            const noteHtml = i.visitNote ? `<div>📝 <strong>メモ:</strong> ${i.visitNote}</div>` : '<div style="color:var(--light-text);">📝 メモなし</div>';
-
-            details.innerHTML = `
-              <summary class="timeline-summary">
-                <div style="display:flex; align-items:center; gap:8px;">
-                  <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
-                  <strong>${i.name}</strong>
-                  <span>${i.flags || '通常'}</span>
-                </div>
-                <div style="display:flex; align-items:center; gap:6px;">
-                  ${reportBadgeHtml}
-                  <button class="edit-icon-btn" onclick="openEditRecordModal(event, ${i.originalIndex})" title="編集">
-                    <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                  </button>
-                </div>
-              </summary>
-              <div class="timeline-body">
-                ${reportLinkHtml}
-                ${noteHtml}
-              </div>
-            `;
-            sec.appendChild(details);
-          });
-
-          target.appendChild(sec);
-        }
-      });
-    }
-
     initUserData();
-    render();
   </script>
 </body>
 </html>
