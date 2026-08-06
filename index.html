@@ -3,10 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title id="pageTitle">風俗履歴図鑑</title>
+  <title id="pageTitle">風俗履歴図鑑 [V17.0]</title>
   
   <style>
+    /* 🎨 CSS変数：テーマ10種類のカラー定義 */
     :root {
+      /* デフォルト: 🌸 ぴんく (Default Light) */
       --bg-color: #fdfbfb;
       --card-bg: #ffffff;
       --primary-pink: #ff85a2;
@@ -18,7 +20,200 @@
       --shadow: 0 4px 15px rgba(255, 133, 162, 0.1);
       --radius: 12px;
 
-      /* 金色（超オキニ）用カラー */
+      /* バッジ用変数 */
+      --badge-bg: var(--soft-pink);
+      --badge-color: var(--accent-pink);
+
+      /* 超オキニ（ゴールド） */
+      --gold-bg-start: #fff9e6;
+      --gold-bg-end: #fff0c2;
+      --gold-border: #f3c642;
+      --gold-text: #8a6200;
+    }
+
+    /* 🌙 ミッドナイト・ローズ */
+    [data-theme="midnight"] {
+      --bg-color: #121218;
+      --card-bg: #1a1a24;
+      --primary-pink: #ff6b8b;
+      --soft-pink: #2a1f2d;
+      --accent-pink: #ff4081;
+      --text-color: #e2e2e8;
+      --light-text: #9a9aab;
+      --border-color: #2e2e3d;
+      --shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+
+      --badge-bg: #3a2233;
+      --badge-color: #ff6b8b;
+
+      --gold-bg-start: #2e2612;
+      --gold-bg-end: #1f190a;
+      --gold-border: #d4af37;
+      --gold-text: #ffd700;
+    }
+
+    /* 🖤 ベルベット・ブラック */
+    [data-theme="velvet"] {
+      --bg-color: #0d0d0d;
+      --card-bg: #171717;
+      --primary-pink: #f72585;
+      --soft-pink: #26101b;
+      --accent-pink: #ff007f;
+      --text-color: #f0f0f0;
+      --light-text: #888888;
+      --border-color: #2a2a2a;
+      --shadow: 0 4px 15px rgba(0,0,0,0.7);
+
+      --badge-bg: #3a0d25;
+      --badge-color: #ff3399;
+
+      --gold-bg-start: #262000;
+      --gold-bg-end: #141100;
+      --gold-border: #ffd700;
+      --gold-text: #ffe566;
+    }
+
+    /* 🍇 スモーキー・ベリー */
+    [data-theme="berry"] {
+      --bg-color: #181116;
+      --card-bg: #231821;
+      --primary-pink: #d65a8a;
+      --soft-pink: #341f2f;
+      --accent-pink: #ff6097;
+      --text-color: #ebdce4;
+      --light-text: #a38c99;
+      --border-color: #3b2937;
+      --shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+
+      --badge-bg: #402035;
+      --badge-color: #ff80b3;
+
+      --gold-bg-start: #332615;
+      --gold-bg-end: #21180d;
+      --gold-border: #c9a050;
+      --gold-text: #f0c978;
+    }
+
+    /* 🌃 サイバー・ネオン */
+    [data-theme="cyber"] {
+      --bg-color: #080914;
+      --card-bg: #0f1123;
+      --primary-pink: #00f0ff;
+      --soft-pink: #181b3d;
+      --accent-pink: #ff0055;
+      --text-color: #e0f7fc;
+      --light-text: #698396;
+      --border-color: #1f2545;
+      --shadow: 0 4px 20px rgba(0, 240, 255, 0.15);
+
+      --badge-bg: #102a45;
+      --badge-color: #00f0ff;
+
+      --gold-bg-start: #1f1b00;
+      --gold-bg-end: #0f0d00;
+      --gold-border: #ffe600;
+      --gold-text: #ffff80;
+    }
+
+    /* ☕️ ダーク・モカ */
+    [data-theme="mocha"] {
+      --bg-color: #1c1816;
+      --card-bg: #26211e;
+      --primary-pink: #cf8a72;
+      --soft-pink: #382c28;
+      --accent-pink: #e5987d;
+      --text-color: #ede2dd;
+      --light-text: #9e8e87;
+      --border-color: #3d332e;
+      --shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+
+      --badge-bg: #423028;
+      --badge-color: #e8a992;
+
+      --gold-bg-start: #33291a;
+      --gold-bg-end: #211a10;
+      --gold-border: #d1a153;
+      --gold-text: #f2c779;
+    }
+
+    /* 💎 エメラルド・ラグジュアリー */
+    [data-theme="emerald"] {
+      --bg-color: #f7faf9;
+      --card-bg: #ffffff;
+      --primary-pink: #20c997;
+      --soft-pink: #e6fcf5;
+      --accent-pink: #0ca678;
+      --text-color: #2b3a35;
+      --light-text: #829a92;
+      --border-color: #d3f9ed;
+      --shadow: 0 4px 15px rgba(12, 166, 120, 0.08);
+
+      --badge-bg: var(--soft-pink);
+      --badge-color: var(--accent-pink);
+
+      --gold-bg-start: #fff9e6;
+      --gold-bg-end: #fff0c2;
+      --gold-border: #f3c642;
+      --gold-text: #8a6200;
+    }
+
+    /* 👑 シャンパン・ゴールド */
+    [data-theme="champagne"] {
+      --bg-color: #fdfbf7;
+      --card-bg: #ffffff;
+      --primary-pink: #d4af37;
+      --soft-pink: #fdf6e2;
+      --accent-pink: #b8860b;
+      --text-color: #3d3522;
+      --light-text: #998c6d;
+      --border-color: #f5e8c4;
+      --shadow: 0 4px 15px rgba(212, 175, 55, 0.12);
+
+      --badge-bg: var(--soft-pink);
+      --badge-color: var(--accent-pink);
+
+      --gold-bg-start: #fff5cc;
+      --gold-bg-end: #ffe680;
+      --gold-border: #d4af37;
+      --gold-text: #665200;
+    }
+
+    /* 💜 ヴァイオレット・アイリス */
+    [data-theme="violet"] {
+      --bg-color: #faf8ff;
+      --card-bg: #ffffff;
+      --primary-pink: #b197fc;
+      --soft-pink: #f3f0ff;
+      --accent-pink: #845ef7;
+      --text-color: #3b354d;
+      --light-text: #8c829e;
+      --border-color: #e5dbff;
+      --shadow: 0 4px 15px rgba(132, 94, 247, 0.1);
+
+      --badge-bg: var(--soft-pink);
+      --badge-color: var(--accent-pink);
+
+      --gold-bg-start: #fff9e6;
+      --gold-bg-end: #fff0c2;
+      --gold-border: #f3c642;
+      --gold-text: #8a6200;
+    }
+
+    /* 🍑 ピーチ・アプリコット */
+    [data-theme="peach"] {
+      --bg-color: #fffaf8;
+      --card-bg: #ffffff;
+      --primary-pink: #ff922b;
+      --soft-pink: #fff4e6;
+      --accent-pink: #f76707;
+      --text-color: #42362b;
+      --light-text: #9c8978;
+      --border-color: #ffe8cc;
+      --shadow: 0 4px 15px rgba(247, 103, 7, 0.08);
+
+      --badge-bg: var(--soft-pink);
+      --badge-color: var(--accent-pink);
+
       --gold-bg-start: #fff9e6;
       --gold-bg-end: #fff0c2;
       --gold-border: #f3c642;
@@ -39,6 +234,7 @@
       padding: 16px 12px 80px;
       max-width: 800px;
       margin: 0 auto;
+      transition: background-color 0.3s, color 0.3s;
     }
 
     header {
@@ -50,38 +246,45 @@
     }
 
     header h1 {
-      font-size: 1.4rem;
+      font-size: 1.5rem;
+      font-weight: bold;
       color: var(--accent-pink);
+      margin-bottom: 2px;
     }
 
-    header p {
+    .header-sub {
       font-size: 0.8rem;
       color: var(--light-text);
+      margin-bottom: 8px;
     }
 
-    .header-btns {
+    /* 🎀 丸カプセル型ボタンエリア */
+    .header-btn-row {
       display: flex;
+      align-items: center;
       justify-content: center;
-      gap: 8px;
-      margin-top: 6px;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
-    .user-tag-btn, .help-btn {
-      background: var(--soft-pink);
-      color: var(--accent-pink);
-      border: 1px solid var(--primary-pink);
-      padding: 4px 12px;
-      border-radius: 15px;
-      font-size: 0.75rem;
-      font-weight: bold;
-      cursor: pointer;
+    .pill-btn {
       display: inline-flex;
       align-items: center;
       gap: 4px;
+      background: var(--soft-pink);
+      color: var(--accent-pink);
+      border: 1.5px solid var(--primary-pink);
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.1s;
+      outline: none;
     }
 
-    .help-btn {
-      background: #fff;
+    .pill-btn:active {
+      transform: scale(0.95);
     }
 
     /* メインナビゲーションタブ */
@@ -110,7 +313,7 @@
 
     /* アナリティクスパネル */
     .dashboard {
-      background: #fff;
+      background: var(--card-bg);
       border: 1px solid var(--border-color);
       border-radius: var(--radius);
       padding: 12px;
@@ -173,10 +376,11 @@
       font-size: 0.85rem;
       outline: none;
       background: var(--bg-color);
+      color: var(--text-color);
     }
 
     .btn-gacha {
-      background: linear-gradient(135deg, #ff85a2, #f72585);
+      background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink));
       color: #fff;
       border: none;
       padding: 0 14px;
@@ -185,7 +389,7 @@
       font-size: 0.85rem;
       cursor: pointer;
       white-space: nowrap;
-      box-shadow: 0 2px 8px rgba(247, 37, 133, 0.3);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
       transition: transform 0.1s;
     }
 
@@ -295,6 +499,10 @@
       box-shadow: 0 4px 15px rgba(230, 161, 0, 0.25);
     }
 
+    details.cast-card.super-favorite summary.card-btn {
+      color: var(--gold-text);
+    }
+
     details.cast-card .anim-wrapper {
       display: grid;
       grid-template-rows: 0fr;
@@ -323,7 +531,7 @@
     }
 
     summary.card-btn:active {
-      background-color: rgba(0, 0, 0, 0.03);
+      background-color: rgba(255, 255, 255, 0.05);
     }
 
     summary.card-btn::-webkit-details-marker {
@@ -332,7 +540,7 @@
 
     .arrow-icon {
       font-size: 0.75rem;
-      color: #8d8d8d;
+      color: var(--light-text);
       display: inline-block;
       transition: transform 0.3s ease;
     }
@@ -363,18 +571,18 @@
     }
 
     .status-retired {
-      background: #f1f3f5;
-      color: #868e96;
-      border: 1px solid #ced4da;
+      background: rgba(150, 150, 150, 0.15);
+      color: var(--light-text);
+      border: 1px solid var(--border-color);
     }
 
     .old-name-badge {
       font-size: 0.65rem;
-      background: #f1f3f5;
-      color: #6c757d;
+      background: rgba(150, 150, 150, 0.15);
+      color: var(--light-text);
       padding: 1px 6px;
       border-radius: 6px;
-      border: 1px solid #dee2e6;
+      border: 1px solid var(--border-color);
       font-weight: normal;
     }
 
@@ -387,31 +595,33 @@
       font-weight: bold;
     }
 
+    /* 回数バッジ */
     .badge-count {
-      background: var(--soft-pink);
-      color: var(--accent-pink);
+      background: var(--badge-bg);
+      color: var(--badge-color);
       font-weight: bold;
       padding: 2px 8px;
       border-radius: 10px;
       font-size: 0.75rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     .super-favorite .badge-count {
-      background: #fff0a6;
+      background: rgba(255, 255, 255, 0.8);
       color: var(--gold-text);
       border: 1px solid var(--gold-border);
     }
 
     .badge-count.bad-count {
-      background: #e9ecef !important;
-      color: #6c757d !important;
-      border: 1px solid #ced4da !important;
+      background: rgba(150, 150, 150, 0.2) !important;
+      color: var(--light-text) !important;
+      border: 1px solid var(--border-color) !important;
     }
 
     .card-body {
       padding: 10px 14px 12px;
       border-top: 1px dashed var(--border-color);
-      background-color: rgba(255, 255, 255, 0.6);
+      background-color: var(--card-bg);
       display: flex;
       flex-direction: column;
       gap: 8px;
@@ -448,11 +658,11 @@
 
     .style-none {
       font-size: 0.68rem;
-      color: #a0a0a0;
-      background: #f1f3f5;
+      color: var(--light-text);
+      background: var(--bg-color);
       padding: 2px 8px;
       border-radius: 6px;
-      border: 1px solid #e9ecef;
+      border: 1px solid var(--border-color);
     }
 
     .p-blue .style-pill-label { background-color: #339af0; }
@@ -479,11 +689,11 @@
 
     .notes-box {
       font-size: 0.75rem;
-      color: #666;
-      background: #fdf8f9;
+      color: var(--text-color);
+      background: var(--bg-color);
       padding: 6px 10px;
       border-radius: 8px;
-      border: 1px solid #f2e3e6;
+      border: 1px solid var(--border-color);
       flex: 1;
     }
 
@@ -498,7 +708,7 @@
       border-radius: 10px;
       cursor: pointer;
       border: 1px solid var(--primary-pink);
-      background: #fff;
+      background: var(--card-bg);
       color: var(--accent-pink);
       white-space: nowrap;
       transition: transform 0.1s;
@@ -524,14 +734,13 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: #ffffff;
+      background: var(--card-bg);
       border: 1px solid var(--border-color);
       padding: 5px 8px;
       border-radius: 6px;
       font-size: 0.8rem;
     }
 
-    /* 🏷️ WEBレポートありバッジ（世界観に合わせたデザイン） */
     .report-badge {
       font-size: 0.65rem;
       color: var(--accent-pink);
@@ -545,7 +754,6 @@
       gap: 3px;
     }
 
-    /* ✏️ 薄灰色のペンアイコンボタン */
     .edit-icon-btn {
       background: none;
       border: none;
@@ -554,13 +762,12 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      color: #b0b0b0;
+      color: var(--light-text);
       transition: color 0.2s;
     }
-    .edit-icon-btn:hover, .edit-icon-btn:active { color: #666666; }
+    .edit-icon-btn:hover, .edit-icon-btn:active { color: var(--accent-pink); }
     .edit-icon-btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
-    /* 📅 月別タイムラインアコーディオン */
     .month-section { margin-bottom: 16px; }
     .month-title {
       font-size: 0.95rem;
@@ -590,7 +797,7 @@
     .timeline-body {
       padding: 8px 12px 10px;
       border-top: 1px dashed var(--border-color);
-      background: #fdfbfb;
+      background: var(--bg-color);
       font-size: 0.78rem;
       display: flex;
       flex-direction: column;
@@ -603,7 +810,7 @@
       gap: 4px;
       font-size: 0.72rem;
       color: var(--accent-pink);
-      background: #fff;
+      background: var(--card-bg);
       border: 1px solid var(--primary-pink);
       padding: 3px 10px;
       border-radius: 12px;
@@ -612,10 +819,7 @@
       width: fit-content;
     }
 
-    /* 過去メモ折りたたみリスト */
-    details.past-notes-details {
-      margin-top: 4px;
-    }
+    details.past-notes-details { margin-top: 4px; }
     summary.past-notes-summary {
       font-size: 0.72rem;
       color: var(--accent-pink);
@@ -631,9 +835,88 @@
       padding-left: 6px;
       border-left: 2px solid var(--soft-pink);
     }
-    .past-note-item {
-      font-size: 0.72rem;
-      color: #555;
+    .past-note-item { font-size: 0.72rem; color: var(--light-text); }
+
+    /* 👥 共有された履歴タブ内のデザイン */
+    .shared-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      background: var(--card-bg);
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow);
+    }
+
+    .shared-card {
+      background: var(--card-bg);
+      border: 1px solid var(--soft-pink);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 10px;
+      box-shadow: var(--shadow);
+    }
+    .shared-header {
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: var(--accent-pink);
+      margin-bottom: 6px;
+      padding-bottom: 4px;
+      border-bottom: 1px dashed var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .empty-shared-box {
+      background: var(--card-bg);
+      border: 2px dashed var(--primary-pink);
+      border-radius: var(--radius);
+      padding: 30px 16px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      margin-top: 20px;
+    }
+    .empty-shared-box h3 {
+      color: var(--accent-pink);
+      margin-bottom: 8px;
+      font-size: 1.1rem;
+    }
+    .empty-shared-box p {
+      font-size: 0.8rem;
+      color: var(--light-text);
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .dropzone-box {
+      background: var(--bg-color);
+      border: 2px dashed var(--primary-pink);
+      border-radius: 14px;
+      padding: 24px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin: 10px 0;
+    }
+    .dropzone-box:hover {
+      background: var(--soft-pink);
+    }
+    .dropzone-icon {
+      font-size: 2rem;
+      margin-bottom: 6px;
+    }
+    .dropzone-text {
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: var(--accent-pink);
+      margin-bottom: 4px;
+    }
+    .dropzone-sub {
+      font-size: 0.7rem;
+      color: var(--light-text);
     }
 
     /* モーダル共通 */
@@ -641,7 +924,7 @@
       display: none;
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5);
+      background: rgba(0,0,0,0.6);
       backdrop-filter: blur(4px);
       justify-content: center;
       align-items: center;
@@ -649,13 +932,14 @@
     }
 
     .modal-content {
-      background: #fff;
+      background: var(--card-bg);
+      color: var(--text-color);
       padding: 20px 16px;
       border-radius: 20px;
       text-align: center;
-      max-width: 380px;
+      max-width: 400px;
       width: 92%;
-      box-shadow: 0 10px 30px rgba(247, 37, 133, 0.3);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
       border: 2px solid var(--soft-pink);
       position: relative;
       max-height: 85vh;
@@ -670,52 +954,69 @@
 
     .modal-content h3 {
       color: var(--accent-pink);
+      margin-bottom: 12px;
+      font-size: 1.15rem;
+    }
+
+    /* ⚙️ 設定モーダル内アコーディオンカード */
+    details.settings-acc-card {
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
       margin-bottom: 8px;
-      font-size: 1.1rem;
-    }
-
-    .help-section {
       text-align: left;
-      font-size: 0.8rem;
-      color: #4a4a4a;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin: 10px 0;
+      overflow: hidden;
     }
 
-    .help-box {
-      background: #fffdfd;
-      border: 1px solid var(--soft-pink);
-      padding: 10px;
-      border-radius: 10px;
-    }
-
-    .help-box h4 {
+    summary.settings-acc-summary {
+      padding: 10px 12px;
       font-size: 0.85rem;
+      font-weight: bold;
       color: var(--accent-pink);
-      margin-bottom: 4px;
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    summary.settings-acc-summary::-webkit-details-marker { display: none; }
+
+    .settings-acc-body {
+      padding: 10px 12px 12px;
+      border-top: 1px dashed var(--border-color);
+      font-size: 0.8rem;
+    }
+
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .theme-item-btn {
+      padding: 8px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-color);
+      font-size: 0.75rem;
+      font-weight: bold;
+      cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
+      transition: all 0.2s;
     }
 
-    .backup-section {
-      margin-top: 15px;
-      padding-top: 12px;
-      border-top: 1px dashed var(--border-color);
-      text-align: left;
-    }
-
-    .backup-section h4 {
-      font-size: 0.8rem;
-      color: var(--accent-pink);
-      margin-bottom: 6px;
+    .theme-item-btn.active {
+      border-color: var(--accent-pink);
+      box-shadow: 0 0 8px rgba(247, 37, 133, 0.4);
+      background: var(--soft-pink);
     }
 
     .letter-card-item {
-      background: #fffdfa;
-      border: 1px solid #f3e5d8;
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
       border-radius: 12px;
       padding: 10px;
       margin-top: 10px;
@@ -724,7 +1025,7 @@
 
     .letter-date {
       font-size: 0.75rem;
-      color: #888;
+      color: var(--light-text);
       font-weight: bold;
       margin-bottom: 6px;
     }
@@ -732,24 +1033,24 @@
     .letter-img {
       width: 100%;
       border-radius: 8px;
-      border: 1px solid #eee;
+      border: 1px solid var(--border-color);
       margin-bottom: 6px;
       display: block;
     }
 
     .letter-text-box {
       font-size: 0.8rem;
-      color: #4a4a4a;
-      background: #fff;
+      color: var(--text-color);
+      background: var(--card-bg);
       padding: 8px;
       border-radius: 6px;
-      border: 1px dashed #f0d0db;
+      border: 1px dashed var(--primary-pink);
       line-height: 1.4;
       white-space: pre-wrap;
     }
 
     .roulette-container {
-      background: #fff0f5;
+      background: var(--soft-pink);
       border: 2px dashed var(--primary-pink);
       border-radius: 14px;
       padding: 16px 8px;
@@ -762,7 +1063,7 @@
     }
 
     .roulette-container.winner {
-      background: linear-gradient(135deg, #fff9e6, #fff0c2);
+      background: linear-gradient(135deg, var(--gold-bg-start), var(--gold-bg-end));
       border: 2px solid var(--gold-border);
       box-shadow: 0 0 15px rgba(243, 198, 66, 0.6);
       transform: scale(1.03);
@@ -780,7 +1081,7 @@
     }
 
     .close-btn {
-      background: linear-gradient(135deg, #ff85a2, #f72585);
+      background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink));
       color: white;
       border: none;
       padding: 8px 22px;
@@ -789,13 +1090,10 @@
       font-size: 0.9rem;
       cursor: pointer;
       margin-top: 10px;
-      box-shadow: 0 3px 10px rgba(247, 37, 133, 0.3);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
     }
 
-    .close-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+    .close-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
     .fab-add {
       position: fixed;
@@ -804,7 +1102,7 @@
       width: 56px;
       height: 56px;
       border-radius: 28px;
-      background: linear-gradient(135deg, #ff85a2, #f72585);
+      background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink));
       color: white;
       border: none;
       font-size: 1.6rem;
@@ -812,7 +1110,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 15px rgba(247, 37, 133, 0.4);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
       cursor: pointer;
       z-index: 900;
     }
@@ -822,7 +1120,6 @@
       flex-direction: column;
       gap: 10px;
       text-align: left;
-      margin-top: 10px;
     }
 
     .form-group {
@@ -844,6 +1141,7 @@
       font-size: 0.85rem;
       outline: none;
       background: var(--bg-color);
+      color: var(--text-color);
       width: 100%;
     }
 
@@ -873,48 +1171,94 @@
       font-size: 0.72rem;
       padding: 4px 8px;
       border-radius: 12px;
-      border: 1px solid var(--border-color);
-      background: #fff;
+      border: 1.5px solid var(--border-color);
+      background: var(--card-bg);
       color: var(--text-color);
       cursor: pointer;
     }
 
     .flag-btn-clear {
-      background: #f1f3f5;
-      color: #868e96;
-      border-color: #dee2e6;
+      background: rgba(150, 150, 150, 0.2);
+      color: var(--light-text);
+      border-color: var(--border-color);
     }
 
-    /* 👥 共有された履歴専用スタイル */
-    .shared-card {
-      background: #ffffff;
-      border: 1px solid var(--soft-pink);
-      border-radius: 12px;
-      padding: 12px;
-      margin-bottom: 10px;
-      box-shadow: var(--shadow);
+    .help-box {
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px;
+      text-align: left;
+      font-size: 0.8rem;
     }
-    .shared-header {
-      font-size: 0.85rem;
-      font-weight: bold;
+    .help-box h4 {
       color: var(--accent-pink);
-      margin-bottom: 6px;
-      padding-bottom: 4px;
-      border-bottom: 1px dashed var(--border-color);
+      margin-bottom: 4px;
+    }
+
+    .step-box {
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px 12px;
+      text-align: left;
+      font-size: 0.78rem;
+      margin-bottom: 8px;
+    }
+    .step-box strong {
+      color: var(--accent-pink);
+    }
+    .file-name-highlight {
+      display: inline-block;
+      background: var(--soft-pink);
+      color: var(--accent-pink);
+      font-family: monospace;
+      font-weight: bold;
+      padding: 2px 8px;
+      border-radius: 6px;
+      border: 1px dashed var(--primary-pink);
+      word-break: break-all;
+      margin: 4px 0;
+    }
+
+    /* アップデート内容リスト */
+    .update-list {
+      text-align: left;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
+      gap: 8px;
+      margin: 12px 0;
+    }
+    .update-item {
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 0.78rem;
+    }
+    .update-item strong {
+      color: var(--accent-pink);
+      display: block;
+      margin-bottom: 2px;
     }
   </style>
 </head>
 <body>
 
   <header>
-    <h1 id="headerTitle">風俗履歴図鑑</h1>
-    <p>マイ キャスト＆プレイレコード</p>
-    <div class="header-btns">
-      <button class="user-tag-btn" onclick="openUserModal()">👤 ユーザー: <span id="currentUserNameDisplay">童貞</span></button>
-      <button class="help-btn" onclick="openHelpModal()">❓ 使い方</button>
+    <!-- タイトル -->
+    <h1 id="headerTitle">こすぎの風俗履歴図鑑</h1>
+    <div class="header-sub">マイ キャスト ＆ プレイレコード</div>
+    
+    <!-- 🎀 丸カプセルボタンエリア -->
+    <div class="header-btn-row">
+      <button class="pill-btn" onclick="openSettingsModal()" title="ユーザー設定・テーマ変更">
+        <span>👤 ユーザー: <span id="currentUserNameDisplay">こすぎ</span></span>
+      </button>
+
+      <button class="pill-btn" onclick="openHelpModal()" title="使い方・ヘルプ">
+        <span>❓ 使い方</span>
+      </button>
     </div>
   </header>
 
@@ -935,7 +1279,7 @@
         <div class="dash-item"><div class="dash-val" id="stFavRate">0%</div><div class="dash-lbl">オキニ率</div></div>
       </div>
       <div style="text-align:right; margin-top:8px;">
-        <button onclick="resetData()" style="font-size:0.65rem; color:#aaa; background:none; border:none; text-decoration:underline; cursor:pointer;">⚠️ 記録を初期化して「童貞」に戻す</button>
+        <button onclick="resetData()" style="font-size:0.65rem; color:var(--light-text); background:none; border:none; text-decoration:underline; cursor:pointer;">⚠️ 記録を初期化して「童貞」に戻す</button>
       </div>
     </details>
 
@@ -997,11 +1341,176 @@
 
   <!-- 👥 共有された履歴エリア -->
   <div id="sharedTabArea" style="display:none;">
+    <div class="shared-top-bar">
+      <span style="font-size:0.85rem; font-weight:bold; color:var(--accent-pink);">📥 友達からの共有データ</span>
+      <button class="pill-btn" onclick="openImportModal()">📂 友達の履歴を読み込む</button>
+    </div>
     <div id="sharedContent"></div>
   </div>
 
   <!-- ➕ フローティング追加ボタン -->
   <button class="fab-add" onclick="openAddModal()" title="新しい利用記録を追加">＋</button>
+
+  <!-- 🎉 初回アップデートお知らせモーダル (V17.0の新機能紹介) -->
+  <div class="modal-overlay" id="whatsNewModal">
+    <div class="modal-content">
+      <h3>🎉 風俗履歴図鑑 V17.0へようこそ！</h3>
+      <p style="font-size:0.75rem; color:var(--light-text); margin-bottom:8px;">
+        今回のアップデートでの主な新機能・仕様変更をご紹介します！
+      </p>
+
+      <div class="update-list">
+        <div class="update-item">
+          <strong>🎨 10種類のカラーテーマ着せ替え</strong>
+          ピンクだけでなく、ミッドナイトやゴールド、サイバーなど気分に合わせて見た目を変更できるようになりました！（アプリ設定から変更可能）
+        </div>
+        <div class="update-item">
+          <strong>⚙️ 設定・管理メニューの統合</strong>
+          ユーザー名変更、テーマ着せ替え、バックアップが1つの「アプリ設定」モーダルにすっきり整理されました。
+        </div>
+        <div class="update-item">
+          <strong>👥 共有された履歴の管理強化</strong>
+          友達から受け取った単体データのインポートがさらに簡単になり、リストからの削除やマイ図鑑への一括コピーに対応しました！
+        </div>
+        <div class="update-item">
+          <strong>📤 友だちへの共有手順改善</strong>
+          自分の記録を友達にシェアする際、ファイル名や手順をしっかり確認してからダウンロードできるようになりました。
+        </div>
+      </div>
+
+      <button class="close-btn" onclick="closeWhatsNewModal()" style="width:100%; margin-top:4px;">了解してはじめる</button>
+    </div>
+  </div>
+
+  <!-- 📤 友だちへ共有モーダル（説明 ＋ ダウンロードボタン） -->
+  <div class="modal-overlay" id="exportCastModal">
+    <div class="modal-content">
+      <h3>📤 友だちへ共有</h3>
+      <p style="font-size:0.8rem; color:var(--light-text); margin-bottom:10px;">
+        「<strong id="exportModalCastName" style="color:var(--accent-pink);">---</strong>」さんのデータを友達に送信します。
+      </p>
+
+      <div class="step-box">
+        <strong>STEP 1:</strong> 以下のボタンを押して共有ファイルをダウンロードします。<br>
+        <div style="text-align:center; margin-top:4px;">
+          <span class="file-name-highlight" id="exportModalFileName">キャスト共有_...json</span>
+        </div>
+      </div>
+
+      <div class="step-box">
+        <strong>STEP 2:</strong> ダウンロードした `.json` ファイルを LINE や Discord 等で友達にそのまま送信してください。
+      </div>
+
+      <div class="step-box">
+        <strong>STEP 3:</strong> 友達側は「👥 共有された履歴」タブからファイルを読み込むことで、図鑑に保存・登録できます！
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:6px; margin-top:12px;">
+        <button class="close-btn" onclick="executeCastDownload()" style="width:100%; margin-top:0;">💾 ファイルをダウンロード</button>
+        <button class="close-btn" onclick="closeModal('exportCastModal')" style="background:#888; width:100%; margin-top:0;">キャンセル</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⚙️ アプリ設定統合モーダル -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal-content">
+      <h3>⚙️ アプリ設定</h3>
+
+      <!-- 👤 1. ユーザー名設定 -->
+      <details class="settings-acc-card" open>
+        <summary class="settings-acc-summary">
+          <span>👤 ユーザー名の変更</span>
+          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+        </summary>
+        <div class="settings-acc-body">
+          <form class="add-form" onsubmit="saveUserName(event)">
+            <div class="form-group">
+              <input type="text" id="inputUserName" placeholder="お名前を入力..." required>
+            </div>
+            <button type="submit" class="close-btn" style="margin-top:4px; padding:6px; font-size:0.8rem; width:100%;">保存する</button>
+          </form>
+        </div>
+      </details>
+
+      <!-- 🎨 2. テーマ着せ替え -->
+      <details class="settings-acc-card" open>
+        <summary class="settings-acc-summary">
+          <span>🎨 カラーテーマの着せ替え</span>
+          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+        </summary>
+        <div class="settings-acc-body">
+          <div class="theme-grid">
+            <button class="theme-item-btn" id="btnThemeDefault" onclick="setTheme('default')">🌸 ぴんく</button>
+            <button class="theme-item-btn" id="btnThemeMidnight" onclick="setTheme('midnight')">🌙 ミッドナイト</button>
+            <button class="theme-item-btn" id="btnThemeVelvet" onclick="setTheme('velvet')">🖤 ベルベット</button>
+            <button class="theme-item-btn" id="btnThemeBerry" onclick="setTheme('berry')">🍇 ベリー</button>
+            <button class="theme-item-btn" id="btnThemeCyber" onclick="setTheme('cyber')">🌃 サイバー</button>
+            <button class="theme-item-btn" id="btnThemeMocha" onclick="setTheme('mocha')">☕️ モカ</button>
+            <button class="theme-item-btn" id="btnThemeEmerald" onclick="setTheme('emerald')">💎 エメラルド</button>
+            <button class="theme-item-btn" id="btnThemeChampagne" onclick="setTheme('champagne')">👑 ゴールド</button>
+            <button class="theme-item-btn" id="btnThemeViolet" onclick="setTheme('violet')">💜 ヴァイオレット</button>
+            <button class="theme-item-btn" id="btnThemePeach" onclick="setTheme('peach')">🍑 ピーチ</button>
+          </div>
+        </div>
+      </details>
+
+      <!-- 📂 3. バックアップ & データ管理 -->
+      <details class="settings-acc-card">
+        <summary class="settings-acc-summary">
+          <span>📂 バックアップ & データ管理</span>
+          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+        </summary>
+        <div class="settings-acc-body">
+          <p style="font-size:0.7rem; color:var(--light-text); margin-bottom:6px;">全データをファイルとして保存・復元できます。</p>
+          <button class="close-btn" style="width:100%; margin-top:0; font-size:0.75rem; padding:6px; background:linear-gradient(135deg, #4dabf7, #339af0);" onclick="exportJSONFile()">💾 JSONダウンロード</button>
+          <button class="close-btn" style="width:100%; margin-top:6px; font-size:0.75rem; padding:6px; background:#20c997;" onclick="triggerJSONFileInput()">📂 JSONファイルを選択して復元</button>
+          <input type="file" id="jsonFileInput" accept=".json,application/json,text/plain" style="display:none;" onchange="importJSONFile(event)">
+        </div>
+      </details>
+
+      <button class="close-btn" onclick="closeModal('settingsModal')" style="width:100%; margin-top:10px;">閉じる</button>
+    </div>
+  </div>
+
+  <!-- 📥 友達の履歴ファイルを読み込むモーダル -->
+  <div class="modal-overlay" id="importModal">
+    <div class="modal-content">
+      <h3>📂 友達の履歴を読み込む</h3>
+      <p style="font-size:0.75rem; color:var(--light-text); margin-bottom:10px;">友達から受け取った共有ファイル（.json）を選択してください。</p>
+      
+      <div class="dropzone-box" onclick="triggerSharedFileInput()">
+        <div class="dropzone-icon">📄</div>
+        <div class="dropzone-text">タップしてファイルを選択</div>
+        <div class="dropzone-sub">またはここに .json ファイルをドラッグ＆ドロップ</div>
+      </div>
+      <input type="file" id="sharedFileInput" accept=".json,application/json,text/plain" style="display:none;" onchange="importJSONFile(event)">
+
+      <button class="close-btn" onclick="closeModal('importModal')" style="background:#888; width:100%; margin-top:10px;">キャンセル</button>
+    </div>
+  </div>
+
+  <!-- ❓ 使い方ヘルプモーダル -->
+  <div class="modal-overlay" id="helpModal">
+    <div class="modal-content">
+      <h3>❓ ご利用ガイド</h3>
+      <div class="help-section" style="display:flex; flex-direction:column; gap:8px;">
+        <div class="help-box">
+          <h4>👤 自分専用の図鑑にする</h4>
+          <p>ヘッダーの「👤 ユーザー: 〇〇」ボタンから、お好きなユーザー名に変更できます。（例: 「こすぎ」にすると76件のサンプルデータも読み込めます！）</p>
+        </div>
+        <div class="help-box">
+          <h4>🎨 気分でテーマを着せ替える</h4>
+          <p>ユーザー設定からミッドナイトやサイバー、ゴールドなど10種類のカラーテーマを選択可能です。</p>
+        </div>
+        <div class="help-box">
+          <h4>📂 データの保存と友達への共有</h4>
+          <p>「友だちへ共有」でキャスト単体のデータを友達に送信したり、「共有された履歴」タブから受け取ったJSONを読み込んで図鑑に取り込めます。</p>
+        </div>
+      </div>
+      <button class="close-btn" onclick="closeModal('helpModal')">了解して閉じる</button>
+    </div>
+  </div>
 
   <!-- ✏️ 利用記録の個別修正モーダル -->
   <div class="modal-overlay" id="editRecordModal">
@@ -1011,7 +1520,7 @@
         <input type="hidden" id="editRecordIndex">
         <div class="form-group">
           <label>キャスト名 / 日付</label>
-          <div id="editRecordHeader" style="font-size:0.85rem; font-weight:bold; color:#555;"></div>
+          <div id="editRecordHeader" style="font-size:0.85rem; font-weight:bold; color:var(--text-color);"></div>
         </div>
 
         <div class="form-group">
@@ -1031,64 +1540,9 @@
 
         <div style="display:flex; gap:8px; margin-top:10px;">
           <button type="submit" class="close-btn" style="flex:1;">更新して保存</button>
-          <button type="button" class="close-btn" onclick="closeModal('editRecordModal')" style="background:#ccc; flex:1;">キャンセル</button>
+          <button type="button" class="close-btn" onclick="closeModal('editRecordModal')" style="background:#888; flex:1;">キャンセル</button>
         </div>
       </form>
-    </div>
-  </div>
-
-  <!-- 📖 使い方ダイアログ -->
-  <div class="modal-overlay" id="helpModal">
-    <div class="modal-content">
-      <h3>📖 風俗履歴図鑑のご利用ガイド</h3>
-      <div class="help-section">
-        <div class="help-box">
-          <h4>👤 1. あなただけのアプリとして使う</h4>
-          <p>ヘッダーの「👤 ユーザー」ボタンからお名前を設定してください。タイトルが切り替わります。</p>
-        </div>
-        <div class="help-box">
-          <h4>📂 2. ファイル保存＆復元・共有</h4>
-          <p>バックアップ機能はJSONファイルでダウンロード保存されます。友達に送信して共有することもできます。</p>
-        </div>
-        <div class="help-box">
-          <h4>💡 3. こすぎ さんのデータを参照する</h4>
-          <p>ユーザー名を 「こすぎ」（または `じゅん` / `ジュン`）に変更すると、主さんの全利用記録と手紙画像が見れます！</p>
-        </div>
-      </div>
-      <button class="close-btn" onclick="closeModal('helpModal')">はい</button>
-    </div>
-  </div>
-
-  <!-- 👤 ユーザー設定 & バックアップモーダル -->
-  <div class="modal-overlay" id="userModal">
-    <div class="modal-content">
-      <h3>👤 ユーザー切り替え・名前変更</h3>
-      <p style="font-size:0.75rem; color:#666; margin-bottom:10px;">名前を入力するとタイトルが切り替わります。</p>
-      <form class="add-form" onsubmit="saveUserName(event)">
-        <div class="form-group">
-          <label>お名前（例: こすぎ、たろう）</label>
-          <input type="text" id="inputUserName" placeholder="名前を入力..." required>
-        </div>
-        <div style="display:flex; gap:8px;">
-          <button type="submit" class="close-btn" style="flex:1;">保存する</button>
-          <button type="button" class="close-btn" onclick="closeModal('userModal')" style="background:#ccc; flex:1;">キャンセル</button>
-        </div>
-      </form>
-
-      <!-- 📁 JSONファイル保存・読み込みエリア -->
-      <div class="backup-section">
-        <h4>📁 バックアップの保存（JSONファイル）</h4>
-        <p style="font-size:0.7rem; color:#666; margin-bottom:6px;">全データをファイルとしてダウンロード保存します。</p>
-        <button class="close-btn" style="width:100%; margin-top:0; background:linear-gradient(135deg, #4dabf7, #339af0);" onclick="exportJSONFile()">💾 JSONファイルをダウンロード</button>
-
-        <h4 style="margin-top:12px;">📥 ファイルの復元・友達のデータ読み込み</h4>
-        <p style="font-size:0.7rem; color:#666; margin-bottom:4px;">バックアップファイル（.json）を選択して読み込みます。</p>
-        
-        <button class="close-btn" style="width:100%; margin-top:0; background:#20c997;" onclick="triggerJSONFileInput()">📂 JSONファイルを選択</button>
-        <!-- 📱 Android互換性向上のための広範なaccept指定 -->
-        <input type="file" id="jsonFileInput" accept=".json,application/json,text/plain" style="display:none;" onchange="importJSONFile(event)">
-      </div>
-
     </div>
   </div>
 
@@ -1168,7 +1622,7 @@
 
         <div style="display:flex; gap:8px; margin-top:10px;">
           <button type="submit" class="close-btn" style="flex:1;">保存する</button>
-          <button type="button" class="close-btn" onclick="closeModal('addModal')" style="background:#ccc; flex:1;">キャンセル</button>
+          <button type="button" class="close-btn" onclick="closeModal('addModal')" style="background:#888; flex:1;">キャンセル</button>
         </div>
       </form>
     </div>
@@ -1178,7 +1632,7 @@
   <div class="modal-overlay" id="gachaModal">
     <div class="modal-content">
       <h3 id="gachaTitle">🎰 運命の指名抽選中...</h3>
-      <p style="font-size:0.75rem; color:#888;" id="gachaSub">在籍中のキャストから選出中！</p>
+      <p style="font-size:0.75rem; color:var(--light-text);" id="gachaSub">在籍中のキャストから選出中！</p>
       
       <div class="roulette-container" id="rouletteBox">
         <div class="modal-cast-name" id="gachaResultName">???</div>
@@ -1297,28 +1751,74 @@
       "るる": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3288", notes: "", oldName: "", style: "", letters: [{ date: "2025年10月", imageUrl: "https://i.imgur.com/Z9EQ2Tz.jpeg", text: "じゅんくん　今日は会いに来てくれてありがとう！友達みたいに楽しかったしじゅんくんが明るい人だから話しやすかった！お仕事無理しないようにね♡　るる" }] },
       "ゆい": { link: "", notes: "", oldName: "", style: "", letters: [] },
       "みみ": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=2965", notes: "", oldName: "", style: "", letters: [] },
-      "アンナ": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2026年1月", imageUrl: "https://i.imgur.com/Mg0q2ot.jpeg", text: "ジュン君。　今日は、来てくれてありがとう！！　同じ年なのに、おとなっぽくて、一緒にいて楽しかった！！　また、会えたら嬉しいです♡　アンナ" }] },
+      "アンナ": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2026年1月", imageUrl: "https://i.imgur.com/Mg0q2ot.jpeg", text: "ジュン君。　今日は、来てくれてありがとう！！　同じ年なのに、おとなっぽくて、一緒にいて楽しかった！！　また、会えたら嬉しいです♡アンナ" }] },
       "あい": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3394", notes: "", oldName: "", style: "", letters: [] },
       "さな": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2026年2月", imageUrl: "https://i.imgur.com/YoaqJJO.jpeg", text: "いっぱいガンバッててえらいよ🙂　むりしないでまた来てね💮" }] },
       "るか": { link: "https://www.cityheaven.net/tokyo/A1304/A130401/a-crystal/girlid-64506913/?mygirl=1&lo=1", notes: "", oldName: "", style: "", letters: [] },
       "ミノリ": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2026年2月", imageUrl: "https://i.imgur.com/KNNzZ7H.jpeg", text: "バレンタイン♡♡" }] },
       "さら": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/okinawa-naminouejyogakuin/girlid-62305727/", notes: "", oldName: "", style: "", letters: [] },
       "める": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/okinawa-naminouesougoubyouin/girlid-44817013/", notes: "", oldName: "", style: "", letters: [] },
-      "ゆず": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3523", notes: "", oldName: "", style: "", letters: [{ date: "2026年3月", imageUrl: "https://i.imgur.com/GtHdniF.jpeg", text: "ジュン君　今日は出会えて　よかった♡　また会いたいです！　ゆず" }] },
+      "ゆず": { link: "https://www.yesgrp.com/naha/sele/model/model.html?girl_id=3523", notes: "", oldName: "", style: "", letters: [{ date: "2026年3月", imageUrl: "https://i.imgur.com/GtHdniF.jpeg", text: "ジュン君　今日は出会えて　よかった♡　また会いたいです！ゆず" }] },
       "ななみ": { link: "https://www.cityheaven.net/okinawa/A4701/A470101/okinawa-nursejyogakuen/girlid-65139298/", notes: "", oldName: "", style: "", letters: [] },
       "なるみ": { link: "", notes: "", oldName: "", style: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/Eq6COe4.jpeg", text: "ありがとう♡　またきてね　大学がんばってね！　なるみ" }] },
       "ひびき": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3454", notes: "", oldName: "", style: "", letters: [{ date: "2026年4月", imageUrl: "https://i.imgur.com/bNSgBmz.jpeg", text: "今日はありがとう♡　たくさんお話できて楽しかったです！tまた遊びに来てください❕️　ひびき" }] },
       "せいな": { link: "https://www.cityheaven.net/tokyo/A1312/A131201/uenolip/girlid-52762713/?mygirl=1&lo=1", notes: "", oldName: "", style: "", letters: [] },
       "きほ": { link: "https://www.cityheaven.net/tokyo/A1304/A130401/a-crystal/girlid-65756780/", notes: "", oldName: "", style: "", letters: [] },
       "アクア": { link: "https://www.cityheaven.net/tokyo/A1303/A130301/sc-crystal/girlid-64589705/", notes: "", oldName: "", style: "", letters: [] },
-      "伏見みなお": { link: "https://ranking-deli.jp/tokyo/area30/style4/32002/2706377/", notes: "", oldName: "", style: "", letters: [{ date: "2026年6月", imageUrl: "https://i.imgur.com/ZtmEUr8.jpeg", text: "試験お疲れ様！今日は来てくれてありがとー♡またあそびに来てくださーい🥰" }] },
+      "伏見みなお": { link: "https://ranking-deli.jp/tokyo/area30/style4/32002/2706377/", notes: "", oldName: "", style: "", letters: [{ date: "2026年6月", imageUrl: "https://i.imgur.com/ZtmEUr8.jpeg", text: "試験お疲れ様！今日は来てくれてありがとー♡またあそびに来てくださ-い🥰" }] },
       "ゆうか": { link: "https://www.yesgrp.com/naha/lesson1/model/model.html?girl_id=3504", notes: "", oldName: "ここみ", style: "", letters: [{ date: "2026年7月", imageUrl: "https://i.imgur.com/vcJpOyD.jpeg", text: "今日はありがとう〜まさかの二度目ましてでおもろかった(笑ナースの時よりも少し風俗慣れてた気がして寂しい気もするけど会えて良かった!))" }] }
     };
 
-    let currentUserName = localStorage.getItem('app_user_name') || '童貞';
+    let currentUserName = localStorage.getItem('app_user_name') || 'こすぎ';
+    let currentTheme = localStorage.getItem('app_theme') || 'default';
     let historyList = [];
     let castData = {};
     let sharedRecords = [];
+    let targetExportCastName = "";
+
+    function applyTheme(themeName) {
+      currentTheme = themeName;
+      if (themeName === 'default') {
+        document.documentElement.removeAttribute('data-theme');
+      } else {
+        document.documentElement.setAttribute('data-theme', themeName);
+      }
+      localStorage.setItem('app_theme', themeName);
+
+      document.querySelectorAll('.theme-item-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById('btnTheme' + themeName.charAt(0).toUpperCase() + themeName.slice(1));
+      if (activeBtn) activeBtn.classList.add('active');
+    }
+
+    function setTheme(themeName) {
+      applyTheme(themeName);
+    }
+
+    function openSettingsModal() {
+      document.getElementById('inputUserName').value = currentUserName === 'こすぎ' ? '' : currentUserName;
+      document.getElementById('settingsModal').style.display = 'flex';
+    }
+
+    function openHelpModal() {
+      document.getElementById('helpModal').style.display = 'flex';
+    }
+
+    function openImportModal() {
+      document.getElementById('importModal').style.display = 'flex';
+    }
+
+    /* 初回アップデートお知らせモーダルの表示・非表示 */
+    const LATEST_VERSION_KEY = 'app_version_v17.0_shown';
+    function checkWhatsNew() {
+      if (!localStorage.getItem(LATEST_VERSION_KEY)) {
+        document.getElementById('whatsNewModal').style.display = 'flex';
+      }
+    }
+
+    function closeWhatsNewModal() {
+      localStorage.setItem(LATEST_VERSION_KEY, 'true');
+      closeModal('whatsNewModal');
+    }
 
     function isKosugi(name) {
       if (!name) return false;
@@ -1327,6 +1827,8 @@
     }
 
     function initUserData() {
+      applyTheme(currentTheme);
+
       if (isKosugi(currentUserName)) {
         historyList = JSON.parse(JSON.stringify(kosugiHistoryList));
         castData = JSON.parse(JSON.stringify(kosugiCastData));
@@ -1343,12 +1845,13 @@
       updateUIHeader();
       updateSharedCount();
       render();
+      checkWhatsNew();
     }
 
     function updateUIHeader() {
       const titleText = currentUserName + "の風俗履歴図鑑";
       document.getElementById('headerTitle').innerText = titleText;
-      document.getElementById('pageTitle').innerText = titleText;
+      document.getElementById('pageTitle').innerText = titleText + " [V17.0]";
       document.getElementById('currentUserNameDisplay').innerText = currentUserName;
     }
 
@@ -1366,7 +1869,6 @@
       updateSharedCount();
     }
 
-    /* リセット機能 */
     function resetData() {
       if (confirm("現在の記録を完全にクリアして「童貞」に戻しますか？")) {
         localStorage.removeItem('user_hist_' + currentUserName);
@@ -1388,11 +1890,10 @@
       }
     }
 
-    /* 💾 JSONファイルとしてバックアップ保存（ダウンロード） */
     function exportJSONFile() {
       const exportObject = {
         app: "風俗履歴図鑑",
-        version: "2.0",
+        version: "17.0",
         exportDate: new Date().toISOString(),
         userName: currentUserName,
         historyList: historyList,
@@ -1408,9 +1909,21 @@
       downloadAnchor.remove();
     }
 
-    /* 🔗 キャスト単体共有用JSONダウンロード */
-    function shareSingleCast(event, name) {
+    function openExportCastModal(event, name) {
       event.preventDefault(); event.stopPropagation();
+      targetExportCastName = name;
+
+      const fileName = `キャスト共有_${name}_(from_${currentUserName}).json`;
+
+      document.getElementById('exportModalCastName').innerText = name;
+      document.getElementById('exportModalFileName').innerText = fileName;
+      document.getElementById('exportCastModal').style.display = 'flex';
+    }
+
+    function executeCastDownload() {
+      if (!targetExportCastName) return;
+
+      const name = targetExportCastName;
       const visits = historyList.filter(h => h.name === name);
       const info = castData[name] || {};
 
@@ -1422,19 +1935,25 @@
         visits: visits
       };
 
+      const fileName = `キャスト共有_${name}_(from_${currentUserName}).json`;
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(singleExportObject, null, 2));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `キャスト共有_${name}_(from_${currentUserName}).json`);
+      downloadAnchor.setAttribute("download", fileName);
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
       downloadAnchor.remove();
-      alert(`「${name}」さんの共有ファイル（.json）をダウンロードしました！LINE等で友達に共有できます。`);
+
+      closeModal('exportCastModal');
+      alert(`✨ 「${fileName}」をダウンロードしました！LINE等で友達に送信してください。`);
     }
 
-    /* 📥 JSONファイルの選択＆読み込み */
     function triggerJSONFileInput() {
       document.getElementById('jsonFileInput').click();
+    }
+
+    function triggerSharedFileInput() {
+      document.getElementById('sharedFileInput').click();
     }
 
     function importJSONFile(event) {
@@ -1456,7 +1975,8 @@
             });
             saveData();
             renderSharedArea();
-            closeModal('userModal');
+            closeModal('settingsModal');
+            closeModal('importModal');
             switchMainTab('shared');
             alert(`👥 ${imported.sharedBy || '友達'}さんから共有された「${imported.castName}」さんの履歴を追加しました！`);
             return;
@@ -1470,7 +1990,8 @@
               saveData();
               initUserData();
               render();
-              closeModal('userModal');
+              closeModal('settingsModal');
+              closeModal('importModal');
               alert("✨ データの全復元が完了しました！");
             }
             return;
@@ -1485,7 +2006,6 @@
       event.target.value = '';
     }
 
-    /* メインエリアタブ切り替え */
     function switchMainTab(type) {
       const myArea = document.getElementById('myTabArea');
       const sharedArea = document.getElementById('sharedTabArea');
@@ -1506,13 +2026,18 @@
       }
     }
 
-    /* 👥 共有された履歴の表示描画 */
     function renderSharedArea() {
       const container = document.getElementById('sharedContent');
       container.innerHTML = '';
 
       if (sharedRecords.length === 0) {
-        container.innerHTML = '<div style="text-align:center; color:#aaa; padding:40px 10px; font-size:0.85rem;">共有された履歴がまだありません。<br>友達から送られてきた .json ファイルを「ユーザー設定」から読み込むとここに表示されます！</div>';
+        container.innerHTML = `
+          <div class="empty-shared-box">
+            <h3>👥 共有された履歴がありません</h3>
+            <p>友達から受け取った .json ファイルを読み込むと<br>ここにコレクションされます！</p>
+            <button class="pill-btn" onclick="openImportModal()" style="font-size:0.85rem; padding:8px 18px;">📂 友達の履歴ファイルを読み込む</button>
+          </div>
+        `;
         return;
       }
 
@@ -1523,7 +2048,7 @@
         let visitRows = '';
         item.visits.forEach(v => {
           visitRows += `<div class="history-row" style="margin-top:4px;">
-            <span>${v.year}年 ${v.month}</span>
+            <span>📅 ${v.year}年 ${v.month}</span>
             <span>${v.flags || '通常'}</span>
           </div>`;
         });
@@ -1531,14 +2056,17 @@
         card.innerHTML = `
           <div class="shared-header">
             <span>👤 共有者: ${item.fromUser} さん</span>
-            <button onclick="copySharedToMyCatalog(${index})" style="font-size:0.65rem; background:var(--soft-pink); color:var(--accent-pink); border:1px solid var(--primary-pink); border-radius:10px; padding:2px 6px; cursor:pointer;">➕ 自分の図鑑にコピー</button>
+            <div style="display:flex; gap:4px;">
+              <button onclick="copySharedToMyCatalog(${index})" class="link-btn" style="background:var(--soft-pink);">➕ マイ図鑑へ</button>
+              <button onclick="deleteSharedRecord(${index})" class="link-btn" style="color:#888; border-color:#888;">🗑 削除</button>
+            </div>
           </div>
           <div style="font-size:0.95rem; font-weight:bold; color:var(--text-color); margin:4px 0;">
             💕 ${item.castName} 
             ${item.info.oldName ? `<span class="old-name-badge">旧:${item.info.oldName}</span>` : ''}
           </div>
           ${renderStyleTags(item.info.style || '')}
-          <div style="font-size:0.75rem; color:#666; margin-top:4px;">メモ: ${item.info.notes || 'なし'}</div>
+          <div style="font-size:0.75rem; color:var(--light-text); margin-top:4px;">メモ: ${item.info.notes || 'なし'}</div>
           <div style="margin-top:6px;">${visitRows}</div>
         `;
 
@@ -1556,6 +2084,14 @@
         saveData();
         render();
         alert(`✨ 「${item.castName}」さんをマイ図鑑に追加しました！`);
+      }
+    }
+
+    function deleteSharedRecord(index) {
+      if (confirm("この共有履歴をリストから削除しますか？")) {
+        sharedRecords.splice(index, 1);
+        saveData();
+        renderSharedArea();
       }
     }
 
@@ -1645,15 +2181,6 @@
       return tagsHtml;
     }
 
-    function openUserModal() {
-      document.getElementById('inputUserName').value = currentUserName === '童貞' ? '' : currentUserName;
-      document.getElementById('userModal').style.display = 'flex';
-    }
-
-    function openHelpModal() {
-      document.getElementById('helpModal').style.display = 'flex';
-    }
-
     function saveUserName(event) {
       event.preventDefault();
       const input = document.getElementById('inputUserName').value.trim();
@@ -1662,7 +2189,7 @@
       currentUserName = input;
       saveData();
       initUserData();
-      closeModal('userModal');
+      closeModal('settingsModal');
       render();
     }
 
@@ -1772,7 +2299,6 @@
       document.getElementById('addLetterImg').value = '';
     }
 
-    /* ✏️ 利用記録の編集モーダルを開く */
     function openEditRecordModal(event, index) {
       event.preventDefault(); event.stopPropagation();
       const rec = historyList[index];
@@ -1903,7 +2429,7 @@
       target.innerHTML = '';
 
       if (historyList.length === 0) {
-        target.innerHTML = '<div style="text-align:center; color:#aaa; padding:40px 10px; font-size:0.85rem;">記録がまだありません。<br>右下の「＋」ボタンから追加するか、<br>上のボタンからお名前を「こすぎ」に変更して参考にしてみてください。</div>';
+        target.innerHTML = '<div style="text-align:center; color:var(--light-text); padding:40px 10px; font-size:0.85rem;">記録がまだありません。<br>右下の「＋」ボタンから追加するか、<br>ヘッダーの「ユーザー」ボタンを押して「こすぎ」に変更してみてください。</div>';
         updateStats({});
         return;
       }
@@ -1915,14 +2441,13 @@
       }
     }
 
-    /* 🎨 キャスト別図鑑の描画（過去メモ折りたたみ表示対応） */
     function renderCastView(target, keyword) {
       const map = {};
       historyList.forEach((item, idx) => {
         if (!map[item.name]) {
           map[item.name] = { name: item.name, visits: [], lastIdx: idx, favCount: 0, hasBad: false, lastVisit: item };
         }
-        item.originalIndex = idx; // 元の配列インデックスを保存
+        item.originalIndex = idx;
         map[item.name].visits.push(item);
         map[item.name].lastIdx = idx;
         map[item.name].lastVisit = item;
@@ -1995,13 +2520,12 @@
           ? '<button class="link-btn" onclick="openLink(event, \'' + url + '\')">プロフ</button>' 
           : '';
 
-        const copyBtnHtml = '<button class="copy-btn" onclick="shareSingleCast(event, \'' + c.name + '\')">💾 共有ファイル作成</button>';
+        const copyBtnHtml = '<button class="copy-btn" onclick="openExportCastModal(event, \'' + c.name + '\')">📤 友だちへ共有</button>';
 
         const letterBtnHtml = hasLetters 
           ? '<button class="letter-btn" onclick="openLetterModal(event, \'' + c.name + '\')">💌 手紙 (' + validLetters.length + ')</button>' 
           : '';
 
-        /* メモの集計（最新メモ ＋ 過去メモアコーディオン） */
         const notesWithDate = c.visits
           .filter(v => v.visitNote && v.visitNote.trim() !== '')
           .reverse();
@@ -2013,7 +2537,7 @@
         if (latestNote) {
           notesContentHtml += `<div><strong>📌 最新メモ (${latestNote.year}年${latestNote.month}):</strong> ${latestNote.visitNote}</div>`;
         } else {
-          notesContentHtml += `<div style="color:#aaa;">メモなし</div>`;
+          notesContentHtml += `<div style="color:var(--light-text);">メモなし</div>`;
         }
 
         if (pastNotes.length > 0) {
@@ -2084,7 +2608,6 @@
       target.appendChild(grid);
     }
 
-    /* 📅 月別タイムラインの描画（アコーディオン＋編集アイコン＋レポートあり文字バッジ） */
     function renderTimelineView(target, keyword) {
       const groups = {};
       historyList.forEach((item, idx) => {
@@ -2119,7 +2642,7 @@
             const hasReport = i.reportUrl && i.reportUrl.trim() !== '';
             const reportBadgeHtml = hasReport ? '<span class="report-badge">レポートあり</span>' : '';
             const reportLinkHtml = hasReport ? `<a href="${i.reportUrl}" target="_blank" class="report-link-btn">📄 WEBレポートを読む</a>` : '';
-            const noteHtml = i.visitNote ? `<div>📝 <strong>メモ:</strong> ${i.visitNote}</div>` : '<div style="color:#aaa;">📝 メモなし</div>';
+            const noteHtml = i.visitNote ? `<div>📝 <strong>メモ:</strong> ${i.visitNote}</div>` : '<div style="color:var(--light-text);">📝 メモなし</div>';
 
             details.innerHTML = `
               <summary class="timeline-summary">
@@ -2146,11 +2669,6 @@
           target.appendChild(sec);
         }
       });
-    }
-
-    if (!localStorage.getItem('fuzoku_app_visited')) {
-      openHelpModal();
-      localStorage.setItem('fuzoku_app_visited', 'true');
     }
 
     initUserData();
