@@ -481,8 +481,8 @@
       font-size: 0.75rem;
       color: #666;
       background: #fdf8f9;
-      padding: 4px 8px;
-      border-radius: 6px;
+      padding: 6px 10px;
+      border-radius: 8px;
       border: 1px solid #f2e3e6;
       flex: 1;
     }
@@ -523,11 +523,117 @@
     .history-row {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       background: #ffffff;
       border: 1px solid var(--border-color);
       padding: 5px 8px;
       border-radius: 6px;
       font-size: 0.8rem;
+    }
+
+    /* 🏷️ WEBレポートありバッジ（世界観に合わせたデザイン） */
+    .report-badge {
+      font-size: 0.65rem;
+      color: var(--accent-pink);
+      background: var(--soft-pink);
+      border: 1px solid var(--primary-pink);
+      padding: 1px 7px;
+      border-radius: 10px;
+      font-weight: bold;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    /* ✏️ 薄灰色のペンアイコンボタン */
+    .edit-icon-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 2px 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #b0b0b0;
+      transition: color 0.2s;
+    }
+    .edit-icon-btn:hover, .edit-icon-btn:active { color: #666666; }
+    .edit-icon-btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* 📅 月別タイムラインアコーディオン */
+    .month-section { margin-bottom: 16px; }
+    .month-title {
+      font-size: 0.95rem;
+      color: var(--accent-pink);
+      margin-bottom: 6px;
+      padding-left: 6px;
+      border-left: 3px solid var(--primary-pink);
+      font-weight: bold;
+    }
+    details.timeline-item {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      margin-bottom: 6px;
+      overflow: hidden;
+    }
+    summary.timeline-summary {
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-size: 0.85rem;
+      list-style: none;
+    }
+    summary.timeline-summary::-webkit-details-marker { display: none; }
+    .timeline-body {
+      padding: 8px 12px 10px;
+      border-top: 1px dashed var(--border-color);
+      background: #fdfbfb;
+      font-size: 0.78rem;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .report-link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.72rem;
+      color: var(--accent-pink);
+      background: #fff;
+      border: 1px solid var(--primary-pink);
+      padding: 3px 10px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: bold;
+      width: fit-content;
+    }
+
+    /* 過去メモ折りたたみリスト */
+    details.past-notes-details {
+      margin-top: 4px;
+    }
+    summary.past-notes-summary {
+      font-size: 0.72rem;
+      color: var(--accent-pink);
+      cursor: pointer;
+      font-weight: bold;
+      padding: 2px 0;
+    }
+    .past-notes-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 4px;
+      padding-left: 6px;
+      border-left: 2px solid var(--soft-pink);
+    }
+    .past-note-item {
+      font-size: 0.72rem;
+      color: #555;
     }
 
     /* モーダル共通 */
@@ -592,25 +698,6 @@
       display: flex;
       align-items: center;
       gap: 4px;
-    }
-
-    .github-link-box {
-      background: #f8f9fa;
-      border: 1px solid #e9ecef;
-      padding: 8px 10px;
-      border-radius: 8px;
-      text-align: center;
-      margin-top: 4px;
-    }
-
-    .github-link-box a {
-      color: #24292e;
-      font-weight: bold;
-      font-size: 0.75rem;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
     }
 
     .backup-section {
@@ -798,29 +885,6 @@
       border-color: #dee2e6;
     }
 
-    .month-section { margin-bottom: 16px; }
-    .month-title {
-      font-size: 0.95rem;
-      color: var(--accent-pink);
-      margin-bottom: 6px;
-      padding-left: 6px;
-      border-left: 3px solid var(--primary-pink);
-    }
-    .month-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 6px;
-    }
-    .month-item {
-      background: var(--card-bg);
-      padding: 6px 10px;
-      border-radius: 6px;
-      border: 1px solid var(--border-color);
-      font-size: 0.8rem;
-      display: flex;
-      justify-content: space-between;
-    }
-
     /* 👥 共有された履歴専用スタイル */
     .shared-card {
       background: #ffffff;
@@ -939,6 +1003,40 @@
   <!-- ➕ フローティング追加ボタン -->
   <button class="fab-add" onclick="openAddModal()" title="新しい利用記録を追加">＋</button>
 
+  <!-- ✏️ 利用記録の個別修正モーダル -->
+  <div class="modal-overlay" id="editRecordModal">
+    <div class="modal-content">
+      <h3>✏️ 記録の編集・メモ作成</h3>
+      <form class="add-form" onsubmit="saveEditedRecord(event)">
+        <input type="hidden" id="editRecordIndex">
+        <div class="form-group">
+          <label>キャスト名 / 日付</label>
+          <div id="editRecordHeader" style="font-size:0.85rem; font-weight:bold; color:#555;"></div>
+        </div>
+
+        <div class="form-group">
+          <label>マーク・フラグ</label>
+          <input type="text" id="editFlags" placeholder="マークを入力">
+        </div>
+
+        <div class="form-group">
+          <label>この回のメモ・感想</label>
+          <textarea id="editVisitNote" rows="3" placeholder="プレイ内容や印象などを記録..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>WEBレポートURL（noteなど）</label>
+          <input type="url" id="editReportUrl" placeholder="https://note.com/...">
+        </div>
+
+        <div style="display:flex; gap:8px; margin-top:10px;">
+          <button type="submit" class="close-btn" style="flex:1;">更新して保存</button>
+          <button type="button" class="close-btn" onclick="closeModal('editRecordModal')" style="background:#ccc; flex:1;">キャンセル</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- 📖 使い方ダイアログ -->
   <div class="modal-overlay" id="helpModal">
     <div class="modal-content">
@@ -999,12 +1097,12 @@
     <div class="modal-content">
       <h3>✨ 利用記録を追加</h3>
       <form class="add-form" onsubmit="saveNewRecord(event)">
-        <div class="form-row">
-          <div class="form-group">
+        <div class="form-row" style="display:flex; gap:6px;">
+          <div class="form-group" style="flex:1;">
             <label>年</label>
             <input type="text" id="addYear" placeholder="2026" required>
           </div>
-          <div class="form-group">
+          <div class="form-group" style="flex:1;">
             <label>月</label>
             <input type="text" id="addMonth" placeholder="8月" required>
           </div>
@@ -1042,20 +1140,25 @@
           <input type="text" id="addFlags" placeholder="タップしたマークが入ります（直接編集もOK）">
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label>旧・源氏名（あれば）</label>
-            <input type="text" id="addOldName" placeholder="例: ここみ">
-          </div>
-          <div class="form-group">
-            <label>プロフURL</label>
-            <input type="url" id="addLink" placeholder="https://...">
-          </div>
+        <div class="form-group">
+          <label>この回のメモ・感想</label>
+          <input type="text" id="addVisitNote" placeholder="接客メモなど">
         </div>
 
         <div class="form-group">
-          <label>メモ・備考</label>
-          <input type="text" id="addNotes" placeholder="接客メモなど">
+          <label>WEBレポートURL（あれば）</label>
+          <input type="url" id="addReportUrl" placeholder="https://note.com/...">
+        </div>
+
+        <div class="form-row" style="display:flex; gap:6px;">
+          <div class="form-group" style="flex:1;">
+            <label>旧・源氏名</label>
+            <input type="text" id="addOldName" placeholder="例: ここみ">
+          </div>
+          <div class="form-group" style="flex:1;">
+            <label>プロフURL</label>
+            <input type="url" id="addLink" placeholder="https://...">
+          </div>
         </div>
 
         <div class="form-group">
@@ -1097,83 +1200,83 @@
   <script>
     // こすぎ専用 Masterデータ（全76件完全版）
     const kosugiHistoryList = [
-      { year: "2025", month: "8月", name: "ゆあ", flags: "🆂" },
-      { year: "2025", month: "8月", name: "じゅり", flags: "⚔⚔" },
-      { year: "2025", month: "8月", name: "みく", flags: "" },
-      { year: "2025", month: "8月", name: "みく", flags: "" },
-      { year: "2025", month: "8月", name: "まりあ", flags: "" },
-      { year: "2025", month: "8月", name: "ゆあ", flags: "🆂" },
-      { year: "2025", month: "8月", name: "まりあ", flags: "" },
-      { year: "2025", month: "8月", name: "ひまわり", flags: "A" },
-      { year: "2025", month: "8月", name: "まりあ", flags: "" },
-      { year: "2025", month: "9月", name: "れい", flags: "⚔⚔" },
-      { year: "2025", month: "9月", name: "まりあ", flags: "" },
-      { year: "2025", month: "9月", name: "れみ", flags: "" },
-      { year: "2025", month: "9月", name: "ことり", flags: "✈🆂" },
-      { year: "2025", month: "9月", name: "みゅーず", flags: "✈⚔" },
-      { year: "2025", month: "9月", name: "もも", flags: "" },
-      { year: "2025", month: "9月", name: "さきな", flags: "🈠⑱🆂" },
-      { year: "2025", month: "10月", name: "ゆあ", flags: "🆂" },
-      { year: "2025", month: "10月", name: "るる", flags: "⚔" },
-      { year: "2025", month: "10月", name: "ゆい", flags: "" },
-      { year: "2025", month: "10月", name: "もも", flags: "" },
-      { year: "2025", month: "10月", name: "ゆあ", flags: "🆂" },
-      { year: "2025", month: "10月", name: "さきな", flags: "⑱🆂" },
-      { year: "2025", month: "11月", name: "まりあ", flags: "" },
-      { year: "2025", month: "11月", name: "まりあ", flags: "" },
-      { year: "2025", month: "11月", name: "まりあ", flags: "❖" },
-      { year: "2025", month: "11月", name: "ゆあ", flags: "🆂" },
-      { year: "2025", month: "11月", name: "みく", flags: "" },
-      { year: "2025", month: "11月", name: "モカ", flags: "🆂" },
-      { year: "2025", month: "12月", name: "ゆあ", flags: "🆂" },
-      { year: "2025", month: "12月", name: "カルア", flags: "🆂" },
-      { year: "2025", month: "12月", name: "ゆあ", flags: "🆂❖" },
-      { year: "2025", month: "12月", name: "モカ", flags: "🆂" },
-      { year: "2025", month: "12月", name: "モカ", flags: "🆂" },
-      { year: "2025", month: "12月", name: "みみ", flags: "⚔⚔" },
-      { year: "2026", month: "1月", name: "アンナ", flags: "" },
-      { year: "2026", month: "1月", name: "もも", flags: "" },
-      { year: "2026", month: "1月", name: "あい", flags: "" },
-      { year: "2026", month: "1月", name: "ゆあ", flags: "🆂❖" },
-      { year: "2026", month: "1月", name: "モカ", flags: "🆂" },
-      { year: "2026", month: "2月", name: "もも", flags: "❀" },
-      { year: "2026", month: "2月", name: "さな", flags: "⚔" },
-      { year: "2026", month: "2月", name: "るか", flags: "✈🆂" },
-      { year: "2026", month: "2月", name: "ミノリ", flags: "✈🆂" },
-      { year: "2026", month: "2月", name: "ことり", flags: "✈🆂" },
-      { year: "2026", month: "2月", name: "ひまわり", flags: "✈B" },
-      { year: "2026", month: "2月", name: "カルア", flags: "🆂" },
-      { year: "2026", month: "3月", name: "ゆうか", flags: "" },
-      { year: "2026", month: "3月", name: "モカ", flags: "🆂" },
-      { year: "2026", month: "3月", name: "さら", flags: "⚔⚔⚔" },
-      { year: "2026", month: "3月", name: "める", flags: "" },
-      { year: "2026", month: "3月", name: "カルア", flags: "🆂" },
-      { year: "2026", month: "3月", name: "カルア", flags: "🆂" },
-      { year: "2026", month: "3月", name: "四葉", flags: "🆂" },
-      { year: "2026", month: "3月", name: "四葉", flags: "" },
-      { year: "2026", month: "3月", name: "ゆず", flags: "" },
-      { year: "2026", month: "3月", name: "モカ", flags: "🆂" },
-      { year: "2026", month: "4月", name: "モカ", flags: "🆂" },
-      { year: "2026", month: "4月", name: "カルア", flags: "🆂㋑" },
-      { year: "2026", month: "4月", name: "ゆあ", flags: "🆂" },
-      { year: "2026", month: "4月", name: "ななみ", flags: "⚔㋗" },
-      { year: "2026", month: "4月", name: "なるみ", flags: "🆂❀" },
-      { year: "2026", month: "4月", name: "ひびき", flags: "⑱ｴ" },
-      { year: "2026", month: "4月", name: "せいな", flags: "✈ｄ" },
-      { year: "2026", month: "4月", name: "きほ", flags: "✈⑱" },
-      { year: "2026", month: "5月", name: "アクア", flags: "✈" },
-      { year: "2026", month: "5月", name: "モカ", flags: "🆂" },
-      { year: "2026", month: "5月", name: "ゆあ", flags: "🆂" },
-      { year: "2026", month: "6月", name: "さきな", flags: "🆂❖" },
-      { year: "2026", month: "6月", name: "ゆあ", flags: "🆂" },
-      { year: "2026", month: "6月", name: "伏見みなお", flags: "✈❑" },
-      { year: "2026", month: "6月", name: "さきな", flags: "🆂㋑" },
-      { year: "2026", month: "6月", name: "ゆあ", flags: "🆂" },
-      { year: "2026", month: "7月", name: "さきな", flags: "🆂㋑" },
-      { year: "2026", month: "7月", name: "ゆうか", flags: "ｴ(旧ここみ)" },
-      { year: "2026", month: "7月", name: "ゆあ", flags: "🆂㋑" },
-      { year: "2026", month: "7月", name: "ゆあ", flags: "🆂" },
-      { year: "2026", month: "8月", name: "ゆあ", flags: "🆂" }
+      { year: "2025", month: "8月", name: "ゆあ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "8月", name: "じゅり", flags: "⚔⚔", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "8月", name: "みく", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "8月", name: "みく", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "8月", name: "まりあ", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "8月", name: "ゆあ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "8月", name: "まりあ", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "8月", name: "ひまわり", flags: "A", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "8月", name: "まりあ", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "9月", name: "れい", flags: "⚔⚔", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "9月", name: "まりあ", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "9月", name: "れみ", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "9月", name: "ことり", flags: "✈🆂", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "9月", name: "みゅーず", flags: "✈⚔", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "9月", name: "もも", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "9月", name: "さきな", flags: "🈠⑱🆂", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "10月", name: "ゆあ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "10月", name: "るる", flags: "⚔", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "10月", name: "ゆい", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "10月", name: "もも", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "10月", name: "ゆあ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "10月", name: "さきな", flags: "⑱🆂", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "11月", name: "まりあ", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "11月", name: "まりあ", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "11月", name: "まりあ", flags: "❖", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "11月", name: "ゆあ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "11月", name: "みく", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "11月", name: "モカ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "12月", name: "ゆあ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "12月", name: "カルア", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "12月", name: "ゆあ", flags: "🆂❖", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "12月", name: "モカ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "12月", name: "モカ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2025", month: "12月", name: "みみ", flags: "⚔⚔", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "1月", name: "アンナ", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "1月", name: "もも", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "1月", name: "あい", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "1月", name: "ゆあ", flags: "🆂❖", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "1月", name: "モカ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "2月", name: "もも", flags: "❀", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "2月", name: "さな", flags: "⚔", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "2月", name: "るか", flags: "✈🆂", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "2月", name: "ミノリ", flags: "✈🆂", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "2月", name: "ことり", flags: "✈🆂", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "2月", name: "ひまわり", flags: "✈B", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "2月", name: "カルア", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "3月", name: "ゆうか", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "3月", name: "モカ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "3月", name: "さら", flags: "⚔⚔⚔", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "3月", name: "める", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "3月", name: "カルア", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "3月", name: "カルア", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "3月", name: "四葉", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "3月", name: "四葉", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "3月", name: "ゆず", flags: "", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "3月", name: "モカ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "4月", name: "モカ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "4月", name: "カルア", flags: "🆂㋑", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "4月", name: "ゆあ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "4月", name: "ななみ", flags: "⚔㋗", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "4月", name: "なるみ", flags: "🆂❀", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "4月", name: "ひびき", flags: "⑱ｴ", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "4月", name: "せいな", flags: "✈ｄ", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "4月", name: "きほ", flags: "✈⑱", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "5月", name: "アクア", flags: "✈", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "5月", name: "モカ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "5月", name: "ゆあ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "6月", name: "さきな", flags: "🆂❖", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "6月", name: "ゆあ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "6月", name: "伏見みなお", flags: "✈❑", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "6月", name: "さきな", flags: "🆂㋑", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "6月", name: "ゆあ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "7月", name: "さきな", flags: "🆂㋑", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "7月", name: "ゆうか", flags: "ｴ(旧ここみ)", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "7月", name: "ゆあ", flags: "🆂㋑", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "7月", name: "ゆあ", flags: "🆂", visitNote: "", reportUrl: "" },
+      { year: "2026", month: "8月", name: "ゆあ", flags: "🆂", visitNote: "", reportUrl: "" }
     ];
 
     const kosugiCastData = {
@@ -1239,6 +1342,7 @@
 
       updateUIHeader();
       updateSharedCount();
+      render();
     }
 
     function updateUIHeader() {
@@ -1342,7 +1446,6 @@
         try {
           const imported = JSON.parse(e.target.result);
 
-          // パターンA: キャスト単体シェアファイルの読み込み -> 「共有された履歴」タブへ
           if (imported.app === "風俗履歴図鑑_単体" || imported.castName) {
             sharedRecords.unshift({
               fromUser: imported.sharedBy || "友達",
@@ -1359,7 +1462,6 @@
             return;
           }
 
-          // パターンB: 全データバックアップファイルの復元
           if (imported.historyList && imported.castData) {
             if (confirm(`「${imported.userName || 'バックアップ'}」の全データで図鑑を復元しますか？`)) {
               currentUserName = imported.userName || '復元ユーザー';
@@ -1622,20 +1724,20 @@
 
       const style = parts.join(' ');
       const flags = document.getElementById('addFlags').value.trim();
+      const visitNote = document.getElementById('addVisitNote').value.trim();
+      const reportUrl = document.getElementById('addReportUrl').value.trim();
       const oldName = document.getElementById('addOldName').value.trim();
       const link = document.getElementById('addLink').value.trim();
-      const notes = document.getElementById('addNotes').value.trim();
       const letterImg = document.getElementById('addLetterImg').value.trim();
 
       if (!year || !month || !name) return alert("年、月、キャスト名は必須です！");
 
-      historyList.push({ year, month, name, flags });
+      historyList.push({ year, month, name, flags, visitNote, reportUrl });
 
       if (!castData[name]) {
-        castData[name] = { link: link, notes: notes, oldName: oldName, style: style, letters: [] };
+        castData[name] = { link: link, notes: "", oldName: oldName, style: style, letters: [] };
       } else {
         if (link) castData[name].link = link;
-        if (notes) castData[name].notes = notes;
         if (oldName) castData[name].oldName = oldName;
         if (style) castData[name].style = style;
       }
@@ -1663,10 +1765,40 @@
         elem.style.color = 'var(--text-color)';
       });
       document.getElementById('addFlags').value = '';
+      document.getElementById('addVisitNote').value = '';
+      document.getElementById('addReportUrl').value = '';
       document.getElementById('addOldName').value = '';
       document.getElementById('addLink').value = '';
-      document.getElementById('addNotes').value = '';
       document.getElementById('addLetterImg').value = '';
+    }
+
+    /* ✏️ 利用記録の編集モーダルを開く */
+    function openEditRecordModal(event, index) {
+      event.preventDefault(); event.stopPropagation();
+      const rec = historyList[index];
+      if (!rec) return;
+
+      document.getElementById('editRecordIndex').value = index;
+      document.getElementById('editRecordHeader').innerText = `${rec.year}年 ${rec.month} - ${rec.name} さん`;
+      document.getElementById('editFlags').value = rec.flags || '';
+      document.getElementById('editVisitNote').value = rec.visitNote || '';
+      document.getElementById('editReportUrl').value = rec.reportUrl || '';
+
+      document.getElementById('editRecordModal').style.display = 'flex';
+    }
+
+    function saveEditedRecord(e) {
+      e.preventDefault();
+      const index = parseInt(document.getElementById('editRecordIndex').value, 10);
+      const rec = historyList[index];
+      if (rec) {
+        rec.flags = document.getElementById('editFlags').value.trim();
+        rec.visitNote = document.getElementById('editVisitNote').value.trim();
+        rec.reportUrl = document.getElementById('editReportUrl').value.trim();
+        saveData();
+        render();
+        closeModal('editRecordModal');
+      }
     }
 
     function openLetterModal(event, name) {
@@ -1783,12 +1915,14 @@
       }
     }
 
+    /* 🎨 キャスト別図鑑の描画（過去メモ折りたたみ表示対応） */
     function renderCastView(target, keyword) {
       const map = {};
       historyList.forEach((item, idx) => {
         if (!map[item.name]) {
           map[item.name] = { name: item.name, visits: [], lastIdx: idx, favCount: 0, hasBad: false, lastVisit: item };
         }
+        item.originalIndex = idx; // 元の配列インデックスを保存
         map[item.name].visits.push(item);
         map[item.name].lastIdx = idx;
         map[item.name].lastVisit = item;
@@ -1813,7 +1947,7 @@
           return c.name.toLowerCase().includes(keyword) ||
                  oldName.includes(keyword) ||
                  style.includes(keyword) ||
-                 c.visits.some(v => (v.year + v.month + v.flags).toLowerCase().includes(keyword));
+                 c.visits.some(v => (v.year + v.month + v.flags + (v.visitNote || '')).toLowerCase().includes(keyword));
         });
       }
 
@@ -1840,7 +1974,6 @@
 
         const info = castData[c.name] || { link: "", notes: "", oldName: "", style: "", letters: [] };
         const url = info.link;
-        const notes = info.notes || "";
         const oldName = info.oldName || "";
         const style = info.style || "";
         const isActive = url && url.trim() !== "";
@@ -1868,16 +2001,52 @@
           ? '<button class="letter-btn" onclick="openLetterModal(event, \'' + c.name + '\')">💌 手紙 (' + validLetters.length + ')</button>' 
           : '';
 
+        /* メモの集計（最新メモ ＋ 過去メモアコーディオン） */
+        const notesWithDate = c.visits
+          .filter(v => v.visitNote && v.visitNote.trim() !== '')
+          .reverse();
+
+        const latestNote = notesWithDate.length > 0 ? notesWithDate[0] : null;
+        const pastNotes = notesWithDate.length > 1 ? notesWithDate.slice(1) : [];
+
+        let notesContentHtml = '';
+        if (latestNote) {
+          notesContentHtml += `<div><strong>📌 最新メモ (${latestNote.year}年${latestNote.month}):</strong> ${latestNote.visitNote}</div>`;
+        } else {
+          notesContentHtml += `<div style="color:#aaa;">メモなし</div>`;
+        }
+
+        if (pastNotes.length > 0) {
+          let pastItemsHtml = '';
+          pastNotes.forEach(pn => {
+            pastItemsHtml += `<div class="past-note-item">📅 ${pn.year}年${pn.month}: ${pn.visitNote}</div>`;
+          });
+
+          notesContentHtml += `
+            <details class="past-notes-details">
+              <summary class="past-notes-summary">… 過去のメモを表示 (${pastNotes.length}件)</summary>
+              <div class="past-notes-list">${pastItemsHtml}</div>
+            </details>
+          `;
+        }
+
         let rowsHtml = '';
         c.visits.forEach(v => {
-          rowsHtml += '<div class="history-row">' +
-            '<span class="history-date">' + v.year.slice(2) + '年 ' + v.month + '</span>' +
-            '<span class="history-flags">' + (v.flags || '通常') + '</span>' +
-          '</div>';
+          const reportTag = v.reportUrl ? '<span class="report-badge">レポートあり</span>' : '';
+          rowsHtml += `
+            <div class="history-row">
+              <span class="history-date">${v.year.slice(2)}年 ${v.month} ${reportTag}</span>
+              <div style="display:flex; align-items:center; gap:6px;">
+                <span class="history-flags">${v.flags || '通常'}</span>
+                <button class="edit-icon-btn" onclick="openEditRecordModal(event, ${v.originalIndex})" title="編集">
+                  <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                </button>
+              </div>
+            </div>`;
         });
 
         const superBadgeHtml = isSuperFav ? '<span class="super-tag">オキニ</span>' : '';
-        const notesHtml = '<div class="notes-box"> ' + (notes ? notes : '備考なし') + '</div>';
+        const notesHtml = '<div class="notes-box">' + notesContentHtml + '</div>';
         const styleHtml = renderStyleTags(style);
         const daysAgoText = calcMonthsAgo(c.lastVisit.year, c.lastVisit.month);
 
@@ -1915,9 +2084,11 @@
       target.appendChild(grid);
     }
 
+    /* 📅 月別タイムラインの描画（アコーディオン＋編集アイコン＋レポートあり文字バッジ） */
     function renderTimelineView(target, keyword) {
       const groups = {};
-      historyList.forEach(item => {
+      historyList.forEach((item, idx) => {
+        item.originalIndex = idx;
         const key = item.year + '年 ' + item.month;
         if (!groups[key]) groups[key] = [];
         groups[key].push(item);
@@ -1931,6 +2102,7 @@
           items = items.filter(i => 
             i.name.toLowerCase().includes(keyword) || 
             (i.flags && i.flags.toLowerCase().includes(keyword)) ||
+            (i.visitNote && i.visitNote.toLowerCase().includes(keyword)) ||
             key.toLowerCase().includes(keyword)
           );
         }
@@ -1940,18 +2112,37 @@
           sec.className = 'month-section';
           sec.innerHTML = '<div class="month-title">' + key + '</div>';
 
-          const mGrid = document.createElement('div');
-          mGrid.className = 'month-grid';
-
           items.forEach(i => {
-            mGrid.innerHTML += 
-              '<div class="month-item">' +
-                '<strong>' + i.name + '</strong>' +
-                '<span>' + (i.flags || '通常') + '</span>' +
-              '</div>';
+            const details = document.createElement('details');
+            details.className = 'timeline-item';
+
+            const hasReport = i.reportUrl && i.reportUrl.trim() !== '';
+            const reportBadgeHtml = hasReport ? '<span class="report-badge">レポートあり</span>' : '';
+            const reportLinkHtml = hasReport ? `<a href="${i.reportUrl}" target="_blank" class="report-link-btn">📄 WEBレポートを読む</a>` : '';
+            const noteHtml = i.visitNote ? `<div>📝 <strong>メモ:</strong> ${i.visitNote}</div>` : '<div style="color:#aaa;">📝 メモなし</div>';
+
+            details.innerHTML = `
+              <summary class="timeline-summary">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+                  <strong>${i.name}</strong>
+                  <span>${i.flags || '通常'}</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:6px;">
+                  ${reportBadgeHtml}
+                  <button class="edit-icon-btn" onclick="openEditRecordModal(event, ${i.originalIndex})" title="編集">
+                    <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                  </button>
+                </div>
+              </summary>
+              <div class="timeline-body">
+                ${reportLinkHtml}
+                ${noteHtml}
+              </div>
+            `;
+            sec.appendChild(details);
           });
 
-          sec.appendChild(mGrid);
           target.appendChild(sec);
         }
       });
