@@ -1422,15 +1422,15 @@
         <div class="settings-acc-body">
           <div class="theme-grid">
             <button class="theme-item-btn" id="btnThemeDefault" onclick="setTheme('default')">🌸 ぴんく</button>
-            <button class="theme-item-btn" id="btnThemeMidnight" onclick="setTheme('midnight')">🌙 ミッドナイト</button>
-            <button class="theme-item-btn" id="btnThemeVelvet" onclick="setTheme('velvet')">🖤 ベルベット</button>
+            <button class="theme-item-btn" id="btnThemeMidnight" onclick="setTheme('midnight')">🌙 だーく</button>
+            <button class="theme-item-btn" id="btnThemeVelvet" onclick="setTheme('velvet')">🖤 ブラック</button>
             <button class="theme-item-btn" id="btnThemeBerry" onclick="setTheme('berry')">🍇 ベリー</button>
-            <button class="theme-item-btn" id="btnThemeCyber" onclick="setTheme('cyber')">🌃 サイバー</button>
+            <button class="theme-item-btn" id="btnThemeCyber" onclick="setTheme('cyber')">🌃 TikTok風</button>
             <button class="theme-item-btn" id="btnThemeMocha" onclick="setTheme('mocha')">☕️ モカ</button>
-            <button class="theme-item-btn" id="btnThemeEmerald" onclick="setTheme('emerald')">💎 エメラルド</button>
+            <button class="theme-item-btn" id="btnThemeEmerald" onclick="setTheme('emerald')">🥗 サラダ</button>
             <button class="theme-item-btn" id="btnThemeChampagne" onclick="setTheme('champagne')">👑 ゴールド</button>
             <button class="theme-item-btn" id="btnThemeViolet" onclick="setTheme('violet')">💜 ヴァイオレット</button>
-            <button class="theme-item-btn" id="btnThemePeach" onclick="setTheme('peach')">🍑 ピーチ</button>
+            <button class="theme-item-btn" id="btnThemePeach" onclick="setTheme('peach')">🍑 もも</button>
           </div>
         </div>
       </details>
@@ -1441,7 +1441,7 @@
           <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
         </summary>
         <div class="settings-acc-body">
-          <p style="font-size:0.7rem; color:var(--light-text); margin-bottom:6px;">全データをファイルとして保存・復元できます。</p>
+          <p style="font-size:0.7rem; color:var(--light-text); margin-bottom:6px;">全データをファイルとしてバックアップ・復元できます。</p>
           <button class="close-btn" style="width:100%; margin-top:0; font-size:0.75rem; padding:6px; background:linear-gradient(135deg, #4dabf7, #339af0);" onclick="exportJSONFile()">💾 JSONダウンロード</button>
           <button class="close-btn" style="width:100%; margin-top:6px; font-size:0.75rem; padding:6px; background:#20c997;" onclick="triggerJSONFileInput()">📂 JSONファイルを選択して復元</button>
           <input type="file" id="jsonFileInput" accept=".json,application/json,text/plain" style="display:none;" onchange="importJSONFile(event)">
