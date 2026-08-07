@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title id="pageTitle">風俗履歴図鑑 [V17.4]</title>
+  <title id="pageTitle">風俗履歴図鑑 [V17.5]</title>
   
   <style>
     /* 🎨 CSS変数：テーマ10種類のカラー定義 */
@@ -1363,9 +1363,9 @@
 
   <div class="modal-overlay" id="whatsNewModal">
     <div class="modal-content">
-      <h3>🎉 風俗履歴図鑑 V17.4へようこそ！</h3>
+      <h3>🎉 風俗履歴図鑑 V17.5へようこそ！</h3>
       <p style="font-size:0.75rem; color:var(--light-text); margin-bottom:8px;">
-        手紙モーダルの表示不具合を修正いたしました！
+        手紙モーダルの安全ガードを追加し、クラッシュ不具合を完全に修正しました！
       </p>
       <button class="close-btn" onclick="closeWhatsNewModal()" style="width:100%; margin-top:4px;">了解してはじめる</button>
     </div>
@@ -1633,7 +1633,7 @@
   <!-- 💌 メッセージカードモーダル -->
   <div class="modal-overlay" id="letterModal">
     <div class="modal-content">
-      <h3>💌 メッセージカード</h3>
+      <h3 id="letterModalTitle">💌 メッセージカード</h3>
       <div id="letterModalContainer"></div>
       <button class="close-btn" onclick="closeModal('letterModal')">閉じる</button>
     </div>
@@ -1794,7 +1794,7 @@
       document.getElementById('importModal').style.display = 'flex';
     }
 
-    const LATEST_VERSION_KEY = 'app_version_v17.4_shown';
+    const LATEST_VERSION_KEY = 'app_version_v17.5_shown';
     function checkWhatsNew() {
       if (!localStorage.getItem(LATEST_VERSION_KEY)) {
         document.getElementById('whatsNewModal').style.display = 'flex';
@@ -1837,7 +1837,7 @@
     function updateUIHeader() {
       const titleText = currentUserName + "の風俗履歴図鑑";
       document.getElementById('headerTitle').innerText = titleText;
-      document.getElementById('pageTitle').innerText = titleText + " [V17.4]";
+      document.getElementById('pageTitle').innerText = titleText + " [V17.5]";
       document.getElementById('currentUserNameDisplay').innerText = currentUserName;
     }
 
@@ -1879,7 +1879,7 @@
     function exportJSONFile() {
       const exportObject = {
         app: "風俗履歴図鑑",
-        version: "17.4",
+        version: "17.5",
         exportDate: new Date().toISOString(),
         userName: currentUserName,
         historyList: historyList,
@@ -1929,7 +1929,7 @@
 
       const singleExportObject = {
         app: "風俗履歴図鑑_選択共有",
-        version: "17.4",
+        version: "17.5",
         sharedBy: currentUserName,
         castName: name,
         info: includeInfo ? (castData[name] || {}) : null,
@@ -2345,7 +2345,7 @@
       }
     }
 
-    /* 💌 修正された手紙モーダルオープン関数（デバッグ対応済み） */
+    /* 💌 修正された手紙モーダルオープン関数（null安全ガード追加） */
     function openLetterModal(event, name) {
       event.preventDefault(); event.stopPropagation();
       const info = castData[name];
@@ -2354,7 +2354,6 @@
         return;
       }
 
-      // 画像URLが存在するもの、またはテキストが存在するものを有効な手紙として抽出
       const validLetters = info.letters.filter(item => 
         (item.imageUrl && typeof item.imageUrl === 'string' && item.imageUrl.trim() !== "") || 
         (item.text && typeof item.text === 'string' && item.text.trim() !== "")
@@ -2365,27 +2364,36 @@
         return;
       }
 
-      document.getElementById('letterModalTitle').innerText = "💌 " + name + " さんの手紙";
+      const titleElem = document.getElementById('letterModalTitle');
+      if (titleElem) {
+        titleElem.innerText = "💌 " + name + " さんの手紙";
+      }
+
       const container = document.getElementById('letterModalContainer');
-      container.innerHTML = '';
+      if (container) {
+        container.innerHTML = '';
+        validLetters.forEach(item => {
+          let imgHtml = (item.imageUrl && item.imageUrl.trim() !== "") ? '<img src="' + item.imageUrl + '" class="letter-img" alt="手紙画像">' : '';
+          let textHtml = (item.text && item.text.trim() !== "") ? '<div class="letter-text-box">' + item.text + '</div>' : '';
+          
+          container.innerHTML += 
+            '<div class="letter-card-item">' +
+              '<div class="letter-date">📅 ' + (item.date || '日付不明') + '</div>' +
+              imgHtml +
+              textHtml +
+            '</div>';
+        });
+      }
 
-      validLetters.forEach(item => {
-        let imgHtml = (item.imageUrl && item.imageUrl.trim() !== "") ? '<img src="' + item.imageUrl + '" class="letter-img" alt="手紙画像">' : '';
-        let textHtml = (item.text && item.text.trim() !== "") ? '<div class="letter-text-box">' + item.text + '</div>' : '';
-        
-        container.innerHTML += 
-          '<div class="letter-card-item">' +
-            '<div class="letter-date">📅 ' + (item.date || '日付不明') + '</div>' +
-            imgHtml +
-            textHtml +
-          '</div>';
-      });
-
-      document.getElementById('letterModal').style.display = 'flex';
+      const modal = document.getElementById('letterModal');
+      if (modal) {
+        modal.style.display = 'flex';
+      }
     }
 
     function closeModal(id) {
-      document.getElementById(id).style.display = 'none';
+      const modal = document.getElementById(id);
+      if (modal) modal.style.display = 'none';
     }
 
     function runGacha() {
@@ -2704,7 +2712,7 @@
                 <div style="display:flex; align-items:center; gap:8px;">
                   <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
                   <strong>${i.name}</strong>
-                  <span>${i.flags || 'normal'}</span>
+                  <span>${i.flags || '通常'}</span>
                 </div>
                 <div style="display:flex; align-items:center; gap:6px;">
                   ${reportBadgeHtml}
