@@ -1,0 +1,13 @@
+{
+  "name": "風俗履歴図鑑",
+  "short_name": "風パス",
+  "start_url": "https://chuenli2006.github.io/kosugi-f-zukan.github.io/",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
