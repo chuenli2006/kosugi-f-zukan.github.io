@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title id="pageTitle">童貞の風俗履歴図鑑 [V18.1 Pro]</title>
+  <title id="pageTitle">童貞の風俗履歴図鑑</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
   
   <style>
@@ -14,7 +14,7 @@
       --shadow: 0 4px 15px rgba(255, 133, 162, 0.1); --radius: 12px;
       --badge-bg: var(--soft-pink); --badge-color: var(--accent-pink);
       --gold-bg-start: #fff9e6; --gold-bg-end: #fff0c2; --gold-border: #f3c642; --gold-text: #8a6200;
-      --rank-c1: #ff85a2; --rank-c2: #ffb347; --rank-c3: #63c7b2; --rank-c4: #a389d4; --rank-c5: #6fb1fc; --rank-cx: #d8d0d2;
+      --rank-c1: #ff85a2; --rank-c2: #ffb347; --rank-c3: #63c7b2; --rank-c4: #a389d4; --rank-c5: #6fb1fc;
     }
 
     [data-theme="midnight"] { --bg-color: #121218; --card-bg: #1a1a24; --primary-pink: #ff6b8b; --soft-pink: #2a1f2d; --accent-pink: #ff4081; --text-color: #e2e2e8; --light-text: #9a9aab; --border-color: #2e2e3d; --shadow: 0 4px 15px rgba(0, 0, 0, 0.5); --badge-bg: #3a2233; --badge-color: #ff6b8b; --gold-bg-start: #2e2612; --gold-bg-end: #1f190a; --gold-border: #d4af37; --gold-text: #ffd700; }
@@ -83,7 +83,7 @@
       position: relative; width: 100%; display: flex; flex-direction: column; align-items: center;
       height: 0; opacity: 0; overflow: hidden; transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
     }
-    #viewHome.active { height: 74vh; opacity: 1; margin-bottom: 20px; }
+    #viewHome.active { height: 76vh; opacity: 1; margin-bottom: 20px; }
     .floating-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; z-index: 1; }
     .floating-letter-card {
       position: absolute; bottom: -180px; background: var(--card-bg); padding: 8px 8px 24px 8px;
@@ -98,21 +98,14 @@
       100% { transform: translateY(-82vh) rotate(var(--rot-end)) scale(var(--scale)); opacity: 0; }
     }
 
-    .home-top-panel {
-      position: relative; z-index: 2; width: 92%; max-width: 420px; display: flex; flex-direction: column; gap: 8px; margin-top: 4px;
-    }
-    .home-card-a {
-      background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius);
-      padding: 14px 16px; box-shadow: var(--shadow); backdrop-filter: blur(8px);
-    }
+    .home-top-panel { position: relative; z-index: 2; width: 92%; max-width: 420px; display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+    .home-card-a { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 12px 16px; box-shadow: var(--shadow); backdrop-filter: blur(8px); }
     [data-theme="midnight"] .home-card-a, [data-theme="velvet"] .home-card-a, [data-theme="cyber"] .home-card-a { background: rgba(26,26,36,0.85); }
-    .home-card-b {
-      background: linear-gradient(135deg, var(--soft-pink), var(--card-bg)); border: 1.5px dashed var(--primary-pink);
-      border-radius: var(--radius); padding: 12px 16px; text-align: center; box-shadow: var(--shadow);
-    }
-    .counter-big { font-size: 1.8rem; font-weight: bold; color: var(--accent-pink); line-height: 1.1; }
-    .countdown-anim { font-size: 1.4rem; font-weight: bold; color: var(--accent-pink); animation: pulseScale 2s infinite ease-in-out; }
-    @keyframes pulseScale { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+    .home-card-b { background: linear-gradient(135deg, var(--soft-pink), var(--card-bg)); border: 1.5px dashed var(--primary-pink); border-radius: var(--radius); padding: 10px 16px; text-align: center; box-shadow: var(--shadow); }
+    .home-card-c { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 10px 14px; text-align: center; box-shadow: var(--shadow); cursor: pointer; transition: transform 0.1s; }
+    .home-card-c:active { transform: scale(0.98); }
+    .counter-big { font-size: 1.6rem; font-weight: bold; color: var(--accent-pink); line-height: 1.1; }
+    .countdown-anim { font-size: 1.2rem; font-weight: bold; color: var(--accent-pink); }
 
     /* ダッシュボード & コントロール */
     .dashboard { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 12px; margin-bottom: 12px; box-shadow: var(--shadow); width: 100%; }
@@ -167,11 +160,15 @@
     .status-retired { background: rgba(150, 150, 150, 0.15); color: var(--light-text); border: 1px solid var(--border-color); }
     .old-name-badge { font-size: 0.65rem; background: rgba(150, 150, 150, 0.15); color: var(--light-text); padding: 1px 6px; border-radius: 6px; border: 1px solid var(--border-color); }
     .super-tag { font-size: 0.65rem; background: var(--gold-border); color: #fff; padding: 1px 5px; border-radius: 8px; font-weight: bold; }
+    .store-pill-badge {
+      display: inline-flex; align-items: center; gap: 3px; font-size: 0.65rem;
+      background: var(--soft-pink); color: var(--accent-pink); border: 1px solid var(--primary-pink);
+      padding: 1px 7px; border-radius: 10px; font-weight: bold; box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
     .badge-count { background: var(--badge-bg); color: var(--badge-color); font-weight: bold; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem; }
 
     .card-body { padding: 10px 14px 12px; border-top: 1px dashed var(--border-color); background-color: var(--card-bg); display: flex; flex-direction: column; gap: 8px; width: 100%; }
     
-    /* スタイルピル（T/B/W/H）の定義 */
     .style-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 2px; }
     .style-pill { display: inline-flex; align-items: center; border-radius: 8px; overflow: hidden; font-size: 0.7rem; font-weight: bold; border: 1px solid rgba(0,0,0,0.08); }
     .style-pill-label { padding: 2px 7px; color: #fff; }
@@ -194,7 +191,7 @@
 
     .history-row-wrap { width: 100%; }
     .history-row { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); border: 1px solid var(--border-color); padding: 5px 8px; border-radius: 6px; font-size: 0.8rem; width: 100%; }
-    .report-badge { font-size: 0.65rem; color: var(--accent-pink); background: var(--soft-pink); border: 1px solid var(--primary-pink); padding: 1px 7px; border-radius: 10px; font-weight: bold; }
+    .report-badge { font-size: 0.65rem; color: var(--accent-pink); background: var(--soft-pink); border: 1px solid var(--primary-pink); padding: 1px 7px; border-radius: 10px; font-weight: bold; text-decoration: none; }
     .edit-icon-btn { background: none; border: none; cursor: pointer; padding: 2px 4px; color: var(--light-text); }
 
     .info-toggle-btn { background: var(--soft-pink); border: 1px solid var(--primary-pink); color: var(--accent-pink); border-radius: 8px; width: 18px; height: 18px; font-size: 0.65rem; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
@@ -209,10 +206,17 @@
     summary.timeline-summary::-webkit-details-marker { display: none; }
     .timeline-body { padding: 8px 12px 10px; border-top: 1px dashed var(--border-color); background: var(--bg-color); font-size: 0.78rem; display: flex; flex-direction: column; gap: 6px; width: 100%; }
 
+    /* 共有タブ専用スタイル（統合版） */
     .shared-top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; background: var(--card-bg); padding: 10px 14px; border-radius: var(--radius); border: 1px solid var(--border-color); box-shadow: var(--shadow); width: 100%; }
-    .shared-card { background: var(--card-bg); border: 1px solid var(--soft-pink); border-radius: 12px; padding: 12px; margin-bottom: 10px; box-shadow: var(--shadow); width: 100%; }
-    .empty-shared-box { background: var(--card-bg); border: 2px dashed var(--primary-pink); border-radius: var(--radius); padding: 30px 16px; text-align: center; box-shadow: var(--shadow); margin-top: 20px; width: 100%; }
-    .dropzone-box { background: var(--bg-color); border: 2px dashed var(--primary-pink); border-radius: 14px; padding: 24px 16px; text-align: center; cursor: pointer; margin: 10px 0; width: 100%; }
+    .shared-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 10px; box-shadow: var(--shadow); width: 100%; }
+    .shared-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; border-bottom: 1px dashed var(--border-color); padding-bottom: 4px; }
+    .shared-user-name { font-size: 0.9rem; font-weight: bold; color: var(--accent-pink); }
+    .empty-shared-box { background: var(--card-bg); border: 2px dashed var(--primary-pink); border-radius: var(--radius); padding: 24px 16px; text-align: center; box-shadow: var(--shadow); margin-bottom: 16px; width: 100%; }
+    .dropzone-box { background: var(--bg-color); border: 2px dashed var(--primary-pink); border-radius: 14px; padding: 20px 16px; text-align: center; cursor: pointer; margin: 10px 0; width: 100%; }
+    
+    .share-guide-box { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 14px; margin-bottom: 14px; box-shadow: var(--shadow); font-size: 0.78rem; text-align: left; }
+    .share-guide-box h4 { color: var(--accent-pink); margin-bottom: 6px; font-size: 0.85rem; }
+    .share-guide-box ol { padding-left: 18px; display: flex; flex-direction: column; gap: 4px; color: var(--text-color); }
 
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); justify-content: center; align-items: center; z-index: 1000; }
     .modal-content {
@@ -223,6 +227,19 @@
     }
     @keyframes modalFadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
     .close-btn { background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink)); color: white; border: none; padding: 8px 22px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; cursor: pointer; margin-top: 10px; width: 100%; box-shadow: 0 3px 10px rgba(0,0,0,0.2); }
+
+    .letter-modal-card-item {
+      background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 12px;
+      padding: 10px; margin-top: 10px; text-align: left;
+    }
+    .letter-modal-img {
+      width: 100%; max-height: 350px; object-fit: contain; border-radius: 8px;
+      border: 1px solid var(--border-color); margin-bottom: 6px; background: rgba(0,0,0,0.02); display: block;
+    }
+    .letter-modal-text-box {
+      font-size: 0.8rem; color: var(--text-color); background: var(--card-bg);
+      padding: 8px; border-radius: 6px; border: 1px dashed var(--primary-pink); line-height: 1.4; white-space: pre-wrap;
+    }
 
     .add-form { display: flex; flex-direction: column; gap: 10px; text-align: left; width: 100%; }
     .form-group { display: flex; flex-direction: column; gap: 4px; width: 100%; }
@@ -239,25 +256,13 @@
     details.detail-fold summary::-webkit-details-marker { display: none; }
     details.detail-fold .fold-body { padding: 4px 10px 10px; display: flex; flex-direction: column; gap: 8px; }
 
-    /* 3Dフリップモーダル */
-    .flip-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); justify-content: center; align-items: center; z-index: 2000; }
-    .flip-container { perspective: 1200px; width: 85vw; max-width: 400px; aspect-ratio: 3/4; cursor: pointer; }
-    .flip-card { width: 100%; height: 100%; position: relative; transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1); transform-style: preserve-3d; }
-    .flip-card.is-flipped { transform: rotateY(180deg); }
-    .flip-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 4px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
-    .flip-front { background: #fff; padding: 12px 12px 45px 12px; display: flex; flex-direction: column; }
-    .flip-front img { width: 100%; height: 100%; object-fit: cover; border-radius: 2px; }
-    .flip-back { background: #fdfbfb; transform: rotateY(180deg); padding: 24px; color: #333; display: flex; flex-direction: column; gap: 12px; background-image: repeating-linear-gradient(transparent, transparent 27px, #e0e0e0 27px, #e0e0e0 28px); background-position: 0 24px; }
-    .flip-back-header { font-size: 1.1rem; font-weight: bold; border-bottom: 2px dashed #ccc; padding-bottom: 8px; }
-    .flip-back-note { font-size: 0.95rem; line-height: 1.8; flex-grow: 1; text-align: left; }
-    .flip-hint { position: absolute; bottom: -30px; width: 100%; text-align: center; color: rgba(255,255,255,0.7); font-size: 0.8rem; }
-
     details.settings-acc-card { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 8px; text-align: left; overflow: hidden; width: 100%; }
     summary.settings-acc-summary { padding: 10px 12px; font-size: 0.85rem; font-weight: bold; color: var(--accent-pink); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; width: 100%; }
     summary.settings-acc-summary::-webkit-details-marker { display: none; }
     .settings-acc-body { padding: 10px 12px 12px; border-top: 1px dashed var(--border-color); font-size: 0.8rem; width: 100%; }
     .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 100%; }
     .theme-item-btn { padding: 8px; border-radius: 10px; border: 1.5px solid var(--border-color); background: var(--card-bg); color: var(--text-color); font-size: 0.75rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+    .theme-item-btn.active-theme { border: 2px solid var(--accent-pink); box-shadow: 0 0 8px rgba(247,37,133,0.3); }
 
     #viewDashboard { width: 100%; }
     .period-select-row { display: flex; gap: 4px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 8px; width: 100%; }
@@ -283,7 +288,7 @@
 
   <header>
     <h1 id="headerTitle">童貞の風俗履歴図鑑</h1>
-    <div class="header-sub">マイ キャスト ＆ プレイレコード [V18.1 Pro]</div>
+    <div class="header-sub">マイ キャスト ＆ プレイレコード</div>
     <div class="header-btn-row">
       <button class="pill-btn" onclick="openSettingsModal()" title="ユーザー設定・テーマ変更">
         <span>👤 ユーザー: <span id="currentUserNameDisplay">童貞</span></span>
@@ -320,7 +325,7 @@
     <div class="home-top-panel">
       <!-- A. 今月のカウンター -->
       <div class="home-card-a">
-        <div style="font-size: 0.75rem; color: var(--light-text); font-weight: bold; margin-bottom: 2px;">📅 今月のプレイ状況</div>
+        <div style="font-size: 0.75rem; color: var(--light-text); font-weight: bold; margin-bottom: 2px;">今月のプレイ状況</div>
         <div style="display: flex; justify-content: space-between; align-items: baseline;">
           <div>
             <span class="counter-big" id="homeMonthCount">0回</span>
@@ -335,8 +340,14 @@
 
       <!-- B. 最終利用からの経過日数 -->
       <div class="home-card-b">
-        <div style="font-size: 0.72rem; color: var(--light-text); font-weight: bold; margin-bottom: 2px;">⚡ 前回の利用からの経過日数</div>
+        <div style="font-size: 0.72rem; color: var(--light-text); font-weight: bold; margin-bottom: 2px;">前回の利用からの経過</div>
         <div class="countdown-anim" id="homeDaysSinceLast">計測データなし</div>
+      </div>
+
+      <!-- C. ダイアログ風：次はいつイクのー？ -->
+      <div class="home-card-c" onclick="openNextVisitPrompt()">
+        <div style="font-size: 0.72rem; color: var(--light-text); font-weight: bold; margin-bottom: 2px;">次回の予定</div>
+        <div style="font-size: 0.95rem; font-weight: bold; color: var(--accent-pink);" id="homeNextVisitText">次はいつイクのー？♡</div>
       </div>
     </div>
   </div>
@@ -406,30 +417,32 @@
     <div id="dashboardContent"></div>
   </div>
 
-  <!-- ===== 4. 共有タブ ===== -->
+  <!-- ===== 4. 共有タブ（完全統合版：キャスト単位選択共有 ＆ マイ図鑑取込） ===== -->
   <div id="viewShared" class="tab-content">
+    <div class="share-guide-box">
+      <h4>📖 キャスト履歴の共有と見方ガイド</h4>
+      <ol>
+        <li><strong>個別のキャストを共有する:</strong> マイ図鑑の各キャストカードにある「📤 友だちへ共有」ボタンを押すと、基本情報・利用履歴・手紙カードのどれを送信するか選んで .json ファイルを作成できます。ファイル名や内部データにはあなたのユーザー名（共有元）が記録されます。</li>
+        <li><strong>友達の履歴を受け取る:</strong> 受け取った .json ファイルを下のボタンから読み込むと、共有リストにストックされ、カードの「➕ マイ図鑑へ取り込む」ボタンで自分のマイ図鑑に直接合算・統合できます！</li>
+      </ol>
+      <div style="margin-top: 10px;">
+        <button class="pill-btn" onclick="openImportSharedModal()" style="width:100%; justify-content:center; padding:8px;">📂 友達の履歴ファイルを読み込む</button>
+      </div>
+    </div>
+
     <div class="shared-top-bar">
-      <span style="font-size:0.85rem; font-weight:bold; color:var(--accent-pink);">📥 友達からの共有データ</span>
-      <button class="pill-btn" onclick="openImportModal()">📂 読み込む</button>
+      <span style="font-size:0.85rem; font-weight:bold; color:var(--accent-pink);">📥 友達からの共有データ一覧</span>
+      <span style="font-size:0.75rem; color:var(--light-text);">合計: <span id="sharedCount">0</span>件</span>
     </div>
     <div id="sharedContent"></div>
   </div>
 
-  <!-- 3Dフリップモーダル -->
-  <div class="flip-overlay" id="flipModal" onclick="closeFlipModal(event)">
-    <div class="flip-container" id="flipContainer" onclick="toggleFlip(event)">
-      <div class="flip-card" id="flipCard">
-        <div class="flip-face flip-front"><img id="flipImg" src="" alt="手紙カード"></div>
-        <div class="flip-face flip-back">
-          <div class="flip-back-header">
-            <div style="font-size:0.8rem; color:#888;" id="flipDate">---</div>
-            <div id="flipName" style="color:var(--accent-pink); font-size:1.1rem;">---</div>
-          </div>
-          <div class="flip-back-note" id="flipNote">メモがありません。</div>
-          <div style="font-size:0.75rem; font-weight:bold; color:#0ca678;" id="flipFlags"></div>
-        </div>
-      </div>
-      <div class="flip-hint">💡 タップして裏返す</div>
+  <!-- 💌 手紙・カード全画像ギャラリーモーダル -->
+  <div class="modal-overlay" id="letterModal">
+    <div class="modal-content" style="max-width: 450px;">
+      <h3 id="letterModalTitle">💌 メッセージカード・手紙</h3>
+      <div id="letterModalContainer" style="display:flex; flex-direction:column; gap:10px; max-height:60vh; overflow-y:auto; padding-right:4px;"></div>
+      <button class="close-btn" onclick="closeModal('letterModal')" style="margin-top:12px;">閉じる</button>
     </div>
   </div>
 
@@ -449,7 +462,7 @@
       <details class="settings-acc-card" open>
         <summary class="settings-acc-summary"><span>🎨 カラーテーマ変更</span></summary>
         <div class="settings-acc-body">
-          <div class="theme-grid">
+          <div class="theme-grid" id="themeButtonsGrid">
             <button class="theme-item-btn" onclick="setTheme('default')">🌸 ぴんく</button>
             <button class="theme-item-btn" onclick="setTheme('midnight')">🌙 ミッドナイト</button>
             <button class="theme-item-btn" onclick="setTheme('velvet')">🖤 ベルベット</button>
@@ -475,15 +488,54 @@
     </div>
   </div>
 
-  <div class="modal-overlay" id="importModal">
+  <!-- 📤 キャスト別 選択式共有エクスポートモーダル -->
+  <div class="modal-overlay" id="exportCastModal">
     <div class="modal-content">
-      <h3>📂 共有データ読み込み</h3>
+      <h3>📤 友だちへ共有</h3>
+      <p style="font-size:0.8rem; color:var(--light-text); margin-bottom:8px;">
+        「<strong id="exportModalCastName" style="color:var(--accent-pink);">---</strong>」さんのデータを友達に送信します。
+      </p>
+
+      <div style="background:var(--bg-color); border:1px solid var(--border-color); border-radius:10px; padding:10px 12px; text-align:left; margin-bottom:10px; display:flex; flex-direction:column; gap:6px;">
+        <div style="font-size:0.75rem; font-weight:bold; color:var(--accent-pink); margin-bottom:2px;">共有する項目を選択:</div>
+        <label style="font-size:0.82rem; font-weight:bold; display:flex; align-items:center; gap:8px; cursor:pointer;">
+          <input type="checkbox" id="chkIncludeInfo" checked onchange="updateExportFileName()" style="width:16px; height:16px; accent-color:var(--accent-pink);"> キャスト基本情報（名前・スタイル・メモ等）
+        </label>
+        <label style="font-size:0.82rem; font-weight:bold; display:flex; align-items:center; gap:8px; cursor:pointer;">
+          <input type="checkbox" id="chkIncludeVisits" checked onchange="updateExportFileName()" style="width:16px; height:16px; accent-color:var(--accent-pink);"> 利用履歴（日付・回数・マーク等）
+        </label>
+        <label style="font-size:0.82rem; font-weight:bold; display:flex; align-items:center; gap:8px; cursor:pointer;">
+          <input type="checkbox" id="chkIncludeLetters" checked onchange="updateExportFileName()" style="width:16px; height:16px; accent-color:var(--accent-pink);"> 手紙・メッセージカード画像
+        </label>
+      </div>
+
+      <div style="background:var(--bg-color); border:1px solid var(--border-color); border-radius:10px; padding:10px 12px; text-align:left; font-size:0.78rem; margin-bottom:8px;">
+        <strong style="color:var(--accent-pink);">STEP 1:</strong> ボタンを押してファイルをダウンロード。<br>
+        <div style="text-align:center; margin-top:4px;">
+          <span id="exportModalFileName" style="display:inline-block; background:var(--soft-pink); color:var(--accent-pink); font-family:monospace; font-weight:bold; padding:2px 8px; border-radius:6px; border:1px dashed var(--primary-pink); word-break:break-all;">共有_...json</span>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:6px; margin-top:10px;">
+        <button class="close-btn" onclick="executeCastDownload()" style="width:100%; margin-top:0;">💾 ファイルをダウンロード</button>
+        <button class="close-btn" onclick="closeModal('exportCastModal')" style="background:#888; width:100%; margin-top:0;">キャンセル</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 友達の共有データインポート用モーダル -->
+  <div class="modal-overlay" id="importSharedModal">
+    <div class="modal-content">
+      <h3>📂 友達の履歴を読み込む</h3>
+      <div style="font-size:0.75rem; color:var(--light-text); margin-bottom:10px; text-align:left;">
+        友達から受け取った共有ファイル（.json）を選択してください。共有タブにストックされ、マイ図鑑へいつでも取り込めます。
+      </div>
       <div class="dropzone-box" onclick="triggerSharedFileInput()">
         <div style="font-size: 1.8rem; margin-bottom: 4px;">📄</div>
-        <div style="font-size: 0.85rem; font-weight: bold; color: var(--accent-pink);">ファイルを選択</div>
+        <div style="font-size: 0.85rem; font-weight: bold; color: var(--accent-pink);">タップしてファイルを選択</div>
       </div>
-      <input type="file" id="sharedFileInput" accept=".json" style="display:none;" onchange="importJSONFile(event)">
-      <button class="close-btn" onclick="closeModal('importModal')" style="background:#888;">キャンセル</button>
+      <input type="file" id="sharedFileInput" accept=".json" style="display:none;" onchange="importSharedJSONFile(event)">
+      <button class="close-btn" onclick="closeModal('importSharedModal')" style="background:#888;">キャンセル</button>
     </div>
   </div>
 
@@ -491,9 +543,10 @@
     <div class="modal-content">
       <h3>❓ ご利用ガイド</h3>
       <div style="text-align:left; font-size:0.8rem; display:flex; flex-direction:column; gap:6px; max-height:60vh; overflow-y:auto;">
-        <div><strong>💭 ホーム:</strong> 今月の利用カウンター・経過日数のアニメーションと浮遊カード（タップで3Dフリップ）！</div>
-        <div><strong>📖 マイ図鑑:</strong> スリーサイズ、金額、店舗名、手紙画像なども完璧に管理。</div>
+        <div><strong>💭 ホーム:</strong> 今月の利用カウンター・経過日数と、次回の予定日まであと何日かを表示！</div>
+        <div><strong>📖 マイ図鑑:</strong> 年月日に加え、スリーサイズ、金額、店舗名バッジ、手紙画像ギャラリーを完備。</div>
         <div><strong>📊 統計:</strong> 期間フィルター（月別/3ヶ月/半年/1年/全データ）で徹底分析！</div>
+        <div><strong>👥 共有:</strong> キャストごとに情報を選んでエクスポートし、受け取ったデータをマイ図鑑に合算できます。</div>
       </div>
       <button class="close-btn" onclick="closeModal('helpModal')">閉じる</button>
     </div>
@@ -507,7 +560,7 @@
         <div style="display:flex; gap:6px;">
           <div class="form-group" style="flex:1;"><label>年</label><input type="text" id="addYear" required></div>
           <div class="form-group" style="flex:1;"><label>月</label><input type="text" id="addMonth" required></div>
-          <div class="form-group" style="flex:1;"><label>日（任意）</label><input type="number" id="addDay" min="1" max="31" placeholder="15"></div>
+          <div class="form-group" style="flex:1;"><label>日</label><input type="number" id="addDay" min="1" max="31" placeholder="15" required></div>
         </div>
 
         <div class="form-group"><label>キャスト名</label><input type="text" id="addName" required placeholder="例: ゆあ"></div>
@@ -569,6 +622,13 @@
       <form class="add-form" onsubmit="saveEditedRecord(event)">
         <input type="hidden" id="editRecordIndex">
         <div class="form-group"><label>対象</label><div id="editRecordHeader" style="font-size:0.85rem; font-weight:bold;"></div></div>
+        
+        <div style="display:flex; gap:6px;">
+          <div class="form-group" style="flex:1;"><label>年</label><input type="text" id="editYear" required></div>
+          <div class="form-group" style="flex:1;"><label>月</label><input type="text" id="editMonth" required></div>
+          <div class="form-group" style="flex:1;"><label>日</label><input type="number" id="editDay" min="1" max="31" placeholder="15" required></div>
+        </div>
+
         <div class="form-group"><label>フラグ</label><input type="text" id="editFlags"></div>
         <div class="form-group"><label>メモ</label><textarea id="editVisitNote" rows="2"></textarea></div>
         <div class="form-group"><label>金額（円）</label><input type="number" id="editAmount" min="0" placeholder="15000"></div>
@@ -581,8 +641,8 @@
 
   <div class="modal-overlay" id="gachaModal">
     <div class="modal-content">
-      <h3 id="gachaTitle">🎰 運命の指名抽選中...</h3>
-      <div class="roulette-container" id="rouletteBox" style="background:var(--soft-pink); border:2px dashed var(--primary-pink); border-radius:14px; padding:16px; margin:14px 0;"><div class="modal-cast-name" id="gachaResultName" style="font-size:1.5rem; font-weight:bold;">???</div></div>
+      <h3>🎰 運命の指名抽選中...</h3>
+      <div class="roulette-container" style="background:var(--soft-pink); border:2px dashed var(--primary-pink); border-radius:14px; padding:16px; margin:14px 0;"><div class="modal-cast-name" id="gachaResultName" style="font-size:1.5rem; font-weight:bold;">???</div></div>
       <button class="close-btn" id="gachaCloseBtn" onclick="closeModal('gachaModal')" disabled>抽選中...</button>
     </div>
   </div>
@@ -595,6 +655,7 @@
     let sharedRecords = [];
     let bubbleInterval;
     let dashPeriodType = 'month';
+    let targetExportCastName = '';
 
     function initUserData() {
       applyTheme(currentTheme);
@@ -602,15 +663,26 @@
       const savedCast = localStorage.getItem('user_cast_' + currentUserName);
       historyList = savedHist ? JSON.parse(savedHist) : [];
       castData = savedCast ? JSON.parse(savedCast) : {};
+      
       const savedShared = localStorage.getItem('user_shared_list_' + currentUserName);
       sharedRecords = savedShared ? JSON.parse(savedShared) : [];
 
-      historyList.forEach((h, i) => h.originalIndex = i);
-      document.getElementById('currentUserNameDisplay').innerText = currentUserName;
-      document.getElementById('sharedCount').innerText = sharedRecords.length;
+      historyList.forEach((h, i) => {
+        h.originalIndex = i;
+        if(!h.day) h.day = "1";
+      });
 
+      updateUIHeader();
       render();
       switchMainTab('home');
+    }
+
+    function updateUIHeader() {
+      const titleText = currentUserName + "の風俗履歴図鑑";
+      document.getElementById('headerTitle').innerText = titleText;
+      document.getElementById('pageTitle').innerText = titleText + " [V18.6 Pro]";
+      document.getElementById('currentUserNameDisplay').innerText = currentUserName;
+      document.getElementById('sharedCount').innerText = sharedRecords.length;
     }
 
     function saveData() {
@@ -618,8 +690,28 @@
       localStorage.setItem('user_hist_' + currentUserName, JSON.stringify(historyList));
       localStorage.setItem('user_cast_' + currentUserName, JSON.stringify(castData));
       localStorage.setItem('user_shared_list_' + currentUserName, JSON.stringify(sharedRecords));
-      document.getElementById('sharedCount').innerText = sharedRecords.length;
       historyList.forEach((h, i) => h.originalIndex = i);
+      updateUIHeader();
+    }
+
+    // ==========================================
+    // 次回予約日管理（次はいつイクのー？♡）
+    // ==========================================
+    function getNextVisitDate() {
+      return localStorage.getItem('user_next_visit_' + currentUserName) || '';
+    }
+
+    function setNextVisitDate(dateStr) {
+      localStorage.setItem('user_next_visit_' + currentUserName, dateStr);
+    }
+
+    function openNextVisitPrompt() {
+      const current = getNextVisitDate();
+      const input = prompt("次回の予約日を入力してください（例: 2026-08-25 または 2026/08/25）:", current);
+      if(input !== null) {
+        setNextVisitDate(input.trim());
+        renderHomeMetrics();
+      }
     }
 
     // ==========================================
@@ -656,7 +748,7 @@
     }
 
     // ==========================================
-    // スタイル（T/B/W/H）のカラー・ピル生成ヘルパー
+    // スタイル（T/B/W/H）ヘルパー
     // ==========================================
     function updateInputColor(inputElem, type) {
       const val = inputElem.value.trim().toUpperCase();
@@ -764,7 +856,7 @@
     }
 
     // ==========================================
-    // ホーム画面ダイナミック演出（A・B・C）
+    // ホーム画面ダイナミック演出
     // ==========================================
     function startHomeAnimations() {
       renderHomeMetrics();
@@ -789,8 +881,8 @@
 
       const diff = thisCount - prevCount;
       let diffHtml = '';
-      if(diff > 0) diffHtml = `<span style="color:#0ca678;">(先月比 +${diff}回 📈)</span>`;
-      else if(diff < 0) diffHtml = `<span style="color:#fa5252;">(先月比 ${diff}回 📉)</span>`;
+      if(diff > 0) diffHtml = `<span style="color:#0ca678;">(先月比 +${diff}回)</span>`;
+      else if(diff < 0) diffHtml = `<span style="color:#fa5252;">(先月比 ${diff}回)</span>`;
       else diffHtml = `<span style="color:var(--light-text);">(先月比 ±0)</span>`;
 
       document.getElementById('homeMonthCount').innerText = thisCount + '回';
@@ -803,25 +895,47 @@
       const daysElem = document.getElementById('homeDaysSinceLast');
       if(historyList.length === 0) {
         daysElem.innerText = "まだ記録がありません";
-        return;
+      } else {
+        let latestDate = null;
+        historyList.forEach(v => {
+          const y = parseInt(v.year, 10) || 2026;
+          const m = parseInt(v.month, 10) || 1;
+          const d = parseInt(v.day, 10) || 1;
+          const dt = new Date(y, m - 1, d);
+          if(!latestDate || dt > latestDate) latestDate = dt;
+        });
+
+        if(latestDate) {
+          const diffTime = now.getTime() - latestDate.getTime();
+          const diffDays = Math.floor(diffTime / (1000 * 3600 * 24));
+          if(diffDays <= 0) daysElem.innerText = "直近の利用から 0日経過";
+          else daysElem.innerText = `最後の記録から ${diffDays} 日経過`;
+        } else {
+          daysElem.innerText = "計測データなし";
+        }
       }
 
-      let latestDate = null;
-      historyList.forEach(v => {
-        const y = parseInt(v.year, 10) || 2026;
-        const m = parseInt(v.month, 10) || 1;
-        const d = parseInt(v.day, 10) || 1;
-        const dt = new Date(y, m - 1, d);
-        if(!latestDate || dt > latestDate) latestDate = dt;
-      });
-
-      if(latestDate) {
-        const diffTime = now.getTime() - latestDate.getTime();
-        const diffDays = Math.floor(diffTime / (1000 * 3600 * 24));
-        if(diffDays <= 0) daysElem.innerText = "✨ 今日も利用記録があります！";
-        else daysElem.innerText = `🔥 最後の記録から ${diffDays} 日経過しました`;
+      const nextVisitStr = getNextVisitDate();
+      const nextTextElem = document.getElementById('homeNextVisitText');
+      if(!nextVisitStr) {
+        nextTextElem.innerText = "次はいつイクのー？（タップして設定）";
       } else {
-        daysElem.innerText = "計測データなし";
+        const nextDt = new Date(nextVisitStr.replace(/\//g, '-'));
+        if(isNaN(nextDt.getTime())) {
+          nextTextElem.innerText = `予定: ${nextVisitStr}`;
+        } else {
+          const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+          const targetMidnight = new Date(nextDt.getFullYear(), nextDt.getMonth(), nextDt.getDate());
+          const diffDaysNext = Math.ceil((targetMidnight - todayMidnight) / (1000 * 3600 * 24));
+          
+          if(diffDaysNext < 0) {
+            nextTextElem.innerText = `予定日(${nextVisitStr})を過ぎています（タップして変更）`;
+          } else if(diffDaysNext === 0) {
+            nextTextElem.innerText = `次回の予定日まで あと 0日（今日！）`;
+          } else {
+            nextTextElem.innerText = `次回の予定日まで あと ${diffDaysNext} 日 (${nextVisitStr})`;
+          }
+        }
       }
     }
 
@@ -845,7 +959,7 @@
       });
 
       if(cards.length === 0) {
-        area.innerHTML = '<div style="text-align:center; margin-top:140px; color:var(--light-text); font-size:0.8rem;">手紙や画像付きの記録を追加すると<br>ここに思い出が浮かんできます💭</div>';
+        area.innerHTML = '<div style="text-align:center; margin-top:140px; color:var(--light-text); font-size:0.8rem;">画像付きの記録を追加すると<br>思い出が浮かんできます</div>';
         return;
       }
 
@@ -872,30 +986,41 @@
       el.style.animationDuration = duration + 's';
 
       el.innerHTML = `<img src="${item.img}" alt="card"><div class="fl-name">${item.name}</div>`;
-      el.onclick = () => openFlipModalFromHome(item);
+      el.onclick = () => openLetterListModal(null, item.name);
       area.appendChild(el);
 
       setTimeout(() => { if(el.parentNode) el.remove(); }, duration * 1000);
     }
 
-    function openFlipModalFromHome(item) {
-      document.getElementById('flipImg').src = item.img;
-      document.getElementById('flipDate').innerText = item.date;
-      document.getElementById('flipName').innerText = item.name;
-      document.getElementById('flipNote').innerText = item.note || 'メモなし';
-      document.getElementById('flipFlags').innerText = item.flags || '';
-      document.getElementById('flipCard').classList.remove('is-flipped');
-      document.getElementById('flipModal').style.display = 'flex';
-    }
+    function openLetterListModal(event, name) {
+      if(event) { event.preventDefault(); event.stopPropagation(); }
+      const info = castData[name];
+      const castVisits = historyList.filter(v => v.name === name);
+      
+      const allLetters = [];
+      if(info && info.letters) {
+        info.letters.forEach(l => { if(l.imageUrl) allLetters.push({ date: l.date || '思い出', img: l.imageUrl, text: l.text || '' }); });
+      }
+      castVisits.forEach(v => {
+        if(v.chekiImg && !allLetters.some(l => l.img === v.chekiImg)) {
+          allLetters.push({ date: `${v.year}年${v.month}${v.day?v.day+'日':''}`, img: v.chekiImg, text: v.visitNote || '' });
+        }
+      });
 
-    function openFlipModal(index) {
-      const record = historyList[index];
-      if(!record || !record.chekiImg) return;
-      openFlipModalFromHome({ name: record.name, img: record.chekiImg, date: `${record.year} ${record.month}`, note: record.visitNote, flags: record.flags });
-    }
+      if(allLetters.length === 0) return alert("画像データがありません。");
 
-    function toggleFlip(event) { event.stopPropagation(); document.getElementById('flipCard').classList.toggle('is-flipped'); }
-    function closeFlipModal(event) { document.getElementById('flipModal').style.display = 'none'; }
+      document.getElementById('letterModalTitle').innerText = `${name} の思い出ギャラリー (${allLetters.length}枚)`;
+      const container = document.getElementById('letterModalContainer');
+      container.innerHTML = allLetters.map(item => `
+        <div class="letter-modal-card-item">
+          <div style="font-size:0.72rem; color:var(--light-text); font-weight:bold; margin-bottom:4px;">${item.date}</div>
+          <img src="${item.img}" class="letter-modal-img" alt="画像">
+          ${item.text ? `<div class="letter-modal-text-box">${item.text}</div>` : ''}
+        </div>
+      `).join('');
+
+      document.getElementById('letterModal').style.display = 'flex';
+    }
 
     function toggleRowDetail(idx) {
       const panel = document.getElementById('rd-' + idx);
@@ -935,24 +1060,32 @@
       if(!target) return;
       const keyword = (document.getElementById('searchKeyword').value || '').trim().toLowerCase();
       target.innerHTML = '';
-      if(historyList.length === 0 && Object.keys(castData).length === 0) {
-        target.innerHTML = '<div style="text-align:center; color:var(--light-text); padding:40px 10px; font-size:0.85rem;">記録がありません。<br>右下の「＋」から追加してください。</div>';
-        updateStats({}); return;
-      }
-      if(currentView === 'cast') renderCastView(target, keyword);
-      else renderTimelineView(target, keyword);
-    }
 
-    function renderCastView(target, keyword) {
       const map = {};
       historyList.forEach((item, idx) => {
         if (!map[item.name]) map[item.name] = { name: item.name, visits: [], lastIdx: idx, favCount: 0 };
-        map[item.name].visits.push(item); map[item.name].lastIdx = idx;
+        map[item.name].visits.push(item);
+        map[item.name].lastIdx = idx;
         if (item.flags && item.flags.includes('🆂')) map[item.name].favCount++;
       });
-      Object.keys(castData).forEach(cName => { if (!map[cName]) map[cName] = { name: cName, visits: [], lastIdx: -1, favCount: 0 }; });
+      Object.keys(castData).forEach(cName => {
+        if (!map[cName]) map[cName] = { name: cName, visits: [], lastIdx: -1, favCount: 0 };
+      });
       updateStats(map);
 
+      if(historyList.length === 0 && Object.keys(castData).length === 0) {
+        target.innerHTML = '<div style="text-align:center; color:var(--light-text); padding:40px 10px; font-size:0.85rem;">記録がありません。<br>右下の「＋」から追加してください。</div>';
+        return;
+      }
+
+      if(currentView === 'cast') {
+        renderCastView(target, map, keyword);
+      } else {
+        renderTimelineView(target, keyword);
+      }
+    }
+
+    function renderCastView(target, map, keyword) {
       let list = Object.values(map);
       if(currentFilter === 'active') list = list.filter(c => castData[c.name] && castData[c.name].link);
       if(currentFilter === 'fav') list = list.filter(c => c.favCount >= 1);
@@ -972,26 +1105,30 @@
         const info = castData[c.name] || { link: '', notes: '', oldName: '', style: '', letters: [] };
         const isActive = info.link && info.link.trim() !== '';
 
-        // 手紙データの有無を検証してボタンを生成
-        const validLetters = (info.letters || []).filter(item => 
-          (item.imageUrl && typeof item.imageUrl === 'string' && item.imageUrl.trim() !== "") || 
-          (item.text && typeof item.text === 'string' && item.text.trim() !== "")
-        );
-        const letterBtnHtml = validLetters.length > 0 
-          ? `<button class="letter-btn" onclick="openLetterListModal(event, '${c.name}')">💌 手紙 (${validLetters.length})</button>` 
+        let latestStore = '';
+        for(let i = c.visits.length - 1; i >= 0; i--) {
+          if(c.visits[i].storeName) { latestStore = c.visits[i].storeName; break; }
+        }
+        const storeBadgeHtml = latestStore ? `<span class="store-pill-badge" title="店舗名">🏬 ${latestStore}</span>` : '';
+
+        const validLettersCount = (info.letters || []).filter(l => l.imageUrl).length + c.visits.filter(v => v.chekiImg).length;
+        const letterBtnHtml = validLettersCount > 0 
+          ? `<button class="letter-btn" onclick="openLetterListModal(event, '${c.name}')">💌 手紙 (${validLettersCount})</button>` 
           : '';
+
+        const copyBtnHtml = `<button class="copy-btn" onclick="openExportCastModal(event, '${c.name}')">📤 友だちへ共有</button>`;
 
         let rowsHtml = '';
         c.visits.forEach(v => {
           const reportBtn = v.reportUrl ? `<a href="${v.reportUrl}" target="_blank" class="report-badge">レポ</a>` : '';
-          const imgBtn = v.chekiImg ? `<button class="link-btn" onclick="openFlipModal(${v.originalIndex})">📷 画像</button>` : '';
           const { btn: infoBtn, panel: infoPanel } = buildRowDetailHTML(v);
+          const dateStr = `${v.year.slice(2)}年 ${v.month}${v.day ? ' ' + v.day + '日' : ''}`;
           rowsHtml += `
             <div class="history-row-wrap">
               <div class="history-row">
-                <span class="history-date">${v.year.slice(2)}年 ${v.month}</span>
+                <span class="history-date">${dateStr}</span>
                 <div style="display:flex; align-items:center; gap:6px;">
-                  ${imgBtn} ${reportBtn} <span class="history-flags">${v.flags||''}</span>
+                  ${reportBtn} <span class="history-flags">${v.flags||''}</span>
                   ${infoBtn}
                   <button class="edit-icon-btn" onclick="openEditRecordModal(event, ${v.originalIndex})"><svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>
                 </div>
@@ -1005,8 +1142,9 @@
             <div class="cast-info">
               <span class="arrow-icon">▼</span>
               <span>${c.name}</span>
+              ${storeBadgeHtml}
               ${info.oldName?`<span class="old-name-badge">旧:${info.oldName}</span>`:''}
-              <span class="status-badge ${isActive?'status-active':'status-retired'}">${isActive?'在籍中':'卒業'}</span>
+              <span class="status-badge ${isActive?'status-active':'status-retired'}">${isActive?'在籍':'卒業'}</span>
               ${c.favCount>=5?'<span class="super-tag">オキニ</span>':''}
             </div>
             <span class="badge-count">${c.visits.length}回</span>
@@ -1017,6 +1155,7 @@
               <div class="notes-box">${info.notes || 'メモなし'}</div>
               <div class="btn-action-group">
                 ${letterBtnHtml}
+                ${copyBtnHtml}
                 ${isActive?`<button class="link-btn" onclick="window.open('${info.link}','_blank')">プロフ</button>`:''}
               </div>
             </div>
@@ -1045,9 +1184,10 @@
         items.forEach(i => {
           const details = document.createElement('details'); details.className = 'timeline-item';
           const { btn: infoBtn, panel: infoPanel } = buildRowDetailHTML(i);
+          const subDateStr = i.day ? `${i.day}日` : '';
           details.innerHTML = `
             <summary class="timeline-summary">
-              <div style="display:flex; align-items:center; gap:8px;"><span class="arrow-icon">▼</span><strong>${i.name}</strong><span>${i.flags||''}</span></div>
+              <div style="display:flex; align-items:center; gap:8px;"><span class="arrow-icon">▼</span><strong>${i.name}</strong> <span style="font-size:0.75rem; color:var(--light-text);">${subDateStr}</span><span>${i.flags||''}</span></div>
               <div style="display:flex; align-items:center; gap:6px;">${infoBtn} <button class="edit-icon-btn" onclick="openEditRecordModal(event, ${i.originalIndex})"><svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button></div>
             </summary>
             <div class="timeline-body">📝 ${i.visitNote || 'メモなし'} ${infoPanel}</div>`;
@@ -1055,16 +1195,6 @@
         });
         target.appendChild(sec);
       });
-    }
-
-    function openLetterListModal(event, name) {
-      event.preventDefault(); event.stopPropagation();
-      const info = castData[name];
-      if (!info || !info.letters || info.letters.length === 0) return;
-      const firstL = info.letters.find(l => l.imageUrl);
-      if (firstL) {
-        openFlipModalFromHome({ name: name, img: firstL.imageUrl, date: firstL.date || '手紙', note: firstL.text || 'メッセージカード', flags: '💌' });
-      }
     }
 
     // ==========================================
@@ -1233,12 +1363,206 @@
     }
 
     // ==========================================
+    // キャスト個別選択共有 ＆ マイ図鑑合算取り込み
+    // ==========================================
+    function openExportCastModal(event, name) {
+      event.preventDefault(); event.stopPropagation();
+      targetExportCastName = name;
+      document.getElementById('exportModalCastName').innerText = name;
+      document.getElementById('chkIncludeInfo').checked = true;
+      document.getElementById('chkIncludeVisits').checked = true;
+      document.getElementById('chkIncludeLetters').checked = true;
+      updateExportFileName();
+      document.getElementById('exportCastModal').style.display = 'flex';
+    }
+
+    function updateExportFileName() {
+      const name = targetExportCastName;
+      const opts = [];
+      if (document.getElementById('chkIncludeInfo').checked) opts.push('info');
+      if (document.getElementById('chkIncludeVisits').checked) opts.push('visits');
+      if (document.getElementById('chkIncludeLetters').checked) opts.push('letters');
+      const fileName = `共有_${name}_[${opts.join('-')}](from_${currentUserName}).json`;
+      document.getElementById('exportModalFileName').innerText = fileName;
+    }
+
+    function executeCastDownload() {
+      if (!targetExportCastName) return;
+      const name = targetExportCastName;
+      const includeInfo = document.getElementById('chkIncludeInfo').checked;
+      const includeVisits = document.getElementById('chkIncludeVisits').checked;
+      const includeLetters = document.getElementById('chkIncludeLetters').checked;
+
+      const singleExportObject = {
+        app: "風俗履歴図鑑_選択共有",
+        version: "18.6",
+        sharedBy: currentUserName,
+        castName: name,
+        info: includeInfo ? (castData[name] || {}) : null,
+        visits: includeVisits ? historyList.filter(h => h.name === name) : [],
+        letters: includeLetters && castData[name] ? (castData[name].letters || []) : []
+      };
+
+      const fileName = document.getElementById('exportModalFileName').innerText;
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(singleExportObject, null, 2));
+      const a = document.createElement('a');
+      a.href = dataStr;
+      a.download = fileName;
+      a.click();
+      a.remove();
+
+      closeModal('exportCastModal');
+      alert(`✨ 「${fileName}」をダウンロードしました！LINE等で友達に送信してください。`);
+    }
+
+    function openImportSharedModal() {
+      document.getElementById('importSharedModal').style.display = 'flex';
+    }
+
+    function triggerSharedFileInput() {
+      document.getElementById('sharedFileInput').click();
+    }
+
+    function importSharedJSONFile(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+
+          if (imported.app === "風俗履歴図鑑_選択共有" || imported.castName) {
+            sharedRecords.unshift({
+              fromUser: imported.sharedBy || "友達",
+              castName: imported.castName,
+              info: imported.info || null,
+              visits: imported.visits || [],
+              letters: imported.letters || [],
+              date: new Date().toLocaleDateString()
+            });
+            saveData();
+            renderSharedArea();
+            closeModal('importSharedModal');
+            switchMainTab('shared');
+            alert(`👥 ${imported.sharedBy || '友達'}さんから共有された「${imported.castName}」さんのデータを受信しました！`);
+            return;
+          }
+
+          if (imported.historyList && imported.castData) {
+            sharedRecords.unshift({
+              fromUser: imported.userName || "友達",
+              castName: "全図鑑データバックアップ",
+              info: null,
+              visits: imported.historyList,
+              letters: [],
+              date: new Date().toLocaleDateString(),
+              fullBackup: true,
+              castData: imported.castData
+            });
+            saveData();
+            renderSharedArea();
+            closeModal('importSharedModal');
+            switchMainTab('shared');
+            alert("✨ 友達の図鑑ファイルを受信しました！");
+            return;
+          }
+
+          alert("⚠️ 無効なファイル形式です。");
+        } catch (err) {
+          alert("⚠️ ファイルの読み込みに失敗しました。");
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    function copySharedToMyCatalog(index) {
+      const item = sharedRecords[index];
+      if (confirm(`「${item.castName}」さんのデータをあなたのマイ図鑑に取り込みますか？`)) {
+        if (item.info) {
+          if (!castData[item.castName]) {
+            castData[item.castName] = item.info;
+          } else {
+            if (item.info.style && !castData[item.castName].style) castData[item.castName].style = item.info.style;
+            if (item.info.link && !castData[item.castName].link) castData[item.castName].link = item.info.link;
+          }
+          const creditStr = ` [共有元: ${item.fromUser}さん]`;
+          if (!castData[item.castName].notes.includes(creditStr)) {
+            castData[item.castName].notes = (castData[item.castName].notes || '') + creditStr;
+          }
+        }
+        if (item.visits && item.visits.length > 0) {
+          item.visits.forEach(v => historyList.push(v));
+        }
+        if (item.letters && item.letters.length > 0) {
+          if (!castData[item.castName]) castData[item.castName] = { letters: [] };
+          if (!castData[item.castName].letters) castData[item.castName].letters = [];
+          item.letters.forEach(l => castData[item.castName].letters.push(l));
+        }
+        saveData();
+        render();
+        alert(`✨ 「${item.castName}」さんをマイ図鑑に取り込みました！`);
+      }
+    }
+
+    function deleteSharedRecord(index) {
+      if (confirm("この共有履歴をリストから削除しますか？")) {
+        sharedRecords.splice(index, 1);
+        saveData();
+        renderSharedArea();
+      }
+    }
+
+    function renderSharedArea() {
+      const container = document.getElementById('sharedContent');
+      if(!container) return;
+
+      if(sharedRecords.length === 0) {
+        container.innerHTML = `
+          <div class="empty-shared-box">
+            <h3>👥 共有された履歴がありません</h3>
+            <p style="font-size:0.8rem; color:var(--light-text); margin-top:4px;">友達から受け取った .json ファイルを読み込むと<br>ここにコレクションされます！</p>
+          </div>`;
+        return;
+      }
+
+      container.innerHTML = sharedRecords.map((item, index) => {
+        let visitSummary = "";
+        if (item.visits && item.visits.length > 0) {
+          visitSummary = `${item.visits.length}回利用の記録が含まれています`;
+        } else {
+          visitSummary = '<span style="font-size:0.65rem; background:#fff3bf; color:#f59f00; border:1px solid #fcc419; padding:1px 6px; border-radius:8px; font-weight:bold;">⚠️ 履歴なし（キャスト基本情報のみ）</span>';
+        }
+        let infoText = item.info ? (item.info.notes || 'メモなし') : '情報なし';
+
+        return `
+          <div class="shared-card">
+            <div class="shared-card-header">
+              <span class="shared-user-name">👤 共有元: ${item.fromUser} さん</span>
+              <div style="display:flex; gap:6px;">
+                <button onclick="copySharedToMyCatalog(${index})" class="link-btn" style="background:var(--soft-pink); font-weight:bold;">➕ マイ図鑑へ取り込む</button>
+                <button onclick="deleteSharedRecord(${index})" style="background:none; border:none; color:var(--light-text); font-size:0.75rem; cursor:pointer; text-decoration:underline;">削除</button>
+              </div>
+            </div>
+            <div style="font-size:0.95rem; font-weight:bold; color:var(--text-color); margin:4px 0;">
+              💕 ${item.castName} 
+            </div>
+            <div style="font-size:0.75rem; color:var(--light-text);">${visitSummary}</div>
+            <div style="font-size:0.75rem; color:var(--text-color); margin-top:4px;">メモ: ${infoText}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ==========================================
     // 追加・編集・管理
     // ==========================================
     function openAddModal() {
       const d = new Date();
       document.getElementById('addYear').value = d.getFullYear();
       document.getElementById('addMonth').value = (d.getMonth() + 1) + '月';
+      document.getElementById('addDay').value = d.getDate();
       document.getElementById('addModal').style.display = 'flex';
     }
 
@@ -1260,7 +1584,7 @@
       const rec = {
         year: document.getElementById('addYear').value,
         month: document.getElementById('addMonth').value,
-        day: document.getElementById('addDay').value || '',
+        day: document.getElementById('addDay').value || '1',
         name: name,
         flags: document.getElementById('addFlags').value,
         visitNote: document.getElementById('addVisitNote').value,
@@ -1295,6 +1619,9 @@
       const rec = historyList[index]; if(!rec) return;
       document.getElementById('editRecordIndex').value = index;
       document.getElementById('editRecordHeader').innerText = `${rec.year}年 ${rec.month} - ${rec.name}`;
+      document.getElementById('editYear').value = rec.year || '';
+      document.getElementById('editMonth').value = rec.month || '';
+      document.getElementById('editDay').value = rec.day || '1';
       document.getElementById('editFlags').value = rec.flags || '';
       document.getElementById('editVisitNote').value = rec.visitNote || '';
       document.getElementById('editAmount').value = rec.amount || '';
@@ -1308,6 +1635,9 @@
       const idx = parseInt(document.getElementById('editRecordIndex').value, 10);
       const rec = historyList[idx];
       if(rec) {
+        rec.year = document.getElementById('editYear').value;
+        rec.month = document.getElementById('editMonth').value;
+        rec.day = document.getElementById('editDay').value || '1';
         rec.flags = document.getElementById('editFlags').value;
         rec.visitNote = document.getElementById('editVisitNote').value;
         rec.amount = document.getElementById('editAmount').value;
@@ -1342,17 +1672,43 @@
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     function openSettingsModal() { document.getElementById('inputUserName').value = currentUserName; document.getElementById('settingsModal').style.display = 'flex'; }
     function openHelpModal() { document.getElementById('helpModal').style.display = 'flex'; }
-    function openImportModal() { document.getElementById('importModal').style.display = 'flex'; }
-    function applyTheme(t) { currentTheme = t; if(t==='default') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme', t); localStorage.setItem('app_theme', t); }
+    
+    function applyTheme(t) {
+      currentTheme = t;
+      if(t==='default') document.documentElement.removeAttribute('data-theme');
+      else document.documentElement.setAttribute('data-theme', t);
+      localStorage.setItem('app_theme', t);
+
+      const grid = document.getElementById('themeButtonsGrid');
+      if(grid) {
+        const buttons = grid.querySelectorAll('.theme-item-btn');
+        buttons.forEach(btn => {
+          btn.classList.remove('active-theme');
+          if(btn.getAttribute('onclick').includes(`'${t}'`)) {
+            btn.classList.add('active-theme');
+          }
+        });
+      }
+    }
     function setTheme(t) { applyTheme(t); }
-    function saveUserName(e) { e.preventDefault(); currentUserName = document.getElementById('inputUserName').value; document.getElementById('currentUserNameDisplay').innerText = currentUserName; saveData(); closeModal('settingsModal'); }
-    function resetData() { if(confirm("初期化しますか？")){ localStorage.clear(); historyList=[]; castData=[]; render(); renderDashboard(); } }
+
+    function saveUserName(e) {
+      e.preventDefault();
+      currentUserName = document.getElementById('inputUserName').value.trim() || '童貞';
+      updateUIHeader();
+      saveData();
+      closeModal('settingsModal');
+      renderHomeMetrics();
+    }
+
+    function resetData() { if(confirm("初期化しますか？")){ localStorage.removeItem('user_hist_' + currentUserName); localStorage.removeItem('user_cast_' + currentUserName); historyList=[]; castData={}; render(); renderDashboard(); } }
     function triggerJSONFileInput() { document.getElementById('jsonFileInput').click(); }
-    function triggerSharedFileInput() { document.getElementById('sharedFileInput').click(); }
+    
     function exportJSONFile() {
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ historyList, castData, userName: currentUserName }, null, 2));
-      const a = document.createElement('a'); a.href = dataStr; a.download = `風俗履歴図鑑_${currentUserName}.json`; a.click(); a.remove();
+      const a = document.createElement('a'); a.href = dataStr; a.download = `${currentUserName}の風俗履歴図鑑_backup.json`; a.click(); a.remove();
     }
+
     function importJSONFile(e) {
       const file = e.target.files[0]; if(!file) return;
       const reader = new FileReader();
@@ -1361,14 +1717,11 @@
           const imp = JSON.parse(evt.target.result);
           if(imp.historyList && imp.castData) {
             historyList = imp.historyList; castData = imp.castData; currentUserName = imp.userName || '童貞';
-            saveData(); initUserData(); closeModal('settingsModal'); closeModal('importModal'); alert("復元完了しました！");
+            saveData(); initUserData(); closeModal('settingsModal'); alert("復元完了しました！");
           }
         } catch(err) { alert("読込エラー"); }
       };
       reader.readAsText(file);
-    }
-    function renderSharedArea() {
-      document.getElementById('sharedContent').innerHTML = `<div class="empty-shared-box"><h3>👥 共有データなし</h3><p>友達からのファイルを読み込むと表示されます</p></div>`;
     }
 
     initUserData();
