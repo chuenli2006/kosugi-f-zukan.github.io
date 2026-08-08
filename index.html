@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title id="pageTitle">風俗履歴図鑑 [V17.6]</title>
+  <title id="pageTitle">童貞の風俗履歴図鑑 [V17.7]</title>
   
   <style>
     /* 🎨 CSS変数：テーマ10種類のカラー定義 */
@@ -1345,9 +1345,9 @@
 
   <div class="modal-overlay" id="whatsNewModal">
     <div class="modal-content">
-      <h3>🎉 風俗履歴図鑑 V17.6へようこそ！</h3>
+      <h3>🎉 風俗履歴図鑑 V17.7へようこそ！</h3>
       <p style="font-size:0.75rem; color:var(--light-text); margin-bottom:8px;">
-        新規ユーザーは完全に空っぽの「童貞」状態からスタートします！使い方ガイドも更新されました。
+        スマホのアルバムから手紙・カード画像を直接選んでImgurに自動アップロードできるようになりました！
       </p>
       <button class="close-btn" onclick="closeWhatsNewModal()" style="width:100%; margin-top:4px;">了解してはじめる</button>
     </div>
@@ -1422,15 +1422,15 @@
         <div class="settings-acc-body">
           <div class="theme-grid">
             <button class="theme-item-btn" id="btnThemeDefault" onclick="setTheme('default')">🌸 ぴんく</button>
-            <button class="theme-item-btn" id="btnThemeMidnight" onclick="setTheme('midnight')">🌙 だーく</button>
-            <button class="theme-item-btn" id="btnThemeVelvet" onclick="setTheme('velvet')">🖤 ブラック</button>
+            <button class="theme-item-btn" id="btnThemeMidnight" onclick="setTheme('midnight')">🌙 ミッドナイト</button>
+            <button class="theme-item-btn" id="btnThemeVelvet" onclick="setTheme('velvet')">🖤 ベルベット</button>
             <button class="theme-item-btn" id="btnThemeBerry" onclick="setTheme('berry')">🍇 ベリー</button>
-            <button class="theme-item-btn" id="btnThemeCyber" onclick="setTheme('cyber')">🌃 TikTok風</button>
+            <button class="theme-item-btn" id="btnThemeCyber" onclick="setTheme('cyber')">🌃 サイバー</button>
             <button class="theme-item-btn" id="btnThemeMocha" onclick="setTheme('mocha')">☕️ モカ</button>
-            <button class="theme-item-btn" id="btnThemeEmerald" onclick="setTheme('emerald')">🥗 サラダ</button>
+            <button class="theme-item-btn" id="btnThemeEmerald" onclick="setTheme('emerald')">💎 エメラルド</button>
             <button class="theme-item-btn" id="btnThemeChampagne" onclick="setTheme('champagne')">👑 ゴールド</button>
             <button class="theme-item-btn" id="btnThemeViolet" onclick="setTheme('violet')">💜 ヴァイオレット</button>
-            <button class="theme-item-btn" id="btnThemePeach" onclick="setTheme('peach')">🍑 もも</button>
+            <button class="theme-item-btn" id="btnThemePeach" onclick="setTheme('peach')">🍑 ピーチ</button>
           </div>
         </div>
       </details>
@@ -1441,7 +1441,7 @@
           <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
         </summary>
         <div class="settings-acc-body">
-          <p style="font-size:0.7rem; color:var(--light-text); margin-bottom:6px;">全データをファイルとしてバックアップ・復元できます。</p>
+          <p style="font-size:0.7rem; color:var(--light-text); margin-bottom:6px;">全データをファイルとして保存・復元できます。</p>
           <button class="close-btn" style="width:100%; margin-top:0; font-size:0.75rem; padding:6px; background:linear-gradient(135deg, #4dabf7, #339af0);" onclick="exportJSONFile()">💾 JSONダウンロード</button>
           <button class="close-btn" style="width:100%; margin-top:6px; font-size:0.75rem; padding:6px; background:#20c997;" onclick="triggerJSONFileInput()">📂 JSONファイルを選択して復元</button>
           <input type="file" id="jsonFileInput" accept=".json,application/json,text/plain" style="display:none;" onchange="importJSONFile(event)">
@@ -1468,7 +1468,6 @@
     </div>
   </div>
 
-  <!-- ❓ 使い方ヘルプモーダル（ご要望の1〜7の機能説明を完全搭載） -->
   <div class="modal-overlay" id="helpModal">
     <div class="modal-content">
       <h3>❓ ご利用ガイド</h3>
@@ -1476,39 +1475,27 @@
         
         <div class="help-box">
           <h4>1. キャスト別図鑑 ＆ 月別時系列ビュー</h4>
-          <p><strong>キャスト別管理:</strong> 利用回数やオキニ度（⭐️・🆂・⚔などのマーク）に応じてカードが美しく色分けされます。在籍状況や旧源氏名、スリーサイズ（体型に応じた自動カラーリング機能付き）もひと目でわかります。</p>
-          <p style="margin-top:2px;"><strong>月別時系列ビュー:</strong> 過去の利用履歴を月ごとにタイムライン形式で振り返ることができます。</p>
+          <p><strong>キャスト別管理:</strong> 利用回数やオキニ度に応じてカードが美しく色分けされます。</p>
         </div>
 
         <div class="help-box">
           <h4>2. 📊 利用統計ダッシュボード</h4>
-          <p>総利用回数、経験人数、現在在籍しているキャスト数、オキニ率などのスタッツを自動集計・リアルタイム表示します。</p>
+          <p>総利用回数、経験人数、在籍数、オキニ率を自動集計します。</p>
         </div>
 
         <div class="help-box">
-          <h4>3. 📤 友だちへの共有機能 ＆ ガイド</h4>
-          <p><strong>個別選択シェア:</strong> キャストごとの基本情報、利用履歴を .json ファイルとして書き出し可能です。</p>
-          <p style="margin-top:2px;"><strong>STEPガイド:</strong> 共有モーダル内に「STEP 1〜3」の分かりやすい共有ガイドカードを搭載し、ファイル作成からLINEやDiscordでの送信、受け取りまで迷わず行えます。</p>
+          <h4>3. 📤 友だちへの共有機能</h4>
+          <p>キャストごとの基本情報や利用履歴を .json ファイルとして書き出して簡単に共有可能です。</p>
         </div>
 
         <div class="help-box">
-          <h4>4. 💌 メッセージカード（手紙）コレクション</h4>
-          <p>キャストから貰った手紙やメッセージカードの写真・テキストを日付順に美しくファイリング。いつでも思い出を振り返ることができます。</p>
+          <h4>4. 💌 手紙・カード画像アップロード</h4>
+          <p>スマホの写真を選ぶだけで自動でImgurにアップロードされ、URLが入力されて美しくファイリングされます。</p>
         </div>
 
         <div class="help-box">
-          <h4>5. 🎨 10種類のカラーテーマ着せ替え</h4>
-          <p>ぴんく、ミッドナイト・ローズ、ベルベット・ブラック、スモーキー・ベリー、サイバー・ネオン、ダーク・モカ、エメラルド、シャンパン・ゴールド、ヴァイオレット、ピーチなど、気分に合わせてUIカラーを自由自在に変更可能です。</p>
-        </div>
-
-        <div class="help-box">
-          <h4>6. 🎰 運命の指名ガチャ機能</h4>
-          <p>在籍中のキャストからランダムで次の指名先を楽しく選出してくれるガチャ演出を搭載しています。</p>
-        </div>
-
-        <div class="help-box">
-          <h4>7. 📂 バックアップ & データ管理</h4>
-          <p>すべてのデータをJSONファイルとして一括ダウンロード保存したり、ファイルを選択して簡単に復元・移行することができます、機種変するときに便利です。</p>
+          <h4>5. 🎨 10種類のカラーテーマ</h4>
+          <p>気分に合わせてUIカラーを自由自在に変更可能です。</p>
         </div>
 
       </div>
@@ -1618,8 +1605,12 @@
         </div>
 
         <div class="form-group">
-          <label>手紙・カード画像URL（あれば）</label>
-          <input type="url" id="addLetterImg" placeholder="https://i.imgur.com/...">
+          <label>手紙・カード画像</label>
+          <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 4px;">
+            <input type="file" id="imageFileToUpload" accept="image/*" style="font-size: 0.75rem; padding: 4px;" onchange="uploadImageToImgur(this)">
+            <span id="uploadStatus" style="font-size: 0.7rem; color: var(--light-text);">未選択</span>
+          </div>
+          <input type="url" id="addLetterImg" placeholder="https://i.imgur.com/... (自動入力されます)">
         </div>
 
         <div style="display:flex; gap:8px; margin-top:10px;">
@@ -1691,7 +1682,7 @@
       document.getElementById('importModal').style.display = 'flex';
     }
 
-    const LATEST_VERSION_KEY = 'app_version_v17.6_shown';
+    const LATEST_VERSION_KEY = 'app_version_v17.7_shown';
     function checkWhatsNew() {
       if (!localStorage.getItem(LATEST_VERSION_KEY)) {
         document.getElementById('whatsNewModal').style.display = 'flex';
@@ -1706,7 +1697,6 @@
     function initUserData() {
       applyTheme(currentTheme);
 
-      // 新規ユーザーや明示的な保存データがない場合は空っぽの童貞状態からスタート
       const savedHist = localStorage.getItem('user_hist_' + currentUserName);
       const savedCast = localStorage.getItem('user_cast_' + currentUserName);
       
@@ -1725,7 +1715,7 @@
     function updateUIHeader() {
       const titleText = currentUserName + "の風俗履歴図鑑";
       document.getElementById('headerTitle').innerText = titleText;
-      document.getElementById('pageTitle').innerText = titleText + " [V17.6]";
+      document.getElementById('pageTitle').innerText = titleText + " [V17.7]";
       document.getElementById('currentUserNameDisplay').innerText = currentUserName;
     }
 
@@ -1765,7 +1755,7 @@
     function exportJSONFile() {
       const exportObject = {
         app: "風俗履歴図鑑",
-        version: "17.6",
+        version: "17.7",
         exportDate: new Date().toISOString(),
         userName: currentUserName,
         historyList: historyList,
@@ -1815,7 +1805,7 @@
 
       const singleExportObject = {
         app: "風俗履歴図鑑_選択共有",
-        version: "17.6",
+        version: "17.7",
         sharedBy: currentUserName,
         castName: name,
         info: includeInfo ? (castData[name] || {}) : null,
@@ -1893,6 +1883,46 @@
       };
       reader.readAsText(file);
       event.target.value = '';
+    }
+
+    // 📁 Imgur 匿名アップロード処理
+    async function uploadImageToImgur(inputElem) {
+      const file = inputElem.files[0];
+      if (!file) return;
+
+      const statusSpan = document.getElementById('uploadStatus');
+      const urlInput = document.getElementById('addLetterImg');
+      
+      statusSpan.innerText = "アップロード中...";
+      statusSpan.style.color = "var(--accent-pink)";
+
+      const formData = new FormData();
+      formData.append('image', file);
+
+      try {
+        const response = await fetch('https://api.imgur.com/3/image', {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Client-ID 546c25a59c58ad7' 
+          },
+          body: formData
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          const imageUrl = result.data.link;
+          urlInput.value = imageUrl;
+          statusSpan.innerText = "アップロード完了！✨";
+          statusSpan.style.color = "#0ca678";
+        } else {
+          throw new Error(result.data.error.message || "アップロード失敗");
+        }
+      } catch (error) {
+        console.error(error);
+        statusSpan.innerText = "失敗しました。再試行してください";
+        statusSpan.style.color = "#ff6b6b";
+      }
     }
 
     function switchMainTab(type) {
@@ -2133,6 +2163,9 @@
       const now = new Date();
       document.getElementById('addYear').value = now.getFullYear();
       document.getElementById('addMonth').value = (now.getMonth() + 1) + '月';
+      document.getElementById('imageFileToUpload').value = '';
+      document.getElementById('uploadStatus').innerText = '未選択';
+      document.getElementById('uploadStatus').style.color = 'var(--light-text)';
       document.getElementById('addModal').style.display = 'flex';
     }
 
