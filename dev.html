@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title id="pageTitle">風俗履歴図鑑 [V18.0 Pro]</title>
+  <title id="pageTitle">童貞の風俗履歴図鑑 [V18.1 Pro]</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
   
   <style>
@@ -167,19 +167,24 @@
     .status-retired { background: rgba(150, 150, 150, 0.15); color: var(--light-text); border: 1px solid var(--border-color); }
     .old-name-badge { font-size: 0.65rem; background: rgba(150, 150, 150, 0.15); color: var(--light-text); padding: 1px 6px; border-radius: 6px; border: 1px solid var(--border-color); }
     .super-tag { font-size: 0.65rem; background: var(--gold-border); color: #fff; padding: 1px 5px; border-radius: 8px; font-weight: bold; }
-    .store-badge { font-size: 0.65rem; background: var(--soft-pink); color: var(--accent-pink); padding: 1px 6px; border-radius: 8px; border: 1px solid var(--primary-pink); font-weight: bold; }
     .badge-count { background: var(--badge-bg); color: var(--badge-color); font-weight: bold; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem; }
 
     .card-body { padding: 10px 14px 12px; border-top: 1px dashed var(--border-color); background-color: var(--card-bg); display: flex; flex-direction: column; gap: 8px; width: 100%; }
+    
+    /* スタイルピル（T/B/W/H）の定義 */
     .style-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 2px; }
     .style-pill { display: inline-flex; align-items: center; border-radius: 8px; overflow: hidden; font-size: 0.7rem; font-weight: bold; border: 1px solid rgba(0,0,0,0.08); }
     .style-pill-label { padding: 2px 7px; color: #fff; }
     .style-pill-val { padding: 2px 8px; }
+    .style-none { font-size: 0.68rem; color: var(--light-text); background: var(--bg-color); padding: 2px 8px; border-radius: 6px; border: 1px solid var(--border-color); }
+
     .p-blue .style-pill-label { background-color: #339af0; } .p-blue .style-pill-val { background-color: #e7f5ff; color: #1c7ed6; }
     .p-green .style-pill-label { background-color: #51cf66; } .p-green .style-pill-val { background-color: #ebfbee; color: #2b8a3e; }
     .p-yellow .style-pill-label { background-color: #fcc419; } .p-yellow .style-pill-val { background-color: #fff9db; color: #d9480f; }
     .p-purple .style-pill-label { background-color: #cc5de8; } .p-purple .style-pill-val { background-color: #f3d9fa; color: #9c36b5; }
     .p-pink1 .style-pill-label { background-color: #ff85a2; } .p-pink1 .style-pill-val { background-color: #fff0f6; color: #d6336c; }
+    .p-pink2 .style-pill-label { background-color: #f72585; } .p-pink2 .style-pill-val { background-color: #ffdeeb; color: #c2255c; }
+    .p-pink3 .style-pill-label { background-color: #b5179e; } .p-pink3 .style-pill-val { background-color: #fcc2d7; color: #a61e4d; }
 
     .card-middle-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; width: 100%; }
     .notes-box { font-size: 0.75rem; color: var(--text-color); background: var(--bg-color); padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border-color); flex: 1; }
@@ -192,7 +197,6 @@
     .report-badge { font-size: 0.65rem; color: var(--accent-pink); background: var(--soft-pink); border: 1px solid var(--primary-pink); padding: 1px 7px; border-radius: 10px; font-weight: bold; }
     .edit-icon-btn { background: none; border: none; cursor: pointer; padding: 2px 4px; color: var(--light-text); }
 
-    /* 金額・店舗情報の展開トグルボタン */
     .info-toggle-btn { background: var(--soft-pink); border: 1px solid var(--primary-pink); color: var(--accent-pink); border-radius: 8px; width: 18px; height: 18px; font-size: 0.65rem; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
     .row-detail-panel { display: none; margin-top: 4px; padding: 6px 10px; background: var(--bg-color); border: 1px dashed var(--border-color); border-radius: 8px; font-size: 0.72rem; color: var(--text-color); }
     .row-detail-panel.open { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -210,7 +214,6 @@
     .empty-shared-box { background: var(--card-bg); border: 2px dashed var(--primary-pink); border-radius: var(--radius); padding: 30px 16px; text-align: center; box-shadow: var(--shadow); margin-top: 20px; width: 100%; }
     .dropzone-box { background: var(--bg-color); border: 2px dashed var(--primary-pink); border-radius: 14px; padding: 24px 16px; text-align: center; cursor: pointer; margin: 10px 0; width: 100%; }
 
-    /* モーダル群 */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); justify-content: center; align-items: center; z-index: 1000; }
     .modal-content {
       background: var(--card-bg); color: var(--text-color); padding: 20px 16px; border-radius: 20px;
@@ -221,7 +224,6 @@
     @keyframes modalFadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
     .close-btn { background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink)); color: white; border: none; padding: 8px 22px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; cursor: pointer; margin-top: 10px; width: 100%; box-shadow: 0 3px 10px rgba(0,0,0,0.2); }
 
-    /* 入力フォームUI */
     .add-form { display: flex; flex-direction: column; gap: 10px; text-align: left; width: 100%; }
     .form-group { display: flex; flex-direction: column; gap: 4px; width: 100%; }
     .form-group label { font-size: 0.75rem; font-weight: bold; color: var(--accent-pink); }
@@ -237,7 +239,7 @@
     details.detail-fold summary::-webkit-details-marker { display: none; }
     details.detail-fold .fold-body { padding: 4px 10px 10px; display: flex; flex-direction: column; gap: 8px; }
 
-    /* 手紙／カード 3Dフリップモーダル */
+    /* 3Dフリップモーダル */
     .flip-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); justify-content: center; align-items: center; z-index: 2000; }
     .flip-container { perspective: 1200px; width: 85vw; max-width: 400px; aspect-ratio: 3/4; cursor: pointer; }
     .flip-card { width: 100%; height: 100%; position: relative; transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1); transform-style: preserve-3d; }
@@ -257,7 +259,6 @@
     .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 100%; }
     .theme-item-btn { padding: 8px; border-radius: 10px; border: 1.5px solid var(--border-color); background: var(--card-bg); color: var(--text-color); font-size: 0.75rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px; }
 
-    /* ===== 統計ダッシュボード（Pro） ===== */
     #viewDashboard { width: 100%; }
     .period-select-row { display: flex; gap: 4px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 8px; width: 100%; }
     .stat-section { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 14px; margin-bottom: 14px; box-shadow: var(--shadow); width: 100%; }
@@ -275,10 +276,6 @@
     .rank-name { font-weight: bold; flex: 1; }
     .rank-sub { font-size: 0.68rem; color: var(--light-text); }
     .rank-pct { font-weight: bold; color: var(--accent-pink); font-size: 0.8rem; min-width: 42px; text-align: right; }
-    .top-list-row { display: flex; align-items: center; gap: 10px; padding: 7px 8px; border-radius: 8px; background: var(--bg-color); border: 1px solid var(--border-color); font-size: 0.78rem; margin-bottom: 6px; }
-    .top-list-rank { font-weight: bold; color: var(--accent-pink); width: 22px; flex-shrink: 0; }
-    .top-list-name { font-weight: bold; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .top-list-meta { color: var(--light-text); font-size: 0.68rem; white-space: nowrap; }
     .dash-empty { text-align: center; color: var(--light-text); font-size: 0.8rem; padding: 20px 10px; }
   </style>
 </head>
@@ -286,7 +283,7 @@
 
   <header>
     <h1 id="headerTitle">童貞の風俗履歴図鑑</h1>
-    <div class="header-sub">マイ キャスト ＆ プレイレコード [V18.0 Pro]</div>
+    <div class="header-sub">マイ キャスト ＆ プレイレコード [V18.1 Pro]</div>
     <div class="header-btn-row">
       <button class="pill-btn" onclick="openSettingsModal()" title="ユーザー設定・テーマ変更">
         <span>👤 ユーザー: <span id="currentUserNameDisplay">童貞</span></span>
@@ -316,7 +313,7 @@
   <!-- 追加ボタン（FAB） -->
   <button class="fab-add" onclick="openAddModal()">＋</button>
 
-  <!-- ===== 1. ホーム画面（ダイナミック演出 ＆ 背景フローティング） ===== -->
+  <!-- ===== 1. ホーム画面 ===== -->
   <div id="viewHome" class="active">
     <div class="floating-container" id="homeFloatingArea"></div>
 
@@ -400,7 +397,7 @@
     <div id="mainContent"></div>
   </div>
 
-  <!-- ===== 3. 統計タブ（Pro機能） ===== -->
+  <!-- ===== 3. 統計タブ ===== -->
   <div id="viewDashboard" class="tab-content">
     <div class="controls" style="margin-bottom:10px;">
       <div style="font-size:0.78rem; font-weight:bold; color:var(--accent-pink); margin-bottom:4px;">📊 期間フィルター（月別 / 3ヶ月別 / 半年別 / 1年別 / 全データ）</div>
@@ -418,7 +415,7 @@
     <div id="sharedContent"></div>
   </div>
 
-  <!-- ===== 3Dフリップモーダル（手紙・カード詳細） ===== -->
+  <!-- 3Dフリップモーダル -->
   <div class="flip-overlay" id="flipModal" onclick="closeFlipModal(event)">
     <div class="flip-container" id="flipContainer" onclick="toggleFlip(event)">
       <div class="flip-card" id="flipCard">
@@ -436,7 +433,7 @@
     </div>
   </div>
 
-  <!-- 各種モーダル（設定・ヘルプ・追加・編集など） -->
+  <!-- 設定・ヘルプモーダル -->
   <div class="modal-overlay" id="settingsModal">
     <div class="modal-content">
       <h3>⚙️ アプリ設定</h3>
@@ -494,9 +491,9 @@
     <div class="modal-content">
       <h3>❓ ご利用ガイド</h3>
       <div style="text-align:left; font-size:0.8rem; display:flex; flex-direction:column; gap:6px; max-height:60vh; overflow-y:auto;">
-        <div><strong>💭 ホーム:</strong> 今月の利用カウンター・経過日数のリアルタイムアニメーションと、浮遊する手紙カード（タップで3Dフリップ）を搭載！</div>
-        <div><strong>📖 マイ図鑑:</strong> キャスト別・月別時系列で管理。利用ごとの金額や店舗名も記録可能です。</div>
-        <div><strong>📊 統計:</strong> 月別・3ヶ月別・半年別・1年別・全データの期間フィルターで、支出・回数・累計メモリアルを徹底分析！</div>
+        <div><strong>💭 ホーム:</strong> 今月の利用カウンター・経過日数のアニメーションと浮遊カード（タップで3Dフリップ）！</div>
+        <div><strong>📖 マイ図鑑:</strong> スリーサイズ、金額、店舗名、手紙画像なども完璧に管理。</div>
+        <div><strong>📊 統計:</strong> 期間フィルター（月別/3ヶ月/半年/1年/全データ）で徹底分析！</div>
       </div>
       <button class="close-btn" onclick="closeModal('helpModal')">閉じる</button>
     </div>
@@ -517,10 +514,10 @@
 
         <div class="form-group"><label>スリーサイズ</label>
           <div class="style-grid-compact">
-            <input type="text" id="addStyleT" placeholder="T">
-            <input type="text" id="addStyleB" placeholder="B">
-            <input type="text" id="addStyleW" placeholder="W">
-            <input type="text" id="addStyleH" placeholder="H">
+            <input type="text" id="addStyleT" placeholder="T" oninput="updateInputColor(this, 'T')">
+            <input type="text" id="addStyleB" placeholder="B" oninput="updateInputColor(this, 'B')">
+            <input type="text" id="addStyleW" placeholder="W" oninput="updateInputColor(this, 'W')">
+            <input type="text" id="addStyleH" placeholder="H" oninput="updateInputColor(this, 'H')">
           </div>
         </div>
 
@@ -597,7 +594,7 @@
     let castData = {};
     let sharedRecords = [];
     let bubbleInterval;
-    let dashPeriodType = 'month'; // デフォルトは月別
+    let dashPeriodType = 'month';
 
     function initUserData() {
       applyTheme(currentTheme);
@@ -659,6 +656,73 @@
     }
 
     // ==========================================
+    // スタイル（T/B/W/H）のカラー・ピル生成ヘルパー
+    // ==========================================
+    function updateInputColor(inputElem, type) {
+      const val = inputElem.value.trim().toUpperCase();
+      const numMatch = val.match(/\d+/);
+      if (!numMatch) {
+        inputElem.style.background = "var(--bg-color)";
+        inputElem.style.borderColor = "var(--border-color)";
+        inputElem.style.color = "var(--text-color)";
+        return;
+      }
+      const num = parseInt(numMatch[0], 10);
+      if (type === 'T') {
+        if (num < 150) { inputElem.style.background = "#e7f5ff"; inputElem.style.borderColor = "#a5d8ff"; inputElem.style.color = "#1c7ed6"; }
+        else if (num < 155) { inputElem.style.background = "#ebfbee"; inputElem.style.borderColor = "#b2f2bb"; inputElem.style.color = "#2b8a3e"; }
+        else if (num < 160) { inputElem.style.background = "#fff9db"; inputElem.style.borderColor = "#ffec99"; inputElem.style.color = "#d9480f"; }
+        else { inputElem.style.background = "#f3d9fa"; inputElem.style.borderColor = "#eebefa"; inputElem.style.color = "#9c36b5"; }
+      } else if (type === 'B') {
+        if (num < 85) { inputElem.style.background = "#fff0f6"; inputElem.style.borderColor = "#fcc2d7"; inputElem.style.color = "#d6336c"; }
+        else if (num < 90) { inputElem.style.background = "#ffdeeb"; inputElem.style.borderColor = "#faa2c1"; inputElem.style.color = "#c2255c"; }
+        else { inputElem.style.background = "#fcc2d7"; inputElem.style.borderColor = "#f783ac"; inputElem.style.color = "#a61e4d"; }
+      } else if (type === 'W' || type === 'H') {
+        if (num <= 55 || (type === 'H' && num <= 85)) { inputElem.style.background = "#ebfbee"; inputElem.style.borderColor = "#b2f2bb"; inputElem.style.color = "#2b8a3e"; }
+        else { inputElem.style.background = "#fff9db"; inputElem.style.borderColor = "#ffec99"; inputElem.style.color = "#d9480f"; }
+      }
+    }
+
+    function renderStyleTags(styleStr) {
+      if (!styleStr || !styleStr.trim()) {
+        return '<div class="style-row"><span class="style-none">スタイルデータなし</span></div>';
+      }
+      const str = styleStr.toUpperCase();
+      const tMatch = str.match(/T\s*:?\s*(\d+)/i);
+      const bMatch = str.match(/B\s*:?\s*(\d+)\s*(\([A-Z\+]+\))?/i);
+      const wMatch = str.match(/W\s*:?\s*(\d+)/i);
+      const hMatch = str.match(/H\s*:?\s*(\d+)/i);
+
+      let tagsHtml = '<div class="style-row">';
+      if (tMatch) {
+        const h = parseInt(tMatch[1], 10);
+        let col = "p-blue";
+        if (h >= 150 && h < 155) col = "p-green";
+        else if (h >= 155 && h < 160) col = "p-yellow";
+        else if (h >= 160) col = "p-purple";
+        tagsHtml += `<div class="style-pill ${col}"><span class="style-pill-label">T</span><span class="style-pill-val">${h}cm</span></div>`;
+      }
+      if (bMatch) {
+        const b = parseInt(bMatch[1], 10);
+        const cup = bMatch[2] ? bMatch[2].replace(/[\(\)]/g, '') : '';
+        let col = "p-pink1";
+        if (b >= 85) col = "p-pink2";
+        if (b >= 90) col = "p-pink3";
+        tagsHtml += `<div class="style-pill ${col}"><span class="style-pill-label">B</span><span class="style-pill-val">${b}${cup?'('+cup+')':''}</span></div>`;
+      }
+      if (wMatch) {
+        const w = parseInt(wMatch[1], 10);
+        tagsHtml += `<div class="style-pill ${w<=55?'p-green':'p-yellow'}"><span class="style-pill-label">W</span><span class="style-pill-val">${w}</span></div>`;
+      }
+      if (hMatch) {
+        const hip = parseInt(hMatch[1], 10);
+        tagsHtml += `<div class="style-pill ${hip<=85?'p-green':'p-yellow'}"><span class="style-pill-label">H</span><span class="style-pill-val">${hip}</span></div>`;
+      }
+      tagsHtml += '</div>';
+      return tagsHtml;
+    }
+
+    // ==========================================
     // タブ＆ナビゲーション制御
     // ==========================================
     function switchMainTab(type) {
@@ -713,11 +777,9 @@
       const curMonthNum = now.getMonth() + 1;
       const curMonthStr = curMonthNum + '月';
 
-      // 今月の記録
       const thisMonthVisits = historyList.filter(v => v.year === curYear && (v.month === curMonthStr || v.month === String(curMonthNum) || v.month === String(curMonthNum).padStart(2,'0')));
       const thisCount = thisMonthVisits.length;
 
-      // 先月の記録
       let prevMonthNum = curMonthNum - 1;
       let prevYearNum = parseInt(curYear, 10);
       if(prevMonthNum <= 0) { prevMonthNum = 12; prevYearNum--; }
@@ -734,19 +796,16 @@
       document.getElementById('homeMonthCount').innerText = thisCount + '回';
       document.getElementById('homeMonthDiff').innerHTML = diffHtml;
 
-      // 当たり率・オキニ率計算
       const favs = thisMonthVisits.filter(v => v.flags && v.flags.includes('🆂')).length;
       const favRate = thisCount > 0 ? Math.round((favs / thisCount) * 100) : 0;
       document.getElementById('homeMonthRates').innerText = `${favRate}% / ${favRate}%`;
 
-      // B. 最終利用からの経過日数算出
       const daysElem = document.getElementById('homeDaysSinceLast');
       if(historyList.length === 0) {
         daysElem.innerText = "まだ記録がありません";
         return;
       }
 
-      // 日付が新しい順にソートして最新の記録日を取得
       let latestDate = null;
       historyList.forEach(v => {
         const y = parseInt(v.year, 10) || 2026;
@@ -766,14 +825,12 @@
       }
     }
 
-    // C. フローティングカード（手紙画像など）の背景アニメーション
     function startFloatingCards() {
       clearInterval(bubbleInterval);
       const area = document.getElementById('homeFloatingArea');
       if(!area) return;
       area.innerHTML = '';
 
-      // 手紙画像のあるレコード、またはキャストの手紙を収集
       const cards = [];
       historyList.forEach((h, idx) => {
         if(h.chekiImg) cards.push({ name: h.name, img: h.chekiImg, date: `${h.year}年${h.month}`, note: h.visitNote, flags: h.flags, originalIndex: idx });
@@ -840,9 +897,6 @@
     function toggleFlip(event) { event.stopPropagation(); document.getElementById('flipCard').classList.toggle('is-flipped'); }
     function closeFlipModal(event) { document.getElementById('flipModal').style.display = 'none'; }
 
-    // ==========================================
-    // 詳細（金額・店舗名）の開閉トグル
-    // ==========================================
     function toggleRowDetail(idx) {
       const panel = document.getElementById('rd-' + idx);
       if(panel) panel.classList.toggle('open');
@@ -918,6 +972,15 @@
         const info = castData[c.name] || { link: '', notes: '', oldName: '', style: '', letters: [] };
         const isActive = info.link && info.link.trim() !== '';
 
+        // 手紙データの有無を検証してボタンを生成
+        const validLetters = (info.letters || []).filter(item => 
+          (item.imageUrl && typeof item.imageUrl === 'string' && item.imageUrl.trim() !== "") || 
+          (item.text && typeof item.text === 'string' && item.text.trim() !== "")
+        );
+        const letterBtnHtml = validLetters.length > 0 
+          ? `<button class="letter-btn" onclick="openLetterListModal(event, '${c.name}')">💌 手紙 (${validLetters.length})</button>` 
+          : '';
+
         let rowsHtml = '';
         c.visits.forEach(v => {
           const reportBtn = v.reportUrl ? `<a href="${v.reportUrl}" target="_blank" class="report-badge">レポ</a>` : '';
@@ -949,9 +1012,11 @@
             <span class="badge-count">${c.visits.length}回</span>
           </summary>
           <div class="anim-wrapper"><div class="anim-inner"><div class="card-body">
+            ${renderStyleTags(info.style)}
             <div class="card-middle-row">
               <div class="notes-box">${info.notes || 'メモなし'}</div>
               <div class="btn-action-group">
+                ${letterBtnHtml}
                 ${isActive?`<button class="link-btn" onclick="window.open('${info.link}','_blank')">プロフ</button>`:''}
               </div>
             </div>
@@ -992,8 +1057,18 @@
       });
     }
 
+    function openLetterListModal(event, name) {
+      event.preventDefault(); event.stopPropagation();
+      const info = castData[name];
+      if (!info || !info.letters || info.letters.length === 0) return;
+      const firstL = info.letters.find(l => l.imageUrl);
+      if (firstL) {
+        openFlipModalFromHome({ name: name, img: firstL.imageUrl, date: firstL.date || '手紙', note: firstL.text || 'メッセージカード', flags: '💌' });
+      }
+    }
+
     // ==========================================
-    // 統計ダッシュボード（期間別対応 ＆ 累計メモリアル）
+    // 統計ダッシュボード
     // ==========================================
     let monthlyChartInstance = null;
     let rankingChartInstance = null;
@@ -1021,14 +1096,13 @@
         `<div class="ftag ${p.id===dashPeriodType?'active':''}" onclick="setDashPeriod('${p.id}')">${p.label}</div>`
       ).join('');
 
-      // 期間に応じたデータ抽出・グループ化
       const filteredRecords = filterRecordsByPeriod(historyList, dashPeriodType);
       const totalVisits = filteredRecords.length;
       const totalAmount = filteredRecords.reduce((s, v) => s + (Number(v.amount) || 0), 0);
       const avgUnit = totalVisits > 0 ? Math.round(totalAmount / totalVisits) : 0;
       const uniqueCasts = new Set(filteredRecords.map(v => v.name)).size;
 
-      let html = `
+      wrap.innerHTML = `
         <div class="stat-section">
           <div class="stat-section-title">📊 選択期間のサマリー</div>
           <div class="stat-grid-4">
@@ -1055,7 +1129,6 @@
           <div class="stat-grid-4" id="cumulativeGrid"></div>
         </div>
       `;
-      wrap.innerHTML = html;
 
       renderDashCharts(filteredRecords);
       renderCumulativeMemorial();
@@ -1090,7 +1163,6 @@
       const listEl = document.getElementById('dashRankList');
       if(!canvasTrend || !canvasRank || typeof Chart === 'undefined') return;
 
-      // トレンドグラフ用データ集計
       const agg = {};
       records.forEach(v => {
         const k = `${v.year}-${String(parseInt(v.month,10)||1).padStart(2,'0')}`;
@@ -1105,14 +1177,11 @@
         type: 'line',
         data: {
           labels: keys.map(k => k.replace('-', '年') + '月'),
-          datasets: [
-            { label: '利用回数', data: keys.map(k => agg[k].count), borderColor: getCssVar('--accent-pink'), backgroundColor: 'transparent', tension: 0.3 }
-          ]
+          datasets: [{ label: '利用回数', data: keys.map(k => agg[k].count), borderColor: getCssVar('--accent-pink'), backgroundColor: 'transparent', tension: 0.3 }]
         },
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
       });
 
-      // キャスト別ランキング集計
       const byCast = {};
       records.forEach(v => {
         if(!byCast[v.name]) byCast[v.name] = { count: 0, amount: 0 };
@@ -1121,7 +1190,6 @@
       });
       let entries = Object.keys(byCast).map(name => ({ name, ...byCast[name] })).sort((a,b) => b.count - a.count || b.amount - a.amount);
       const top = entries.slice(0, 5);
-
       const colors = [getCssVar('--rank-c1'), getCssVar('--rank-c2'), getCssVar('--rank-c3'), getCssVar('--rank-c4'), getCssVar('--rank-c5')];
 
       if(rankingChartInstance) rankingChartInstance.destroy();
@@ -1176,11 +1244,24 @@
 
     function saveNewRecord(e) {
       e.preventDefault();
+      const name = document.getElementById('addName').value.trim();
+      let rawT = document.getElementById('addStyleT').value.trim();
+      let rawB = document.getElementById('addStyleB').value.trim();
+      let rawW = document.getElementById('addStyleW').value.trim();
+      let rawH = document.getElementById('addStyleH').value.trim();
+
+      const parts = [];
+      if (rawT) parts.push(rawT.toLowerCase().startsWith('t') ? rawT : 'T:' + rawT + (rawT.includes('cm') ? '' : 'cm'));
+      if (rawB) parts.push(rawB.toLowerCase().startsWith('b') ? rawB : 'B:' + rawB);
+      if (rawW) parts.push(rawW.toLowerCase().startsWith('w') ? rawW : 'W:' + rawW);
+      if (rawH) parts.push(rawH.toLowerCase().startsWith('h') ? rawH : 'H:' + rawH);
+      const style = parts.join(' ');
+
       const rec = {
         year: document.getElementById('addYear').value,
         month: document.getElementById('addMonth').value,
         day: document.getElementById('addDay').value || '',
-        name: document.getElementById('addName').value,
+        name: name,
         flags: document.getElementById('addFlags').value,
         visitNote: document.getElementById('addVisitNote').value,
         amount: document.getElementById('addAmount').value || '',
@@ -1193,16 +1274,17 @@
 
       const oldName = document.getElementById('addOldName').value;
       const link = document.getElementById('addLink').value;
-      if (!castData[rec.name]) {
-        castData[rec.name] = { link: link, notes: '', oldName: oldName, letters: [] };
+      if (!castData[name]) {
+        castData[name] = { link: link, notes: '', oldName: oldName, style: style, letters: [] };
       } else {
-        if(link) castData[rec.name].link = link;
-        if(oldName) castData[rec.name].oldName = oldName;
+        if(link) castData[name].link = link;
+        if(oldName) castData[name].oldName = oldName;
+        if(style) castData[name].style = style;
       }
 
       if (rec.chekiImg) {
-        if (!castData[rec.name].letters) castData[rec.name].letters = [];
-        castData[rec.name].letters.push({ date: rec.year + rec.month, imageUrl: rec.chekiImg, text: rec.visitNote });
+        if (!castData[name].letters) castData[name].letters = [];
+        castData[name].letters.push({ date: rec.year + rec.month, imageUrl: rec.chekiImg, text: rec.visitNote });
       }
 
       saveData(); closeModal('addModal'); render(); renderDashboard(); alert('保存しました！');
