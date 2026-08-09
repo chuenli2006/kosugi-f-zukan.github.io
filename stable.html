@@ -1,0 +1,2659 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="pageTitle">童貞の風俗履歴図鑑 [V17.7]</title>
+  
+  <style>
+    /* 🎨 CSS変数：テーマ10種類のカラー定義 */
+    :root {
+      /* デフォルト: 🌸 ぴんく (Default Light) */
+      --bg-color: #fdfbfb;
+      --card-bg: #ffffff;
+      --primary-pink: #ff85a2;
+      --soft-pink: #ffe6ea;
+      --accent-pink: #f72585;
+      --text-color: #4a4a4a;
+      --light-text: #8d8d8d;
+      --border-color: #f0e6e8;
+      --shadow: 0 4px 15px rgba(255, 133, 162, 0.1);
+      --radius: 12px;
+
+      /* バッジ用変数 */
+      --badge-bg: var(--soft-pink);
+      --badge-color: var(--accent-pink);
+
+      /* 超オキニ（ゴールド） */
+      --gold-bg-start: #fff9e6;
+      --gold-bg-end: #fff0c2;
+      --gold-border: #f3c642;
+      --gold-text: #8a6200;
+    }
+
+    /* 🌙 ミッドナイト・ローズ */
+    [data-theme="midnight"] {
+      --bg-color: #121218;
+      --card-bg: #1a1a24;
+      --primary-pink: #ff6b8b;
+      --soft-pink: #2a1f2d;
+      --accent-pink: #ff4081;
+      --text-color: #e2e2e8;
+      --light-text: #9a9aab;
+      --border-color: #2e2e3d;
+      --shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+
+      --badge-bg: #3a2233;
+      --badge-color: #ff6b8b;
+
+      --gold-bg-start: #2e2612;
+      --gold-bg-end: #1f190a;
+      --gold-border: #d4af37;
+      --gold-text: #ffd700;
+    }
+
+    /* 🖤 ベルベット・ブラック */
+    [data-theme="velvet"] {
+      --bg-color: #0d0d0d;
+      --card-bg: #171717;
+      --primary-pink: #f72585;
+      --soft-pink: #26101b;
+      --accent-pink: #ff007f;
+      --text-color: #f0f0f0;
+      --light-text: #888888;
+      --border-color: #2a2a2a;
+      --shadow: 0 4px 15px rgba(0,0,0,0.7);
+
+      --badge-bg: #3a0d25;
+      --badge-color: #ff3399;
+
+      --gold-bg-start: #262000;
+      --gold-bg-end: #141100;
+      --gold-border: #ffd700;
+      --gold-text: #ffe566;
+    }
+
+    /* 🍇 スモーキー・ベリー */
+    [data-theme="berry"] {
+      --bg-color: #181116;
+      --card-bg: #231821;
+      --primary-pink: #d65a8a;
+      --soft-pink: #341f2f;
+      --accent-pink: #ff6097;
+      --text-color: #ebdce4;
+      --light-text: #a38c99;
+      --border-color: #3b2937;
+      --shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+
+      --badge-bg: #402035;
+      --badge-color: #ff80b3;
+
+      --gold-bg-start: #332615;
+      --gold-bg-end: #21180d;
+      --gold-border: #c9a050;
+      --gold-text: #f0c978;
+    }
+
+    /* 🌃 サイバー・ネオン */
+    [data-theme="cyber"] {
+      --bg-color: #080914;
+      --card-bg: #0f1123;
+      --primary-pink: #00f0ff;
+      --soft-pink: #181b3d;
+      --accent-pink: #ff0055;
+      --text-color: #e0f7fc;
+      --light-text: #698396;
+      --border-color: #1f2545;
+      --shadow: 0 4px 20px rgba(0, 240, 255, 0.15);
+
+      --badge-bg: #102a45;
+      --badge-color: #00f0ff;
+
+      --gold-bg-start: #1f1b00;
+      --gold-bg-end: #0f0d00;
+      --gold-border: #ffe600;
+      --gold-text: #ffff80;
+    }
+
+    /* ☕️ ダーク・モカ */
+    [data-theme="mocha"] {
+      --bg-color: #1c1816;
+      --card-bg: #26211e;
+      --primary-pink: #cf8a72;
+      --soft-pink: #382c28;
+      --accent-pink: #e5987d;
+      --text-color: #ede2dd;
+      --light-text: #9e8e87;
+      --border-color: #3d332e;
+      --shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+
+      --badge-bg: #423028;
+      --badge-color: #e8a992;
+
+      --gold-bg-start: #33291a;
+      --gold-bg-end: #211a10;
+      --gold-border: #d1a153;
+      --gold-text: #f2c779;
+    }
+
+    /* 💎 エメラルド・ラグジュアリー */
+    [data-theme="emerald"] {
+      --bg-color: #f7faf9;
+      --card-bg: #ffffff;
+      --primary-pink: #20c997;
+      --soft-pink: #e6fcf5;
+      --accent-pink: #0ca678;
+      --text-color: #2b3a35;
+      --light-text: #829a92;
+      --border-color: #d3f9ed;
+      --shadow: 0 4px 15px rgba(12, 166, 120, 0.08);
+
+      --badge-bg: var(--soft-pink);
+      --badge-color: var(--accent-pink);
+
+      --gold-bg-start: #fff9e6;
+      --gold-bg-end: #fff0c2;
+      --gold-border: #f3c642;
+      --gold-text: #8a6200;
+    }
+
+    /* 👑 シャンパン・ゴールド */
+    [data-theme="champagne"] {
+      --bg-color: #fdfbf7;
+      --card-bg: #ffffff;
+      --primary-pink: #d4af37;
+      --soft-pink: #fdf6e2;
+      --accent-pink: #b8860b;
+      --text-color: #3d3522;
+      --light-text: #998c6d;
+      --border-color: #f5e8c4;
+      --shadow: 0 4px 15px rgba(212, 175, 55, 0.12);
+
+      --badge-bg: var(--soft-pink);
+      --badge-color: var(--accent-pink);
+
+      --gold-bg-start: #fff5cc;
+      --gold-bg-end: #ffe680;
+      --gold-border: #d4af37;
+      --gold-text: #665200;
+    }
+
+    /* 💜 ヴァイオレット・アイリス */
+    [data-theme="violet"] {
+      --bg-color: #faf8ff;
+      --card-bg: #ffffff;
+      --primary-pink: #b197fc;
+      --soft-pink: #f3f0ff;
+      --accent-pink: #845ef7;
+      --text-color: #3b354d;
+      --light-text: #8c829e;
+      --border-color: #e5dbff;
+      --shadow: 0 4px 15px rgba(132, 94, 247, 0.1);
+
+      --badge-bg: var(--soft-pink);
+      --badge-color: var(--accent-pink);
+
+      --gold-bg-start: #fff9e6;
+      --gold-bg-end: #fff0c2;
+      --gold-border: #f3c642;
+      --gold-text: #8a6200;
+    }
+
+    /* 🍑 ピーチ・アプリコット */
+    [data-theme="peach"] {
+      --bg-color: #fffaf8;
+      --card-bg: #ffffff;
+      --primary-pink: #ff922b;
+      --soft-pink: #fff4e6;
+      --accent-pink: #f76707;
+      --text-color: #42362b;
+      --light-text: #9c8978;
+      --border-color: #ffe8cc;
+      --shadow: 0 4px 15px rgba(247, 103, 7, 0.08);
+
+      --badge-bg: var(--soft-pink);
+      --badge-color: var(--accent-pink);
+
+      --gold-bg-start: #fff9e6;
+      --gold-bg-end: #fff0c2;
+      --gold-border: #f3c642;
+      --gold-text: #8a6200;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      padding: 16px 12px 80px;
+      max-width: 800px;
+      margin: 0 auto;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--soft-pink);
+      position: relative;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--accent-pink);
+      margin-bottom: 2px;
+    }
+
+    .header-sub {
+      font-size: 0.8rem;
+      color: var(--light-text);
+      margin-bottom: 8px;
+    }
+
+    .header-btn-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pill-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--soft-pink);
+      color: var(--accent-pink);
+      border: 1.5px solid var(--primary-pink);
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.1s;
+      outline: none;
+    }
+
+    .pill-btn:active {
+      transform: scale(0.95);
+    }
+
+    .tab-nav {
+      display: flex;
+      margin-bottom: 12px;
+      border-bottom: 2px solid var(--soft-pink);
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 8px 4px;
+      background: none;
+      border: none;
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: var(--light-text);
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .tab-btn.active {
+      color: var(--accent-pink);
+      border-bottom: 3px solid var(--accent-pink);
+    }
+
+    .dashboard {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 12px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .dash-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      text-align: center;
+    }
+
+    .dash-item {
+      background: var(--bg-color);
+      padding: 6px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .dash-val {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: var(--accent-pink);
+    }
+
+    .dash-lbl {
+      font-size: 0.65rem;
+      color: var(--light-text);
+    }
+
+    .controls {
+      background: var(--card-bg);
+      padding: 12px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border-color);
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 6px;
+    }
+
+    .search-box {
+      flex: 1;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      font-size: 0.85rem;
+      outline: none;
+      background: var(--bg-color);
+      color: var(--text-color);
+    }
+
+    .btn-gacha {
+      background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink));
+      color: #fff;
+      border: none;
+      padding: 0 14px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 0.85rem;
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      transition: transform 0.1s;
+    }
+
+    .btn-gacha:active {
+      transform: scale(0.95);
+    }
+
+    .filter-tags {
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .ftag {
+      font-size: 0.75rem;
+      padding: 3px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-color);
+      color: var(--text-color);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .ftag.active {
+      background: var(--accent-pink);
+      color: #fff;
+      border-color: var(--accent-pink);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 6px;
+    }
+
+    .btn-toggle {
+      flex: 1;
+      padding: 5px 8px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-color);
+      color: var(--text-color);
+      border-radius: 16px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .btn-toggle.active {
+      background: var(--primary-pink);
+      color: white;
+      border-color: var(--primary-pink);
+    }
+
+    .legend-details {
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .legend-details summary {
+      color: var(--primary-pink);
+      font-size: 0.75rem;
+      text-decoration: underline;
+      cursor: pointer;
+      list-style: none;
+    }
+
+    .legend-box {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 4px;
+      background: var(--card-bg);
+      padding: 8px;
+      border-radius: var(--radius);
+      margin-top: 6px;
+      font-size: 0.7rem;
+      border: 1px solid var(--border-color);
+      text-align: left;
+    }
+
+    .grid {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    details.cast-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    details.cast-card.favorite {
+      border-left: 5px solid var(--accent-pink);
+    }
+
+    details.cast-card.super-favorite {
+      background: linear-gradient(135deg, var(--gold-bg-start), var(--gold-bg-end));
+      border: 1px solid var(--gold-border);
+      border-left: 6px solid var(--gold-border);
+      box-shadow: 0 4px 15px rgba(230, 161, 0, 0.25);
+    }
+
+    details.cast-card.super-favorite summary.card-btn {
+      color: var(--gold-text);
+    }
+
+    details.cast-card .anim-wrapper {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    details.cast-card[open] .anim-wrapper {
+      grid-template-rows: 1fr;
+    }
+
+    .anim-inner {
+      overflow: hidden;
+    }
+
+    summary.card-btn {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 14px;
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+      font-weight: bold;
+      background: transparent;
+      transition: background-color 0.2s;
+    }
+
+    summary.card-btn:active {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    summary.card-btn::-webkit-details-marker {
+      display: none;
+    }
+
+    .arrow-icon {
+      font-size: 0.75rem;
+      color: var(--light-text);
+      display: inline-block;
+      transition: transform 0.3s ease;
+    }
+
+    details[open] summary .arrow-icon {
+      transform: rotate(180deg);
+      color: var(--accent-pink);
+    }
+
+    .cast-info {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .status-badge {
+      font-size: 0.65rem;
+      padding: 1px 5px;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+
+    .status-active {
+      background: #e6fcf5;
+      color: #0ca678;
+      border: 1px solid #20c997;
+    }
+
+    .status-retired {
+      background: rgba(150, 150, 150, 0.15);
+      color: var(--light-text);
+      border: 1px solid var(--border-color);
+    }
+
+    .old-name-badge {
+      font-size: 0.65rem;
+      background: rgba(150, 150, 150, 0.15);
+      color: var(--light-text);
+      padding: 1px 6px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      font-weight: normal;
+    }
+
+    .super-tag {
+      font-size: 0.65rem;
+      background: var(--gold-border);
+      color: #fff;
+      padding: 1px 5px;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+
+    .friend-visited-badge {
+      font-size: 0.65rem;
+      background: #fff3bf;
+      color: #f59f00;
+      border: 1px solid #fcc419;
+      padding: 1px 6px;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+
+    .badge-count {
+      background: var(--badge-bg);
+      color: var(--badge-color);
+      font-weight: bold;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 0.75rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .super-favorite .badge-count {
+      background: rgba(255, 255, 255, 0.8);
+      color: var(--gold-text);
+      border: 1px solid var(--gold-border);
+    }
+
+    .badge-count.bad-count {
+      background: rgba(150, 150, 150, 0.2) !important;
+      color: var(--light-text) !important;
+      border: 1px solid var(--border-color) !important;
+    }
+
+    .card-body {
+      padding: 10px 14px 12px;
+      border-top: 1px dashed var(--border-color);
+      background-color: var(--card-bg);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .style-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 2px;
+    }
+
+    .style-pill {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 8px;
+      overflow: hidden;
+      font-size: 0.7rem;
+      font-weight: bold;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+
+    .style-pill-label {
+      padding: 2px 7px;
+      color: #ffffff;
+      font-family: inherit;
+    }
+
+    .style-pill-val {
+      padding: 2px 8px;
+    }
+
+    .style-none {
+      font-size: 0.68rem;
+      color: var(--light-text);
+      background: var(--bg-color);
+      padding: 2px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+    }
+
+    .p-blue .style-pill-label { background-color: #339af0; }
+    .p-blue .style-pill-val   { background-color: #e7f5ff; color: #1c7ed6; }
+    .p-green .style-pill-label { background-color: #51cf66; }
+    .p-green .style-pill-val   { background-color: #ebfbee; color: #2b8a3e; }
+    .p-yellow .style-pill-label { background-color: #fcc419; }
+    .p-yellow .style-pill-val   { background-color: #fff9db; color: #d9480f; }
+    .p-purple .style-pill-label { background-color: #cc5de8; }
+    .p-purple .style-pill-val   { background-color: #f3d9fa; color: #9c36b5; }
+    .p-pink1 .style-pill-label { background-color: #ff85a2; }
+    .p-pink1 .style-pill-val   { background-color: #fff0f6; color: #d6336c; }
+    .p-pink2 .style-pill-label { background-color: #f72585; }
+    .p-pink2 .style-pill-val   { background-color: #ffdeeb; color: #c2255c; }
+    .p-pink3 .style-pill-label { background-color: #b5179e; }
+    .p-pink3 .style-pill-val   { background-color: #fcc2d7; color: #a61e4d; }
+
+    .card-middle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .notes-box {
+      font-size: 0.75rem;
+      color: var(--text-color);
+      background: var(--bg-color);
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      flex: 1;
+    }
+
+    .btn-action-group {
+      display: flex;
+      gap: 4px;
+    }
+
+    .link-btn, .copy-btn, .letter-btn {
+      font-size: 0.7rem;
+      padding: 3px 8px;
+      border-radius: 10px;
+      cursor: pointer;
+      border: 1px solid var(--primary-pink);
+      background: var(--card-bg);
+      color: var(--accent-pink);
+      white-space: nowrap;
+      transition: transform 0.1s;
+    }
+
+    .link-btn:active, .copy-btn:active, .letter-btn:active {
+      transform: scale(0.95);
+    }
+
+    .letter-btn {
+      background: var(--soft-pink);
+      border-color: var(--primary-pink);
+      font-weight: bold;
+    }
+
+    .days-ago-tag {
+      font-size: 0.7rem;
+      color: var(--light-text);
+      text-align: right;
+    }
+
+    .history-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: 5px 8px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+    }
+
+    .report-badge {
+      font-size: 0.65rem;
+      color: var(--accent-pink);
+      background: var(--soft-pink);
+      border: 1px solid var(--primary-pink);
+      padding: 1px 7px;
+      border-radius: 10px;
+      font-weight: bold;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .edit-icon-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 2px 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--light-text);
+      transition: color 0.2s;
+    }
+    .edit-icon-btn:hover, .edit-icon-btn:active { color: var(--accent-pink); }
+    .edit-icon-btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    .month-section { margin-bottom: 16px; }
+    .month-title {
+      font-size: 0.95rem;
+      color: var(--accent-pink);
+      margin-bottom: 6px;
+      padding-left: 6px;
+      border-left: 3px solid var(--primary-pink);
+      font-weight: bold;
+    }
+    details.timeline-item {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      margin-bottom: 6px;
+      overflow: hidden;
+    }
+    summary.timeline-summary {
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-size: 0.85rem;
+      list-style: none;
+    }
+    summary.timeline-summary::-webkit-details-marker { display: none; }
+    .timeline-body {
+      padding: 8px 12px 10px;
+      border-top: 1px dashed var(--border-color);
+      background: var(--bg-color);
+      font-size: 0.78rem;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .report-link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.72rem;
+      color: var(--accent-pink);
+      background: var(--card-bg);
+      border: 1px solid var(--primary-pink);
+      padding: 3px 10px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: bold;
+      width: fit-content;
+    }
+
+    details.past-notes-details { margin-top: 4px; }
+    summary.past-notes-summary {
+      font-size: 0.72rem;
+      color: var(--accent-pink);
+      cursor: pointer;
+      font-weight: bold;
+      padding: 2px 0;
+    }
+    .past-notes-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 4px;
+      padding-left: 6px;
+      border-left: 2px solid var(--soft-pink);
+    }
+    .past-note-item { font-size: 0.72rem; color: var(--light-text); }
+
+    .shared-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      background: var(--card-bg);
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow);
+    }
+
+    .shared-card {
+      background: var(--card-bg);
+      border: 1px solid var(--soft-pink);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 10px;
+      box-shadow: var(--shadow);
+    }
+    .shared-header {
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: var(--accent-pink);
+      margin-bottom: 6px;
+      padding-bottom: 4px;
+      border-bottom: 1px dashed var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .empty-shared-box {
+      background: var(--card-bg);
+      border: 2px dashed var(--primary-pink);
+      border-radius: var(--radius);
+      padding: 30px 16px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      margin-top: 20px;
+    }
+    .empty-shared-box h3 {
+      color: var(--accent-pink);
+      margin-bottom: 8px;
+      font-size: 1.1rem;
+    }
+    .empty-shared-box p {
+      font-size: 0.8rem;
+      color: var(--light-text);
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .dropzone-box {
+      background: var(--bg-color);
+      border: 2px dashed var(--primary-pink);
+      border-radius: 14px;
+      padding: 24px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin: 10px 0;
+    }
+    .dropzone-box:hover {
+      background: var(--soft-pink);
+    }
+    .dropzone-icon {
+      font-size: 2rem;
+      margin-bottom: 6px;
+    }
+    .dropzone-text {
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: var(--accent-pink);
+      margin-bottom: 4px;
+    }
+    .dropzone-sub {
+      font-size: 0.7rem;
+      color: var(--light-text);
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: var(--card-bg);
+      color: var(--text-color);
+      padding: 20px 16px;
+      border-radius: 20px;
+      text-align: center;
+      max-width: 400px;
+      width: 92%;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      border: 2px solid var(--soft-pink);
+      position: relative;
+      max-height: 85vh;
+      overflow-y: auto;
+      animation: modalFadeIn 0.25s ease-out forwards;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-content h3 {
+      color: var(--accent-pink);
+      margin-bottom: 12px;
+      font-size: 1.15rem;
+    }
+
+    .share-option-group {
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px 12px;
+      text-align: left;
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .share-option-label {
+      font-size: 0.82rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .share-option-label input { width: 16px; height: 16px; accent-color: var(--accent-pink); cursor: pointer; }
+
+    details.settings-acc-card {
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      margin-bottom: 8px;
+      text-align: left;
+      overflow: hidden;
+    }
+
+    summary.settings-acc-summary {
+      padding: 10px 12px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: var(--accent-pink);
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    summary.settings-acc-summary::-webkit-details-marker { display: none; }
+
+    .settings-acc-body {
+      padding: 10px 12px 12px;
+      border-top: 1px dashed var(--border-color);
+      font-size: 0.8rem;
+    }
+
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .theme-item-btn {
+      padding: 8px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-color);
+      font-size: 0.75rem;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .theme-item-btn.active {
+      border-color: var(--accent-pink);
+      box-shadow: 0 0 8px rgba(247, 37, 133, 0.4);
+      background: var(--soft-pink);
+    }
+
+    .letter-card-item {
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 10px;
+      margin-top: 10px;
+      text-align: left;
+    }
+
+    .letter-date {
+      font-size: 0.75rem;
+      color: var(--light-text);
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    .letter-img {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .letter-text-box {
+      font-size: 0.8rem;
+      color: var(--text-color);
+      background: var(--card-bg);
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px dashed var(--primary-pink);
+      line-height: 1.4;
+      white-space: pre-wrap;
+    }
+
+    .roulette-container {
+      background: var(--soft-pink);
+      border: 2px dashed var(--primary-pink);
+      border-radius: 14px;
+      padding: 16px 8px;
+      margin: 14px 0;
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .roulette-container.winner {
+      background: linear-gradient(135deg, var(--gold-bg-start), var(--gold-bg-end));
+      border: 2px solid var(--gold-border);
+      box-shadow: 0 0 15px rgba(243, 198, 66, 0.6);
+      transform: scale(1.03);
+    }
+
+    .modal-cast-name {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--text-color);
+    }
+
+    .roulette-container.winner .modal-cast-name {
+      color: var(--accent-pink);
+      font-size: 1.7rem;
+    }
+
+    .close-btn {
+      background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink));
+      color: white;
+      border: none;
+      padding: 8px 22px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      cursor: pointer;
+      margin-top: 10px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .close-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .fab-add {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 56px;
+      height: 56px;
+      border-radius: 28px;
+      background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink));
+      color: white;
+      border: none;
+      font-size: 1.6rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+      z-index: 900;
+    }
+
+    .add-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      text-align: left;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .form-group label {
+      font-size: 0.75rem;
+      font-weight: bold;
+      color: var(--accent-pink);
+    }
+
+    .form-group input, .form-group select, .form-group textarea {
+      padding: 8px 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      outline: none;
+      background: var(--bg-color);
+      color: var(--text-color);
+      width: 100%;
+    }
+
+    .style-grid-compact {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      width: 100%;
+    }
+
+    .style-grid-compact input {
+      padding: 6px 2px;
+      text-align: center;
+      font-size: 0.78rem;
+      font-weight: bold;
+      min-width: 0;
+    }
+
+    .flag-picker {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 4px;
+    }
+
+    .flag-btn {
+      font-size: 0.72rem;
+      padding: 4px 8px;
+      border-radius: 12px;
+      border: 1.5px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-color);
+      cursor: pointer;
+    }
+
+    .flag-btn-clear {
+      background: rgba(150, 150, 150, 0.2);
+      color: var(--light-text);
+      border-color: var(--border-color);
+    }
+
+    .help-box {
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px;
+      text-align: left;
+      font-size: 0.8rem;
+      margin-bottom: 6px;
+    }
+    .help-box h4 {
+      color: var(--accent-pink);
+      margin-bottom: 3px;
+      font-size: 0.85rem;
+    }
+
+    .step-box {
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px 12px;
+      text-align: left;
+      font-size: 0.78rem;
+      margin-bottom: 8px;
+    }
+    .step-box strong {
+      color: var(--accent-pink);
+    }
+    .file-name-highlight {
+      display: inline-block;
+      background: var(--soft-pink);
+      color: var(--accent-pink);
+      font-family: monospace;
+      font-weight: bold;
+      padding: 2px 8px;
+      border-radius: 6px;
+      border: 1px dashed var(--primary-pink);
+      word-break: break-all;
+      margin: 4px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1 id="headerTitle">童貞の風俗履歴図鑑</h1>
+    <div class="header-sub">マイ キャスト ＆ プレイレコード</div>
+    
+    <div class="header-btn-row">
+      <button class="pill-btn" onclick="openSettingsModal()" title="ユーザー設定・テーマ変更">
+        <span>👤 ユーザー: <span id="currentUserNameDisplay">童貞</span></span>
+      </button>
+
+      <button class="pill-btn" onclick="openHelpModal()" title="使い方・ヘルプ">
+        <span>❓ 使い方</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="tab-nav">
+    <button class="tab-btn active" id="tabMyRecords" onclick="switchMainTab('my')">👤 マイ図鑑</button>
+    <button class="tab-btn" id="tabSharedRecords" onclick="switchMainTab('shared')">👥 共有された履歴 (<span id="sharedCount">0</span>)</button>
+  </div>
+
+  <div id="myTabArea">
+    <details class="dashboard">
+      <summary style="font-size:0.8rem; font-weight:bold; color:var(--accent-pink); cursor:pointer;">📊 利用統計ダッシュボードを表示／非表示</summary>
+      <div class="dash-grid" style="margin-top:10px;">
+        <div class="dash-item"><div class="dash-val" id="stTotalVisits">0</div><div class="dash-lbl">総利用回数</div></div>
+        <div class="dash-item"><div class="dash-val" id="stTotalCasts">0</div><div class="dash-lbl">経験人数</div></div>
+        <div class="dash-item"><div class="dash-val" id="stActiveCasts">0</div><div class="dash-lbl">現在在籍</div></div>
+        <div class="dash-item"><div class="dash-val" id="stFavRate">0%</div><div class="dash-lbl">オキニ率</div></div>
+      </div>
+      <div style="text-align:right; margin-top:8px;">
+        <button onclick="resetData()" style="font-size:0.65rem; color:var(--light-text); background:none; border:none; text-decoration:underline; cursor:pointer;">⚠️ 記録を初期化して空にする</button>
+      </div>
+    </details>
+
+    <div class="controls">
+      <div class="search-row">
+        <div class="search-box">
+          <input type="text" id="searchKeyword" placeholder="キャスト名やマークで検索..." oninput="render()">
+        </div>
+        <button class="btn-gacha" onclick="runGacha()">🎰 ガチャ</button>
+      </div>
+
+      <div class="filter-tags">
+        <div class="ftag active" id="ftAll" onclick="setFilter('all')">すべて</div>
+        <div class="ftag" id="ftActive" onclick="setFilter('active')">🟢 在籍のみ</div>
+        <div class="ftag" id="ftFav" onclick="setFilter('fav')">🆂 当たり</div>
+        <div class="ftag" id="ftSuper" onclick="setFilter('super')">⭐️ オキニ</div>
+        <div class="ftag" id="ftBad" onclick="setFilter('bad')">🚨 ハズレ</div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn-toggle active" id="viewCast" onclick="changeView('cast')">キャスト別図鑑</button>
+        <button class="btn-toggle" id="viewTimeline" onclick="changeView('timeline')">月別時系列</button>
+      </div>
+
+      <div class="btn-group" id="sortGroup">
+        <button class="btn-toggle active" id="sortCount" onclick="changeSort('count')">回数順</button>
+        <button class="btn-toggle" id="sortRecent" onclick="changeSort('recent')">最近順</button>
+        <button class="btn-toggle" id="sortName" onclick="changeSort('name')">五十音順</button>
+      </div>
+    </div>
+
+    <details class="legend-details">
+      <summary>マークの意味（凡例）を表示／非表示</summary>
+      <div class="legend-box">
+        <div>🈠 デビュー/初出勤</div>
+        <div>🆂 当たりもしくはオキニ </div>
+        <div>✈ 県外</div>
+        <div>⚔ 次ナシ</div>
+        <div>🈘 交配</div>
+        <div>🄽 生交配</div>
+        <div>㍁ ＡＦ</div>
+        <div>⑱ 18歳</div>
+        <div>㋑ イメージプレイ（コスプレなど）</div>
+        <div>㋗ クレーム案件</div>
+        <div>ｴ 風エステ</div>
+        <div>❀ 卒業の出勤</div>
+        <div>ｄ 出前</div>
+        <div>❖ ヘルス2万円超</div>
+        <div>❑ 社交飲食店</div>
+      </div>
+    </details>
+
+    <div id="mainContent"></div>
+  </div>
+
+  <div id="sharedTabArea" style="display:none;">
+    <div class="shared-top-bar">
+      <span style="font-size:0.85rem; font-weight:bold; color:var(--accent-pink);">📥 友達からの共有データ</span>
+      <button class="pill-btn" onclick="openImportModal()">📂 友達の履歴を読み込む</button>
+    </div>
+    <div id="sharedContent"></div>
+  </div>
+
+  <button class="fab-add" onclick="openAddModal()" title="新しい利用記録を追加">＋</button>
+
+  <div class="modal-overlay" id="whatsNewModal">
+    <div class="modal-content">
+      <h3>🎉 風俗履歴図鑑 V17.7へようこそ！</h3>
+      <p style="font-size:0.75rem; color:var(--light-text); margin-bottom:8px;">
+        スマホのアルバムから手紙・カード画像を直接選んでImgurに自動アップロードできるようになりました！
+      </p>
+      <button class="close-btn" onclick="closeWhatsNewModal()" style="width:100%; margin-top:4px;">了解してはじめる</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="exportCastModal">
+    <div class="modal-content">
+      <h3>📤 友だちへ共有</h3>
+      <p style="font-size:0.8rem; color:var(--light-text); margin-bottom:8px;">
+        「<strong id="exportModalCastName" style="color:var(--accent-pink);">---</strong>」さんのデータを友達に送信します。
+      </p>
+
+      <div class="share-option-group">
+        <div style="font-size:0.75rem; font-weight:bold; color:var(--accent-pink); margin-bottom:2px;">共有する項目を選択:</div>
+        <label class="share-option-label">
+          <input type="checkbox" id="chkIncludeInfo" checked onchange="updateExportFileName()"> キャスト基本情報（名前・スタイル・メモ等）
+        </label>
+        <label class="share-option-label">
+          <input type="checkbox" id="chkIncludeVisits" checked onchange="updateExportFileName()"> 利用履歴（日付・回数・マーク等）
+        </label>
+        <label class="share-option-label">
+          <input type="checkbox" id="chkIncludeLetters" checked onchange="updateExportFileName()"> 手紙・メッセージカード画像
+        </label>
+      </div>
+
+      <div class="step-box">
+        <strong>STEP 1:</strong> 以下のボタンを押して共有ファイルをダウンロードします。<br>
+        <div style="text-align:center; margin-top:4px;">
+          <span class="file-name-highlight" id="exportModalFileName">共有_...json</span>
+        </div>
+      </div>
+
+      <div class="step-box">
+        <strong>STEP 2:</strong> ダウンロードした `.json` ファイルを LINE や Discord 等で友達にそのまま送信してください。
+      </div>
+
+      <div class="step-box">
+        <strong>STEP 3:</strong> 友達側は「👥 共有された履歴」タブからファイルを読み込むことで、図鑑に保存・登録できます！
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:6px; margin-top:10px;">
+        <button class="close-btn" onclick="executeCastDownload()" style="width:100%; margin-top:0;">💾 ファイルをダウンロード</button>
+        <button class="close-btn" onclick="closeModal('exportCastModal')" style="background:#888; width:100%; margin-top:0;">キャンセル</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal-content">
+      <h3>⚙️ アプリ設定</h3>
+
+      <details class="settings-acc-card" open>
+        <summary class="settings-acc-summary">
+          <span>👤 ユーザー名の変更</span>
+          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+        </summary>
+        <div class="settings-acc-body">
+          <form class="add-form" onsubmit="saveUserName(event)">
+            <div class="form-group">
+              <input type="text" id="inputUserName" placeholder="お名前を入力..." required>
+            </div>
+            <button type="submit" class="close-btn" style="margin-top:4px; padding:6px; font-size:0.8rem; width:100%;">保存する</button>
+          </form>
+        </div>
+      </details>
+
+      <details class="settings-acc-card" open>
+        <summary class="settings-acc-summary">
+          <span>🎨 カラーテーマの着せ替え</span>
+          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+        </summary>
+        <div class="settings-acc-body">
+          <div class="theme-grid">
+            <button class="theme-item-btn" id="btnThemeDefault" onclick="setTheme('default')">🌸 ぴんく</button>
+            <button class="theme-item-btn" id="btnThemeMidnight" onclick="setTheme('midnight')">🌙 ミッドナイト</button>
+            <button class="theme-item-btn" id="btnThemeVelvet" onclick="setTheme('velvet')">🖤 ベルベット</button>
+            <button class="theme-item-btn" id="btnThemeBerry" onclick="setTheme('berry')">🍇 ベリー</button>
+            <button class="theme-item-btn" id="btnThemeCyber" onclick="setTheme('cyber')">🌃 サイバー</button>
+            <button class="theme-item-btn" id="btnThemeMocha" onclick="setTheme('mocha')">☕️ モカ</button>
+            <button class="theme-item-btn" id="btnThemeEmerald" onclick="setTheme('emerald')">💎 エメラルド</button>
+            <button class="theme-item-btn" id="btnThemeChampagne" onclick="setTheme('champagne')">👑 ゴールド</button>
+            <button class="theme-item-btn" id="btnThemeViolet" onclick="setTheme('violet')">💜 ヴァイオレット</button>
+            <button class="theme-item-btn" id="btnThemePeach" onclick="setTheme('peach')">🍑 ピーチ</button>
+          </div>
+        </div>
+      </details>
+
+      <details class="settings-acc-card">
+        <summary class="settings-acc-summary">
+          <span>📂 バックアップ & データ管理</span>
+          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+        </summary>
+        <div class="settings-acc-body">
+          <p style="font-size:0.7rem; color:var(--light-text); margin-bottom:6px;">全データをファイルとして保存・復元できます。</p>
+          <button class="close-btn" style="width:100%; margin-top:0; font-size:0.75rem; padding:6px; background:linear-gradient(135deg, #4dabf7, #339af0);" onclick="exportJSONFile()">💾 JSONダウンロード</button>
+          <button class="close-btn" style="width:100%; margin-top:6px; font-size:0.75rem; padding:6px; background:#20c997;" onclick="triggerJSONFileInput()">📂 JSONファイルを選択して復元</button>
+          <input type="file" id="jsonFileInput" accept=".json,application/json,text/plain" style="display:none;" onchange="importJSONFile(event)">
+        </div>
+      </details>
+
+      <button class="close-btn" onclick="closeModal('settingsModal')" style="width:100%; margin-top:10px;">閉じる</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="importModal">
+    <div class="modal-content">
+      <h3>📂 友達の履歴を読み込む</h3>
+      <p style="font-size:0.75rem; color:var(--light-text); margin-bottom:10px;">友達から受け取った共有ファイル（.json）を選択してください。</p>
+      
+      <div class="dropzone-box" onclick="triggerSharedFileInput()">
+        <div class="dropzone-icon">📄</div>
+        <div class="dropzone-text">タップしてファイルを選択</div>
+        <div class="dropzone-sub">またはここに .json ファイルをドラッグ＆ドロップ</div>
+      </div>
+      <input type="file" id="sharedFileInput" accept=".json,application/json,text/plain" style="display:none;" onchange="importJSONFile(event)">
+
+      <button class="close-btn" onclick="closeModal('importModal')" style="background:#888; width:100%; margin-top:10px;">キャンセル</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="helpModal">
+    <div class="modal-content">
+      <h3>❓ ご利用ガイド</h3>
+      <div class="help-section" style="display:flex; flex-direction:column; gap:4px; max-height: 60vh; overflow-y: auto; padding-right: 4px;">
+        
+        <div class="help-box">
+          <h4>1. キャスト別図鑑 ＆ 月別時系列ビュー</h4>
+          <p><strong>キャスト別管理:</strong> 利用回数やオキニ度に応じてカードが美しく色分けされます。</p>
+        </div>
+
+        <div class="help-box">
+          <h4>2. 📊 利用統計ダッシュボード</h4>
+          <p>総利用回数、経験人数、在籍数、オキニ率を自動集計します。</p>
+        </div>
+
+        <div class="help-box">
+          <h4>3. 📤 友だちへの共有機能</h4>
+          <p>キャストごとの基本情報や利用履歴を .json ファイルとして書き出して簡単に共有可能です。</p>
+        </div>
+
+        <div class="help-box">
+          <h4>4. 💌 手紙・カード画像アップロード</h4>
+          <p>スマホの写真を選ぶだけで自動でImgurにアップロードされ、URLが入力されて美しくファイリングされます。</p>
+        </div>
+
+        <div class="help-box">
+          <h4>5. 🎨 10種類のカラーテーマ</h4>
+          <p>気分に合わせてUIカラーを自由自在に変更可能です。</p>
+        </div>
+
+      </div>
+      <button class="close-btn" onclick="closeModal('helpModal')" style="margin-top:10px;">了解して閉じる</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="editRecordModal">
+    <div class="modal-content">
+      <h3>✏️ 記録の編集・メモ作成</h3>
+      <form class="add-form" onsubmit="saveEditedRecord(event)">
+        <input type="hidden" id="editRecordIndex">
+        <div class="form-group">
+          <label>キャスト名 / 日付</label>
+          <div id="editRecordHeader" style="font-size:0.85rem; font-weight:bold; color:var(--text-color);"></div>
+        </div>
+
+        <div class="form-group">
+          <label>マーク・フラグ</label>
+          <input type="text" id="editFlags" placeholder="マークを入力">
+        </div>
+
+        <div class="form-group">
+          <label>この回のメモ・感想</label>
+          <textarea id="editVisitNote" rows="3" placeholder="プレイ内容や印象などを記録..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>WEBレポートURL（noteなど）</label>
+          <input type="url" id="editReportUrl" placeholder="https://note.com/...">
+        </div>
+
+        <div style="display:flex; gap:8px; margin-top:10px;">
+          <button type="submit" class="close-btn" style="flex:1;">更新して保存</button>
+          <button type="button" class="close-btn" onclick="closeModal('editRecordModal')" style="background:#888; flex:1;">キャンセル</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="addModal">
+    <div class="modal-content">
+      <h3>✨ 利用記録を追加</h3>
+      <form class="add-form" onsubmit="saveNewRecord(event)">
+        <div class="form-row" style="display:flex; gap:6px;">
+          <div class="form-group" style="flex:1;">
+            <label>年</label>
+            <input type="text" id="addYear" placeholder="2026" required>
+          </div>
+          <div class="form-group" style="flex:1;">
+            <label>月</label>
+            <input type="text" id="addMonth" placeholder="8月" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>キャスト名（現・源氏名）</label>
+          <input type="text" id="addName" placeholder="例: ゆあ" required>
+        </div>
+
+        <div class="form-group">
+          <label>スリーサイズ（スタイルデータ）</label>
+          <div class="style-grid-compact">
+            <input type="text" id="addStyleT" placeholder="T" oninput="updateInputColor(this, 'T')">
+            <input type="text" id="addStyleB" placeholder="B" oninput="updateInputColor(this, 'B')">
+            <input type="text" id="addStyleW" placeholder="W" oninput="updateInputColor(this, 'W')">
+            <input type="text" id="addStyleH" placeholder="H" oninput="updateInputColor(this, 'H')">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>マーク・フラグ（タップで追加）</label>
+          <div class="flag-picker">
+            <button type="button" class="flag-btn" onclick="addFlagChar('🆂')">🆂 当たり</button>
+            <button type="button" class="flag-btn" onclick="addFlagChar('⚔')">⚔ 次ナシ</button>
+            <button type="button" class="flag-btn" onclick="addFlagChar('✈')">✈ 県外</button>
+            <button type="button" class="flag-btn" onclick="addFlagChar('⑱')">⑱ 18歳</button>
+            <button type="button" class="flag-btn" onclick="addFlagChar('❖')">❖ 2万超</button>
+            <button type="button" class="flag-btn" onclick="addFlagChar('❀')">❀ 卒業</button>
+            <button type="button" class="flag-btn" onclick="addFlagChar('🈠')">🈠 初出勤</button>
+            <button type="button" class="flag-btn" onclick="addFlagChar('㋑')">㋑ コス</button>
+            <button type="button" class="flag-btn" onclick="addFlagChar('ｴ')">ｴ エステ</button>
+            <button type="button" class="flag-btn flag-btn-clear" onclick="clearFlagsInput()">クリア</button>
+          </div>
+          <input type="text" id="addFlags" placeholder="タップしたマークが入ります（直接編集もOK）">
+        </div>
+
+        <div class="form-group">
+          <label>この回のメモ・感想</label>
+          <input type="text" id="addVisitNote" placeholder="接客メモなど">
+        </div>
+
+        <div class="form-group">
+          <label>WEBレポートURL（あれば）</label>
+          <input type="url" id="addReportUrl" placeholder="https://note.com/...">
+        </div>
+
+        <div class="form-row" style="display:flex; gap:6px;">
+          <div class="form-group" style="flex:1;">
+            <label>旧・源氏名</label>
+            <input type="text" id="addOldName" placeholder="例: ここみ">
+          </div>
+          <div class="form-group" style="flex:1;">
+            <label>プロフURL</label>
+            <input type="url" id="addLink" placeholder="https://...">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>手紙・カード画像</label>
+          <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 4px;">
+            <input type="file" id="imageFileToUpload" accept="image/*" style="font-size: 0.75rem; padding: 4px;" onchange="uploadImageToImgur(this)">
+            <span id="uploadStatus" style="font-size: 0.7rem; color: var(--light-text);">未選択</span>
+          </div>
+          <input type="url" id="addLetterImg" placeholder="https://i.imgur.com/... (自動入力されます)">
+        </div>
+
+        <div style="display:flex; gap:8px; margin-top:10px;">
+          <button type="submit" class="close-btn" style="flex:1;">保存する</button>
+          <button type="button" class="close-btn" onclick="closeModal('addModal')" style="background:#888; flex:1;">キャンセル</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="gachaModal">
+    <div class="modal-content">
+      <h3 id="gachaTitle">🎰 運命の指名抽選中...</h3>
+      <p style="font-size:0.75rem; color:var(--light-text);" id="gachaSub">在籍中のキャストから選出中！</p>
+      
+      <div class="roulette-container" id="rouletteBox">
+        <div class="modal-cast-name" id="gachaResultName">???</div>
+      </div>
+
+      <button class="close-btn" id="gachaCloseBtn" onclick="closeModal('gachaModal')" disabled>抽選中...</button>
+    </div>
+  </div>
+
+  <!-- 💌 メッセージカードモーダル -->
+  <div class="modal-overlay" id="letterModal">
+    <div class="modal-content">
+      <h3 id="letterModalTitle">💌 メッセージカード</h3>
+      <div id="letterModalContainer"></div>
+      <button class="close-btn" onclick="closeModal('letterModal')">閉じる</button>
+    </div>
+  </div>
+
+  <script>
+    let currentUserName = localStorage.getItem('app_user_name') || '童貞';
+    let currentTheme = localStorage.getItem('app_theme') || 'default';
+    let historyList = [];
+    let castData = {};
+    let sharedRecords = [];
+    let targetExportCastName = "";
+
+    function applyTheme(themeName) {
+      currentTheme = themeName;
+      if (themeName === 'default') {
+        document.documentElement.removeAttribute('data-theme');
+      } else {
+        document.documentElement.setAttribute('data-theme', themeName);
+      }
+      localStorage.setItem('app_theme', themeName);
+
+      document.querySelectorAll('.theme-item-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById('btnTheme' + themeName.charAt(0).toUpperCase() + themeName.slice(1));
+      if (activeBtn) activeBtn.classList.add('active');
+    }
+
+    function setTheme(themeName) {
+      applyTheme(themeName);
+    }
+
+    function openSettingsModal() {
+      document.getElementById('inputUserName').value = currentUserName === '童貞' ? '' : currentUserName;
+      document.getElementById('settingsModal').style.display = 'flex';
+    }
+
+    function openHelpModal() {
+      document.getElementById('helpModal').style.display = 'flex';
+    }
+
+    function openImportModal() {
+      document.getElementById('importModal').style.display = 'flex';
+    }
+
+    const LATEST_VERSION_KEY = 'app_version_v17.7_shown';
+    function checkWhatsNew() {
+      if (!localStorage.getItem(LATEST_VERSION_KEY)) {
+        document.getElementById('whatsNewModal').style.display = 'flex';
+      }
+    }
+
+    function closeWhatsNewModal() {
+      localStorage.setItem(LATEST_VERSION_KEY, 'true');
+      closeModal('whatsNewModal');
+    }
+
+    function initUserData() {
+      applyTheme(currentTheme);
+
+      const savedHist = localStorage.getItem('user_hist_' + currentUserName);
+      const savedCast = localStorage.getItem('user_cast_' + currentUserName);
+      
+      historyList = savedHist ? JSON.parse(savedHist) : [];
+      castData = savedCast ? JSON.parse(savedCast) : {};
+      
+      const savedShared = localStorage.getItem('user_shared_list_' + currentUserName);
+      sharedRecords = savedShared ? JSON.parse(savedShared) : [];
+
+      updateUIHeader();
+      updateSharedCount();
+      render();
+      checkWhatsNew();
+    }
+
+    function updateUIHeader() {
+      const titleText = currentUserName + "の風俗履歴図鑑";
+      document.getElementById('headerTitle').innerText = titleText;
+      document.getElementById('pageTitle').innerText = titleText + " [V17.7]";
+      document.getElementById('currentUserNameDisplay').innerText = currentUserName;
+    }
+
+    function updateSharedCount() {
+      document.getElementById('sharedCount').innerText = sharedRecords.length;
+    }
+
+    function saveData() {
+      localStorage.setItem('app_user_name', currentUserName);
+      localStorage.setItem('user_hist_' + currentUserName, JSON.stringify(historyList));
+      localStorage.setItem('user_cast_' + currentUserName, JSON.stringify(castData));
+      localStorage.setItem('user_shared_list_' + currentUserName, JSON.stringify(sharedRecords));
+      updateSharedCount();
+    }
+
+    function resetData() {
+      if (confirm("現在の記録を完全にクリアして空っぽの「童貞」状態にしますか？")) {
+        localStorage.removeItem('user_hist_' + currentUserName);
+        localStorage.removeItem('user_cast_' + currentUserName);
+        localStorage.removeItem('user_shared_list_' + currentUserName);
+
+        currentUserName = '童貞';
+        localStorage.setItem('app_user_name', currentUserName);
+        
+        historyList = [];
+        castData = {};
+        sharedRecords = [];
+
+        saveData();
+        initUserData();
+        render();
+        renderSharedArea();
+        alert("データを初期化しました。");
+      }
+    }
+
+    function exportJSONFile() {
+      const exportObject = {
+        app: "風俗履歴図鑑",
+        version: "17.7",
+        exportDate: new Date().toISOString(),
+        userName: currentUserName,
+        historyList: historyList,
+        castData: castData
+      };
+
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObject, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `風俗履歴図鑑_${currentUserName}_backup.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    function openExportCastModal(event, name) {
+      event.preventDefault(); event.stopPropagation();
+      targetExportCastName = name;
+      document.getElementById('exportModalCastName').innerText = name;
+      
+      document.getElementById('chkIncludeInfo').checked = true;
+      document.getElementById('chkIncludeVisits').checked = true;
+      document.getElementById('chkIncludeLetters').checked = true;
+
+      updateExportFileName();
+      document.getElementById('exportCastModal').style.display = 'flex';
+    }
+
+    function updateExportFileName() {
+      const name = targetExportCastName;
+      const opts = [];
+      if (document.getElementById('chkIncludeInfo').checked) opts.push('info');
+      if (document.getElementById('chkIncludeVisits').checked) opts.push('visits');
+      if (document.getElementById('chkIncludeLetters').checked) opts.push('letters');
+      
+      const fileName = `共有_${name}_[${opts.join('-')}](from_${currentUserName}).json`;
+      document.getElementById('exportModalFileName').innerText = fileName;
+    }
+
+    function executeCastDownload() {
+      if (!targetExportCastName) return;
+
+      const name = targetExportCastName;
+      const includeInfo = document.getElementById('chkIncludeInfo').checked;
+      const includeVisits = document.getElementById('chkIncludeVisits').checked;
+      const includeLetters = document.getElementById('chkIncludeLetters').checked;
+
+      const singleExportObject = {
+        app: "風俗履歴図鑑_選択共有",
+        version: "17.7",
+        sharedBy: currentUserName,
+        castName: name,
+        info: includeInfo ? (castData[name] || {}) : null,
+        visits: includeVisits ? historyList.filter(h => h.name === name) : [],
+        letters: includeLetters && castData[name] ? (castData[name].letters || []) : []
+      };
+
+      const fileName = document.getElementById('exportModalFileName').innerText;
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(singleExportObject, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", fileName);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+
+      closeModal('exportCastModal');
+      alert(`✨ 「${fileName}」をダウンロードしました！LINE等で友達に送信してください。`);
+    }
+
+    function triggerJSONFileInput() {
+      document.getElementById('jsonFileInput').click();
+    }
+
+    function triggerSharedFileInput() {
+      document.getElementById('sharedFileInput').click();
+    }
+
+    function importJSONFile(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+
+          if (imported.app === "風俗履歴図鑑_選択共有" || imported.app === "風俗履歴図鑑_単体" || imported.castName) {
+            sharedRecords.unshift({
+              fromUser: imported.sharedBy || "友達",
+              castName: imported.castName,
+              info: imported.info || null,
+              visits: imported.visits || [],
+              letters: imported.letters || [],
+              date: new Date().toLocaleDateString()
+            });
+            saveData();
+            renderSharedArea();
+            closeModal('settingsModal');
+            closeModal('importModal');
+            switchMainTab('shared');
+            alert(`👥 ${imported.sharedBy || '友達'}さんから共有された「${imported.castName}」さんのデータを受信しました！`);
+            return;
+          }
+
+          if (imported.historyList && imported.castData) {
+            if (confirm(`「${imported.userName || 'バックアップ'}」の全データで図鑑を復元しますか？`)) {
+              currentUserName = imported.userName || '復元ユーザー';
+              historyList = imported.historyList;
+              castData = imported.castData;
+              saveData();
+              initUserData();
+              render();
+              closeModal('settingsModal');
+              closeModal('importModal');
+              alert("✨ データの全復元が完了しました！");
+            }
+            return;
+          }
+
+          alert("⚠️ 無効なファイル形式です。");
+        } catch (err) {
+          alert("⚠️ ファイルの読み込みに失敗しました。正しいJSONファイルを選択してください。");
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    // 📁 Imgur 匿名アップロード処理
+    async function uploadImageToImgur(inputElem) {
+      const file = inputElem.files[0];
+      if (!file) return;
+
+      const statusSpan = document.getElementById('uploadStatus');
+      const urlInput = document.getElementById('addLetterImg');
+      
+      statusSpan.innerText = "アップロード中...";
+      statusSpan.style.color = "var(--accent-pink)";
+
+      const formData = new FormData();
+      formData.append('image', file);
+
+      try {
+        const response = await fetch('https://api.imgur.com/3/image', {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Client-ID 546c25a59c58ad7' 
+          },
+          body: formData
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          const imageUrl = result.data.link;
+          urlInput.value = imageUrl;
+          statusSpan.innerText = "アップロード完了！✨";
+          statusSpan.style.color = "#0ca678";
+        } else {
+          throw new Error(result.data.error.message || "アップロード失敗");
+        }
+      } catch (error) {
+        console.error(error);
+        statusSpan.innerText = "失敗しました。再試行してください";
+        statusSpan.style.color = "#ff6b6b";
+      }
+    }
+
+    function switchMainTab(type) {
+      const myArea = document.getElementById('myTabArea');
+      const sharedArea = document.getElementById('sharedTabArea');
+      const btnMy = document.getElementById('tabMyRecords');
+      const btnShared = document.getElementById('tabSharedRecords');
+
+      if (type === 'my') {
+        myArea.style.display = 'block';
+        sharedArea.style.display = 'none';
+        btnMy.classList.add('active');
+        btnShared.classList.remove('active');
+      } else {
+        myArea.style.display = 'none';
+        sharedArea.style.display = 'block';
+        btnMy.classList.remove('active');
+        btnShared.classList.add('active');
+        renderSharedArea();
+      }
+    }
+
+    function renderSharedArea() {
+      const container = document.getElementById('sharedContent');
+      container.innerHTML = '';
+
+      if (sharedRecords.length === 0) {
+        container.innerHTML = `
+          <div class="empty-shared-box">
+            <h3>👥 共有された履歴がありません</h3>
+            <p>友達から受け取った .json ファイルを読み込むと<br>ここにコレクションされます！</p>
+            <button class="pill-btn" onclick="openImportModal()" style="font-size:0.85rem; padding:8px 18px;">📂 友達の履歴ファイルを読み込む</button>
+          </div>
+        `;
+        return;
+      }
+
+      sharedRecords.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = 'shared-card';
+
+        let visitSummary = "";
+        if (item.visits && item.visits.length > 0) {
+          visitSummary = `${item.visits.length}回利用の記録が含まれています`;
+        } else {
+          visitSummary = '<span class="friend-visited-badge">⚠️ 履歴なし（キャスト基本情報のみ）</span>';
+        }
+
+        let infoText = item.info ? (item.info.notes || 'メモなし') : '情報なし';
+
+        card.innerHTML = `
+          <div class="shared-header">
+            <span>👤 共有者: ${item.fromUser} さん</span>
+            <div style="display:flex; gap:4px;">
+              <button onclick="copySharedToMyCatalog(${index})" class="link-btn" style="background:var(--soft-pink);">➕ マイ図鑑へ取り込む</button>
+              <button onclick="deleteSharedRecord(${index})" class="link-btn" style="color:#888; border-color:#888;">🗑 削除</button>
+            </div>
+          </div>
+          <div style="font-size:0.95rem; font-weight:bold; color:var(--text-color); margin:4px 0;">
+            💕 ${item.castName} 
+          </div>
+          <div style="font-size:0.75rem; color:var(--light-text);">${visitSummary}</div>
+          <div style="font-size:0.75rem; color:var(--text-color); margin-top:4px;">メモ: ${infoText}</div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    function copySharedToMyCatalog(index) {
+      const item = sharedRecords[index];
+      if (confirm(`「${item.castName}」さんのデータをあなたのマイ図鑑に取り込みますか？\n(共有元: ${item.fromUser} さんとしてクレジットがメモに記録されます)`)) {
+        if (item.info) {
+          if (!castData[item.castName]) {
+            castData[item.castName] = item.info;
+          } else {
+            if (item.info.style && !castData[item.castName].style) castData[item.castName].style = item.info.style;
+            if (item.info.link && !castData[item.castName].link) castData[item.castName].link = item.info.link;
+          }
+          const creditStr = ` [共有元: ${item.fromUser}さん]`;
+          if (!castData[item.castName].notes.includes(creditStr)) {
+            castData[item.castName].notes = (castData[item.castName].notes || '') + creditStr;
+          }
+        }
+        if (item.visits && item.visits.length > 0) {
+          item.visits.forEach(v => historyList.push(v));
+        }
+        if (item.letters && item.letters.length > 0) {
+          if (!castData[item.castName]) castData[item.castName] = { letters: [] };
+          if (!castData[item.castName].letters) castData[item.castName].letters = [];
+          item.letters.forEach(l => castData[item.castName].letters.push(l));
+        }
+        saveData();
+        render();
+        alert(`✨ 「${item.castName}」さんをマイ図鑑に取り込みました！`);
+      }
+    }
+
+    function deleteSharedRecord(index) {
+      if (confirm("この共有履歴をリストから削除しますか？")) {
+        sharedRecords.splice(index, 1);
+        saveData();
+        renderSharedArea();
+      }
+    }
+
+    function addFlagChar(char) {
+      const input = document.getElementById('addFlags');
+      input.value = (input.value || '') + char;
+    }
+
+    function clearFlagsInput() {
+      document.getElementById('addFlags').value = '';
+    }
+
+    function updateInputColor(inputElem, type) {
+      const val = inputElem.value.trim().toUpperCase();
+      const numMatch = val.match(/\d+/);
+
+      if (!numMatch) {
+        inputElem.style.background = "var(--bg-color)";
+        inputElem.style.borderColor = "var(--border-color)";
+        inputElem.style.color = "var(--text-color)";
+        return;
+      }
+
+      const num = parseInt(numMatch[0], 10);
+
+      if (type === 'T') {
+        if (num < 150) { inputElem.style.background = "#e7f5ff"; inputElem.style.borderColor = "#a5d8ff"; inputElem.style.color = "#1c7ed6"; }
+        else if (num < 155) { inputElem.style.background = "#ebfbee"; inputElem.style.borderColor = "#b2f2bb"; inputElem.style.color = "#2b8a3e"; }
+        else if (num < 160) { inputElem.style.background = "#fff9db"; inputElem.style.borderColor = "#ffec99"; inputElem.style.color = "#d9480f"; }
+        else { inputElem.style.background = "#f3d9fa"; inputElem.style.borderColor = "#eebefa"; inputElem.style.color = "#9c36b5"; }
+      } else if (type === 'B') {
+        if (num < 85) { inputElem.style.background = "#fff0f6"; inputElem.style.borderColor = "#fcc2d7"; inputElem.style.color = "#d6336c"; }
+        else if (num < 90) { inputElem.style.background = "#ffdeeb"; inputElem.style.borderColor = "#faa2c1"; inputElem.style.color = "#c2255c"; }
+        else { inputElem.style.background = "#fcc2d7"; inputElem.style.borderColor = "#f783ac"; inputElem.style.color = "#a61e4d"; }
+      } else if (type === 'W' || type === 'H') {
+        if (num <= 55 || (type === 'H' && num <= 85)) { inputElem.style.background = "#ebfbee"; inputElem.style.borderColor = "#b2f2bb"; inputElem.style.color = "#2b8a3e"; }
+        else { inputElem.style.background = "#fff9db"; inputElem.style.borderColor = "#ffec99"; inputElem.style.color = "#d9480f"; }
+      }
+    }
+
+    function renderStyleTags(styleStr) {
+      if (!styleStr || !styleStr.trim()) {
+        return '<div class="style-row"><span class="style-none">スタイルデータなし</span></div>';
+      }
+
+      const str = styleStr.toUpperCase();
+      const tMatch = str.match(/T\s*:?\s*(\d+)/i);
+      const bMatch = str.match(/B\s*:?\s*(\d+)\s*(\([A-Z\+]+\))?/i);
+      const wMatch = str.match(/W\s*:?\s*(\d+)/i);
+      const hMatch = str.match(/H\s*:?\s*(\d+)/i);
+
+      let tagsHtml = '<div class="style-row">';
+
+      if (tMatch) {
+        const height = parseInt(tMatch[1], 10);
+        let colorClass = "p-blue";
+        if (height >= 150 && height < 155) colorClass = "p-green";
+        else if (height >= 155 && height < 160) colorClass = "p-yellow";
+        else if (height >= 160) colorClass = "p-purple";
+
+        tagsHtml += '<div class="style-pill ' + colorClass + '"><span class="style-pill-label">T</span><span class="style-pill-val">' + height + 'cm</span></div>';
+      }
+
+      if (bMatch) {
+        const bust = parseInt(bMatch[1], 10);
+        const cup = bMatch[2] ? bMatch[2].replace(/[\(\)]/g, '') : '';
+        let colorClass = "p-pink1";
+        if (bust >= 85) colorClass = "p-pink2";
+        if (bust >= 90) colorClass = "p-pink3";
+
+        tagsHtml += '<div class="style-pill ' + colorClass + '"><span class="style-pill-label">B</span><span class="style-pill-val">' + bust + (cup ? '(' + cup + ')' : '') + '</span></div>';
+      }
+
+      if (wMatch) {
+        const waist = parseInt(wMatch[1], 10);
+        let colorClass = waist <= 55 ? "p-green" : "p-yellow";
+        tagsHtml += '<div class="style-pill ' + colorClass + '"><span class="style-pill-label">W</span><span class="style-pill-val">' + waist + '</span></div>';
+      }
+
+      if (hMatch) {
+        const hip = parseInt(hMatch[1], 10);
+        let colorClass = hip <= 85 ? "p-green" : "p-yellow";
+        tagsHtml += '<div class="style-pill ' + colorClass + '"><span class="style-pill-label">H</span><span class="style-pill-val">' + hip + '</span></div>';
+      }
+
+      tagsHtml += '</div>';
+      return tagsHtml;
+    }
+
+    function saveUserName(event) {
+      event.preventDefault();
+      const input = document.getElementById('inputUserName').value.trim();
+      if (!input) return alert("お名前を入力してください！");
+
+      currentUserName = input;
+      saveData();
+      initUserData();
+      closeModal('settingsModal');
+      render();
+    }
+
+    let currentView = 'cast';
+    let currentSort = 'count';
+    let currentFilter = 'all';
+
+    function changeView(mode) {
+      currentView = mode;
+      document.getElementById('viewCast').className = 'btn-toggle' + (mode === 'cast' ? ' active' : '');
+      document.getElementById('viewTimeline').className = 'btn-toggle' + (mode === 'timeline' ? ' active' : '');
+      document.getElementById('sortGroup').style.display = (mode === 'cast') ? 'flex' : 'none';
+      render();
+    }
+
+    function changeSort(sort) {
+      currentSort = sort;
+      document.getElementById('sortCount').className = 'btn-toggle' + (sort === 'count' ? ' active' : '');
+      document.getElementById('sortRecent').className = 'btn-toggle' + (sort === 'recent' ? ' active' : '');
+      document.getElementById('sortName').className = 'btn-toggle' + (sort === 'name' ? ' active' : '');
+      render();
+    }
+
+    function setFilter(filter) {
+      currentFilter = filter;
+      document.querySelectorAll('.ftag').forEach(el => el.classList.remove('active'));
+      document.getElementById('ft' + filter.charAt(0).toUpperCase() + filter.slice(1)).classList.add('active');
+      render();
+    }
+
+    function openLink(event, url) {
+      event.preventDefault(); event.stopPropagation();
+      window.open(url, '_blank');
+    }
+
+    function openAddModal() {
+      const now = new Date();
+      document.getElementById('addYear').value = now.getFullYear();
+      document.getElementById('addMonth').value = (now.getMonth() + 1) + '月';
+      document.getElementById('imageFileToUpload').value = '';
+      document.getElementById('uploadStatus').innerText = '未選択';
+      document.getElementById('uploadStatus').style.color = 'var(--light-text)';
+      document.getElementById('addModal').style.display = 'flex';
+    }
+
+    function saveNewRecord(event) {
+      event.preventDefault();
+      const year = document.getElementById('addYear').value.trim();
+      const month = document.getElementById('addMonth').value.trim();
+      const name = document.getElementById('addName').value.trim();
+      
+      let rawT = document.getElementById('addStyleT').value.trim();
+      let rawB = document.getElementById('addStyleB').value.trim();
+      let rawW = document.getElementById('addStyleW').value.trim();
+      let rawH = document.getElementById('addStyleH').value.trim();
+
+      const parts = [];
+      if (rawT) parts.push(rawT.toLowerCase().startsWith('t') ? rawT : 'T:' + rawT + (rawT.includes('cm') ? '' : 'cm'));
+      if (rawB) parts.push(rawB.toLowerCase().startsWith('b') ? rawB : 'B:' + rawB);
+      if (rawW) parts.push(rawW.toLowerCase().startsWith('w') ? rawW : 'W:' + rawW);
+      if (rawH) parts.push(rawH.toLowerCase().startsWith('h') ? rawH : 'H:' + rawH);
+
+      const style = parts.join(' ');
+      const flags = document.getElementById('addFlags').value.trim();
+      const visitNote = document.getElementById('addVisitNote').value.trim();
+      const reportUrl = document.getElementById('addReportUrl').value.trim();
+      const oldName = document.getElementById('addOldName').value.trim();
+      const link = document.getElementById('addLink').value.trim();
+      const letterImg = document.getElementById('addLetterImg').value.trim();
+
+      if (!year || !month || !name) return alert("年、月、キャスト名は必須です！");
+
+      historyList.push({ year, month, name, flags, visitNote, reportUrl });
+
+      if (!castData[name]) {
+        castData[name] = { link: link, notes: "", oldName: oldName, style: style, letters: [] };
+      } else {
+        if (link) castData[name].link = link;
+        if (oldName) castData[name].oldName = oldName;
+        if (style) castData[name].style = style;
+      }
+
+      if (letterImg) {
+        if (!castData[name].letters) castData[name].letters = [];
+        castData[name].letters.push({
+          date: year + "年" + month,
+          imageUrl: letterImg,
+          text: ""
+        });
+      }
+
+      saveData();
+      closeModal('addModal');
+      render();
+      alert(name + " さんの利用記録を追加・保存しました！");
+
+      document.getElementById('addName').value = '';
+      ['addStyleT', 'addStyleB', 'addStyleW', 'addStyleH'].forEach(id => {
+        const elem = document.getElementById(id);
+        elem.value = '';
+        elem.style.background = 'var(--bg-color)';
+        elem.style.borderColor = 'var(--border-color)';
+        elem.style.color = 'var(--text-color)';
+      });
+      document.getElementById('addFlags').value = '';
+      document.getElementById('addVisitNote').value = '';
+      document.getElementById('addReportUrl').value = '';
+      document.getElementById('addOldName').value = '';
+      document.getElementById('addLink').value = '';
+      document.getElementById('addLetterImg').value = '';
+    }
+
+    function openEditRecordModal(event, index) {
+      event.preventDefault(); event.stopPropagation();
+      const rec = historyList[index];
+      if (!rec) return;
+
+      document.getElementById('editRecordIndex').value = index;
+      document.getElementById('editRecordHeader').innerText = `${rec.year}年 ${rec.month} - ${rec.name} さん`;
+      document.getElementById('editFlags').value = rec.flags || '';
+      document.getElementById('editVisitNote').value = rec.visitNote || '';
+      document.getElementById('editReportUrl').value = rec.reportUrl || '';
+
+      document.getElementById('editRecordModal').style.display = 'flex';
+    }
+
+    function saveEditedRecord(e) {
+      e.preventDefault();
+      const index = parseInt(document.getElementById('editRecordIndex').value, 10);
+      const rec = historyList[index];
+      if (rec) {
+        rec.flags = document.getElementById('editFlags').value.trim();
+        rec.visitNote = document.getElementById('editVisitNote').value.trim();
+        rec.reportUrl = document.getElementById('editReportUrl').value.trim();
+        saveData();
+        render();
+        closeModal('editRecordModal');
+      }
+    }
+
+    function openLetterModal(event, name) {
+      event.preventDefault(); event.stopPropagation();
+      const info = castData[name];
+      if (!info || !info.letters || !Array.isArray(info.letters)) {
+        alert("手紙データが見つかりません。");
+        return;
+      }
+
+      const validLetters = info.letters.filter(item => 
+        (item.imageUrl && typeof item.imageUrl === 'string' && item.imageUrl.trim() !== "") || 
+        (item.text && typeof item.text === 'string' && item.text.trim() !== "")
+      );
+
+      if (validLetters.length === 0) {
+        alert("有効な手紙・メッセージカードがありません。");
+        return;
+      }
+
+      const titleElem = document.getElementById('letterModalTitle');
+      if (titleElem) {
+        titleElem.innerText = "💌 " + name + " さんの手紙";
+      }
+
+      const container = document.getElementById('letterModalContainer');
+      if (container) {
+        container.innerHTML = '';
+        validLetters.forEach(item => {
+          let imgHtml = (item.imageUrl && item.imageUrl.trim() !== "") ? '<img src="' + item.imageUrl + '" class="letter-img" alt="手紙画像">' : '';
+          let textHtml = (item.text && item.text.trim() !== "") ? '<div class="letter-text-box">' + item.text + '</div>' : '';
+          
+          container.innerHTML += 
+            '<div class="letter-card-item">' +
+              '<div class="letter-date">📅 ' + (item.date || '日付不明') + '</div>' +
+              imgHtml +
+              textHtml +
+            '</div>';
+        });
+      }
+
+      const modal = document.getElementById('letterModal');
+      if (modal) {
+        modal.style.display = 'flex';
+      }
+    }
+
+    function closeModal(id) {
+      const modal = document.getElementById(id);
+      if (modal) modal.style.display = 'none';
+    }
+
+    function runGacha() {
+      const activeList = Object.keys(castData).filter(name => castData[name].link && castData[name].link.trim() !== "");
+      if (activeList.length === 0) return alert("現在在籍中のキャストがいません！（在籍プロフURLが登録されたキャストが対象です）");
+
+      const modal = document.getElementById('gachaModal');
+      const box = document.getElementById('rouletteBox');
+      const nameElem = document.getElementById('gachaResultName');
+      const titleElem = document.getElementById('gachaTitle');
+      const subElem = document.getElementById('gachaSub');
+      const closeBtn = document.getElementById('gachaCloseBtn');
+
+      box.classList.remove('winner');
+      titleElem.innerText = "🎰 運命の指名抽選中...";
+      subElem.innerText = "在籍中のキャストから選出中！";
+      closeBtn.disabled = true;
+      closeBtn.innerText = "抽選中...";
+      modal.style.display = 'flex';
+
+      const winner = activeList[Math.floor(Math.random() * activeList.length)];
+      
+      let speed = 50;
+      let count = 0;
+      const maxCount = 25;
+
+      function shuffle() {
+        const tempName = activeList[Math.floor(Math.random() * activeList.length)];
+        nameElem.innerText = tempName;
+        count++;
+
+        if (count < maxCount) {
+          speed += count * 4;
+          setTimeout(shuffle, speed);
+        } else {
+          nameElem.innerText = winner;
+          box.classList.add('winner');
+          titleElem.innerText = "🎉 本日の指名確定！";
+          subElem.innerText = "運命のキャストが選ばれました！";
+          closeBtn.disabled = false;
+          closeBtn.innerText = "決定！";
+        }
+      }
+
+      shuffle();
+    }
+
+    function calcMonthsAgo(lastYearStr, lastMonthStr) {
+      const lastYear = parseInt(lastYearStr, 10);
+      const lastMonth = parseInt(lastMonthStr.replace('月',''), 10);
+      const now = new Date();
+      const diffMonths = (now.getFullYear() - lastYear) * 12 + ((now.getMonth() + 1) - lastMonth);
+      if (diffMonths <= 0) return "最近イッた記録あり。";
+      return diffMonths + "ヶ月前";
+    }
+
+    function updateStats(map) {
+      const list = Object.values(map);
+      document.getElementById('stTotalVisits').innerText = historyList.length;
+      document.getElementById('stTotalCasts').innerText = list.length;
+      const activeCount = list.filter(c => castData[c.name] && castData[c.name].link && castData[c.name].link.trim() !== "").length;
+      document.getElementById('stActiveCasts').innerText = activeCount;
+      const favCount = list.filter(c => c.favCount >= 1).length;
+      const favRate = list.length > 0 ? Math.round((favCount / list.length) * 100) : 0;
+      document.getElementById('stFavRate').innerText = favRate + "%";
+    }
+
+    function render() {
+      const target = document.getElementById('mainContent');
+      const keyword = (document.getElementById('searchKeyword').value || '').trim().toLowerCase();
+      target.innerHTML = '';
+
+      if (historyList.length === 0 && Object.keys(castData).length === 0) {
+        target.innerHTML = '<div style="text-align:center; color:var(--light-text); padding:40px 10px; font-size:0.85rem;">記録がまだありません。<br>右下の「＋」ボタンから新しい利用記録を追加してください！</div>';
+        updateStats({});
+        return;
+      }
+
+      if (currentView === 'cast') {
+        renderCastView(target, keyword);
+      } else {
+        renderTimelineView(target, keyword);
+      }
+    }
+
+    function renderCastView(target, keyword) {
+      const map = {};
+      
+      historyList.forEach((item, idx) => {
+        if (!map[item.name]) {
+          map[item.name] = { name: item.name, visits: [], lastIdx: idx, favCount: 0, hasBad: false, lastVisit: item };
+        }
+        item.originalIndex = idx;
+        map[item.name].visits.push(item);
+        map[item.name].lastIdx = idx;
+        map[item.name].lastVisit = item;
+        if (item.flags && item.flags.includes('🆂')) map[item.name].favCount++;
+        if (item.flags && item.flags.includes('⚔')) map[item.name].hasBad = true;
+      });
+
+      Object.keys(castData).forEach(cName => {
+        if (!map[cName]) {
+          map[cName] = { name: cName, visits: [], lastIdx: -1, favCount: 0, hasBad: false, lastVisit: null };
+        }
+      });
+
+      updateStats(map);
+
+      let list = Object.values(map);
+
+      if (currentFilter === 'active') list = list.filter(c => castData[c.name] && castData[c.name].link && castData[c.name].link.trim() !== "");
+      if (currentFilter === 'fav') list = list.filter(c => c.favCount >= 1);
+      if (currentFilter === 'super') list = list.filter(c => c.favCount >= 5);
+      if (currentFilter === 'bad') list = list.filter(c => c.hasBad);
+
+      if (keyword) {
+        list = list.filter(c => {
+          const info = castData[c.name] || {};
+          const oldName = (info.oldName || '').toLowerCase();
+          const style = (info.style || '').toLowerCase();
+          return c.name.toLowerCase().includes(keyword) ||
+                 oldName.includes(keyword) ||
+                 style.includes(keyword) ||
+                 c.visits.some(v => (v.year + v.month + v.flags + (v.visitNote || '')).toLowerCase().includes(keyword));
+        });
+      }
+
+      if (currentSort === 'count') {
+        list.sort((a,b) => b.visits.length - a.visits.length || b.lastIdx - a.lastIdx);
+      } else if (currentSort === 'recent') {
+        list.sort((a,b) => b.lastIdx - a.lastIdx);
+      } else if (currentSort === 'name') {
+        list.sort((a,b) => a.name.localeCompare(b.name, 'ja'));
+      }
+
+      const grid = document.createElement('div');
+      grid.className = 'grid';
+
+      list.forEach(c => {
+        const details = document.createElement('details');
+        const isSuperFav = c.favCount >= 5;
+        const isFav = c.favCount >= 1;
+
+        let cardClass = 'cast-card';
+        if (isSuperFav) cardClass += ' super-favorite';
+        else if (isFav) cardClass += ' favorite';
+        details.className = cardClass;
+
+        const info = castData[c.name] || { link: "", notes: "", oldName: "", style: "", letters: [] };
+        const url = info.link;
+        const oldName = info.oldName || "";
+        const style = info.style || "";
+        const isActive = url && url.trim() !== "";
+        
+        const validLetters = (info.letters || []).filter(item => 
+          (item.imageUrl && typeof item.imageUrl === 'string' && item.imageUrl.trim() !== "") || 
+          (item.text && typeof item.text === 'string' && item.text.trim() !== "")
+        );
+        const hasLetters = validLetters.length > 0;
+
+        const statusBadgeHtml = isActive 
+          ? '<span class="status-badge status-active">在籍中</span>' 
+          : '<span class="status-badge status-retired">卒業済み</span>';
+
+        const oldNameBadgeHtml = oldName 
+          ? '<span class="old-name-badge">旧: ' + oldName + '</span>' 
+          : '';
+
+        let friendVisitedBadgeHtml = '';
+        if (c.visits.length === 0) {
+          let friendName = "友だち";
+          if (info.notes && info.notes.includes('[共有元:')) {
+            const match = info.notes.match(/\[共有元:\s*(.+?)さん\]/);
+            if (match && match[1]) friendName = match[1];
+          }
+          friendVisitedBadgeHtml = `<span class="friend-visited-badge">${friendName}がイッたことあります</span>`;
+        }
+
+        const badgeClass = "badge-count" + (c.hasBad ? " bad-count" : "");
+
+        const linkBtnHtml = isActive 
+          ? '<button class="link-btn" onclick="openLink(event, \'' + url + '\')">プロフ</button>' 
+          : '';
+
+        const copyBtnHtml = '<button class="copy-btn" onclick="openExportCastModal(event, \'' + c.name + '\')">📤 友だちへ共有</button>';
+
+        const letterBtnHtml = hasLetters 
+          ? '<button class="letter-btn" onclick="openLetterModal(event, \'' + c.name + '\')">💌 手紙 (' + validLetters.length + ')</button>' 
+          : '';
+
+        const notesWithDate = c.visits
+          .filter(v => v.visitNote && v.visitNote.trim() !== '')
+          .reverse();
+
+        const latestNote = notesWithDate.length > 0 ? notesWithDate[0] : null;
+        const pastNotes = notesWithDate.length > 1 ? notesWithDate.slice(1) : [];
+
+        let notesContentHtml = '';
+        if (latestNote) {
+          notesContentHtml += `<div><strong>📌 最新メモ (${latestNote.year}年${latestNote.month}):</strong> ${latestNote.visitNote}</div>`;
+        }
+        if (info.notes && info.notes.trim() !== '') {
+          notesContentHtml += `<div>${info.notes}</div>`;
+        }
+        if (!latestNote && (!info.notes || info.notes.trim() === '')) {
+          notesContentHtml += `<div style="color:var(--light-text);">メモなし</div>`;
+        }
+
+        if (pastNotes.length > 0) {
+          let pastItemsHtml = '';
+          pastNotes.forEach(pn => {
+            pastItemsHtml += `<div class="past-note-item">📅 ${pn.year}年${pn.month}: ${pn.visitNote}</div>`;
+          });
+
+          notesContentHtml += `
+            <details class="past-notes-details">
+              <summary class="past-notes-summary">… 過去のメモを表示 (${pastNotes.length}件)</summary>
+              <div class="past-notes-list">${pastItemsHtml}</div>
+            </details>
+          `;
+        }
+
+        let rowsHtml = '';
+        c.visits.forEach(v => {
+          const reportTag = v.reportUrl ? '<span class="report-badge">レポートあり</span>' : '';
+          rowsHtml += `
+            <div class="history-row">
+              <span class="history-date">${v.year.slice(2)}年 ${v.month} ${reportTag}</span>
+              <div style="display:flex; align-items:center; gap:6px;">
+                <span class="history-flags">${v.flags || '通常'}</span>
+                <button class="edit-icon-btn" onclick="openEditRecordModal(event, ${v.originalIndex})" title="編集">
+                  <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                </button>
+              </div>
+            </div>`;
+        });
+
+        const superBadgeHtml = isSuperFav ? '<span class="super-tag">オキニ</span>' : '';
+        const notesHtml = '<div class="notes-box">' + notesContentHtml + '</div>';
+        const styleHtml = renderStyleTags(style);
+        const daysAgoText = c.lastVisit ? calcMonthsAgo(c.lastVisit.year, c.lastVisit.month) : "利用記録なし";
+
+        details.innerHTML = 
+          '<summary class="card-btn">' +
+            '<div class="cast-info">' +
+              '<span class="arrow-icon">▼</span> ' +
+              '<span>' + c.name + '</span> ' +
+              oldNameBadgeHtml + ' ' +
+              statusBadgeHtml + ' ' +
+              friendVisitedBadgeHtml + ' ' +
+              superBadgeHtml +
+            '</div>' +
+            '<span class="' + badgeClass + '">' + c.visits.length + '回</span>' +
+          '</summary>' +
+          '<div class="anim-wrapper">' +
+            '<div class="anim-inner">' +
+              '<div class="card-body">' +
+                styleHtml +
+                '<div class="card-middle-row">' +
+                  notesHtml +
+                  '<div class="btn-action-group">' +
+                    letterBtnHtml +
+                    copyBtnHtml +
+                    linkBtnHtml +
+                  '</div>' +
+                '</div>' +
+                '<div class="days-ago-tag">最終利用: ' + daysAgoText + '</div>' +
+                rowsHtml +
+              '</div>' +
+            '</div>' +
+          '</div>';
+        grid.appendChild(details);
+      });
+
+      target.appendChild(grid);
+    }
+
+    function renderTimelineView(target, keyword) {
+      const groups = {};
+      historyList.forEach((item, idx) => {
+        item.originalIndex = idx;
+        const key = item.year + '年 ' + item.month;
+        if (!groups[key]) groups[key] = [];
+        groups[key].push(item);
+      });
+
+      const keys = Object.keys(groups).reverse();
+
+      keys.forEach(key => {
+        let items = groups[key];
+        if (keyword) {
+          items = items.filter(i => 
+            i.name.toLowerCase().includes(keyword) || 
+            (i.flags && i.flags.toLowerCase().includes(keyword)) ||
+            (i.visitNote && i.visitNote.toLowerCase().includes(keyword)) ||
+            key.toLowerCase().includes(keyword)
+          );
+        }
+
+        if (items.length > 0) {
+          const sec = document.createElement('div');
+          sec.className = 'month-section';
+          sec.innerHTML = '<div class="month-title">' + key + '</div>';
+
+          items.forEach(i => {
+            const details = document.createElement('details');
+            details.className = 'timeline-item';
+
+            const hasReport = i.reportUrl && i.reportUrl.trim() !== '';
+            const reportBadgeHtml = hasReport ? '<span class="report-badge">レポートあり</span>' : '';
+            const reportLinkHtml = hasReport ? `<a href="${i.reportUrl}" target="_blank" class="report-link-btn">📄 WEBレポートを読む</a>` : '';
+            const noteHtml = i.visitNote ? `<div>📝 <strong>メモ:</strong> ${i.visitNote}</div>` : '<div style="color:var(--light-text);">📝 メモなし</div>';
+
+            details.innerHTML = `
+              <summary class="timeline-summary">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+                  <strong>${i.name}</strong>
+                  <span>${i.flags || '通常'}</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:6px;">
+                  ${reportBadgeHtml}
+                  <button class="edit-icon-btn" onclick="openEditRecordModal(event, ${i.originalIndex})" title="編集">
+                    <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                  </button>
+                </div>
+              </summary>
+              <div class="timeline-body">
+                ${reportLinkHtml}
+                ${noteHtml}
+              </div>
+            `;
+            sec.appendChild(details);
+          });
+
+          target.appendChild(sec);
+        }
+      });
+    }
+
+    initUserData();
+    render();
+  </script>
+</body>
+</html>
