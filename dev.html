@@ -212,7 +212,12 @@
     .shared-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; border-bottom: 1px dashed var(--border-color); padding-bottom: 4px; }
     .shared-user-name { font-size: 0.9rem; font-weight: bold; color: var(--accent-pink); }
     .empty-shared-box { background: var(--card-bg); border: 2px dashed var(--primary-pink); border-radius: var(--radius); padding: 24px 16px; text-align: center; box-shadow: var(--shadow); margin-bottom: 16px; width: 100%; }
-    .dropzone-box { background: var(--bg-color); border: 2px dashed var(--primary-pink); border-radius: 14px; padding: 20px 16px; text-align: center; cursor: pointer; margin: 10px 0; width: 100%; }
+    
+    .dropzone-box { background: var(--bg-color); border: 2px dashed var(--primary-pink); border-radius: 14px; padding: 24px 16px; text-align: center; cursor: pointer; transition: background 0.2s; margin: 10px 0; width: 100%; }
+    .dropzone-box:hover { background: var(--soft-pink); }
+    .dropzone-icon { font-size: 2rem; margin-bottom: 6px; }
+    .dropzone-text { font-size: 0.85rem; font-weight: bold; color: var(--accent-pink); margin-bottom: 4px; }
+    .dropzone-sub { font-size: 0.7rem; color: var(--light-text); }
     
     .share-guide-box { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 14px; margin-bottom: 14px; box-shadow: var(--shadow); font-size: 0.78rem; text-align: left; }
     .share-guide-box h4 { color: var(--accent-pink); margin-bottom: 6px; font-size: 0.85rem; }
@@ -226,6 +231,7 @@
       animation: modalFadeIn 0.25s ease-out forwards;
     }
     @keyframes modalFadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+    .modal-content h3 { color: var(--accent-pink); margin-bottom: 12px; font-size: 1.15rem; }
     .close-btn { background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink)); color: white; border: none; padding: 8px 22px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; cursor: pointer; margin-top: 10px; width: 100%; box-shadow: 0 3px 10px rgba(0,0,0,0.2); }
 
     .letter-modal-card-item {
@@ -263,6 +269,21 @@
     .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 100%; }
     .theme-item-btn { padding: 8px; border-radius: 10px; border: 1.5px solid var(--border-color); background: var(--card-bg); color: var(--text-color); font-size: 0.75rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px; }
     .theme-item-btn.active-theme { border: 2px solid var(--accent-pink); box-shadow: 0 0 8px rgba(247,37,133,0.3); }
+
+    .help-box {
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px;
+      text-align: left;
+      font-size: 0.8rem;
+      margin-bottom: 6px;
+    }
+    .help-box h4 {
+      color: var(--accent-pink);
+      margin-bottom: 3px;
+      font-size: 0.85rem;
+    }
 
     #viewDashboard { width: 100%; }
     .period-select-row { display: flex; gap: 4px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 8px; width: 100%; }
@@ -419,20 +440,9 @@
 
   <!-- ===== 4. 共有タブ（完全統合版：キャスト単位選択共有 ＆ マイ図鑑取込） ===== -->
   <div id="viewShared" class="tab-content">
-    <div class="share-guide-box">
-      <h4>📖 キャスト履歴の共有と見方ガイド</h4>
-      <ol>
-        <li><strong>個別のキャストを共有する:</strong> マイ図鑑の各キャストカードにある「📤 友だちへ共有」ボタンを押すと、基本情報・利用履歴・手紙カードのどれを送信するか選んで .json ファイルを作成できます。ファイル名や内部データにはあなたのユーザー名（共有元）が記録されます。</li>
-        <li><strong>友達の履歴を受け取る:</strong> 受け取った .json ファイルを下のボタンから読み込むと、共有リストにストックされ、カードの「➕ マイ図鑑へ取り込む」ボタンで自分のマイ図鑑に直接合算・統合できます！</li>
-      </ol>
-      <div style="margin-top: 10px;">
-        <button class="pill-btn" onclick="openImportSharedModal()" style="width:100%; justify-content:center; padding:8px;">📂 友達の履歴ファイルを読み込む</button>
-      </div>
-    </div>
-
     <div class="shared-top-bar">
-      <span style="font-size:0.85rem; font-weight:bold; color:var(--accent-pink);">📥 友達からの共有データ一覧</span>
-      <span style="font-size:0.75rem; color:var(--light-text);">合計: <span id="sharedCount">0</span>件</span>
+      <span style="font-size:0.85rem; font-weight:bold; color:var(--accent-pink);">📥 友達からの共有データ</span>
+      <button class="pill-btn" onclick="openImportSharedModal()">📂 友達の履歴を読み込む</button>
     </div>
     <div id="sharedContent"></div>
   </div>
@@ -450,17 +460,27 @@
   <div class="modal-overlay" id="settingsModal">
     <div class="modal-content">
       <h3>⚙️ アプリ設定</h3>
+
       <details class="settings-acc-card" open>
-        <summary class="settings-acc-summary"><span>👤 ユーザー名変更</span></summary>
+        <summary class="settings-acc-summary">
+          <span>👤 ユーザー名の変更</span>
+          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+        </summary>
         <div class="settings-acc-body">
           <form class="add-form" onsubmit="saveUserName(event)">
-            <div class="form-group"><input type="text" id="inputUserName" required></div>
-            <button type="submit" class="close-btn" style="margin-top:4px;">保存</button>
+            <div class="form-group">
+              <input type="text" id="inputUserName" placeholder="お名前を入力..." required>
+            </div>
+            <button type="submit" class="close-btn" style="margin-top:4px; padding:6px; font-size:0.8rem; width:100%;">保存する</button>
           </form>
         </div>
       </details>
+
       <details class="settings-acc-card" open>
-        <summary class="settings-acc-summary"><span>🎨 カラーテーマ変更</span></summary>
+        <summary class="settings-acc-summary">
+          <span>🎨 カラーテーマの着せ替え</span>
+          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+        </summary>
         <div class="settings-acc-body">
           <div class="theme-grid" id="themeButtonsGrid">
             <button class="theme-item-btn" onclick="setTheme('default')">🌸 ぴんく</button>
@@ -476,15 +496,21 @@
           </div>
         </div>
       </details>
+
       <details class="settings-acc-card">
-        <summary class="settings-acc-summary"><span>📂 バックアップ & 復元</span></summary>
+        <summary class="settings-acc-summary">
+          <span>📂 バックアップ & データ管理</span>
+          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+        </summary>
         <div class="settings-acc-body">
-          <button class="close-btn" style="margin-top:0;" onclick="exportJSONFile()">💾 JSONダウンロード</button>
-          <button class="close-btn" style="background:#20c997; margin-top:6px;" onclick="triggerJSONFileInput()">📂 JSONファイルで復元</button>
-          <input type="file" id="jsonFileInput" accept=".json" style="display:none;" onchange="importJSONFile(event)">
+          <p style="font-size:0.7rem; color:var(--light-text); margin-bottom:6px;">全データをファイルとして保存・復元できます。</p>
+          <button class="close-btn" style="width:100%; margin-top:0; font-size:0.75rem; padding:6px; background:linear-gradient(135deg, #4dabf7, #339af0);" onclick="exportJSONFile()">💾 JSONダウンロード</button>
+          <button class="close-btn" style="width:100%; margin-top:6px; font-size:0.75rem; padding:6px; background:#20c997;" onclick="triggerJSONFileInput()">📂 JSONファイルを選択して復元</button>
+          <input type="file" id="jsonFileInput" accept=".json,application/json,text/plain" style="display:none;" onchange="importJSONFile(event)">
         </div>
       </details>
-      <button class="close-btn" onclick="closeModal('settingsModal')">閉じる</button>
+
+      <button class="close-btn" onclick="closeModal('settingsModal')" style="width:100%; margin-top:10px;">閉じる</button>
     </div>
   </div>
 
@@ -527,28 +553,51 @@
   <div class="modal-overlay" id="importSharedModal">
     <div class="modal-content">
       <h3>📂 友達の履歴を読み込む</h3>
-      <div style="font-size:0.75rem; color:var(--light-text); margin-bottom:10px; text-align:left;">
-        友達から受け取った共有ファイル（.json）を選択してください。共有タブにストックされ、マイ図鑑へいつでも取り込めます。
-      </div>
+      <p style="font-size:0.75rem; color:var(--light-text); margin-bottom:10px;">友達から受け取った共有ファイル（.json）を選択してください。</p>
+      
       <div class="dropzone-box" onclick="triggerSharedFileInput()">
-        <div style="font-size: 1.8rem; margin-bottom: 4px;">📄</div>
-        <div style="font-size: 0.85rem; font-weight: bold; color: var(--accent-pink);">タップしてファイルを選択</div>
+        <div class="dropzone-icon">📄</div>
+        <div class="dropzone-text">タップしてファイルを選択</div>
+        <div class="dropzone-sub">またはここに .json ファイルをドラッグ＆ドロップ</div>
       </div>
-      <input type="file" id="sharedFileInput" accept=".json" style="display:none;" onchange="importSharedJSONFile(event)">
-      <button class="close-btn" onclick="closeModal('importSharedModal')" style="background:#888;">キャンセル</button>
+      <input type="file" id="sharedFileInput" accept=".json,application/json,text/plain" style="display:none;" onchange="importSharedJSONFile(event)">
+
+      <button class="close-btn" onclick="closeModal('importSharedModal')" style="background:#888; width:100%; margin-top:10px;">キャンセル</button>
     </div>
   </div>
 
   <div class="modal-overlay" id="helpModal">
     <div class="modal-content">
       <h3>❓ ご利用ガイド</h3>
-      <div style="text-align:left; font-size:0.8rem; display:flex; flex-direction:column; gap:6px; max-height:60vh; overflow-y:auto;">
-        <div><strong>💭 ホーム:</strong> 今月の利用カウンター・経過日数と、次回の予定日まであと何日かを表示！</div>
-        <div><strong>📖 マイ図鑑:</strong> 年月日に加え、スリーサイズ、金額、店舗名バッジ、手紙画像ギャラリーを完備。</div>
-        <div><strong>📊 統計:</strong> 期間フィルター（月別/3ヶ月/半年/1年/全データ）で徹底分析！</div>
-        <div><strong>👥 共有:</strong> キャストごとに情報を選んでエクスポートし、受け取ったデータをマイ図鑑に合算できます。</div>
+      <div class="help-section" style="display:flex; flex-direction:column; gap:4px; max-height: 60vh; overflow-y: auto; padding-right: 4px;">
+        
+        <div class="help-box">
+          <h4>1. キャスト別図鑑 ＆ 月別時系列ビュー</h4>
+          <p><strong>キャスト別管理:</strong> 利用回数やオキニ度に応じてカードが美しく色分けされます。</p>
+        </div>
+
+        <div class="help-box">
+          <h4>2. 📊 利用統計ダッシュボード</h4>
+          <p>総利用回数、経験人数、在籍数、オキニ率を自動集計します。</p>
+        </div>
+
+        <div class="help-box">
+          <h4>3. 📤 友だちへの共有機能</h4>
+          <p>キャストごとの基本情報や利用履歴を .json ファイルとして書き出して簡単に共有可能です。</p>
+        </div>
+
+        <div class="help-box">
+          <h4>4. 💌 手紙・カード画像アップロード</h4>
+          <p>スマホの写真を選ぶだけで自動でImgurにアップロードされ、URLが入力されて美しくファイリングされます。</p>
+        </div>
+
+        <div class="help-box">
+          <h4>5. 🎨 10種類のカラーテーマ</h4>
+          <p>気分に合わせてUIカラーを自由自在に変更可能です。</p>
+        </div>
+
       </div>
-      <button class="close-btn" onclick="closeModal('helpModal')">閉じる</button>
+      <button class="close-btn" onclick="closeModal('helpModal')" style="margin-top:10px;">了解して閉じる</button>
     </div>
   </div>
 
