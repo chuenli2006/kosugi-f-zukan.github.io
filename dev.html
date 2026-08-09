@@ -31,9 +31,21 @@
 
     body {
       background-color: var(--bg-color); color: var(--text-color);
-      line-height: 1.6; padding: 16px 12px 110px; max-width: 800px; margin: 0 auto;
+      line-height: 1.6; padding: 0; margin: 0;
       transition: background-color 0.3s, color 0.3s; overflow-x: hidden;
     }
+
+    /* 📱 モバイルファーストのベースレイアウト */
+    .app-layout {
+      display: flex;
+      flex-direction: column;
+      padding: 16px 12px 110px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .sidebar-area { display: flex; flex-direction: column; }
+    .content-area { width: 100%; }
+    .fab-text { display: none; } /* モバイル時はテキスト非表示 */
 
     header { text-align: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid var(--soft-pink); width: 100%; position: relative; }
     header h1 {
@@ -98,7 +110,7 @@
       100% { transform: translateY(-82vh) rotate(var(--rot-end)) scale(var(--scale)); opacity: 0; }
     }
 
-    .home-top-panel { position: relative; z-index: 2; width: 92%; max-width: 420px; display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+    .home-top-panel { position: relative; z-index: 2; width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
     .home-card-a { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 12px 16px; box-shadow: var(--shadow); backdrop-filter: blur(8px); }
     [data-theme="midnight"] .home-card-a, [data-theme="velvet"] .home-card-a, [data-theme="cyber"] .home-card-a { background: rgba(26,26,36,0.85); }
     .home-card-b { background: linear-gradient(135deg, var(--soft-pink), var(--card-bg)); border: 1.5px dashed var(--primary-pink); border-radius: var(--radius); padding: 10px 16px; text-align: center; box-shadow: var(--shadow); }
@@ -113,6 +125,7 @@
     .dash-item { background: var(--bg-color); padding: 6px; border-radius: 8px; border: 1px solid var(--border-color); }
     .dash-val { font-size: 1.1rem; font-weight: bold; color: var(--accent-pink); }
     .dash-lbl { font-size: 0.65rem; color: var(--light-text); }
+    .dash-charts-row { display: flex; flex-direction: column; gap: 0; width: 100%; } /* PC用に追加 */
 
     .controls { background: var(--card-bg); padding: 12px; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border-color); margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; width: 100%; }
     .search-row { display: flex; gap: 6px; width: 100%; }
@@ -232,7 +245,6 @@
     }
     @keyframes modalFadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
     
-    /* モーダル閉じる用アニメーション */
     @keyframes overlayFadeOut { from { opacity: 1; } to { opacity: 0; } }
     @keyframes modalContentFadeOut { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.9); } }
     .modal-overlay.closing { animation: overlayFadeOut 0.25s ease-out forwards; }
@@ -278,19 +290,9 @@
     .theme-item-btn.active-theme { border: 2px solid var(--accent-pink); box-shadow: 0 0 8px rgba(247,37,133,0.3); }
 
     .help-box {
-      background: var(--bg-color);
-      border: 1px solid var(--border-color);
-      border-radius: 10px;
-      padding: 10px;
-      text-align: left;
-      font-size: 0.8rem;
-      margin-bottom: 6px;
+      background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 10px; padding: 10px; text-align: left; font-size: 0.8rem; margin-bottom: 6px;
     }
-    .help-box h4 {
-      color: var(--accent-pink);
-      margin-bottom: 3px;
-      font-size: 0.85rem;
-    }
+    .help-box h4 { color: var(--accent-pink); margin-bottom: 3px; font-size: 0.85rem; }
 
     #viewDashboard { width: 100%; }
     .period-select-row { display: flex; gap: 4px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 8px; width: 100%; }
@@ -310,155 +312,275 @@
     .rank-sub { font-size: 0.68rem; color: var(--light-text); }
     .rank-pct { font-weight: bold; color: var(--accent-pink); font-size: 0.8rem; min-width: 42px; text-align: right; }
     .dash-empty { text-align: center; color: var(--light-text); font-size: 0.8rem; padding: 20px 10px; }
+
+
+    /* =========================================================
+       🖥️ PC向けレスポンシブ・サイドバーレイアウト（案1）
+       ========================================================= */
+    @media (min-width: 768px) {
+      .app-layout {
+        padding: 24px;
+        max-width: 1200px;
+        flex-direction: row;
+        gap: 24px;
+        align-items: flex-start;
+      }
+      
+      .sidebar-area {
+        width: 260px;
+        flex-shrink: 0;
+        position: sticky;
+        top: 24px;
+        height: calc(100vh - 48px);
+        gap: 16px;
+      }
+
+      header {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius);
+        padding: 20px 14px;
+        box-shadow: var(--shadow);
+        margin-bottom: 0;
+      }
+
+      /* PCではホーム画面でもタイトルを消さない */
+      header h1.hidden {
+        opacity: 1; transform: none; height: auto; margin-bottom: 2px; pointer-events: auto;
+      }
+
+      .floating-nav {
+        position: static;
+        transform: none;
+        flex-direction: column;
+        width: 100%;
+        padding: 12px;
+        border-radius: var(--radius);
+        gap: 4px;
+        align-items: stretch;
+      }
+
+      .nav-item {
+        flex-direction: row;
+        justify-content: flex-start;
+        padding: 12px 16px;
+        font-size: 0.95rem;
+        border-radius: 10px;
+        gap: 12px;
+      }
+
+      .nav-item:hover {
+        background: var(--bg-color);
+      }
+
+      .nav-item.active {
+        background: var(--soft-pink);
+        transform: none;
+      }
+
+      .nav-icon {
+        font-size: 1.2rem;
+        width: 24px;
+        text-align: center;
+      }
+
+      .fab-add {
+        position: static;
+        width: 100%;
+        height: 52px;
+        border-radius: 26px;
+        font-size: 1.05rem;
+        gap: 6px;
+      }
+      
+      .fab-text { display: inline; }
+      .fab-icon { font-weight: bold; }
+
+      .content-area {
+        flex: 1;
+        min-width: 0; /* FlexBoxの折り返し防止 */
+      }
+
+      /* モーダル等 */
+      .modal-content { max-width: 500px; padding: 24px; }
+
+      /* PC版 各種コンポーネントのマルチカラム化 */
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 14px;
+      }
+      
+      #sharedContent {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 14px;
+      }
+      .shared-card { margin-bottom: 0; }
+
+      .home-top-panel {
+        flex-direction: row;
+        max-width: 100%;
+      }
+      .home-card-a, .home-card-b, .home-card-c { flex: 1; }
+      
+      #viewHome.active { height: auto; min-height: 70vh; }
+
+      .dash-charts-row { flex-direction: row; gap: 14px; }
+      .dash-charts-row > .stat-section { flex: 1; margin-bottom: 14px; }
+    }
   </style>
 </head>
 <body>
 
-  <header>
-    <h1 id="headerTitle">童貞の風俗履歴図鑑</h1>
-    <div class="header-sub">マイ キャスト ＆ プレイレコード</div>
-    <div class="header-btn-row">
-      <button class="pill-btn" onclick="openSettingsModal()" title="ユーザー設定・テーマ変更">
-        <span>👤 ユーザー: <span id="currentUserNameDisplay">童貞</span></span>
+  <div class="app-layout">
+    <!-- スマホでは上部/下部に分散し、PCでは左側のサイドバーになるエリア -->
+    <aside class="sidebar-area">
+      <header>
+        <h1 id="headerTitle">童貞の風俗履歴図鑑</h1>
+        <div class="header-sub">マイ キャスト ＆ プレイレコード</div>
+        <div class="header-btn-row">
+          <button class="pill-btn" onclick="openSettingsModal()" title="ユーザー設定・テーマ変更">
+            <span>👤 ユーザー: <span id="currentUserNameDisplay">童貞</span></span>
+          </button>
+          <button class="pill-btn" onclick="openHelpModal()" title="使い方・ヘルプ">
+            <span>❓ 使い方</span>
+          </button>
+        </div>
+      </header>
+
+      <nav class="floating-nav">
+        <button class="nav-item active" id="nav-home" onclick="switchMainTab('home')">
+          <span class="nav-icon">💭</span><span>ホーム</span>
+        </button>
+        <button class="nav-item" id="nav-my" onclick="switchMainTab('my')">
+          <span class="nav-icon">📖</span><span>マイ図鑑</span>
+        </button>
+        <button class="nav-item" id="nav-dashboard" onclick="switchMainTab('dashboard')">
+          <span class="nav-icon">📊</span><span>統計</span>
+        </button>
+        <button class="nav-item" id="nav-shared" onclick="switchMainTab('shared')">
+          <span class="nav-icon">👥</span><span>共有 (<span id="sharedCount">0</span>)</span>
+        </button>
+      </nav>
+
+      <button class="fab-add" onclick="openAddModal()">
+        <span class="fab-icon">＋</span><span class="fab-text">記録を追加</span>
       </button>
-      <button class="pill-btn" onclick="openHelpModal()" title="使い方・ヘルプ">
-        <span>❓ 使い方</span>
-      </button>
-    </div>
-  </header>
+    </aside>
 
-  <!-- フローティングボトムナビゲーション -->
-  <nav class="floating-nav">
-    <button class="nav-item active" id="nav-home" onclick="switchMainTab('home')">
-      <span class="nav-icon">💭</span><span>ホーム</span>
-    </button>
-    <button class="nav-item" id="nav-my" onclick="switchMainTab('my')">
-      <span class="nav-icon">📖</span><span>マイ図鑑</span>
-    </button>
-    <button class="nav-item" id="nav-dashboard" onclick="switchMainTab('dashboard')">
-      <span class="nav-icon">📊</span><span>統計</span>
-    </button>
-    <button class="nav-item" id="nav-shared" onclick="switchMainTab('shared')">
-      <span class="nav-icon">👥</span><span>共有 (<span id="sharedCount">0</span>)</span>
-    </button>
-  </nav>
+    <!-- メインコンテンツ表示エリア -->
+    <main class="content-area">
+      <!-- ===== 1. ホーム画面 ===== -->
+      <div id="viewHome" class="active">
+        <div class="floating-container" id="homeFloatingArea"></div>
 
-  <!-- 追加ボタン（FAB） -->
-  <button class="fab-add" onclick="openAddModal()">＋</button>
-
-  <!-- ===== 1. ホーム画面 ===== -->
-  <div id="viewHome" class="active">
-    <div class="floating-container" id="homeFloatingArea"></div>
-
-    <div class="home-top-panel">
-      <!-- A. 今月のカウンター -->
-      <div class="home-card-a">
-        <div style="font-size: 0.75rem; color: var(--light-text); font-weight: bold; margin-bottom: 2px;">今月のプレイ状況</div>
-        <div style="display: flex; justify-content: space-between; align-items: baseline;">
-          <div>
-            <span class="counter-big" id="homeMonthCount">0回</span>
-            <span style="font-size: 0.8rem; margin-left: 6px; font-weight: bold;" id="homeMonthDiff">--</span>
+        <div class="home-top-panel">
+          <div class="home-card-a">
+            <div style="font-size: 0.75rem; color: var(--light-text); font-weight: bold; margin-bottom: 2px;">今月のプレイ状況</div>
+            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+              <div>
+                <span class="counter-big" id="homeMonthCount">0回</span>
+                <span style="font-size: 0.8rem; margin-left: 6px; font-weight: bold;" id="homeMonthDiff">--</span>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-size: 0.72rem; color: var(--light-text);">当たり率 / オキニ率</div>
+                <div style="font-size: 0.88rem; font-weight: bold; color: var(--accent-pink);" id="homeMonthRates">0% / 0%</div>
+              </div>
+            </div>
           </div>
-          <div style="text-align: right;">
-            <div style="font-size: 0.72rem; color: var(--light-text);">当たり率 / オキニ率</div>
-            <div style="font-size: 0.88rem; font-weight: bold; color: var(--accent-pink);" id="homeMonthRates">0% / 0%</div>
+
+          <div class="home-card-b">
+            <div style="font-size: 0.72rem; color: var(--light-text); font-weight: bold; margin-bottom: 2px;">前回の利用からの経過</div>
+            <div class="countdown-anim" id="homeDaysSinceLast">計測データなし</div>
+          </div>
+
+          <div class="home-card-c" onclick="openNextVisitPrompt()">
+            <div style="font-size: 0.72rem; color: var(--light-text); font-weight: bold; margin-bottom: 2px;">次回の予定</div>
+            <div style="font-size: 0.95rem; font-weight: bold; color: var(--accent-pink);" id="homeNextVisitText">次はいつイクのー？♡</div>
           </div>
         </div>
       </div>
 
-      <!-- B. 最終利用からの経過日数 -->
-      <div class="home-card-b">
-        <div style="font-size: 0.72rem; color: var(--light-text); font-weight: bold; margin-bottom: 2px;">前回の利用からの経過</div>
-        <div class="countdown-anim" id="homeDaysSinceLast">計測データなし</div>
-      </div>
+      <!-- ===== 2. マイ図鑑タブ ===== -->
+      <div id="viewMy" class="tab-content">
+        <div class="controls">
+          <div class="search-row">
+            <div class="search-box">
+              <input type="text" id="searchKeyword" placeholder="キャスト名やマークで検索..." oninput="render()">
+            </div>
+            <button class="btn-gacha" onclick="runGacha()">🎰 ガチャ</button>
+          </div>
 
-      <!-- C. ダイアログ風：次はいつイクのー？ -->
-      <div class="home-card-c" onclick="openNextVisitPrompt()">
-        <div style="font-size: 0.72rem; color: var(--light-text); font-weight: bold; margin-bottom: 2px;">次回の予定</div>
-        <div style="font-size: 0.95rem; font-weight: bold; color: var(--accent-pink);" id="homeNextVisitText">次はいつイクのー？♡</div>
-      </div>
-    </div>
-  </div>
+          <div class="filter-tags">
+            <div class="ftag active" id="ftAll" onclick="setFilter('all')">すべて</div>
+            <div class="ftag" id="ftActive" onclick="setFilter('active')">🟢 在籍のみ</div>
+            <div class="ftag" id="ftFav" onclick="setFilter('fav')">🆂 当たり</div>
+            <div class="ftag" id="ftSuper" onclick="setFilter('super')">⭐️ オキニ</div>
+            <div class="ftag" id="ftBad" onclick="setFilter('bad')">🚨 ハズレ</div>
+          </div>
 
-  <!-- ===== 2. マイ図鑑タブ ===== -->
-  <div id="viewMy" class="tab-content">
-    <div class="controls">
-      <div class="search-row">
-        <div class="search-box">
-          <input type="text" id="searchKeyword" placeholder="キャスト名やマークで検索..." oninput="render()">
+          <div class="btn-group">
+            <button class="btn-toggle active" id="viewCast" onclick="changeView('cast')">キャスト別図鑑</button>
+            <button class="btn-toggle" id="viewTimeline" onclick="changeView('timeline')">月別時系列</button>
+          </div>
+
+          <div class="btn-group" id="sortGroup">
+            <button class="btn-toggle active" id="sortCount" onclick="changeSort('count')">回数順</button>
+            <button class="btn-toggle" id="sortRecent" onclick="changeSort('recent')">最近順</button>
+            <button class="btn-toggle" id="sortName" onclick="changeSort('name')">五十音順</button>
+          </div>
         </div>
-        <button class="btn-gacha" onclick="runGacha()">🎰 ガチャ</button>
+
+        <details class="legend-details">
+          <summary>マークの意味（凡例）を表示／非表示</summary>
+          <div class="legend-box">
+            <div>🈠 デビュー/初出勤</div><div>🆂 当たり/オキニ</div><div>✈ 県外</div><div>⚔ 次ナシ</div>
+            <div>🈘 交配</div><div>🄽 生交配</div><div>㍁ ＡＦ</div><div>⑱ 18歳</div>
+            <div>㋑ イメージプレイ</div><div>㋗ クレーム</div><div>ｴ 風エステ</div><div>❀ 卒業</div>
+            <div>ｄ 出前</div><div>❖ ヘルス2万超</div><div>❑ 社交飲食店</div><div>ⓘ 詳細（金額・店舗）</div>
+          </div>
+        </details>
+
+        <div id="mainContent"></div>
       </div>
 
-      <div class="filter-tags">
-        <div class="ftag active" id="ftAll" onclick="setFilter('all')">すべて</div>
-        <div class="ftag" id="ftActive" onclick="setFilter('active')">🟢 在籍のみ</div>
-        <div class="ftag" id="ftFav" onclick="setFilter('fav')">🆂 当たり</div>
-        <div class="ftag" id="ftSuper" onclick="setFilter('super')">⭐️ オキニ</div>
-        <div class="ftag" id="ftBad" onclick="setFilter('bad')">🚨 ハズレ</div>
+      <!-- ===== 3. 統計タブ ===== -->
+      <div id="viewDashboard" class="tab-content">
+        <div class="dashboard" id="dashboardOverview" style="margin-bottom:14px;">
+          <div style="font-size:0.8rem; font-weight:bold; color:var(--accent-pink); margin-bottom:8px;">📊 全体利用統計</div>
+          <div class="dash-grid">
+            <div class="dash-item"><div class="dash-val" id="stTotalVisits">0</div><div class="dash-lbl">総利用回数</div></div>
+            <div class="dash-item"><div class="dash-val" id="stTotalCasts">0</div><div class="dash-lbl">経験人数</div></div>
+            <div class="dash-item"><div class="dash-val" id="stActiveCasts">0</div><div class="dash-lbl">現在在籍</div></div>
+            <div class="dash-item"><div class="dash-val" id="stFavRate">0%</div><div class="dash-lbl">オキニ率</div></div>
+          </div>
+          <div style="text-align:right; margin-top:8px;">
+            <button onclick="resetData()" style="font-size:0.65rem; color:var(--light-text); background:none; border:none; text-decoration:underline; cursor:pointer;">⚠️ 記録を初期化して空にする</button>
+          </div>
+        </div>
+
+        <div class="controls" style="margin-bottom:10px;">
+          <div style="font-size:0.78rem; font-weight:bold; color:var(--accent-pink); margin-bottom:4px;">📊 期間フィルター（月別 / 3ヶ月別 / 半年別 / 1年別 / 全データ）</div>
+          <div class="period-select-row" id="dashPeriodRow"></div>
+        </div>
+        <div id="dashboardContent"></div>
       </div>
 
-      <div class="btn-group">
-        <button class="btn-toggle active" id="viewCast" onclick="changeView('cast')">キャスト別図鑑</button>
-        <button class="btn-toggle" id="viewTimeline" onclick="changeView('timeline')">月別時系列</button>
+      <!-- ===== 4. 共有タブ ===== -->
+      <div id="viewShared" class="tab-content">
+        <div class="shared-top-bar">
+          <span style="font-size:0.85rem; font-weight:bold; color:var(--accent-pink);">📥 友達からの共有データ</span>
+          <button class="pill-btn" onclick="openImportSharedModal()">📂 友達の履歴を読み込む</button>
+        </div>
+        <div id="sharedContent"></div>
       </div>
-
-      <div class="btn-group" id="sortGroup">
-        <button class="btn-toggle active" id="sortCount" onclick="changeSort('count')">回数順</button>
-        <button class="btn-toggle" id="sortRecent" onclick="changeSort('recent')">最近順</button>
-        <button class="btn-toggle" id="sortName" onclick="changeSort('name')">五十音順</button>
-      </div>
-    </div>
-
-    <details class="legend-details">
-      <summary>マークの意味（凡例）を表示／非表示</summary>
-      <div class="legend-box">
-        <div>🈠 デビュー/初出勤</div><div>🆂 当たり/オキニ</div><div>✈ 県外</div><div>⚔ 次ナシ</div>
-        <div>🈘 交配</div><div>🄽 生交配</div><div>㍁ ＡＦ</div><div>⑱ 18歳</div>
-        <div>㋑ イメージプレイ</div><div>㋗ クレーム</div><div>ｴ 風エステ</div><div>❀ 卒業</div>
-        <div>ｄ 出前</div><div>❖ ヘルス2万超</div><div>❑ 社交飲食店</div><div>ⓘ 詳細（金額・店舗）</div>
-      </div>
-    </details>
-
-    <div id="mainContent"></div>
-  </div>
-
-  <!-- ===== 3. 統計タブ ===== -->
-  <div id="viewDashboard" class="tab-content">
-    
-    <!-- 統計ダッシュボードをマイ図鑑からここへ統合 -->
-    <div class="dashboard" id="dashboardOverview" style="margin-bottom:14px;">
-      <div style="font-size:0.8rem; font-weight:bold; color:var(--accent-pink); margin-bottom:8px;">📊 全体利用統計</div>
-      <div class="dash-grid">
-        <div class="dash-item"><div class="dash-val" id="stTotalVisits">0</div><div class="dash-lbl">総利用回数</div></div>
-        <div class="dash-item"><div class="dash-val" id="stTotalCasts">0</div><div class="dash-lbl">経験人数</div></div>
-        <div class="dash-item"><div class="dash-val" id="stActiveCasts">0</div><div class="dash-lbl">現在在籍</div></div>
-        <div class="dash-item"><div class="dash-val" id="stFavRate">0%</div><div class="dash-lbl">オキニ率</div></div>
-      </div>
-      <div style="text-align:right; margin-top:8px;">
-        <button onclick="resetData()" style="font-size:0.65rem; color:var(--light-text); background:none; border:none; text-decoration:underline; cursor:pointer;">⚠️ 記録を初期化して空にする</button>
-      </div>
-    </div>
-
-    <div class="controls" style="margin-bottom:10px;">
-      <div style="font-size:0.78rem; font-weight:bold; color:var(--accent-pink); margin-bottom:4px;">📊 期間フィルター（月別 / 3ヶ月別 / 半年別 / 1年別 / 全データ）</div>
-      <div class="period-select-row" id="dashPeriodRow"></div>
-    </div>
-    <div id="dashboardContent"></div>
-  </div>
-
-  <!-- ===== 4. 共有タブ（完全統合版：キャスト単位選択共有 ＆ マイ図鑑取込） ===== -->
-  <div id="viewShared" class="tab-content">
-    <div class="shared-top-bar">
-      <span style="font-size:0.85rem; font-weight:bold; color:var(--accent-pink);">📥 友達からの共有データ</span>
-      <button class="pill-btn" onclick="openImportSharedModal()">📂 友達の履歴を読み込む</button>
-    </div>
-    <div id="sharedContent"></div>
+    </main>
   </div>
 
   <!-- 💌 手紙・カード全画像ギャラリーモーダル -->
   <div class="modal-overlay" id="letterModal">
-    <div class="modal-content" style="max-width: 450px;">
+    <div class="modal-content">
       <h3 id="letterModalTitle">💌 メッセージカード・手紙</h3>
       <div id="letterModalContainer" style="display:flex; flex-direction:column; gap:10px; max-height:60vh; overflow-y:auto; padding-right:4px;"></div>
       <button class="close-btn" onclick="closeModal('letterModal')" style="margin-top:12px;">閉じる</button>
@@ -1363,15 +1485,16 @@
           </div>
         </div>
 
-        <div class="stat-section">
-          <div class="stat-section-title">📈 推移グラフ</div>
-          <div class="chart-wrap"><canvas id="dashTrendChart"></canvas></div>
-        </div>
-
-        <div class="stat-section">
-          <div class="stat-section-title">🍩 キャスト別利用比率</div>
-          <div class="chart-wrap donut"><canvas id="dashRankingChart"></canvas></div>
-          <div class="rank-list" id="dashRankList"></div>
+        <div class="dash-charts-row">
+          <div class="stat-section">
+            <div class="stat-section-title">📈 推移グラフ</div>
+            <div class="chart-wrap"><canvas id="dashTrendChart"></canvas></div>
+          </div>
+          <div class="stat-section">
+            <div class="stat-section-title">🍩 キャスト別利用比率</div>
+            <div class="chart-wrap donut"><canvas id="dashRankingChart"></canvas></div>
+            <div class="rank-list" id="dashRankList"></div>
+          </div>
         </div>
 
         <div class="stat-section">
