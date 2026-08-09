@@ -231,6 +231,13 @@
       animation: modalFadeIn 0.25s ease-out forwards;
     }
     @keyframes modalFadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+    
+    /* モーダル閉じる用アニメーション */
+    @keyframes overlayFadeOut { from { opacity: 1; } to { opacity: 0; } }
+    @keyframes modalContentFadeOut { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.9); } }
+    .modal-overlay.closing { animation: overlayFadeOut 0.25s ease-out forwards; }
+    .modal-overlay.closing .modal-content { animation: modalContentFadeOut 0.25s ease-out forwards; }
+
     .modal-content h3 { color: var(--accent-pink); margin-bottom: 12px; font-size: 1.15rem; }
     .close-btn { background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink)); color: white; border: none; padding: 8px 22px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; cursor: pointer; margin-top: 10px; width: 100%; box-shadow: 0 3px 10px rgba(0,0,0,0.2); }
 
@@ -375,19 +382,6 @@
 
   <!-- ===== 2. マイ図鑑タブ ===== -->
   <div id="viewMy" class="tab-content">
-    <details class="dashboard">
-      <summary style="font-size:0.8rem; font-weight:bold; color:var(--accent-pink); cursor:pointer;">📊 利用統計ダッシュボードを表示／非表示</summary>
-      <div class="dash-grid" style="margin-top:10px;">
-        <div class="dash-item"><div class="dash-val" id="stTotalVisits">0</div><div class="dash-lbl">総利用回数</div></div>
-        <div class="dash-item"><div class="dash-val" id="stTotalCasts">0</div><div class="dash-lbl">経験人数</div></div>
-        <div class="dash-item"><div class="dash-val" id="stActiveCasts">0</div><div class="dash-lbl">現在在籍</div></div>
-        <div class="dash-item"><div class="dash-val" id="stFavRate">0%</div><div class="dash-lbl">オキニ率</div></div>
-      </div>
-      <div style="text-align:right; margin-top:8px;">
-        <button onclick="resetData()" style="font-size:0.65rem; color:var(--light-text); background:none; border:none; text-decoration:underline; cursor:pointer;">⚠️ 記録を初期化して空にする</button>
-      </div>
-    </details>
-
     <div class="controls">
       <div class="search-row">
         <div class="search-box">
@@ -431,6 +425,21 @@
 
   <!-- ===== 3. 統計タブ ===== -->
   <div id="viewDashboard" class="tab-content">
+    
+    <!-- 統計ダッシュボードをマイ図鑑からここへ統合 -->
+    <div class="dashboard" id="dashboardOverview" style="margin-bottom:14px;">
+      <div style="font-size:0.8rem; font-weight:bold; color:var(--accent-pink); margin-bottom:8px;">📊 全体利用統計</div>
+      <div class="dash-grid">
+        <div class="dash-item"><div class="dash-val" id="stTotalVisits">0</div><div class="dash-lbl">総利用回数</div></div>
+        <div class="dash-item"><div class="dash-val" id="stTotalCasts">0</div><div class="dash-lbl">経験人数</div></div>
+        <div class="dash-item"><div class="dash-val" id="stActiveCasts">0</div><div class="dash-lbl">現在在籍</div></div>
+        <div class="dash-item"><div class="dash-val" id="stFavRate">0%</div><div class="dash-lbl">オキニ率</div></div>
+      </div>
+      <div style="text-align:right; margin-top:8px;">
+        <button onclick="resetData()" style="font-size:0.65rem; color:var(--light-text); background:none; border:none; text-decoration:underline; cursor:pointer;">⚠️ 記録を初期化して空にする</button>
+      </div>
+    </div>
+
     <div class="controls" style="margin-bottom:10px;">
       <div style="font-size:0.78rem; font-weight:bold; color:var(--accent-pink); margin-bottom:4px;">📊 期間フィルター（月別 / 3ヶ月別 / 半年別 / 1年別 / 全データ）</div>
       <div class="period-select-row" id="dashPeriodRow"></div>
@@ -473,6 +482,36 @@
             </div>
             <button type="submit" class="close-btn" style="margin-top:4px; padding:6px; font-size:0.8rem; width:100%;">保存する</button>
           </form>
+        </div>
+      </details>
+
+      <details class="settings-acc-card" open>
+        <summary class="settings-acc-summary">
+          <span>📅 記録の日付表示設定</span>
+          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+        </summary>
+        <div class="settings-acc-body">
+          <label style="font-size:0.8rem; display:flex; align-items:center; gap:8px;">
+            <input type="radio" name="dateFormat" value="ymd" onchange="saveDateFormat(this.value)" checked> 年月日まで表示
+          </label>
+          <label style="font-size:0.8rem; display:flex; align-items:center; gap:8px; margin-top:8px;">
+            <input type="radio" name="dateFormat" value="ym" onchange="saveDateFormat(this.value)"> 年月のみ表示
+          </label>
+        </div>
+      </details>
+
+      <details class="settings-acc-card" open>
+        <summary class="settings-acc-summary">
+          <span>👁️ 金額の表示設定</span>
+          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+        </summary>
+        <div class="settings-acc-body">
+          <label style="font-size:0.8rem; display:flex; align-items:center; gap:8px;">
+            <input type="radio" name="amountHide" value="show" onchange="saveAmountHide(this.value)" checked> 金額を表示する
+          </label>
+          <label style="font-size:0.8rem; display:flex; align-items:center; gap:8px; margin-top:8px;">
+            <input type="radio" name="amountHide" value="hide" onchange="saveAmountHide(this.value)"> 金額を非表示にする (***)
+          </label>
         </div>
       </details>
 
@@ -588,7 +627,7 @@
 
         <div class="help-box">
           <h4>4. 💌 手紙・カード画像アップロード</h4>
-          <p>スマホの写真を選ぶだけで自動でImgurにアップロードされ、URLが入力されて美しくファイリングされます。</p>
+          <p>スマホの写真を選ぶだけで自動でImgurにアップロードされ, URLが入力されて美しくファイリングされます。</p>
         </div>
 
         <div class="help-box">
@@ -699,6 +738,8 @@
   <script>
     let currentUserName = localStorage.getItem('app_user_name') || '童貞';
     let currentTheme = localStorage.getItem('app_theme') || 'default';
+    let currentDateFormat = localStorage.getItem('app_date_format') || 'ymd';
+    let currentAmountHide = localStorage.getItem('app_amount_hide') || 'show';
     let historyList = [];
     let castData = {};
     let sharedRecords = [];
@@ -721,6 +762,12 @@
         if(!h.day) h.day = "1";
       });
 
+      const rbs = document.getElementsByName('dateFormat');
+      rbs.forEach(rb => { if(rb.value === currentDateFormat) rb.checked = true; });
+
+      const amountRbs = document.getElementsByName('amountHide');
+      amountRbs.forEach(rb => { if(rb.value === currentAmountHide) rb.checked = true; });
+
       updateUIHeader();
       render();
       switchMainTab('home');
@@ -741,6 +788,21 @@
       localStorage.setItem('user_shared_list_' + currentUserName, JSON.stringify(sharedRecords));
       historyList.forEach((h, i) => h.originalIndex = i);
       updateUIHeader();
+    }
+
+    function saveDateFormat(val) {
+      currentDateFormat = val;
+      localStorage.setItem('app_date_format', val);
+      render();
+    }
+
+    function saveAmountHide(val) {
+      currentAmountHide = val;
+      localStorage.setItem('app_amount_hide', val);
+      render();
+      if (document.getElementById('viewDashboard').style.display === 'block') {
+        renderDashboard();
+      }
     }
 
     // ==========================================
@@ -1052,7 +1114,7 @@
       }
       castVisits.forEach(v => {
         if(v.chekiImg && !allLetters.some(l => l.img === v.chekiImg)) {
-          allLetters.push({ date: `${v.year}年${v.month}${v.day?v.day+'日':''}`, img: v.chekiImg, text: v.visitNote || '' });
+          allLetters.push({ date: `${v.year}年${v.month}${(currentDateFormat === 'ymd' && v.day) ? v.day+'日' : ''}`, img: v.chekiImg, text: v.visitNote || '' });
         }
       });
 
@@ -1081,7 +1143,10 @@
       if(!hasDetail) return { btn: '', panel: '' };
       const btn = `<button class="info-toggle-btn" title="詳細" onclick="toggleRowDetail(${v.originalIndex})">ⓘ</button>`;
       const bits = [];
-      if(v.amount) bits.push(`<span><span class="rd-label">💰金額</span>¥${Number(v.amount).toLocaleString()}</span>`);
+      if(v.amount) {
+        const amountDisplay = currentAmountHide === 'hide' ? '***' : `¥${Number(v.amount).toLocaleString()}`;
+        bits.push(`<span><span class="rd-label">💰金額</span>${amountDisplay}</span>`);
+      }
       if(v.storeName) bits.push(`<span><span class="rd-label">🏬店舗</span>${v.storeName}</span>`);
       const panel = `<div class="row-detail-panel" id="rd-${v.originalIndex}">${bits.join('')}</div>`;
       return { btn, panel };
@@ -1171,7 +1236,10 @@
         c.visits.forEach(v => {
           const reportBtn = v.reportUrl ? `<a href="${v.reportUrl}" target="_blank" class="report-badge">レポ</a>` : '';
           const { btn: infoBtn, panel: infoPanel } = buildRowDetailHTML(v);
-          const dateStr = `${v.year.slice(2)}年 ${v.month}${v.day ? ' ' + v.day + '日' : ''}`;
+          const dateStr = currentDateFormat === 'ymd' 
+            ? `${v.year.slice(2)}年 ${v.month}${v.day ? ' ' + v.day + '日' : ''}`
+            : `${v.year.slice(2)}年 ${v.month}`;
+            
           rowsHtml += `
             <div class="history-row-wrap">
               <div class="history-row">
@@ -1233,7 +1301,7 @@
         items.forEach(i => {
           const details = document.createElement('details'); details.className = 'timeline-item';
           const { btn: infoBtn, panel: infoPanel } = buildRowDetailHTML(i);
-          const subDateStr = i.day ? `${i.day}日` : '';
+          const subDateStr = (currentDateFormat === 'ymd' && i.day) ? `${i.day}日` : '';
           details.innerHTML = `
             <summary class="timeline-summary">
               <div style="display:flex; align-items:center; gap:8px;"><span class="arrow-icon">▼</span><strong>${i.name}</strong> <span style="font-size:0.75rem; color:var(--light-text);">${subDateStr}</span><span>${i.flags||''}</span></div>
@@ -1281,14 +1349,17 @@
       const avgUnit = totalVisits > 0 ? Math.round(totalAmount / totalVisits) : 0;
       const uniqueCasts = new Set(filteredRecords.map(v => v.name)).size;
 
+      const totalAmountDisplay = currentAmountHide === 'hide' ? '***' : `¥${totalAmount.toLocaleString()}`;
+      const avgUnitDisplay = currentAmountHide === 'hide' ? '***' : `¥${avgUnit.toLocaleString()}`;
+
       wrap.innerHTML = `
         <div class="stat-section">
           <div class="stat-section-title">📊 選択期間のサマリー</div>
           <div class="stat-grid-4">
             <div class="stat-card"><div class="stat-card-lbl">利用回数</div><div class="stat-card-val">${totalVisits}回</div></div>
             <div class="stat-card"><div class="stat-card-lbl">経験人数</div><div class="stat-card-val">${uniqueCasts}人</div></div>
-            <div class="stat-card"><div class="stat-card-lbl">支出合計</div><div class="stat-card-val">¥${totalAmount.toLocaleString()}</div></div>
-            <div class="stat-card"><div class="stat-card-lbl">平均単価</div><div class="stat-card-val">¥${avgUnit.toLocaleString()}</div></div>
+            <div class="stat-card"><div class="stat-card-lbl">支出合計</div><div class="stat-card-val">${totalAmountDisplay}</div></div>
+            <div class="stat-card"><div class="stat-card-lbl">平均単価</div><div class="stat-card-val">${avgUnitDisplay}</div></div>
           </div>
         </div>
 
@@ -1381,13 +1452,16 @@
         options: { responsive: true, maintainAspectRatio: false, cutout: '68%', plugins: { legend: { display: false } } }
       });
 
-      listEl.innerHTML = top.map((t, i) => `
+      listEl.innerHTML = top.map((t, i) => {
+        const tAmountDisplay = currentAmountHide === 'hide' ? '***' : `¥${t.amount.toLocaleString()}`;
+        return `
         <div class="rank-row">
           <span class="rank-dot" style="background:${colors[i]};"></span>
           <span class="rank-name">${t.name}</span>
           <span class="rank-sub">${t.count}回</span>
-          <span class="rank-pct">¥${t.amount.toLocaleString()}</span>
-        </div>`).join('');
+          <span class="rank-pct">${tAmountDisplay}</span>
+        </div>`;
+      }).join('');
     }
 
     function renderCumulativeMemorial() {
@@ -1403,9 +1477,11 @@
         firstDate = `${oldest.year}${oldest.month}`;
       }
 
+      const totalAmountDisplay = currentAmountHide === 'hide' ? '***' : `¥${totalAmount.toLocaleString()}`;
+
       el.innerHTML = `
         <div class="stat-card"><div class="stat-card-lbl">🏆 累計利用回数</div><div class="stat-card-val">${totalVisits}回</div></div>
-        <div class="stat-card"><div class="stat-card-lbl">💰 累計支出額</div><div class="stat-card-val">¥${totalAmount.toLocaleString()}</div></div>
+        <div class="stat-card"><div class="stat-card-lbl">💰 累計支出額</div><div class="stat-card-val">${totalAmountDisplay}</div></div>
         <div class="stat-card"><div class="stat-card-lbl">👥 総経験人数</div><div class="stat-card-val">${uniqueCasts}人</div></div>
         <div class="stat-card"><div class="stat-card-lbl">📅 利用開始</div><div class="stat-card-val" style="font-size:0.9rem;">${firstDate}</div></div>
       `;
@@ -1718,7 +1794,19 @@
 
     function addFlagChar(c) { document.getElementById('addFlags').value += c; }
     function clearFlagsInput() { document.getElementById('addFlags').value = ''; }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    
+    // フェードアウトアニメーションを適用してモーダルを閉じる
+    function closeModal(id) { 
+      const modal = document.getElementById(id);
+      if (modal) {
+        modal.classList.add('closing');
+        setTimeout(() => {
+          modal.style.display = 'none';
+          modal.classList.remove('closing');
+        }, 240); // アニメーション時間(0.25s)に合わせて遅延処理
+      }
+    }
+    
     function openSettingsModal() { document.getElementById('inputUserName').value = currentUserName; document.getElementById('settingsModal').style.display = 'flex'; }
     function openHelpModal() { document.getElementById('helpModal').style.display = 'flex'; }
     
