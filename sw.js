@@ -23,3 +23,43 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
+
+// プッシュ通知またはバックグラウンドからの通知表示処理
+self.addEventListener('push', (event) => {
+  let data = { title: 'リマインダー', body: '予定の時間になりました', icon: './icon.png' };
+  if (event.data) {
+    try {
+      data = event.data.json();
+    } catch (e) {
+      data.body = event.data.text();
+    }
+  }
+
+  const options = {
+    body: data.body,
+    icon: data.icon || './icon.png',
+    badge: './icon.png',
+    vibrate: [200, 100, 200]
+  };
+
+  event.waitUntil(
+    self.registration.showNotification(data.title, options)
+  );
+});
+
+// 通知をクリックした時の動作（アプリのウィンドウを開く/フォーカスする）
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      for (const client of clientList) {
+        if ('focus' in client) {
+          return client.focus();
+        }
+      }
+      if (clients.openWindow) {
+        return clients.openWindow('./');
+      }
+    })
+  );
+});
