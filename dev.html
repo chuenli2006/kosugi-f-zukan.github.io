@@ -6,6 +6,13 @@
   <title id="pageTitle">童貞の風俗履歴図鑑</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
   
+  <!-- PWA用マニフェストの読み込み -->
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#f72585">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="風俗図鑑">
+
   <style>
     /* 🎨 CSS変数：テーマ10種類のカラー定義 */
     :root {
@@ -125,7 +132,7 @@
     .dash-item { background: var(--bg-color); padding: 6px; border-radius: 8px; border: 1px solid var(--border-color); }
     .dash-val { font-size: 1.1rem; font-weight: bold; color: var(--accent-pink); }
     .dash-lbl { font-size: 0.65rem; color: var(--light-text); }
-    .dash-charts-row { display: flex; flex-direction: column; gap: 0; width: 100%; } /* PC用に追加 */
+    .dash-charts-row { display: flex; flex-direction: column; gap: 0; width: 100%; }
 
     .controls { background: var(--card-bg); padding: 12px; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border-color); margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; width: 100%; }
     .search-row { display: flex; gap: 6px; width: 100%; }
@@ -158,8 +165,12 @@
       box-shadow: 0 4px 15px rgba(230, 161, 0, 0.25);
     }
     details.cast-card.super-favorite summary.card-btn { color: var(--gold-text); }
-    details.cast-card .anim-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.35s; }
-    details.cast-card[open] .anim-wrapper { grid-template-rows: 1fr; }
+    
+    /* ▼アコーディオン（スワイプ）アニメーション用のCSS▼ */
+    details.cast-card .anim-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    details.cast-card.is-open .anim-wrapper { grid-template-rows: 1fr; }
+    details.cast-card[open]:not(.is-open) summary .arrow-icon { transform: rotate(0deg); color: var(--light-text); }
+    
     .anim-inner { overflow: hidden; width: 100%; }
 
     summary.card-btn { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; cursor: pointer; list-style: none; font-weight: bold; width: 100%; }
@@ -173,11 +184,6 @@
     .status-retired { background: rgba(150, 150, 150, 0.15); color: var(--light-text); border: 1px solid var(--border-color); }
     .old-name-badge { font-size: 0.65rem; background: rgba(150, 150, 150, 0.15); color: var(--light-text); padding: 1px 6px; border-radius: 6px; border: 1px solid var(--border-color); }
     .super-tag { font-size: 0.65rem; background: var(--gold-border); color: #fff; padding: 1px 5px; border-radius: 8px; font-weight: bold; }
-    .store-pill-badge {
-      display: inline-flex; align-items: center; gap: 3px; font-size: 0.65rem;
-      background: var(--soft-pink); color: var(--accent-pink); border: 1px solid var(--primary-pink);
-      padding: 1px 7px; border-radius: 10px; font-weight: bold; box-shadow: 0 1px 3px rgba(0,0,0,0.03);
-    }
     .badge-count { background: var(--badge-bg); color: var(--badge-color); font-weight: bold; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem; }
 
     .card-body { padding: 10px 14px 12px; border-top: 1px dashed var(--border-color); background-color: var(--card-bg); display: flex; flex-direction: column; gap: 8px; width: 100%; }
@@ -313,6 +319,15 @@
     .rank-pct { font-weight: bold; color: var(--accent-pink); font-size: 0.8rem; min-width: 42px; text-align: right; }
     .dash-empty { text-align: center; color: var(--light-text); font-size: 0.8rem; padding: 20px 10px; }
 
+    /* ===== 分析カルーセル（スワイプ用UI） ===== */
+    .carousel-wrapper { position: relative; width: 100%; overflow: hidden; }
+    .carousel-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -ms-overflow-style: none; scroll-behavior: smooth; }
+    .carousel-container::-webkit-scrollbar { display: none; }
+    .carousel-slide { flex: 0 0 100%; scroll-snap-align: start; width: 100%; box-sizing: border-box; }
+    .carousel-dots { display: flex; justify-content: center; gap: 6px; margin-top: 12px; }
+    .carousel-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border-color); transition: all 0.3s; cursor: pointer; }
+    .carousel-dot.active { background: var(--accent-pink); width: 16px; border-radius: 4px; }
+
 
     /* =========================================================
        🖥️ PC向けレスポンシブ・サイドバーレイアウト（案1）
@@ -398,13 +413,11 @@
 
       .content-area {
         flex: 1;
-        min-width: 0; /* FlexBoxの折り返し防止 */
+        min-width: 0;
       }
 
-      /* モーダル等 */
       .modal-content { max-width: 500px; padding: 24px; }
 
-      /* PC版 各種コンポーネントのマルチカラム化 */
       .grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -749,7 +762,7 @@
 
         <div class="help-box">
           <h4>4. 💌 手紙・カード画像アップロード</h4>
-          <p>スマホの写真を選ぶだけで自動でImgurにアップロードされ, URLが入力されて美しくファイリングされます。</p>
+          <p>スマホの写真を選ぶだけで自動でImgurにアップロードされ、URLが入力されて美しくファイリングされます。</p>
         </div>
 
         <div class="help-box">
@@ -774,6 +787,18 @@
         </div>
 
         <div class="form-group"><label>キャスト名</label><input type="text" id="addName" required placeholder="例: ゆあ"></div>
+
+        <!-- ▼系統タグ入力エリア▼ -->
+        <div class="form-group"><label>系統タグ（複数時はカンマ区切り）</label>
+          <div class="flag-picker">
+            <button type="button" class="flag-btn" onclick="setTypeChar('アイドル系')">アイドル</button>
+            <button type="button" class="flag-btn" onclick="setTypeChar('清楚系')">清楚</button>
+            <button type="button" class="flag-btn" onclick="setTypeChar('ギャル系')">ギャル</button>
+            <button type="button" class="flag-btn" onclick="setTypeChar('女子アナ系')">女子アナ</button>
+            <button type="button" class="flag-btn flag-btn-clear" onclick="clearTypeInput()">クリア</button>
+          </div>
+          <input type="text" id="addTypeTag" placeholder="例: アイドル系, 清楚系">
+        </div>
 
         <div class="form-group"><label>スリーサイズ</label>
           <div class="style-grid-compact">
@@ -840,6 +865,19 @@
         </div>
 
         <div class="form-group"><label>フラグ</label><input type="text" id="editFlags"></div>
+
+        <!-- ▼追加: 系統タグ編集エリア▼ -->
+        <div class="form-group"><label>系統タグ（複数時はカンマ区切り）</label>
+          <div class="flag-picker">
+            <button type="button" class="flag-btn" onclick="setEditTypeChar('アイドル系')">アイドル</button>
+            <button type="button" class="flag-btn" onclick="setEditTypeChar('清楚系')">清楚</button>
+            <button type="button" class="flag-btn" onclick="setEditTypeChar('ギャル系')">ギャル</button>
+            <button type="button" class="flag-btn" onclick="setEditTypeChar('女子アナ系')">女子アナ</button>
+            <button type="button" class="flag-btn flag-btn-clear" onclick="clearEditTypeInput()">クリア</button>
+          </div>
+          <input type="text" id="editTypeTag" placeholder="例: アイドル系, 清楚系">
+        </div>
+
         <div class="form-group"><label>メモ</label><textarea id="editVisitNote" rows="2"></textarea></div>
         <div class="form-group"><label>金額（円）</label><input type="number" id="editAmount" min="0" placeholder="15000"></div>
         <div class="form-group"><label>店舗名</label><input type="text" id="editStoreName" placeholder="店舗名"></div>
@@ -858,6 +896,15 @@
   </div>
 
   <script>
+    // サービスワーカーの登録
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then((reg) => { console.log('ServiceWorker registered: ', reg); })
+          .catch((err) => { console.log('ServiceWorker registration failed: ', err); });
+      });
+    }
+
     let currentUserName = localStorage.getItem('app_user_name') || '童貞';
     let currentTheme = localStorage.getItem('app_theme') || 'default';
     let currentDateFormat = localStorage.getItem('app_date_format') || 'ymd';
@@ -868,6 +915,22 @@
     let bubbleInterval;
     let dashPeriodType = 'month';
     let targetExportCastName = '';
+    
+    window.typeChartInstance = null; // タイプ分布グラフ用のインスタンス
+
+    // 系統タグ用補助関数（カンマ区切りで複数追記）
+    function setTypeChar(c) { 
+      const el = document.getElementById('addTypeTag');
+      el.value = el.value ? el.value + ', ' + c : c;
+    }
+    function clearTypeInput() { document.getElementById('addTypeTag').value = ''; }
+    
+    // 編集モーダル用の系統タグ補助関数（カンマ区切りで複数追記）
+    function setEditTypeChar(c) { 
+      const el = document.getElementById('editTypeTag');
+      el.value = el.value ? el.value + ', ' + c : c;
+    }
+    function clearEditTypeInput() { document.getElementById('editTypeTag').value = ''; }
 
     function initUserData() {
       applyTheme(currentTheme);
@@ -1012,6 +1075,7 @@
       if (!styleStr || !styleStr.trim()) {
         return '<div class="style-row"><span class="style-none">スタイルデータなし</span></div>';
       }
+      
       const str = styleStr.toUpperCase();
       const tMatch = str.match(/T\s*:?\s*(\d+)/i);
       const bMatch = str.match(/B\s*:?\s*(\d+)\s*(\([A-Z\+]+\))?/i);
@@ -1342,10 +1406,21 @@
         const isActive = info.link && info.link.trim() !== '';
 
         let latestStore = '';
+        let latestType = '';
         for(let i = c.visits.length - 1; i >= 0; i--) {
-          if(c.visits[i].storeName) { latestStore = c.visits[i].storeName; break; }
+          if(!latestStore && c.visits[i].storeName) latestStore = c.visits[i].storeName;
+          if(!latestType && c.visits[i].typeTag) latestType = c.visits[i].typeTag;
         }
-        const storeBadgeHtml = latestStore ? `<span class="store-pill-badge" title="店舗名">🏬 ${latestStore}</span>` : '';
+        
+        const storeBadgeHtml = latestStore ? `<div style="display:inline-flex; align-items:center; gap:4px; padding:3px 8px; font-size:0.75rem; font-weight:bold; color:var(--accent-pink); background:var(--soft-pink); border-radius:12px; border:1px solid var(--primary-pink);">🏬 ${latestStore}</div>` : '';
+        
+        let typeBadgesHtml = '';
+        if (latestType) {
+          const types = latestType.split(',').map(t => t.trim()).filter(t => t);
+          typeBadgesHtml = types.map(t => `<div style="display:inline-flex; align-items:center; gap:4px; padding:3px 8px; font-size:0.75rem; font-weight:bold; color:#f76707; background:#fff4e6; border-radius:12px; border:1px solid #ff922b;">${t}</div>`).join('');
+        }
+
+        const tagsRowHtml = (storeBadgeHtml || typeBadgesHtml) ? `<div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;">${storeBadgeHtml}${typeBadgesHtml}</div>` : '';
 
         const validLettersCount = (info.letters || []).filter(l => l.imageUrl).length + c.visits.filter(v => v.chekiImg).length;
         const letterBtnHtml = validLettersCount > 0 
@@ -1381,7 +1456,6 @@
             <div class="cast-info">
               <span class="arrow-icon">▼</span>
               <span>${c.name}</span>
-              ${storeBadgeHtml}
               ${info.oldName?`<span class="old-name-badge">旧:${info.oldName}</span>`:''}
               <span class="status-badge ${isActive?'status-active':'status-retired'}">${isActive?'在籍':'卒業'}</span>
               ${c.favCount>=5?'<span class="super-tag">オキニ</span>':''}
@@ -1390,6 +1464,7 @@
           </summary>
           <div class="anim-wrapper"><div class="anim-inner"><div class="card-body">
             ${renderStyleTags(info.style)}
+            ${tagsRowHtml}
             <div class="card-middle-row">
               <div class="notes-box">${info.notes || 'メモなし'}</div>
               <div class="btn-action-group">
@@ -1490,10 +1565,31 @@
             <div class="stat-section-title">📈 推移グラフ</div>
             <div class="chart-wrap"><canvas id="dashTrendChart"></canvas></div>
           </div>
+
           <div class="stat-section">
-            <div class="stat-section-title">🍩 キャスト別利用比率</div>
-            <div class="chart-wrap donut"><canvas id="dashRankingChart"></canvas></div>
-            <div class="rank-list" id="dashRankList"></div>
+            <div class="stat-section-title">🍩 分析（キャスト / 系統）</div>
+            <div class="carousel-wrapper">
+              <div class="carousel-container" id="dashAnalysisCarousel">
+                
+                <div class="carousel-slide">
+                  <div style="text-align:center; font-size:0.75rem; font-weight:bold; margin-bottom:4px; color:var(--light-text);">👑 キャスト別利用比率</div>
+                  <div class="chart-wrap donut"><canvas id="dashRankingChart"></canvas></div>
+                  <div class="rank-list" id="dashRankList"></div>
+                </div>
+                
+                <div class="carousel-slide">
+                  <div style="text-align:center; font-size:0.75rem; font-weight:bold; margin-bottom:4px; color:var(--light-text);">💖 俺の好みタイプ分布</div>
+                  <div class="chart-wrap donut"><canvas id="dashTypeChart"></canvas></div>
+                  <div class="rank-list" id="dashTypeList"></div>
+                </div>
+
+              </div>
+              
+              <div class="carousel-dots" id="carouselDots">
+                <div class="carousel-dot active" data-index="0"></div>
+                <div class="carousel-dot" data-index="1"></div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1585,6 +1681,64 @@
           <span class="rank-pct">${tAmountDisplay}</span>
         </div>`;
       }).join('');
+
+      // === 🍩 好みタイプ分布 (円グラフ) ===
+      const canvasType = document.getElementById('dashTypeChart');
+      const listTypeEl = document.getElementById('dashTypeList');
+      
+      if (canvasType && listTypeEl) {
+        const byType = {};
+        records.forEach(v => {
+          const tTags = (v.typeTag || '').split(',').map(tag => tag.trim()).filter(tag => tag);
+          tTags.forEach(t => {
+            if(!byType[t]) byType[t] = 0;
+            byType[t]++;
+          });
+        });
+        
+        let typeEntries = Object.keys(byType).map(name => ({ name, count: byType[name] })).sort((a,b) => b.count - a.count);
+        const topTypes = typeEntries.slice(0, 6); // 上位6タイプ
+        // 既存のテーマカラーにオレンジ系を1色追加
+        const typeColors = [getCssVar('--rank-c1'), getCssVar('--rank-c2'), getCssVar('--rank-c3'), getCssVar('--rank-c4'), getCssVar('--rank-c5'), '#ff922b'];
+
+        if(window.typeChartInstance) window.typeChartInstance.destroy();
+        window.typeChartInstance = new Chart(canvasType.getContext('2d'), {
+          type: 'pie', // 円グラフ
+          data: {
+            labels: topTypes.map(t => t.name),
+            datasets: [{ data: topTypes.map(t => t.count), backgroundColor: typeColors.slice(0, topTypes.length), borderWidth: 2, borderColor: getCssVar('--card-bg') }]
+          },
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+        });
+
+        if (topTypes.length === 0) {
+          listTypeEl.innerHTML = '<div style="text-align:center;font-size:0.8rem;color:var(--light-text);padding:10px;">系統の記録がありません</div>';
+        } else {
+          listTypeEl.innerHTML = topTypes.map((t, i) => `
+          <div class="rank-row">
+            <span class="rank-dot" style="background:${typeColors[i]};"></span>
+            <span class="rank-name">${t.name}</span>
+            <span class="rank-pct">${t.count}回</span>
+          </div>`).join('');
+        }
+      }
+
+      // === 👆 カルーセルのスワイプ・ドット同期処理 ===
+      const carousel = document.getElementById('dashAnalysisCarousel');
+      const dots = document.querySelectorAll('#carouselDots .carousel-dot');
+      if (carousel && dots.length > 0) {
+        // スクロール時にドットのアクティブ状態を更新
+        carousel.onscroll = () => {
+          const idx = Math.round(carousel.scrollLeft / carousel.clientWidth);
+          dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+        };
+        // ドットタップ時に該当スライドへスクロール
+        dots.forEach((d, i) => {
+          d.addEventListener('click', () => {
+            carousel.scrollTo({ left: i * carousel.clientWidth, behavior: 'smooth' });
+          });
+        });
+      }
     }
 
     function renderCumulativeMemorial() {
@@ -1839,7 +1993,8 @@
         amount: document.getElementById('addAmount').value || '',
         storeName: document.getElementById('addStoreName').value || '',
         reportUrl: document.getElementById('addReportUrl').value || '',
-        chekiImg: document.getElementById('addLetterImg').value || ''
+        chekiImg: document.getElementById('addLetterImg').value || '',
+        typeTag: document.getElementById('addTypeTag').value || ''
       };
 
       historyList.push(rec);
@@ -1871,6 +2026,7 @@
       document.getElementById('editMonth').value = rec.month || '';
       document.getElementById('editDay').value = rec.day || '1';
       document.getElementById('editFlags').value = rec.flags || '';
+      document.getElementById('editTypeTag').value = rec.typeTag || '';
       document.getElementById('editVisitNote').value = rec.visitNote || '';
       document.getElementById('editAmount').value = rec.amount || '';
       document.getElementById('editStoreName').value = rec.storeName || '';
@@ -1887,6 +2043,7 @@
         rec.month = document.getElementById('editMonth').value;
         rec.day = document.getElementById('editDay').value || '1';
         rec.flags = document.getElementById('editFlags').value;
+        rec.typeTag = document.getElementById('editTypeTag').value;
         rec.visitNote = document.getElementById('editVisitNote').value;
         rec.amount = document.getElementById('editAmount').value;
         rec.storeName = document.getElementById('editStoreName').value;
@@ -1918,7 +2075,6 @@
     function addFlagChar(c) { document.getElementById('addFlags').value += c; }
     function clearFlagsInput() { document.getElementById('addFlags').value = ''; }
     
-    // フェードアウトアニメーションを適用してモーダルを閉じる
     function closeModal(id) { 
       const modal = document.getElementById(id);
       if (modal) {
@@ -1926,7 +2082,7 @@
         setTimeout(() => {
           modal.style.display = 'none';
           modal.classList.remove('closing');
-        }, 240); // アニメーション時間(0.25s)に合わせて遅延処理
+        }, 240);
       }
     }
     
@@ -1983,6 +2139,27 @@
       };
       reader.readAsText(file);
     }
+
+    // ==========================================
+    // アコーディオン（スワイプ）アニメーションの制御
+    // ==========================================
+    document.addEventListener('click', function(e) {
+      const summary = e.target.closest('.cast-card summary.card-btn');
+      if (!summary) return;
+      e.preventDefault(); // デフォルトの即時開閉をブロック
+      
+      const details = summary.parentElement;
+      if (details.open) {
+        details.classList.remove('is-open');
+        // 閉じるスワイプアニメーションの完了（0.3秒後）を待ってからopen属性を外す
+        setTimeout(() => { details.removeAttribute('open'); }, 300);
+      } else {
+        details.setAttribute('open', '');
+        // ブラウザに描画を強制し、CSSのtransitionを発火させる
+        void details.offsetWidth; 
+        details.classList.add('is-open');
+      }
+    });
 
     initUserData();
   </script>
