@@ -7,6 +7,7 @@
 アプリの動作リンクはこちら：
 - **通常版 (Stable):** [https://chuenli2006.github.io/kosugi-f-zukan.github.io](https://chuenli2006.github.io/kosugi-f-zukan.github.io)
 - **開発中バージョン (Dev):** [https://chuenli2006.github.io/kosugi-f-zukan.github.io/dev.html](https://chuenli2006.github.io/kosugi-f-zukan.github.io/dev.html)
+- **簡易バージョン (light):** [https://chuenli2006.github.io/kosugi-f-zukan.github.io/stable.html](https://chuenli2006.github.io/kosugi-f-zukan.github.io/stable.html)
 
 ---
 
