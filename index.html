@@ -6,6 +6,13 @@
   <title id="pageTitle">童貞の風俗履歴図鑑</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
   
+  <!-- PWA用マニフェストの読み込み -->
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#f72585">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="風俗図鑑">
+
   <style>
     /* 🎨 CSS変数：テーマ10種類のカラー定義 */
     :root {
@@ -721,6 +728,15 @@
   </div>
 
   <script>
+    // サービスワーカーの登録
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then((reg) => { console.log('ServiceWorker registered: ', reg); })
+          .catch((err) => { console.log('ServiceWorker registration failed: ', err); });
+      });
+    }
+
     let currentUserName = localStorage.getItem('app_user_name') || '童貞';
     let currentTheme = localStorage.getItem('app_theme') || 'default';
     let currentDateFormat = localStorage.getItem('app_date_format') || 'ymd';
