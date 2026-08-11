@@ -87,17 +87,39 @@
     .nav-item.active { color: var(--accent-pink); transform: scale(1.1); }
     .nav-icon { font-size: 1.1rem; }
 
-    /* FABの位置をナビゲーションバーの上に調整 */
+    /* 🌟 展開式FABコンテナとアニメーション制御 */
+    .fab-container {
+      position: fixed; bottom: 85px; right: 20px; z-index: 900;
+      display: flex; flex-direction: column; align-items: flex-end; gap: 10px;
+    }
+    .fab-menu {
+      display: flex; flex-direction: column; gap: 8px; align-items: flex-end;
+      opacity: 0; transform: translateY(20px) scale(0.8); pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .fab-container.open .fab-menu {
+      opacity: 1; transform: translateY(0) scale(1); pointer-events: auto;
+    }
+    .fab-sub-btn {
+      background: var(--card-bg); color: var(--accent-pink); border: 1.5px solid var(--primary-pink);
+      padding: 8px 16px; border-radius: 20px; font-size: 0.82rem; font-weight: bold; cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 6px;
+      white-space: nowrap; transition: transform 0.2s;
+    }
+    .fab-sub-btn:active { transform: scale(0.95); }
+
     .fab-add {
-      position: fixed; bottom: 85px; right: 20px; width: 56px; height: 56px; border-radius: 28px;
+      width: 56px; height: 56px; border-radius: 28px;
       background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink));
       color: white; border: none; font-size: 1.6rem; font-weight: bold;
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); cursor: pointer; z-index: 900;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); cursor: pointer;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
+    .fab-container.open .fab-add { transform: rotate(45deg); }
     
     @media (max-width: 767px) {
-      .fab-add.hide-on-mobile { display: none !important; }
+      .fab-container.hide-on-mobile { display: none !important; }
     }
 
     .tab-content { display: none; width: 100%; animation: slideUpFade 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
@@ -230,12 +252,18 @@
     summary.timeline-summary::-webkit-details-marker { display: none; }
     .timeline-body { padding: 8px 12px 10px; border-top: 1px dashed var(--border-color); background: var(--bg-color); font-size: 0.78rem; display: flex; flex-direction: column; gap: 6px; width: 100%; }
 
-    /* ===== マイカレンダー用CSS追加 ===== */
+    /* ===== マイカレンダー用CSS追加（縦幅の崩れ防止対応） ===== */
     .calendar-header { display: flex; justify-content: space-between; align-items: center; padding: 12px; font-weight: bold; color: var(--accent-pink); background: var(--card-bg); border-radius: var(--radius); border: 1px solid var(--border-color); margin-bottom: 12px; box-shadow: var(--shadow); }
     .calendar-header button { background: var(--soft-pink); border: 1px solid var(--primary-pink); color: var(--accent-pink); padding: 4px 10px; border-radius: 12px; cursor: pointer; font-weight: bold; }
-    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; padding: 0; margin-bottom: 12px; }
+    
+    .calendar-wrapper-box {
+      background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 10px; box-shadow: var(--shadow); margin-bottom: 12px;
+      min-height: 380px; /* 月によって週数が変わり高さがガタつくのを防ぐための最小高 */
+      display: flex; flex-direction: column;
+    }
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; padding: 0; }
     .cal-day-name { text-align: center; font-size: 0.75rem; font-weight: bold; color: var(--light-text); padding-bottom: 4px; }
-    .cal-cell { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 2px; cursor: pointer; position: relative; }
+    .cal-cell { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 2px; cursor: pointer; position: relative; }
     .cal-cell.today { border: 2px solid var(--accent-pink); background: var(--soft-pink); }
     .cal-cell.selected { background: #e0f0ff; border-color: #339af0; }
     .cal-cell.empty { background: transparent; border: none; pointer-events: none; }
@@ -246,10 +274,11 @@
     .dot-plan { background-color: #20c997; box-shadow: 0 0 3px #20c997; } /* 緑色: イク予定 */
     .dot-res { background-color: #ff922b; box-shadow: 0 0 3px #ff922b; } /* オレンジ: 予約開始 */
     .cal-bell { position: absolute; top: 1px; right: 2px; font-size: 0.55rem; color: #ff922b; }
+    
     .calendar-details { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 12px; min-height: 100px; box-shadow: var(--shadow); }
     .cal-detail-item { padding: 8px; border-bottom: 1px dashed var(--border-color); display: flex; flex-direction: column; gap: 4px; }
     .cal-detail-item:last-child { border-bottom: none; }
-    .cal-detail-title { font-size: 0.85rem; font-weight: bold; color: var(--accent-pink); display: flex; justify-content: space-between; }
+    .cal-detail-title { font-size: 0.85rem; font-weight: bold; color: var(--accent-pink); display: flex; justify-content: space-between; align-items: center; }
     .cal-detail-sub { font-size: 0.75rem; color: var(--light-text); }
     
     /* スワイプアニメーション用CSS */
@@ -434,8 +463,14 @@
         text-align: center;
       }
 
-      .fab-add {
+      .fab-container {
         position: static;
+        width: 100%;
+      }
+      .fab-menu {
+        position: absolute; bottom: 65px; right: 0; align-items: flex-end;
+      }
+      .fab-add {
         width: 100%;
         height: 52px;
         border-radius: 26px;
@@ -443,7 +478,7 @@
         gap: 6px;
       }
       
-      .fab-add.hide-on-mobile {
+      .fab-container.hide-on-mobile {
         display: flex !important; /* PCでは常に表示 */
       }
       
@@ -518,9 +553,16 @@
         </button>
       </nav>
 
-      <button class="fab-add" onclick="openAddModal()">
-        <span class="fab-icon">＋</span><span class="fab-text">記録を追加</span>
-      </button>
+      <!-- 🌟 展開式FABコンテナ -->
+      <div class="fab-container" id="fabContainer">
+        <div class="fab-menu" id="fabMenu">
+          <button class="fab-sub-btn" onclick="openAddModal(); toggleFabMenu();"><span>📝 記録の追加</span></button>
+          <button class="fab-sub-btn" onclick="openAddScheduleModal(); toggleFabMenu();"><span>📅 予定の追加</span></button>
+        </div>
+        <button class="fab-add" onclick="toggleFabMenu()">
+          <span class="fab-icon" id="fabMainIcon">＋</span><span class="fab-text">追加</span>
+        </button>
+      </div>
     </aside>
 
     <main class="content-area">
@@ -606,11 +648,14 @@
           <button onclick="changeCalendarMonth(1)">来月 ▶</button>
         </div>
         
-        <div class="calendar-grid">
-          <div class="cal-day-name">日</div><div class="cal-day-name">月</div><div class="cal-day-name">火</div><div class="cal-day-name">水</div><div class="cal-day-name">木</div><div class="cal-day-name">金</div><div class="cal-day-name">土</div>
+        <!-- ▼ 高さを固定してナビゲーションのガタつきを防止するラッパー ▼ -->
+        <div class="calendar-wrapper-box">
+          <div class="calendar-grid" style="margin-bottom:6px;">
+            <div class="cal-day-name">日</div><div class="cal-day-name">月</div><div class="cal-day-name">火</div><div class="cal-day-name">水</div><div class="cal-day-name">木</div><div class="cal-day-name">金</div><div class="cal-day-name">土</div>
+          </div>
+          <!-- スワイプアニメーションの適用対象 -->
+          <div class="calendar-grid" id="calendarGrid"></div>
         </div>
-        <!-- スワイプアニメーションの適用対象 -->
-        <div class="calendar-grid" id="calendarGrid"></div>
         
         <div class="calendar-details" id="calendarDetails">
           <div style="text-align:center; color:var(--light-text); font-size:0.8rem; padding: 20px 0;">日付をタップすると詳細が表示されます</div>
@@ -844,7 +889,12 @@
           <div class="form-group" style="flex:1;"><label>日</label><input type="number" id="addDay" min="1" max="31" placeholder="15" required></div>
         </div>
 
-        <div class="form-group"><label>キャスト名</label><input type="text" id="addName" required placeholder="例: ゆあ"></div>
+        <!-- キャスト名入力にオートフィル用 datalist を適用 -->
+        <div class="form-group">
+          <label>キャスト名</label>
+          <input type="text" id="addName" list="castDatalist" oninput="onCastNameInput(this.value)" required placeholder="例: ゆあ">
+          <datalist id="castDatalist"></datalist>
+        </div>
 
         <div class="form-group"><label>系統タグ（複数時はカンマ区切り）</label>
           <div class="flag-picker">
@@ -950,7 +1000,6 @@
       <form class="add-form" onsubmit="saveSchedule(event)">
         <div class="form-group">
           <label>予定の種類</label>
-          <!-- ▼ 種類切り替えで電話リマインダーの表示/非表示を制御 ▼ -->
           <select id="schType" required onchange="togglePhoneConfirm()">
             <option value="plan">⚔️ イク予定 (来店日・店名など)</option>
             <option value="reservation">🎫 予約開始日 (枠取り・待機)</option>
@@ -971,7 +1020,6 @@
           <input type="text" id="schTitle" required placeholder="例: 〇〇店 ゆあちゃん予約">
         </div>
         
-        <!-- ▼ 追加: 電話確認リマインダー (イク予定選択時のみ表示) ▼ -->
         <div class="form-group" id="phoneConfirmGroup" style="display:none;">
           <label>📞 お店からの電話確認リマインダー</label>
           <select id="schPhoneConfirm">
@@ -998,6 +1046,64 @@
         <div style="display:flex; gap:8px;">
           <button type="submit" class="close-btn" style="flex:1;">予定を保存</button>
           <button type="button" class="close-btn" onclick="closeModal('addScheduleModal')" style="background:#888; flex:1;">取消</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ▼ 予定の編集モーダル ▼ -->
+  <div class="modal-overlay" id="editScheduleModal">
+    <div class="modal-content">
+      <h3>✏️ 予定の編集</h3>
+      <form class="add-form" onsubmit="saveEditedSchedule(event)">
+        <input type="hidden" id="editSchId">
+        <div class="form-group">
+          <label>予定の種類</label>
+          <select id="editSchType" required onchange="toggleEditPhoneConfirm()">
+            <option value="plan">⚔️ イク予定</option>
+            <option value="reservation">🎫 予約開始日</option>
+          </select>
+        </div>
+        <div style="display:flex; gap:6px;">
+          <div class="form-group" style="flex:1;">
+            <label>日付</label>
+            <input type="date" id="editSchDate" required>
+          </div>
+          <div class="form-group" style="flex:1;">
+            <label>時間 (任意)</label>
+            <input type="time" id="editSchTime">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>タイトル・内容</label>
+          <input type="text" id="editSchTitle" required>
+        </div>
+        
+        <div class="form-group" id="editPhoneConfirmGroup" style="display:none;">
+          <label>📞 お店からの電話確認リマインダー</label>
+          <select id="editSchPhoneConfirm">
+            <option value="0">不要</option>
+            <option value="15">15分前</option>
+            <option value="30">30分前</option>
+            <option value="45">45分前</option>
+            <option value="60">1時間前</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>🔔 プッシュ通知リマインダー</label>
+          <select id="editSchNotify">
+            <option value="0">通知しない</option>
+            <option value="1">1分前</option>
+            <option value="5">5分前</option>
+            <option value="10">10分前</option>
+            <option value="30">30分前</option>
+            <option value="60">1時間前</option>
+          </select>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button type="submit" class="close-btn" style="flex:1;">更新する</button>
+          <button type="button" class="close-btn" onclick="closeModal('editScheduleModal')" style="background:#888; flex:1;">取消</button>
         </div>
       </form>
     </div>
@@ -1118,6 +1224,57 @@
       switchMainTab('calendar');
     }
 
+    // 🌟 キャスト名オートフィル機能の実装
+    function updateCastDatalist() {
+      const datalist = document.getElementById('castDatalist');
+      if (!datalist) return;
+      const castNames = new Set();
+      Object.keys(castData).forEach(n => castNames.add(n));
+      historyList.forEach(h => { if(h.name) castNames.add(h.name); });
+      datalist.innerHTML = Array.from(castNames).map(name => `<option value="${name}">`).join('');
+    }
+
+    function onCastNameInput(nameVal) {
+      const name = nameVal.trim();
+      if (!name) return;
+      
+      // 1. スリーサイズの自動入力
+      let foundStyle = '';
+      if (castData[name] && castData[name].style) {
+        foundStyle = castData[name].style;
+      } else {
+        const matchRec = historyList.slice().reverse().find(h => h.name === name && h.style);
+        if (matchRec) foundStyle = matchRec.style;
+      }
+
+      if (foundStyle) {
+        const tMatch = foundStyle.match(/T\s*:?\s*(\d+)/i);
+        const bMatch = foundStyle.match(/B\s*:?\s*(\d+)\s*(\([A-Z\+]+\))?/i);
+        const wMatch = foundStyle.match(/W\s*:?\s*(\d+)/i);
+        const hMatch = foundStyle.match(/H\s*:?\s*(\d+)/i);
+
+        if (tMatch) document.getElementById('addStyleT').value = tMatch[1];
+        if (bMatch) document.getElementById('addStyleB').value = bMatch[1] + (bMatch[2] ? bMatch[2].replace(/[()]/g,'') : '');
+        if (wMatch) document.getElementById('addStyleW').value = wMatch[1];
+        if (hMatch) document.getElementById('addStyleH').value = hMatch[1];
+        
+        ['addStyleT', 'addStyleB', 'addStyleW', 'addStyleH'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el.value) updateInputColor(el, id.replace('addStyle', ''));
+        });
+      }
+
+      // 2. 系統タグの自動入力
+      let foundType = '';
+      const matchTypeRec = historyList.slice().reverse().find(h => h.name === name && h.typeTag);
+      if (matchTypeRec && matchTypeRec.typeTag) {
+        foundType = matchTypeRec.typeTag;
+      }
+      if (foundType) {
+        document.getElementById('addTypeTag').value = foundType;
+      }
+    }
+
     async function uploadImageToImgur(fileInput, targetUrlInputId, statusSpanId) {
       const file = fileInput.files[0];
       if (!file) return;
@@ -1213,6 +1370,12 @@
       return tagsHtml;
     }
 
+    // 🌟 展開式FABのトグル制御
+    function toggleFabMenu() {
+      const container = document.getElementById('fabContainer');
+      container.classList.toggle('open');
+    }
+
     function switchMainTab(type) {
       document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
       const targetNav = document.getElementById('nav-' + type);
@@ -1224,13 +1387,14 @@
       const sharedView = document.getElementById('viewShared');
       const dashView = document.getElementById('viewDashboard');
       const headerTitle = document.getElementById('headerTitle');
-      const fab = document.querySelector('.fab-add');
+      const fabContainer = document.getElementById('fabContainer');
 
       // 指定されたタブでのみFAB（追加ボタン）を表示する制御
       if (type === 'home' || type === 'my') {
-        fab.classList.remove('hide-on-mobile');
+        fabContainer.classList.remove('hide-on-mobile');
       } else {
-        fab.classList.add('hide-on-mobile');
+        fabContainer.classList.add('hide-on-mobile');
+        fabContainer.classList.remove('open');
       }
 
       if(type === 'home') {
@@ -1345,7 +1509,6 @@
       
       if(calCurrentDate.getFullYear() == y && (calCurrentDate.getMonth()+1) == m) {
         const firstDay = new Date(y, m-1, 1).getDay();
-        const cellIndex = firstDay + parseInt(d, 10) - 1;
         const cells = document.getElementById('calendarGrid').querySelectorAll('.cal-cell:not(.empty)');
         if(cells[parseInt(d, 10) - 1]) cells[parseInt(d, 10) - 1].classList.add('selected');
       }
@@ -1375,13 +1538,11 @@
       if(matchedSchedules.length > 0) {
         foundContent = true;
         matchedSchedules.forEach(s => {
-          // ▼ イク予定に変更 ▼
           const typeIcon = s.type === 'plan' ? '<span style="color:#20c997;">⚔️ イク予定</span>' : '<span style="color:#ff922b;">🎫 予約開始日</span>';
           const timeStr = s.time ? `🕐 ${s.time}` : '時間未定';
           
           let notifyStr = s.notifyMinutes > 0 ? `<span style="font-size:0.65rem; color:#ff922b; border:1px solid #ff922b; padding:1px 4px; border-radius:8px;">🔔 ${s.notifyMinutes}分前</span>` : '';
           
-          // ▼ 追加: 電話確認リマインダー表示 ▼
           if (s.phoneConfirmMinutes > 0) {
              notifyStr += ` <span style="font-size:0.65rem; color:#339af0; border:1px solid #339af0; padding:1px 4px; border-radius:8px; margin-left:4px;">📞 電話 ${s.phoneConfirmMinutes}分前</span>`;
           }
@@ -1390,7 +1551,11 @@
             <div class="cal-detail-item">
               <div class="cal-detail-title">
                 <div>${typeIcon} - ${s.title}</div>
-                <button onclick="deleteSchedule('${s.id}')" style="background:none; border:none; color:var(--light-text); text-decoration:underline; cursor:pointer; font-size:0.7rem;">削除</button>
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <!-- 🌟 うっすいペンの編集アイコンボタン -->
+                  <button class="edit-icon-btn" onclick="openEditScheduleModal('${s.id}')" title="予定を編集" style="opacity:0.6;"><svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>
+                  <button onclick="deleteSchedule('${s.id}')" style="background:none; border:none; color:var(--light-text); text-decoration:underline; cursor:pointer; font-size:0.7rem;">削除</button>
+                </div>
               </div>
               <div class="cal-detail-sub" style="display:flex; align-items:center; flex-wrap:wrap; gap:4px;">${timeStr} ${notifyStr}</div>
             </div>
@@ -1403,7 +1568,6 @@
       }
     }
 
-    // ▼ 追加: イク予定の時だけ電話確認リマインダーの入力を表示 ▼
     function togglePhoneConfirm() {
       const type = document.getElementById('schType').value;
       const phoneGroup = document.getElementById('phoneConfirmGroup');
@@ -1415,10 +1579,36 @@
       }
     }
 
+    function toggleEditPhoneConfirm() {
+      const type = document.getElementById('editSchType').value;
+      const phoneGroup = document.getElementById('editPhoneConfirmGroup');
+      if (type === 'plan') {
+        phoneGroup.style.display = 'flex';
+      } else {
+        phoneGroup.style.display = 'none';
+        document.getElementById('editSchPhoneConfirm').value = '0';
+      }
+    }
+
     function openAddScheduleModal() {
       if(selectedCalDateStr) document.getElementById('schDate').value = selectedCalDateStr;
       togglePhoneConfirm();
       document.getElementById('addScheduleModal').style.display = 'flex';
+    }
+
+    // 🌟 予定編集モーダルを開く処理
+    function openEditScheduleModal(id) {
+      const sch = scheduleList.find(s => s.id === id);
+      if (!sch) return;
+      document.getElementById('editSchId').value = sch.id;
+      document.getElementById('editSchType').value = sch.type || 'plan';
+      document.getElementById('editSchDate').value = sch.date || '';
+      document.getElementById('editSchTime').value = sch.time || '';
+      document.getElementById('editSchTitle').value = sch.title || '';
+      document.getElementById('editSchNotify').value = sch.notifyMinutes || 0;
+      document.getElementById('editSchPhoneConfirm').value = sch.phoneConfirmMinutes || 0;
+      toggleEditPhoneConfirm();
+      document.getElementById('editScheduleModal').style.display = 'flex';
     }
 
     function saveSchedule(e) {
@@ -1456,6 +1646,35 @@
       alert('📅 カレンダーに予定を追加しました！');
     }
 
+    // 🌟 編集した予定の保存処理
+    function saveEditedSchedule(e) {
+      e.preventDefault();
+      const id = document.getElementById('editSchId').value;
+      const sch = scheduleList.find(s => s.id === id);
+      if (!sch) return;
+
+      const notifyMins = parseInt(document.getElementById('editSchNotify').value, 10);
+      const phoneConfirmMins = parseInt(document.getElementById('editSchPhoneConfirm').value, 10);
+
+      sch.type = document.getElementById('editSchType').value;
+      sch.date = document.getElementById('editSchDate').value;
+      sch.time = document.getElementById('editSchTime').value;
+      sch.title = document.getElementById('editSchTitle').value;
+      
+      // 通知設定が変わっていれば再トリガー用にフラグをリセット
+      if (sch.notifyMinutes !== notifyMins) sch.notified = false;
+      if (sch.phoneConfirmMinutes !== phoneConfirmMins) sch.phoneNotified = false;
+
+      sch.notifyMinutes = notifyMins;
+      sch.phoneConfirmMinutes = phoneConfirmMins;
+
+      saveData();
+      closeModal('editScheduleModal');
+      renderCalendar();
+      renderHomeMetrics();
+      alert('✨ 予定を更新しました！');
+    }
+
     function deleteSchedule(id) {
       if(confirm('この予定を削除しますか？')) {
         scheduleList = scheduleList.filter(s => s.id !== id);
@@ -1475,7 +1694,6 @@
         const schDateTime = new Date(`${sch.date}T${sch.time}:00`);
         const diffMs = schDateTime.getTime() - now.getTime();
         
-        // 通常の予定通知
         if (!sch.notified && sch.notifyMinutes > 0) {
           const notifyMs = sch.notifyMinutes * 60000;
           if (diffMs > 0 && diffMs <= notifyMs) {
@@ -1495,7 +1713,6 @@
           }
         }
         
-        // ▼ 追加: 電話確認用通知 ▼
         if (!sch.phoneNotified && sch.phoneConfirmMinutes > 0) {
           const notifyPhoneMs = sch.phoneConfirmMinutes * 60000;
           if (diffMs > 0 && diffMs <= notifyPhoneMs) {
@@ -2312,6 +2529,7 @@
       document.getElementById('addYear').value = d.getFullYear();
       document.getElementById('addMonth').value = (d.getMonth() + 1) + '月';
       document.getElementById('addDay').value = d.getDate();
+      updateCastDatalist(); // 🌟 オートフィル用の候補を更新
       document.getElementById('addModal').style.display = 'flex';
     }
 
