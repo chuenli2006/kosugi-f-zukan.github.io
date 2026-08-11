@@ -639,7 +639,9 @@
         <div class="controls">
           <div class="search-row">
             <div class="search-box">
-              <input type="text" id="searchKeyword" placeholder="キャスト名、店舗名やマークで検索..." oninput="render()">
+              <!-- 🌟 キャスト名・店舗名オートフィル用 datalist をバインド -->
+              <input type="text" id="searchKeyword" list="searchDatalist" placeholder="キャスト名、店舗名やマークで検索..." oninput="render()">
+              <datalist id="searchDatalist"></datalist>
             </div>
             <!-- 🌟 折りたたみメニュー展開・格納ボタン（ガチャから変更） -->
             <button class="btn-options-toggle" onclick="toggleOptionsFold()">
@@ -977,9 +979,12 @@
         <div class="form-group"><label>メモ・感想</label><input type="text" id="addVisitNote" placeholder="接客メモなど"></div>
 
         <details class="detail-fold">
-          <summary>💰 詳細（金額・店舗名・WEBレポート）</summary>
+          <summary>💰 詳細（金額・コース時間・店舗名・WEBレポート）</summary>
           <div class="fold-body">
-            <div class="form-group"><label>金額（円）</label><input type="number" id="addAmount" min="0" placeholder="例: 15000"></div>
+            <div style="display:flex; gap:6px;">
+              <div class="form-group" style="flex:1;"><label>金額（円）</label><input type="number" id="addAmount" min="0" placeholder="例: 15000"></div>
+              <div class="form-group" style="flex:1;"><label>コース時間（分）</label><input type="number" id="addCourseTime" min="0" placeholder="例: 60"></div>
+            </div>
             <div class="form-group"><label>店舗名</label><input type="text" id="addStoreName" placeholder="例: ○○ヘルス 渋谷店"></div>
             <div class="form-group"><label>WEBレポートURL</label><input type="url" id="addReportUrl" placeholder="https://note.com/..."></div>
           </div>
@@ -1032,7 +1037,10 @@
         </div>
 
         <div class="form-group"><label>メモ</label><textarea id="editVisitNote" rows="2"></textarea></div>
-        <div class="form-group"><label>金額（円）</label><input type="number" id="editAmount" min="0" placeholder="15000"></div>
+        <div style="display:flex; gap:6px;">
+          <div class="form-group" style="flex:1;"><label>金額（円）</label><input type="number" id="editAmount" min="0" placeholder="15000"></div>
+          <div class="form-group" style="flex:1;"><label>コース時間（分）</label><input type="number" id="editCourseTime" min="0" placeholder="60"></div>
+        </div>
         <div class="form-group"><label>店舗名</label><input type="text" id="editStoreName" placeholder="店舗名"></div>
         <div class="form-group"><label>WEBレポートURL</label><input type="url" id="editReportUrl"></div>
         <div style="display:flex; gap:8px;"><button type="submit" class="close-btn" style="flex:1;">更新</button><button type="button" class="close-btn" onclick="closeModal('editRecordModal')" style="background:#888; flex:1;">取消</button></div>
@@ -1229,6 +1237,7 @@
       amountRbs.forEach(rb => { if(rb.value === currentAmountHide) rb.checked = true; });
 
       updateUIHeader();
+      updateSearchDatalist(); // 🌟 検索欄のオートフィル補完を生成
       render();
       switchMainTab('home');
       
@@ -1255,6 +1264,7 @@
       localStorage.setItem('user_schedules_' + currentUserName, JSON.stringify(scheduleList));
       historyList.forEach((h, i) => h.originalIndex = i);
       updateUIHeader();
+      updateSearchDatalist(); // 🌟 データ保存時に検索用補完を更新
     }
 
     function saveDateFormat(val) {
@@ -1284,6 +1294,22 @@
       Object.keys(castData).forEach(n => castNames.add(n));
       historyList.forEach(h => { if(h.name) castNames.add(h.name); });
       datalist.innerHTML = Array.from(castNames).map(name => `<option value="${name}">`).join('');
+    }
+
+    // 🌟 検索欄用（キャスト名・店舗名）オートフィル機能の実装
+    function updateSearchDatalist() {
+      const datalist = document.getElementById('searchDatalist');
+      if (!datalist) return;
+      const candidates = new Set();
+      
+      // キャスト名の収集
+      Object.keys(castData).forEach(n => candidates.add(n));
+      historyList.forEach(h => { 
+        if(h.name) candidates.add(h.name);
+        if(h.storeName) candidates.add(h.storeName); // 店舗名の収集
+      });
+
+      datalist.innerHTML = Array.from(candidates).map(item => `<option value="${item}">`).join('');
     }
 
     function onCastNameInput(nameVal) {
@@ -1324,6 +1350,16 @@
       }
       if (foundType) {
         document.getElementById('addTypeTag').value = foundType;
+      }
+
+      // 3. 店舗名の自動入力（最新の訪問店舗を取得）
+      let foundStore = '';
+      const matchStoreRec = historyList.slice().reverse().find(h => h.name === name && h.storeName);
+      if (matchStoreRec && matchStoreRec.storeName) {
+        foundStore = matchStoreRec.storeName;
+      }
+      if (foundStore) {
+        document.getElementById('addStoreName').value = foundStore;
       }
     }
 
@@ -1958,13 +1994,16 @@
     }
 
     function buildRowDetailHTML(v) {
-      const hasDetail = v.amount || v.storeName;
+      const hasDetail = v.amount || v.courseTime || v.storeName;
       if(!hasDetail) return { btn: '', panel: '' };
       const btn = `<button class="info-toggle-btn" title="詳細" onclick="toggleRowDetail(${v.originalIndex})">ⓘ</button>`;
       const bits = [];
       if(v.amount) {
         const amountDisplay = currentAmountHide === 'hide' ? '***' : `¥${Number(v.amount).toLocaleString()}`;
         bits.push(`<span><span class="rd-label">💰金額</span>${amountDisplay}</span>`);
+      }
+      if(v.courseTime) {
+        bits.push(`<span><span class="rd-label">⏱️コース</span>${v.courseTime}分</span>`);
       }
       if(v.storeName) bits.push(`<span><span class="rd-label">🏬店舗</span>${v.storeName}</span>`);
       const panel = `<div class="row-detail-panel" id="rd-${v.originalIndex}">${bits.join('')}</div>`;
@@ -2780,6 +2819,7 @@
         flags: document.getElementById('addFlags').value,
         visitNote: document.getElementById('addVisitNote').value,
         amount: document.getElementById('addAmount').value || '',
+        courseTime: document.getElementById('addCourseTime').value || '', // 🌟 コース時間の保存
         storeName: document.getElementById('addStoreName').value || '',
         reportUrl: document.getElementById('addReportUrl').value || '',
         chekiImg: document.getElementById('addLetterImg').value || '',
@@ -2818,6 +2858,7 @@
       document.getElementById('editTypeTag').value = rec.typeTag || '';
       document.getElementById('editVisitNote').value = rec.visitNote || '';
       document.getElementById('editAmount').value = rec.amount || '';
+      document.getElementById('editCourseTime').value = rec.courseTime || ''; // 🌟 コース時間の読み込み
       document.getElementById('editStoreName').value = rec.storeName || '';
       document.getElementById('editReportUrl').value = rec.reportUrl || '';
       document.getElementById('editRecordModal').style.display = 'flex';
@@ -2835,6 +2876,7 @@
         rec.typeTag = document.getElementById('editTypeTag').value;
         rec.visitNote = document.getElementById('editVisitNote').value;
         rec.amount = document.getElementById('editAmount').value;
+        rec.courseTime = document.getElementById('editCourseTime').value; // 🌟 コース時間の更新
         rec.storeName = document.getElementById('editStoreName').value;
         rec.reportUrl = document.getElementById('editReportUrl').value;
         saveData(); render(); renderDashboard(); closeModal('editRecordModal');
