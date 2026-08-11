@@ -13,7 +13,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="風俗図鑑">
   
-  <!-- 標準のファビコン（ブラウザのタブに表示） -->
+    <!-- 標準のファビコン（ブラウザのタブに表示） -->
   <link rel="icon" type="image/svg+xml" href="/icon.svg">
   
   <style>
@@ -74,27 +74,55 @@
     }
     .pill-btn:active { transform: scale(0.95); }
 
-    /* ボトムナビゲーション（フローティング式） */
+    /* ボトムナビゲーション（フローティング式・縦書き防止対応） */
     .floating-nav {
       position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
       background: var(--card-bg); border: 1px solid var(--border-color);
-      padding: 8px 16px; border-radius: 30px; box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-      display: flex; gap: 14px; z-index: 100; backdrop-filter: blur(10px);
+      padding: 8px 10px; border-radius: 30px; box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      display: flex; gap: 4px; z-index: 100; backdrop-filter: blur(10px);
+      width: 96%; max-width: 420px; justify-content: space-between;
     }
     .nav-item {
-      background: none; border: none; font-size: 0.7rem; font-weight: bold;
+      background: none; border: none; font-size: 0.65rem; font-weight: bold;
       color: var(--light-text); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px;
-      transition: all 0.2s;
+      transition: all 0.2s; white-space: nowrap; flex: 1;
     }
     .nav-item.active { color: var(--accent-pink); transform: scale(1.1); }
     .nav-icon { font-size: 1.1rem; }
 
+    /* 🌟 展開式FABコンテナとアニメーション制御 */
+    .fab-container {
+      position: fixed; bottom: 85px; right: 20px; z-index: 900;
+      display: flex; flex-direction: column; align-items: flex-end; gap: 10px;
+    }
+    .fab-menu {
+      display: flex; flex-direction: column; gap: 8px; align-items: flex-end;
+      opacity: 0; transform: translateY(20px) scale(0.8); pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .fab-container.open .fab-menu {
+      opacity: 1; transform: translateY(0) scale(1); pointer-events: auto;
+    }
+    .fab-sub-btn {
+      background: var(--card-bg); color: var(--accent-pink); border: 1.5px solid var(--primary-pink);
+      padding: 8px 16px; border-radius: 20px; font-size: 0.82rem; font-weight: bold; cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 6px;
+      white-space: nowrap; transition: transform 0.2s;
+    }
+    .fab-sub-btn:active { transform: scale(0.95); }
+
     .fab-add {
-      position: fixed; bottom: 20px; right: 20px; width: 56px; height: 56px; border-radius: 28px;
+      width: 56px; height: 56px; border-radius: 28px;
       background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink));
       color: white; border: none; font-size: 1.6rem; font-weight: bold;
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); cursor: pointer; z-index: 900;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); cursor: pointer;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .fab-container.open .fab-add { transform: rotate(45deg); }
+    
+    @media (max-width: 767px) {
+      .fab-container.hide-on-mobile { display: none !important; }
     }
 
     .tab-content { display: none; width: 100%; animation: slideUpFade 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
@@ -168,8 +196,11 @@
       box-shadow: 0 4px 15px rgba(230, 161, 0, 0.25);
     }
     details.cast-card.super-favorite summary.card-btn { color: var(--gold-text); }
-    details.cast-card .anim-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.35s; }
-    details.cast-card[open] .anim-wrapper { grid-template-rows: 1fr; }
+    
+    details.cast-card .anim-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    details.cast-card.is-open .anim-wrapper { grid-template-rows: 1fr; }
+    details.cast-card[open]:not(.is-open) summary .arrow-icon { transform: rotate(0deg); color: var(--light-text); }
+    
     .anim-inner { overflow: hidden; width: 100%; }
 
     summary.card-btn { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; cursor: pointer; list-style: none; font-weight: bold; width: 100%; }
@@ -183,11 +214,6 @@
     .status-retired { background: rgba(150, 150, 150, 0.15); color: var(--light-text); border: 1px solid var(--border-color); }
     .old-name-badge { font-size: 0.65rem; background: rgba(150, 150, 150, 0.15); color: var(--light-text); padding: 1px 6px; border-radius: 6px; border: 1px solid var(--border-color); }
     .super-tag { font-size: 0.65rem; background: var(--gold-border); color: #fff; padding: 1px 5px; border-radius: 8px; font-weight: bold; }
-    .store-pill-badge {
-      display: inline-flex; align-items: center; gap: 3px; font-size: 0.65rem;
-      background: var(--soft-pink); color: var(--accent-pink); border: 1px solid var(--primary-pink);
-      padding: 1px 7px; border-radius: 10px; font-weight: bold; box-shadow: 0 1px 3px rgba(0,0,0,0.03);
-    }
     .badge-count { background: var(--badge-bg); color: var(--badge-color); font-weight: bold; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem; }
 
     .card-body { padding: 10px 14px 12px; border-top: 1px dashed var(--border-color); background-color: var(--card-bg); display: flex; flex-direction: column; gap: 8px; width: 100%; }
@@ -228,6 +254,42 @@
     summary.timeline-summary { padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 0.85rem; list-style: none; width: 100%; }
     summary.timeline-summary::-webkit-details-marker { display: none; }
     .timeline-body { padding: 8px 12px 10px; border-top: 1px dashed var(--border-color); background: var(--bg-color); font-size: 0.78rem; display: flex; flex-direction: column; gap: 6px; width: 100%; }
+
+    /* ===== マイカレンダー用CSS追加（縦幅の崩れ防止対応） ===== */
+    .calendar-header { display: flex; justify-content: space-between; align-items: center; padding: 12px; font-weight: bold; color: var(--accent-pink); background: var(--card-bg); border-radius: var(--radius); border: 1px solid var(--border-color); margin-bottom: 12px; box-shadow: var(--shadow); }
+    .calendar-header button { background: var(--soft-pink); border: 1px solid var(--primary-pink); color: var(--accent-pink); padding: 4px 10px; border-radius: 12px; cursor: pointer; font-weight: bold; }
+    
+    .calendar-wrapper-box {
+      background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 10px; box-shadow: var(--shadow); margin-bottom: 12px;
+      min-height: 380px; /* 月によって週数が変わり高さがガタつくのを防ぐための最小高 */
+      display: flex; flex-direction: column;
+    }
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; padding: 0; }
+    .cal-day-name { text-align: center; font-size: 0.75rem; font-weight: bold; color: var(--light-text); padding-bottom: 4px; }
+    .cal-cell { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 2px; cursor: pointer; position: relative; }
+    .cal-cell.today { border: 2px solid var(--accent-pink); background: var(--soft-pink); }
+    .cal-cell.selected { background: #e0f0ff; border-color: #339af0; }
+    .cal-cell.empty { background: transparent; border: none; pointer-events: none; }
+    .cal-date { font-size: 0.8rem; font-weight: bold; color: var(--text-color); margin-top: 2px; }
+    .cal-dots { display: flex; gap: 3px; flex-wrap: wrap; justify-content: center; margin-top: 2px; padding: 0 2px; width: 100%; }
+    .cal-dot { width: 6px; height: 6px; border-radius: 50%; }
+    .dot-history { background-color: var(--primary-pink); box-shadow: 0 0 3px var(--primary-pink); }
+    .dot-plan { background-color: #20c997; box-shadow: 0 0 3px #20c997; } /* 緑色: イク予定 */
+    .dot-res { background-color: #ff922b; box-shadow: 0 0 3px #ff922b; } /* オレンジ: 予約開始 */
+    .cal-bell { position: absolute; top: 1px; right: 2px; font-size: 0.55rem; color: #ff922b; }
+    
+    .calendar-details { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 12px; min-height: 100px; box-shadow: var(--shadow); }
+    .cal-detail-item { padding: 8px; border-bottom: 1px dashed var(--border-color); display: flex; flex-direction: column; gap: 4px; }
+    .cal-detail-item:last-child { border-bottom: none; }
+    .cal-detail-title { font-size: 0.85rem; font-weight: bold; color: var(--accent-pink); display: flex; justify-content: space-between; align-items: center; }
+    .cal-detail-sub { font-size: 0.75rem; color: var(--light-text); }
+    
+    /* スワイプアニメーション用CSS */
+    @keyframes slideInRight { from { transform: translateX(30px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideInLeft { from { transform: translateX(-30px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    .slide-in-right { animation: slideInRight 0.3s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+    .slide-in-left { animation: slideInLeft 0.3s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+    /* ================================= */
 
     /* 共有タブ専用スタイル（統合版） */
     .shared-top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; background: var(--card-bg); padding: 10px 14px; border-radius: var(--radius); border: 1px solid var(--border-color); box-shadow: var(--shadow); width: 100%; }
@@ -323,6 +385,15 @@
     .rank-pct { font-weight: bold; color: var(--accent-pink); font-size: 0.8rem; min-width: 42px; text-align: right; }
     .dash-empty { text-align: center; color: var(--light-text); font-size: 0.8rem; padding: 20px 10px; }
 
+    /* ===== 分析カルーセル（スワイプ用UI） ===== */
+    .carousel-wrapper { position: relative; width: 100%; overflow: hidden; }
+    .carousel-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -ms-overflow-style: none; scroll-behavior: smooth; }
+    .carousel-container::-webkit-scrollbar { display: none; }
+    .carousel-slide { flex: 0 0 100%; scroll-snap-align: start; width: 100%; box-sizing: border-box; }
+    .carousel-dots { display: flex; justify-content: center; gap: 6px; margin-top: 12px; }
+    .carousel-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border-color); transition: all 0.3s; cursor: pointer; }
+    .carousel-dot.active { background: var(--accent-pink); width: 16px; border-radius: 4px; }
+
 
     /* =========================================================
        🖥️ PC向けレスポンシブ・サイドバーレイアウト（案1）
@@ -377,6 +448,7 @@
         font-size: 0.95rem;
         border-radius: 10px;
         gap: 12px;
+        white-space: normal;
       }
 
       .nav-item:hover {
@@ -394,13 +466,23 @@
         text-align: center;
       }
 
-      .fab-add {
+      .fab-container {
         position: static;
+        width: 100%;
+      }
+      .fab-menu {
+        position: absolute; bottom: 65px; right: 0; align-items: flex-end;
+      }
+      .fab-add {
         width: 100%;
         height: 52px;
         border-radius: 26px;
         font-size: 1.05rem;
         gap: 6px;
+      }
+      
+      .fab-container.hide-on-mobile {
+        display: flex !important; /* PCでは常に表示 */
       }
       
       .fab-text { display: inline; }
@@ -442,7 +524,6 @@
 <body>
 
   <div class="app-layout">
-    <!-- スマホでは上部/下部に分散し、PCでは左側のサイドバーになるエリア -->
     <aside class="sidebar-area">
       <header>
         <h1 id="headerTitle">童貞の風俗履歴図鑑</h1>
@@ -464,6 +545,9 @@
         <button class="nav-item" id="nav-my" onclick="switchMainTab('my')">
           <span class="nav-icon">📖</span><span>マイ図鑑</span>
         </button>
+        <button class="nav-item" id="nav-calendar" onclick="switchMainTab('calendar')">
+          <span class="nav-icon">📅</span><span>予定</span>
+        </button>
         <button class="nav-item" id="nav-dashboard" onclick="switchMainTab('dashboard')">
           <span class="nav-icon">📊</span><span>統計</span>
         </button>
@@ -472,12 +556,18 @@
         </button>
       </nav>
 
-      <button class="fab-add" onclick="openAddModal()">
-        <span class="fab-icon">＋</span><span class="fab-text">記録を追加</span>
-      </button>
+      <!-- 🌟 展開式FABコンテナ -->
+      <div class="fab-container" id="fabContainer">
+        <div class="fab-menu" id="fabMenu">
+          <button class="fab-sub-btn" onclick="openAddModal(); toggleFabMenu();"><span>📝 記録の追加</span></button>
+          <button class="fab-sub-btn" onclick="openAddScheduleModal(); toggleFabMenu();"><span>📅 予定の追加</span></button>
+        </div>
+        <button class="fab-add" onclick="toggleFabMenu()">
+          <span class="fab-icon" id="fabMainIcon">＋</span><span class="fab-text">追加</span>
+        </button>
+      </div>
     </aside>
 
-    <!-- メインコンテンツ表示エリア -->
     <main class="content-area">
       <!-- ===== 1. ホーム画面 ===== -->
       <div id="viewHome" class="active">
@@ -503,7 +593,7 @@
             <div class="countdown-anim" id="homeDaysSinceLast">計測データなし</div>
           </div>
 
-          <div class="home-card-c" onclick="openNextVisitPrompt()">
+          <div class="home-card-c" onclick="switchMainTab('calendar')">
             <div style="font-size: 0.72rem; color: var(--light-text); font-weight: bold; margin-bottom: 2px;">次回の予定</div>
             <div style="font-size: 0.95rem; font-weight: bold; color: var(--accent-pink);" id="homeNextVisitText">次はいつイクのー？♡</div>
           </div>
@@ -553,7 +643,33 @@
         <div id="mainContent"></div>
       </div>
 
-      <!-- ===== 3. 統計タブ ===== -->
+      <!-- ===== 3. マイカレンダータブ ===== -->
+      <div id="viewCalendar" class="tab-content">
+        <div class="calendar-header">
+          <button onclick="changeCalendarMonth(-1)">◀ 先月</button>
+          <h2 id="calendarMonthLabel" style="font-size:1.1rem; margin:0;">2026年 8月</h2>
+          <button onclick="changeCalendarMonth(1)">来月 ▶</button>
+        </div>
+        
+        <!-- ▼ 高さを固定してナビゲーションのガタつきを防止するラッパー ▼ -->
+        <div class="calendar-wrapper-box">
+          <div class="calendar-grid" style="margin-bottom:6px;">
+            <div class="cal-day-name">日</div><div class="cal-day-name">月</div><div class="cal-day-name">火</div><div class="cal-day-name">水</div><div class="cal-day-name">木</div><div class="cal-day-name">金</div><div class="cal-day-name">土</div>
+          </div>
+          <!-- スワイプアニメーションの適用対象 -->
+          <div class="calendar-grid" id="calendarGrid"></div>
+        </div>
+        
+        <div class="calendar-details" id="calendarDetails">
+          <div style="text-align:center; color:var(--light-text); font-size:0.8rem; padding: 20px 0;">日付をタップすると詳細が表示されます</div>
+        </div>
+        
+        <div style="display:flex; justify-content:flex-end; padding-top:12px;">
+          <button class="pill-btn" onclick="openAddScheduleModal()" style="font-size:0.9rem; padding:8px 16px;">＋ 予定・予約開始日を追加</button>
+        </div>
+      </div>
+
+      <!-- ===== 4. 統計タブ ===== -->
       <div id="viewDashboard" class="tab-content">
         <div class="dashboard" id="dashboardOverview" style="margin-bottom:14px;">
           <div style="font-size:0.8rem; font-weight:bold; color:var(--accent-pink); margin-bottom:8px;">📊 全体利用統計</div>
@@ -575,7 +691,7 @@
         <div id="dashboardContent"></div>
       </div>
 
-      <!-- ===== 4. 共有タブ ===== -->
+      <!-- ===== 5. 共有タブ ===== -->
       <div id="viewShared" class="tab-content">
         <div class="shared-top-bar">
           <span style="font-size:0.85rem; font-weight:bold; color:var(--accent-pink);">📥 友達からの共有データ</span>
@@ -746,23 +862,18 @@
         </div>
 
         <div class="help-box">
-          <h4>2. 📊 利用統計ダッシュボード</h4>
+          <h4>2. 📅 マイカレンダー＆リマインダー</h4>
+          <p>イク予定や予約開始日を管理し、直前にはプッシュ通知でお知らせします。</p>
+        </div>
+
+        <div class="help-box">
+          <h4>3. 📊 利用統計ダッシュボード</h4>
           <p>総利用回数、経験人数、在籍数、オキニ率を自動集計します。</p>
         </div>
 
         <div class="help-box">
-          <h4>3. 📤 友だちへの共有機能</h4>
+          <h4>4. 📤 友だちへの共有機能</h4>
           <p>キャストごとの基本情報や利用履歴を .json ファイルとして書き出して簡単に共有可能です。</p>
-        </div>
-
-        <div class="help-box">
-          <h4>4. 💌 手紙・カード画像アップロード</h4>
-          <p>スマホの写真を選ぶだけで自動でImgurにアップロードされ、URLが入力されて美しくファイリングされます。</p>
-        </div>
-
-        <div class="help-box">
-          <h4>5. 🎨 10種類のカラーテーマ</h4>
-          <p>気分に合わせてUIカラーを自由自在に変更可能です。</p>
         </div>
 
       </div>
@@ -781,7 +892,23 @@
           <div class="form-group" style="flex:1;"><label>日</label><input type="number" id="addDay" min="1" max="31" placeholder="15" required></div>
         </div>
 
-        <div class="form-group"><label>キャスト名</label><input type="text" id="addName" required placeholder="例: ゆあ"></div>
+        <!-- キャスト名入力にオートフィル用 datalist を適用 -->
+        <div class="form-group">
+          <label>キャスト名</label>
+          <input type="text" id="addName" list="castDatalist" oninput="onCastNameInput(this.value)" required placeholder="例: ゆあ">
+          <datalist id="castDatalist"></datalist>
+        </div>
+
+        <div class="form-group"><label>系統タグ（複数時はカンマ区切り）</label>
+          <div class="flag-picker">
+            <button type="button" class="flag-btn" onclick="setTypeChar('アイドル系')">アイドル</button>
+            <button type="button" class="flag-btn" onclick="setTypeChar('清楚系')">清楚</button>
+            <button type="button" class="flag-btn" onclick="setTypeChar('ギャル系')">ギャル</button>
+            <button type="button" class="flag-btn" onclick="setTypeChar('女子アナ系')">女子アナ</button>
+            <button type="button" class="flag-btn flag-btn-clear" onclick="clearTypeInput()">クリア</button>
+          </div>
+          <input type="text" id="addTypeTag" placeholder="例: アイドル系, 清楚系">
+        </div>
 
         <div class="form-group"><label>スリーサイズ</label>
           <div class="style-grid-compact">
@@ -848,11 +975,139 @@
         </div>
 
         <div class="form-group"><label>フラグ</label><input type="text" id="editFlags"></div>
+
+        <div class="form-group"><label>系統タグ（複数時はカンマ区切り）</label>
+          <div class="flag-picker">
+            <button type="button" class="flag-btn" onclick="setEditTypeChar('アイドル系')">アイドル</button>
+            <button type="button" class="flag-btn" onclick="setEditTypeChar('清楚系')">清楚</button>
+            <button type="button" class="flag-btn" onclick="setEditTypeChar('ギャル系')">ギャル</button>
+            <button type="button" class="flag-btn" onclick="setEditTypeChar('女子アナ系')">女子アナ</button>
+            <button type="button" class="flag-btn flag-btn-clear" onclick="clearEditTypeInput()">クリア</button>
+          </div>
+          <input type="text" id="editTypeTag" placeholder="例: アイドル系, 清楚系">
+        </div>
+
         <div class="form-group"><label>メモ</label><textarea id="editVisitNote" rows="2"></textarea></div>
         <div class="form-group"><label>金額（円）</label><input type="number" id="editAmount" min="0" placeholder="15000"></div>
         <div class="form-group"><label>店舗名</label><input type="text" id="editStoreName" placeholder="店舗名"></div>
         <div class="form-group"><label>WEBレポートURL</label><input type="url" id="editReportUrl"></div>
         <div style="display:flex; gap:8px;"><button type="submit" class="close-btn" style="flex:1;">更新</button><button type="button" class="close-btn" onclick="closeModal('editRecordModal')" style="background:#888; flex:1;">取消</button></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ▼カレンダーの予定・予約追加モーダル▼ -->
+  <div class="modal-overlay" id="addScheduleModal">
+    <div class="modal-content">
+      <h3>📅 カレンダーに予定を追加</h3>
+      <form class="add-form" onsubmit="saveSchedule(event)">
+        <div class="form-group">
+          <label>予定の種類</label>
+          <select id="schType" required onchange="togglePhoneConfirm()">
+            <option value="plan">⚔️ イク予定 (来店日・店名など)</option>
+            <option value="reservation">🎫 予約開始日 (枠取り・待機)</option>
+          </select>
+        </div>
+        <div style="display:flex; gap:6px;">
+          <div class="form-group" style="flex:1;">
+            <label>日付</label>
+            <input type="date" id="schDate" required>
+          </div>
+          <div class="form-group" style="flex:1;">
+            <label>時間 (任意)</label>
+            <input type="time" id="schTime">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>タイトル・内容</label>
+          <input type="text" id="schTitle" required placeholder="例: 〇〇店 ゆあちゃん予約">
+        </div>
+        
+        <div class="form-group" id="phoneConfirmGroup" style="display:none;">
+          <label>📞 お店からの電話確認リマインダー</label>
+          <select id="schPhoneConfirm">
+            <option value="0">不要</option>
+            <option value="15">15分前</option>
+            <option value="30">30分前</option>
+            <option value="45">45分前</option>
+            <option value="60">1時間前</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>🔔 プッシュ通知リマインダー</label>
+          <select id="schNotify">
+            <option value="0">通知しない</option>
+            <option value="1">1分前</option>
+            <option value="5">5分前</option>
+            <option value="10">10分前</option>
+            <option value="30">30分前</option>
+            <option value="60">1時間前</option>
+          </select>
+          <div style="font-size:0.65rem; color:var(--light-text); margin-top:2px;">※設定時にブラウザの通知許可が求められます。通知を受け取るにはタブを開いたままか、PWAとして端末にインストールしてください。</div>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button type="submit" class="close-btn" style="flex:1;">予定を保存</button>
+          <button type="button" class="close-btn" onclick="closeModal('addScheduleModal')" style="background:#888; flex:1;">取消</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ▼ 予定の編集モーダル ▼ -->
+  <div class="modal-overlay" id="editScheduleModal">
+    <div class="modal-content">
+      <h3>✏️ 予定の編集</h3>
+      <form class="add-form" onsubmit="saveEditedSchedule(event)">
+        <input type="hidden" id="editSchId">
+        <div class="form-group">
+          <label>予定の種類</label>
+          <select id="editSchType" required onchange="toggleEditPhoneConfirm()">
+            <option value="plan">⚔️ イク予定</option>
+            <option value="reservation">🎫 予約開始日</option>
+          </select>
+        </div>
+        <div style="display:flex; gap:6px;">
+          <div class="form-group" style="flex:1;">
+            <label>日付</label>
+            <input type="date" id="editSchDate" required>
+          </div>
+          <div class="form-group" style="flex:1;">
+            <label>時間 (任意)</label>
+            <input type="time" id="editSchTime">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>タイトル・内容</label>
+          <input type="text" id="editSchTitle" required>
+        </div>
+        
+        <div class="form-group" id="editPhoneConfirmGroup" style="display:none;">
+          <label>📞 お店からの電話確認リマインダー</label>
+          <select id="editSchPhoneConfirm">
+            <option value="0">不要</option>
+            <option value="15">15分前</option>
+            <option value="30">30分前</option>
+            <option value="45">45分前</option>
+            <option value="60">1時間前</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>🔔 プッシュ通知リマインダー</label>
+          <select id="editSchNotify">
+            <option value="0">通知しない</option>
+            <option value="1">1分前</option>
+            <option value="5">5分前</option>
+            <option value="10">10分前</option>
+            <option value="30">30分前</option>
+            <option value="60">1時間前</option>
+          </select>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button type="submit" class="close-btn" style="flex:1;">更新する</button>
+          <button type="button" class="close-btn" onclick="closeModal('editScheduleModal')" style="background:#888; flex:1;">取消</button>
+        </div>
       </form>
     </div>
   </div>
@@ -866,7 +1121,6 @@
   </div>
 
   <script>
-    // サービスワーカーの登録
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
@@ -882,16 +1136,34 @@
     let historyList = [];
     let castData = {};
     let sharedRecords = [];
+    let scheduleList = [];
     let bubbleInterval;
     let dashPeriodType = 'month';
     let targetExportCastName = '';
+    
+    window.typeChartInstance = null;
+
+    function setTypeChar(c) { 
+      const el = document.getElementById('addTypeTag');
+      el.value = el.value ? el.value + ', ' + c : c;
+    }
+    function clearTypeInput() { document.getElementById('addTypeTag').value = ''; }
+    
+    function setEditTypeChar(c) { 
+      const el = document.getElementById('editTypeTag');
+      el.value = el.value ? el.value + ', ' + c : c;
+    }
+    function clearEditTypeInput() { document.getElementById('editTypeTag').value = ''; }
 
     function initUserData() {
       applyTheme(currentTheme);
       const savedHist = localStorage.getItem('user_hist_' + currentUserName);
       const savedCast = localStorage.getItem('user_cast_' + currentUserName);
+      const savedSchedules = localStorage.getItem('user_schedules_' + currentUserName);
+      
       historyList = savedHist ? JSON.parse(savedHist) : [];
       castData = savedCast ? JSON.parse(savedCast) : {};
+      scheduleList = savedSchedules ? JSON.parse(savedSchedules) : [];
       
       const savedShared = localStorage.getItem('user_shared_list_' + currentUserName);
       sharedRecords = savedShared ? JSON.parse(savedShared) : [];
@@ -910,6 +1182,12 @@
       updateUIHeader();
       render();
       switchMainTab('home');
+      
+      calCurrentDate = new Date();
+      renderCalendar();
+      
+      setInterval(checkNotifications, 60000);
+      checkNotifications();
     }
 
     function updateUIHeader() {
@@ -925,6 +1203,7 @@
       localStorage.setItem('user_hist_' + currentUserName, JSON.stringify(historyList));
       localStorage.setItem('user_cast_' + currentUserName, JSON.stringify(castData));
       localStorage.setItem('user_shared_list_' + currentUserName, JSON.stringify(sharedRecords));
+      localStorage.setItem('user_schedules_' + currentUserName, JSON.stringify(scheduleList));
       historyList.forEach((h, i) => h.originalIndex = i);
       updateUIHeader();
     }
@@ -944,29 +1223,61 @@
       }
     }
 
-    // ==========================================
-    // 次回予約日管理（次はいつイクのー？♡）
-    // ==========================================
-    function getNextVisitDate() {
-      return localStorage.getItem('user_next_visit_' + currentUserName) || '';
-    }
-
-    function setNextVisitDate(dateStr) {
-      localStorage.setItem('user_next_visit_' + currentUserName, dateStr);
-    }
-
     function openNextVisitPrompt() {
-      const current = getNextVisitDate();
-      const input = prompt("次回の予約日を入力してください（例: 2026-08-25 または 2026/08/25）:", current);
-      if(input !== null) {
-        setNextVisitDate(input.trim());
-        renderHomeMetrics();
+      switchMainTab('calendar');
+    }
+
+    // 🌟 キャスト名オートフィル機能の実装
+    function updateCastDatalist() {
+      const datalist = document.getElementById('castDatalist');
+      if (!datalist) return;
+      const castNames = new Set();
+      Object.keys(castData).forEach(n => castNames.add(n));
+      historyList.forEach(h => { if(h.name) castNames.add(h.name); });
+      datalist.innerHTML = Array.from(castNames).map(name => `<option value="${name}">`).join('');
+    }
+
+    function onCastNameInput(nameVal) {
+      const name = nameVal.trim();
+      if (!name) return;
+      
+      // 1. スリーサイズの自動入力
+      let foundStyle = '';
+      if (castData[name] && castData[name].style) {
+        foundStyle = castData[name].style;
+      } else {
+        const matchRec = historyList.slice().reverse().find(h => h.name === name && h.style);
+        if (matchRec) foundStyle = matchRec.style;
+      }
+
+      if (foundStyle) {
+        const tMatch = foundStyle.match(/T\s*:?\s*(\d+)/i);
+        const bMatch = foundStyle.match(/B\s*:?\s*(\d+)\s*(\([A-Z\+]+\))?/i);
+        const wMatch = foundStyle.match(/W\s*:?\s*(\d+)/i);
+        const hMatch = foundStyle.match(/H\s*:?\s*(\d+)/i);
+
+        if (tMatch) document.getElementById('addStyleT').value = tMatch[1];
+        if (bMatch) document.getElementById('addStyleB').value = bMatch[1] + (bMatch[2] ? bMatch[2].replace(/[()]/g,'') : '');
+        if (wMatch) document.getElementById('addStyleW').value = wMatch[1];
+        if (hMatch) document.getElementById('addStyleH').value = hMatch[1];
+        
+        ['addStyleT', 'addStyleB', 'addStyleW', 'addStyleH'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el.value) updateInputColor(el, id.replace('addStyle', ''));
+        });
+      }
+
+      // 2. 系統タグの自動入力
+      let foundType = '';
+      const matchTypeRec = historyList.slice().reverse().find(h => h.name === name && h.typeTag);
+      if (matchTypeRec && matchTypeRec.typeTag) {
+        foundType = matchTypeRec.typeTag;
+      }
+      if (foundType) {
+        document.getElementById('addTypeTag').value = foundType;
       }
     }
 
-    // ==========================================
-    // Imgur API 匿名アップロード
-    // ==========================================
     async function uploadImageToImgur(fileInput, targetUrlInputId, statusSpanId) {
       const file = fileInput.files[0];
       if (!file) return;
@@ -997,9 +1308,6 @@
       }
     }
 
-    // ==========================================
-    // スタイル（T/B/W/H）ヘルパー
-    // ==========================================
     function updateInputColor(inputElem, type) {
       const val = inputElem.value.trim().toUpperCase();
       const numMatch = val.match(/\d+/);
@@ -1029,6 +1337,7 @@
       if (!styleStr || !styleStr.trim()) {
         return '<div class="style-row"><span class="style-none">スタイルデータなし</span></div>';
       }
+      
       const str = styleStr.toUpperCase();
       const tMatch = str.match(/T\s*:?\s*(\d+)/i);
       const bMatch = str.match(/B\s*:?\s*(\d+)\s*(\([A-Z\+]+\))?/i);
@@ -1064,9 +1373,12 @@
       return tagsHtml;
     }
 
-    // ==========================================
-    // タブ＆ナビゲーション制御
-    // ==========================================
+    // 🌟 展開式FABのトグル制御
+    function toggleFabMenu() {
+      const container = document.getElementById('fabContainer');
+      container.classList.toggle('open');
+    }
+
     function switchMainTab(type) {
       document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
       const targetNav = document.getElementById('nav-' + type);
@@ -1074,14 +1386,25 @@
 
       const homeView = document.getElementById('viewHome');
       const myView = document.getElementById('viewMy');
+      const calendarView = document.getElementById('viewCalendar');
       const sharedView = document.getElementById('viewShared');
       const dashView = document.getElementById('viewDashboard');
       const headerTitle = document.getElementById('headerTitle');
+      const fabContainer = document.getElementById('fabContainer');
+
+      // 指定されたタブでのみFAB（追加ボタン）を表示する制御
+      if (type === 'home' || type === 'my') {
+        fabContainer.classList.remove('hide-on-mobile');
+      } else {
+        fabContainer.classList.add('hide-on-mobile');
+        fabContainer.classList.remove('open');
+      }
 
       if(type === 'home') {
         homeView.classList.add('active');
         headerTitle.classList.add('hidden');
         myView.style.display = 'none';
+        calendarView.style.display = 'none';
         sharedView.style.display = 'none';
         dashView.style.display = 'none';
         startHomeAnimations();
@@ -1091,10 +1414,12 @@
         clearInterval(bubbleInterval);
 
         myView.style.display = 'none';
+        calendarView.style.display = 'none';
         sharedView.style.display = 'none';
         dashView.style.display = 'none';
 
         if(type === 'my') myView.style.display = 'block';
+        else if (type === 'calendar') { calendarView.style.display = 'block'; renderCalendar(); }
         else if (type === 'shared') { sharedView.style.display = 'block'; renderSharedArea(); }
         else if (type === 'dashboard') { dashView.style.display = 'block'; renderDashboard(); }
 
@@ -1105,9 +1430,315 @@
       }
     }
 
-    // ==========================================
-    // ホーム画面ダイナミック演出
-    // ==========================================
+    let calCurrentDate = new Date();
+    let selectedCalDateStr = '';
+
+    // ▼ カレンダーの左右スワイプ対応 ▼
+    function changeCalendarMonth(offset) {
+      calCurrentDate.setMonth(calCurrentDate.getMonth() + offset);
+      
+      const grid = document.getElementById('calendarGrid');
+      grid.classList.remove('slide-in-left', 'slide-in-right');
+      void grid.offsetWidth; // 強制リフロー
+      grid.classList.add(offset > 0 ? 'slide-in-right' : 'slide-in-left');
+      
+      renderCalendar();
+    }
+
+    function renderCalendar() {
+      const year = calCurrentDate.getFullYear();
+      const month = calCurrentDate.getMonth();
+      document.getElementById('calendarMonthLabel').innerText = `${year}年 ${month + 1}月`;
+      
+      const firstDay = new Date(year, month, 1).getDay();
+      const lastDate = new Date(year, month + 1, 0).getDate();
+      
+      const grid = document.getElementById('calendarGrid');
+      grid.innerHTML = '';
+
+      const today = new Date();
+      const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
+      
+      for (let i = 0; i < firstDay; i++) {
+        grid.innerHTML += `<div class="cal-cell empty"></div>`;
+      }
+      
+      for (let d = 1; d <= lastDate; d++) {
+        const isToday = isCurrentMonth && today.getDate() === d;
+        const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        
+        let dotsHtml = '';
+        let hasNotification = false;
+        
+        const matchedHistory = historyList.filter(h => {
+          const hy = parseInt(h.year, 10);
+          const hm = parseInt(h.month, 10);
+          const hd = parseInt(h.day, 10) || 1;
+          return hy === year && hm === (month + 1) && hd === d;
+        });
+        if (matchedHistory.length > 0) dotsHtml += `<div class="cal-dot dot-history"></div>`;
+        
+        const matchedSchedules = scheduleList.filter(s => s.date === dateStr);
+        matchedSchedules.forEach(sch => {
+          if (sch.type === 'plan') dotsHtml += `<div class="cal-dot dot-plan"></div>`;
+          if (sch.type === 'reservation') dotsHtml += `<div class="cal-dot dot-res"></div>`;
+          if (sch.notifyMinutes > 0 || sch.phoneConfirmMinutes > 0) hasNotification = true;
+        });
+        
+        const bellHtml = hasNotification ? `<div class="cal-bell">🔔</div>` : '';
+
+        grid.innerHTML += `
+          <div class="cal-cell ${isToday ? 'today' : ''} ${selectedCalDateStr === dateStr ? 'selected' : ''}" onclick="selectCalendarDate('${dateStr}')">
+            ${bellHtml}
+            <div class="cal-date">${d}</div>
+            <div class="cal-dots">${dotsHtml}</div>
+          </div>
+        `;
+      }
+      
+      if(selectedCalDateStr) {
+        selectCalendarDate(selectedCalDateStr);
+      } else {
+        const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+        selectCalendarDate(todayStr);
+      }
+    }
+
+    function selectCalendarDate(dateStr) {
+      selectedCalDateStr = dateStr;
+      
+      document.querySelectorAll('.cal-cell').forEach(c => c.classList.remove('selected'));
+      const [y, m, d] = dateStr.split('-');
+      
+      if(calCurrentDate.getFullYear() == y && (calCurrentDate.getMonth()+1) == m) {
+        const firstDay = new Date(y, m-1, 1).getDay();
+        const cells = document.getElementById('calendarGrid').querySelectorAll('.cal-cell:not(.empty)');
+        if(cells[parseInt(d, 10) - 1]) cells[parseInt(d, 10) - 1].classList.add('selected');
+      }
+
+      const detailsPanel = document.getElementById('calendarDetails');
+      detailsPanel.innerHTML = `<div style="font-weight:bold; font-size:0.9rem; margin-bottom:8px; border-bottom:1px solid var(--border-color); padding-bottom:4px; color:var(--accent-pink);">📅 ${y}年${m}月${d}日 の詳細</div>`;
+      
+      let foundContent = false;
+
+      const matchedHistory = historyList.filter(h => {
+        return parseInt(h.year, 10) == y && parseInt(h.month, 10) == m && (parseInt(h.day, 10) || 1) == d;
+      });
+      if(matchedHistory.length > 0) {
+        foundContent = true;
+        matchedHistory.forEach(h => {
+          detailsPanel.innerHTML += `
+            <div class="cal-detail-item">
+              <div class="cal-detail-title"><span style="color:var(--primary-pink);">🌸 履歴: ${h.name}</span></div>
+              <div class="cal-detail-sub">${h.flags || ''} ${h.storeName ? '🏬 '+h.storeName : ''}</div>
+              ${h.visitNote ? `<div style="font-size:0.75rem; color:var(--text-color); margin-top:2px;">📝 ${h.visitNote}</div>` : ''}
+            </div>
+          `;
+        });
+      }
+
+      const matchedSchedules = scheduleList.filter(s => s.date === dateStr);
+      if(matchedSchedules.length > 0) {
+        foundContent = true;
+        matchedSchedules.forEach(s => {
+          const typeIcon = s.type === 'plan' ? '<span style="color:#20c997;">⚔️ イク予定</span>' : '<span style="color:#ff922b;">🎫 予約開始日</span>';
+          const timeStr = s.time ? `🕐 ${s.time}` : '時間未定';
+          
+          let notifyStr = s.notifyMinutes > 0 ? `<span style="font-size:0.65rem; color:#ff922b; border:1px solid #ff922b; padding:1px 4px; border-radius:8px;">🔔 ${s.notifyMinutes}分前</span>` : '';
+          
+          if (s.phoneConfirmMinutes > 0) {
+             notifyStr += ` <span style="font-size:0.65rem; color:#339af0; border:1px solid #339af0; padding:1px 4px; border-radius:8px; margin-left:4px;">📞 電話 ${s.phoneConfirmMinutes}分前</span>`;
+          }
+
+          detailsPanel.innerHTML += `
+            <div class="cal-detail-item">
+              <div class="cal-detail-title">
+                <div>${typeIcon} - ${s.title}</div>
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <!-- 🌟 うっすいペンの編集アイコンボタン -->
+                  <button class="edit-icon-btn" onclick="openEditScheduleModal('${s.id}')" title="予定を編集" style="opacity:0.6;"><svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>
+                  <button onclick="deleteSchedule('${s.id}')" style="background:none; border:none; color:var(--light-text); text-decoration:underline; cursor:pointer; font-size:0.7rem;">削除</button>
+                </div>
+              </div>
+              <div class="cal-detail-sub" style="display:flex; align-items:center; flex-wrap:wrap; gap:4px;">${timeStr} ${notifyStr}</div>
+            </div>
+          `;
+        });
+      }
+
+      if(!foundContent) {
+        detailsPanel.innerHTML += `<div style="text-align:center; color:var(--light-text); font-size:0.8rem; padding: 10px 0;">この日の記録・予定はありません</div>`;
+      }
+    }
+
+    function togglePhoneConfirm() {
+      const type = document.getElementById('schType').value;
+      const phoneGroup = document.getElementById('phoneConfirmGroup');
+      if (type === 'plan') {
+        phoneGroup.style.display = 'flex';
+      } else {
+        phoneGroup.style.display = 'none';
+        document.getElementById('schPhoneConfirm').value = '0';
+      }
+    }
+
+    function toggleEditPhoneConfirm() {
+      const type = document.getElementById('editSchType').value;
+      const phoneGroup = document.getElementById('editPhoneConfirmGroup');
+      if (type === 'plan') {
+        phoneGroup.style.display = 'flex';
+      } else {
+        phoneGroup.style.display = 'none';
+        document.getElementById('editSchPhoneConfirm').value = '0';
+      }
+    }
+
+    function openAddScheduleModal() {
+      if(selectedCalDateStr) document.getElementById('schDate').value = selectedCalDateStr;
+      togglePhoneConfirm();
+      document.getElementById('addScheduleModal').style.display = 'flex';
+    }
+
+    // 🌟 予定編集モーダルを開く処理
+    function openEditScheduleModal(id) {
+      const sch = scheduleList.find(s => s.id === id);
+      if (!sch) return;
+      document.getElementById('editSchId').value = sch.id;
+      document.getElementById('editSchType').value = sch.type || 'plan';
+      document.getElementById('editSchDate').value = sch.date || '';
+      document.getElementById('editSchTime').value = sch.time || '';
+      document.getElementById('editSchTitle').value = sch.title || '';
+      document.getElementById('editSchNotify').value = sch.notifyMinutes || 0;
+      document.getElementById('editSchPhoneConfirm').value = sch.phoneConfirmMinutes || 0;
+      toggleEditPhoneConfirm();
+      document.getElementById('editScheduleModal').style.display = 'flex';
+    }
+
+    function saveSchedule(e) {
+      e.preventDefault();
+      const notifyMins = parseInt(document.getElementById('schNotify').value, 10);
+      const phoneConfirmMins = parseInt(document.getElementById('schPhoneConfirm').value, 10);
+      
+      if((notifyMins > 0 || phoneConfirmMins > 0) && "Notification" in window && Notification.permission !== "granted") {
+        Notification.requestPermission();
+      }
+
+      const sch = {
+        id: 'sch_' + new Date().getTime(),
+        type: document.getElementById('schType').value,
+        date: document.getElementById('schDate').value,
+        time: document.getElementById('schTime').value,
+        title: document.getElementById('schTitle').value,
+        notifyMinutes: notifyMins,
+        notified: false,
+        phoneConfirmMinutes: phoneConfirmMins,
+        phoneNotified: false
+      };
+      
+      scheduleList.push(sch);
+      saveData();
+      
+      closeModal('addScheduleModal');
+      
+      document.getElementById('schTime').value = '';
+      document.getElementById('schTitle').value = '';
+      document.getElementById('schPhoneConfirm').value = '0';
+      
+      renderCalendar();
+      renderHomeMetrics();
+      alert('📅 カレンダーに予定を追加しました！');
+    }
+
+    // 🌟 編集した予定の保存処理
+    function saveEditedSchedule(e) {
+      e.preventDefault();
+      const id = document.getElementById('editSchId').value;
+      const sch = scheduleList.find(s => s.id === id);
+      if (!sch) return;
+
+      const notifyMins = parseInt(document.getElementById('editSchNotify').value, 10);
+      const phoneConfirmMins = parseInt(document.getElementById('editSchPhoneConfirm').value, 10);
+
+      sch.type = document.getElementById('editSchType').value;
+      sch.date = document.getElementById('editSchDate').value;
+      sch.time = document.getElementById('editSchTime').value;
+      sch.title = document.getElementById('editSchTitle').value;
+      
+      // 通知設定が変わっていれば再トリガー用にフラグをリセット
+      if (sch.notifyMinutes !== notifyMins) sch.notified = false;
+      if (sch.phoneConfirmMinutes !== phoneConfirmMins) sch.phoneNotified = false;
+
+      sch.notifyMinutes = notifyMins;
+      sch.phoneConfirmMinutes = phoneConfirmMins;
+
+      saveData();
+      closeModal('editScheduleModal');
+      renderCalendar();
+      renderHomeMetrics();
+      alert('✨ 予定を更新しました！');
+    }
+
+    function deleteSchedule(id) {
+      if(confirm('この予定を削除しますか？')) {
+        scheduleList = scheduleList.filter(s => s.id !== id);
+        saveData();
+        renderCalendar();
+        renderHomeMetrics();
+      }
+    }
+
+    function checkNotifications() {
+      if (!("Notification" in window) || Notification.permission !== "granted") return;
+      const now = new Date();
+      let modified = false;
+
+      scheduleList.forEach(sch => {
+        if (!sch.time) return;
+        const schDateTime = new Date(`${sch.date}T${sch.time}:00`);
+        const diffMs = schDateTime.getTime() - now.getTime();
+        
+        if (!sch.notified && sch.notifyMinutes > 0) {
+          const notifyMs = sch.notifyMinutes * 60000;
+          if (diffMs > 0 && diffMs <= notifyMs) {
+            if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+              navigator.serviceWorker.ready.then(reg => {
+                reg.showNotification(`⚠️ リマインダー: ${sch.title}`, {
+                  body: `${sch.time} からの予定・予約が迫っています！`,
+                  icon: './icon.png',
+                  vibrate: [200, 100, 200]
+                });
+              });
+            } else {
+              new Notification(`⚠️ リマインダー: ${sch.title}`, { body: `${sch.time} からの予定・予約が迫っています！` });
+            }
+            sch.notified = true;
+            modified = true;
+          }
+        }
+        
+        if (!sch.phoneNotified && sch.phoneConfirmMinutes > 0) {
+          const notifyPhoneMs = sch.phoneConfirmMinutes * 60000;
+          if (diffMs > 0 && diffMs <= notifyPhoneMs) {
+            if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+              navigator.serviceWorker.ready.then(reg => {
+                reg.showNotification(`📞 電話確認リマインダー: ${sch.title}`, {
+                  body: `予約の${sch.phoneConfirmMinutes}分前です。お店から電話が来るかもしれません。`,
+                  icon: './icon.png',
+                  vibrate: [200, 100, 200]
+                });
+              });
+            } else {
+              new Notification(`📞 電話確認リマインダー: ${sch.title}`, { body: `予約の${sch.phoneConfirmMinutes}分前です。お店から電話が来るかもしれません。` });
+            }
+            sch.phoneNotified = true;
+            modified = true;
+          }
+        }
+      });
+
+      if(modified) saveData();
+    }
+
     function startHomeAnimations() {
       renderHomeMetrics();
       startFloatingCards();
@@ -1165,26 +1796,26 @@
         }
       }
 
-      const nextVisitStr = getNextVisitDate();
       const nextTextElem = document.getElementById('homeNextVisitText');
-      if(!nextVisitStr) {
-        nextTextElem.innerText = "次はいつイクのー？（タップして設定）";
+      const futurePlans = scheduleList.filter(s => {
+        const sTime = s.time ? `T${s.time}:00` : 'T00:00:00';
+        return new Date(s.date + sTime).getTime() >= new Date().getTime();
+      }).sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+      if(futurePlans.length === 0) {
+        nextTextElem.innerText = "直近のイク予定・予約なし";
       } else {
-        const nextDt = new Date(nextVisitStr.replace(/\//g, '-'));
-        if(isNaN(nextDt.getTime())) {
-          nextTextElem.innerText = `予定: ${nextVisitStr}`;
+        const next = futurePlans[0];
+        const nextDt = new Date(next.date.replace(/\//g, '-'));
+        const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const targetMidnight = new Date(nextDt.getFullYear(), nextDt.getMonth(), nextDt.getDate());
+        const diffDaysNext = Math.ceil((targetMidnight - todayMidnight) / (1000 * 3600 * 24));
+        
+        let subText = next.type === 'plan' ? 'イク予定' : '予約戦';
+        if(diffDaysNext === 0) {
+          nextTextElem.innerHTML = `本日！<span style="font-size:0.75rem;">（${subText}）</span>`;
         } else {
-          const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-          const targetMidnight = new Date(nextDt.getFullYear(), nextDt.getMonth(), nextDt.getDate());
-          const diffDaysNext = Math.ceil((targetMidnight - todayMidnight) / (1000 * 3600 * 24));
-          
-          if(diffDaysNext < 0) {
-            nextTextElem.innerText = `予定日(${nextVisitStr})を過ぎています（タップして変更）`;
-          } else if(diffDaysNext === 0) {
-            nextTextElem.innerText = `次回の予定日まで あと 0日（今日！）`;
-          } else {
-            nextTextElem.innerText = `次回の予定日まで あと ${diffDaysNext} 日 (${nextVisitStr})`;
-          }
+          nextTextElem.innerHTML = `あと ${diffDaysNext} 日 <span style="font-size:0.75rem;">（${next.date.slice(5)} ${subText}）</span>`;
         }
       }
     }
@@ -1291,9 +1922,6 @@
       return { btn, panel };
     }
 
-    // ==========================================
-    // レンダリング＆マイ図鑑
-    // ==========================================
     let currentView = 'cast', currentSort = 'count', currentFilter = 'all';
     function changeView(mode) { currentView = mode; document.getElementById('viewCast').className = 'btn-toggle' + (mode === 'cast' ? ' active' : ''); document.getElementById('viewTimeline').className = 'btn-toggle' + (mode === 'timeline' ? ' active' : ''); document.getElementById('sortGroup').style.display = (mode === 'cast') ? 'flex' : 'none'; render(); }
     function changeSort(sort) { currentSort = sort; document.getElementById('sortCount').className = 'btn-toggle' + (sort === 'count' ? ' active' : ''); document.getElementById('sortRecent').className = 'btn-toggle' + (sort === 'recent' ? ' active' : ''); document.getElementById('sortName').className = 'btn-toggle' + (sort === 'name' ? ' active' : ''); render(); }
@@ -1359,10 +1987,21 @@
         const isActive = info.link && info.link.trim() !== '';
 
         let latestStore = '';
+        let latestType = '';
         for(let i = c.visits.length - 1; i >= 0; i--) {
-          if(c.visits[i].storeName) { latestStore = c.visits[i].storeName; break; }
+          if(!latestStore && c.visits[i].storeName) latestStore = c.visits[i].storeName;
+          if(!latestType && c.visits[i].typeTag) latestType = c.visits[i].typeTag;
         }
-        const storeBadgeHtml = latestStore ? `<span class="store-pill-badge" title="店舗名">🏬 ${latestStore}</span>` : '';
+        
+        const storeBadgeHtml = latestStore ? `<div style="display:inline-flex; align-items:center; gap:4px; padding:3px 8px; font-size:0.75rem; font-weight:bold; color:var(--accent-pink); background:var(--soft-pink); border-radius:12px; border:1px solid var(--primary-pink);">🏬 ${latestStore}</div>` : '';
+        
+        let typeBadgesHtml = '';
+        if (latestType) {
+          const types = latestType.split(',').map(t => t.trim()).filter(t => t);
+          typeBadgesHtml = types.map(t => `<div style="display:inline-flex; align-items:center; gap:4px; padding:3px 8px; font-size:0.75rem; font-weight:bold; color:#f76707; background:#fff4e6; border-radius:12px; border:1px solid #ff922b;">${t}</div>`).join('');
+        }
+
+        const tagsRowHtml = (storeBadgeHtml || typeBadgesHtml) ? `<div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;">${storeBadgeHtml}${typeBadgesHtml}</div>` : '';
 
         const validLettersCount = (info.letters || []).filter(l => l.imageUrl).length + c.visits.filter(v => v.chekiImg).length;
         const letterBtnHtml = validLettersCount > 0 
@@ -1398,7 +2037,6 @@
             <div class="cast-info">
               <span class="arrow-icon">▼</span>
               <span>${c.name}</span>
-              ${storeBadgeHtml}
               ${info.oldName?`<span class="old-name-badge">旧:${info.oldName}</span>`:''}
               <span class="status-badge ${isActive?'status-active':'status-retired'}">${isActive?'在籍':'卒業'}</span>
               ${c.favCount>=5?'<span class="super-tag">オキニ</span>':''}
@@ -1407,6 +2045,7 @@
           </summary>
           <div class="anim-wrapper"><div class="anim-inner"><div class="card-body">
             ${renderStyleTags(info.style)}
+            ${tagsRowHtml}
             <div class="card-middle-row">
               <div class="notes-box">${info.notes || 'メモなし'}</div>
               <div class="btn-action-group">
@@ -1453,9 +2092,6 @@
       });
     }
 
-    // ==========================================
-    // 統計ダッシュボード
-    // ==========================================
     let monthlyChartInstance = null;
     let rankingChartInstance = null;
 
@@ -1507,10 +2143,31 @@
             <div class="stat-section-title">📈 推移グラフ</div>
             <div class="chart-wrap"><canvas id="dashTrendChart"></canvas></div>
           </div>
+
           <div class="stat-section">
-            <div class="stat-section-title">🍩 キャスト別利用比率</div>
-            <div class="chart-wrap donut"><canvas id="dashRankingChart"></canvas></div>
-            <div class="rank-list" id="dashRankList"></div>
+            <div class="stat-section-title">🍩 分析（キャスト / 系統）</div>
+            <div class="carousel-wrapper">
+              <div class="carousel-container" id="dashAnalysisCarousel">
+                
+                <div class="carousel-slide">
+                  <div style="text-align:center; font-size:0.75rem; font-weight:bold; margin-bottom:4px; color:var(--light-text);">👑 キャスト別利用比率</div>
+                  <div class="chart-wrap donut"><canvas id="dashRankingChart"></canvas></div>
+                  <div class="rank-list" id="dashRankList"></div>
+                </div>
+                
+                <div class="carousel-slide">
+                  <div style="text-align:center; font-size:0.75rem; font-weight:bold; margin-bottom:4px; color:var(--light-text);">💖 俺の好みタイプ分布</div>
+                  <div class="chart-wrap donut"><canvas id="dashTypeChart"></canvas></div>
+                  <div class="rank-list" id="dashTypeList"></div>
+                </div>
+
+              </div>
+              
+              <div class="carousel-dots" id="carouselDots">
+                <div class="carousel-dot active" data-index="0"></div>
+                <div class="carousel-dot" data-index="1"></div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1602,6 +2259,59 @@
           <span class="rank-pct">${tAmountDisplay}</span>
         </div>`;
       }).join('');
+
+      const canvasType = document.getElementById('dashTypeChart');
+      const listTypeEl = document.getElementById('dashTypeList');
+      
+      if (canvasType && listTypeEl) {
+        const byType = {};
+        records.forEach(v => {
+          const tTags = (v.typeTag || '').split(',').map(tag => tag.trim()).filter(tag => tag);
+          tTags.forEach(t => {
+            if(!byType[t]) byType[t] = 0;
+            byType[t]++;
+          });
+        });
+        
+        let typeEntries = Object.keys(byType).map(name => ({ name, count: byType[name] })).sort((a,b) => b.count - a.count);
+        const topTypes = typeEntries.slice(0, 6);
+        const typeColors = [getCssVar('--rank-c1'), getCssVar('--rank-c2'), getCssVar('--rank-c3'), getCssVar('--rank-c4'), getCssVar('--rank-c5'), '#ff922b'];
+
+        if(window.typeChartInstance) window.typeChartInstance.destroy();
+        window.typeChartInstance = new Chart(canvasType.getContext('2d'), {
+          type: 'pie',
+          data: {
+            labels: topTypes.map(t => t.name),
+            datasets: [{ data: topTypes.map(t => t.count), backgroundColor: typeColors.slice(0, topTypes.length), borderWidth: 2, borderColor: getCssVar('--card-bg') }]
+          },
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+        });
+
+        if (topTypes.length === 0) {
+          listTypeEl.innerHTML = '<div style="text-align:center;font-size:0.8rem;color:var(--light-text);padding:10px;">系統の記録がありません</div>';
+        } else {
+          listTypeEl.innerHTML = topTypes.map((t, i) => `
+          <div class="rank-row">
+            <span class="rank-dot" style="background:${typeColors[i]};"></span>
+            <span class="rank-name">${t.name}</span>
+            <span class="rank-pct">${t.count}回</span>
+          </div>`).join('');
+        }
+      }
+
+      const carousel = document.getElementById('dashAnalysisCarousel');
+      const dots = document.querySelectorAll('#carouselDots .carousel-dot');
+      if (carousel && dots.length > 0) {
+        carousel.onscroll = () => {
+          const idx = Math.round(carousel.scrollLeft / carousel.clientWidth);
+          dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+        };
+        dots.forEach((d, i) => {
+          d.addEventListener('click', () => {
+            carousel.scrollTo({ left: i * carousel.clientWidth, behavior: 'smooth' });
+          });
+        });
+      }
     }
 
     function renderCumulativeMemorial() {
@@ -1627,9 +2337,6 @@
       `;
     }
 
-    // ==========================================
-    // キャスト個別選択共有 ＆ マイ図鑑合算取り込み
-    // ==========================================
     function openExportCastModal(event, name) {
       event.preventDefault(); event.stopPropagation();
       targetExportCastName = name;
@@ -1820,14 +2527,12 @@
       }).join('');
     }
 
-    // ==========================================
-    // 追加・編集・管理
-    // ==========================================
     function openAddModal() {
       const d = new Date();
       document.getElementById('addYear').value = d.getFullYear();
       document.getElementById('addMonth').value = (d.getMonth() + 1) + '月';
       document.getElementById('addDay').value = d.getDate();
+      updateCastDatalist(); // 🌟 オートフィル用の候補を更新
       document.getElementById('addModal').style.display = 'flex';
     }
 
@@ -1856,7 +2561,8 @@
         amount: document.getElementById('addAmount').value || '',
         storeName: document.getElementById('addStoreName').value || '',
         reportUrl: document.getElementById('addReportUrl').value || '',
-        chekiImg: document.getElementById('addLetterImg').value || ''
+        chekiImg: document.getElementById('addLetterImg').value || '',
+        typeTag: document.getElementById('addTypeTag').value || ''
       };
 
       historyList.push(rec);
@@ -1888,6 +2594,7 @@
       document.getElementById('editMonth').value = rec.month || '';
       document.getElementById('editDay').value = rec.day || '1';
       document.getElementById('editFlags').value = rec.flags || '';
+      document.getElementById('editTypeTag').value = rec.typeTag || '';
       document.getElementById('editVisitNote').value = rec.visitNote || '';
       document.getElementById('editAmount').value = rec.amount || '';
       document.getElementById('editStoreName').value = rec.storeName || '';
@@ -1904,6 +2611,7 @@
         rec.month = document.getElementById('editMonth').value;
         rec.day = document.getElementById('editDay').value || '1';
         rec.flags = document.getElementById('editFlags').value;
+        rec.typeTag = document.getElementById('editTypeTag').value;
         rec.visitNote = document.getElementById('editVisitNote').value;
         rec.amount = document.getElementById('editAmount').value;
         rec.storeName = document.getElementById('editStoreName').value;
@@ -1977,11 +2685,11 @@
       renderHomeMetrics();
     }
 
-    function resetData() { if(confirm("初期化しますか？")){ localStorage.removeItem('user_hist_' + currentUserName); localStorage.removeItem('user_cast_' + currentUserName); historyList=[]; castData={}; render(); renderDashboard(); } }
+    function resetData() { if(confirm("初期化しますか？")){ localStorage.removeItem('user_hist_' + currentUserName); localStorage.removeItem('user_cast_' + currentUserName); historyList=[]; castData={}; scheduleList=[]; render(); renderDashboard(); renderCalendar(); } }
     function triggerJSONFileInput() { document.getElementById('jsonFileInput').click(); }
     
     function exportJSONFile() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ historyList, castData, userName: currentUserName }, null, 2));
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ historyList, castData, scheduleList, userName: currentUserName }, null, 2));
       const a = document.createElement('a'); a.href = dataStr; a.download = `${currentUserName}の風俗履歴図鑑_backup.json`; a.click(); a.remove();
     }
 
@@ -1993,12 +2701,29 @@
           const imp = JSON.parse(evt.target.result);
           if(imp.historyList && imp.castData) {
             historyList = imp.historyList; castData = imp.castData; currentUserName = imp.userName || '童貞';
+            if(imp.scheduleList) scheduleList = imp.scheduleList;
             saveData(); initUserData(); closeModal('settingsModal'); alert("復元完了しました！");
           }
         } catch(err) { alert("読込エラー"); }
       };
       reader.readAsText(file);
     }
+
+    document.addEventListener('click', function(e) {
+      const summary = e.target.closest('.cast-card summary.card-btn');
+      if (!summary) return;
+      e.preventDefault();
+      
+      const details = summary.parentElement;
+      if (details.open) {
+        details.classList.remove('is-open');
+        setTimeout(() => { details.removeAttribute('open'); }, 300);
+      } else {
+        details.setAttribute('open', '');
+        void details.offsetWidth; 
+        details.classList.add('is-open');
+      }
+    });
 
     initUserData();
   </script>
