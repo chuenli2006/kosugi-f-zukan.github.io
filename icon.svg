@@ -1,15 +1,31 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
-  <!-- 背景（ダーク＆スタイリッシュ） -->
-  <rect width="512" height="512" rx="110" fill="#121218" />
+  <defs>
+    <!-- 背景用グラデーション: 非常に明るいピンクから白へ -->
+    <radialGradient id="bg-gradient-light" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+      <stop offset="0%" stop-color="#fff5f8" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </radialGradient>
+    
+    <!-- ハート用グラデーション: ライトピンクから鮮やかなピンクへ -->
+    <linearGradient id="heart-gradient-light" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ff80ab" />
+      <stop offset="100%" stop-color="#f50057" />
+    </linearGradient>
+  </defs>
+
+  <!-- 背景（明るいグラデーションを適用） -->
+  <rect width="512" height="512" rx="110" fill="url(#bg-gradient-light)" />
   
-  <!-- 外枠アクセント -->
-  <rect x="24" y="24" width="464" height="464" rx="90" fill="none" stroke="#ff4081" stroke-width="8" opacity="0.5" />
+  <!-- 外枠アクセント（ソフトなピンク） -->
+  <rect x="24" y="24" width="464" height="464" rx="90" fill="none" stroke="#ff80ab" stroke-width="8" opacity="0.6" />
 
-  <!-- メインアイコンのモチーフ（本＝図鑑をイメージしたシェイプ） -->
-  <path d="M140 130h110v250H140z" fill="#2a1f2d" rx="10"/>
-  <path d="M262 130h110v250H262z" fill="#2a1f2d" rx="10"/>
-  <path d="M256 130h6v250h-6z" fill="#ff6b8b"/>
+  <!-- メインアイコンのモチーフ（本＝図鑑） -->
+  <!-- 本の本体: 薄いグレーまたは非常に淡いピンク -->
+  <path d="M140 130h110v250H140z" fill="#fce4ec" rx="10"/>
+  <path d="M262 130h110v250H262z" fill="#fce4ec" rx="10"/>
+  <!-- 本の背表紙のライン: 濃いピンク -->
+  <path d="M256 130h6v250h-6z" fill="#ec407a"/>
 
-  <!-- ピンクのハート（図鑑の中身・愛の象徴） -->
-  <path d="M205 210c-15-20-45-10-45 15 0 25 35 45 50 60 15-15 50-35 50-60 0-25-30-35-45-15z" fill="#f72585" />
+  <!-- ハート（ピンクのグラデーションを適用） -->
+  <path d="M205 210c-15-20-45-10-45 15 0 25 35 45 50 60 15-15 50-35 50-60 0-25-30-35-45-15z" fill="url(#heart-gradient-light)" />
 </svg>
