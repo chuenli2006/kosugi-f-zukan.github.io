@@ -945,6 +945,13 @@
           <datalist id="castDatalist"></datalist>
         </div>
 
+        <!-- 店舗名欄を移動し、オートフィル用 datalist を設定 -->
+        <div class="form-group">
+          <label>店舗名</label>
+          <input type="text" id="addStoreName" list="storeDatalist" oninput="onStoreNameInput(this.value)" placeholder="例: ○○ヘルス 渋谷店">
+          <datalist id="storeDatalist"></datalist>
+        </div>
+
         <div class="form-group"><label>系統タグ（複数時はカンマ区切り）</label>
           <div class="flag-picker">
             <button type="button" class="flag-btn" onclick="setTypeChar('アイドル系')">アイドル</button>
@@ -979,13 +986,12 @@
         <div class="form-group"><label>メモ・感想</label><input type="text" id="addVisitNote" placeholder="接客メモなど"></div>
 
         <details class="detail-fold">
-          <summary>💰 詳細（金額・コース時間・店舗名・WEBレポート）</summary>
+          <summary>💰 詳細（金額・コース時間・WEBレポート）</summary>
           <div class="fold-body">
             <div style="display:flex; gap:6px;">
               <div class="form-group" style="flex:1;"><label>金額（円）</label><input type="number" id="addAmount" min="0" placeholder="例: 15000"></div>
               <div class="form-group" style="flex:1;"><label>コース時間（分）</label><input type="number" id="addCourseTime" min="0" placeholder="例: 60"></div>
             </div>
-            <div class="form-group"><label>店舗名</label><input type="text" id="addStoreName" placeholder="例: ○○ヘルス 渋谷店"></div>
             <div class="form-group"><label>WEBレポートURL</label><input type="url" id="addReportUrl" placeholder="https://note.com/..."></div>
           </div>
         </details>
@@ -1286,14 +1292,44 @@
       switchMainTab('calendar');
     }
 
-    // 🌟 キャスト名オートフィル機能の実装
-    function updateCastDatalist() {
+    // 🌟 キャスト名オートフィル機能の実装 (店舗名入力の連動フィルタリング対応)
+    function updateCastDatalist(filterStoreName = '') {
       const datalist = document.getElementById('castDatalist');
       if (!datalist) return;
       const castNames = new Set();
-      Object.keys(castData).forEach(n => castNames.add(n));
-      historyList.forEach(h => { if(h.name) castNames.add(h.name); });
+
+      const filterStore = filterStoreName.trim().toLowerCase();
+
+      if (filterStore) {
+        // 店舗名が指定されている場合：その店舗を利用した履歴にあるキャストのみを抽出
+        historyList.forEach(h => {
+          if (h.storeName && h.storeName.trim().toLowerCase() === filterStore && h.name) {
+            castNames.add(h.name);
+          }
+        });
+      } else {
+        // 店舗名が指定されていない場合：従来通りすべてのキャスト
+        Object.keys(castData).forEach(n => castNames.add(n));
+        historyList.forEach(h => { if(h.name) castNames.add(h.name); });
+      }
+
       datalist.innerHTML = Array.from(castNames).map(name => `<option value="${name}">`).join('');
+    }
+
+    // 🌟 店舗名オートフィル機能の実装
+    function updateStoreDatalist() {
+      const datalist = document.getElementById('storeDatalist');
+      if (!datalist) return;
+      const storeNames = new Set();
+      historyList.forEach(h => {
+        if (h.storeName && h.storeName.trim()) storeNames.add(h.storeName.trim());
+      });
+      datalist.innerHTML = Array.from(storeNames).map(s => `<option value="${s}">`).join('');
+    }
+
+    // 🌟 店舗名入力時にキャスト名のオートフィル候補を絞り込む
+    function onStoreNameInput(storeVal) {
+      updateCastDatalist(storeVal);
     }
 
     // 🌟 検索欄用（キャスト名・店舗名）オートフィル機能の実装
@@ -1352,14 +1388,17 @@
         document.getElementById('addTypeTag').value = foundType;
       }
 
-      // 3. 店舗名の自動入力（最新の訪問店舗を取得）
-      let foundStore = '';
-      const matchStoreRec = historyList.slice().reverse().find(h => h.name === name && h.storeName);
-      if (matchStoreRec && matchStoreRec.storeName) {
-        foundStore = matchStoreRec.storeName;
-      }
-      if (foundStore) {
-        document.getElementById('addStoreName').value = foundStore;
+      // 3. 店舗名の自動入力（最新の訪問店舗を取得。店舗名が未入力の場合のみ）
+      const storeInput = document.getElementById('addStoreName');
+      if (!storeInput.value.trim()) {
+        let foundStore = '';
+        const matchStoreRec = historyList.slice().reverse().find(h => h.name === name && h.storeName);
+        if (matchStoreRec && matchStoreRec.storeName) {
+          foundStore = matchStoreRec.storeName;
+        }
+        if (foundStore) {
+          storeInput.value = foundStore;
+        }
       }
     }
 
@@ -2792,7 +2831,9 @@
       document.getElementById('addYear').value = d.getFullYear();
       document.getElementById('addMonth').value = (d.getMonth() + 1) + '月';
       document.getElementById('addDay').value = d.getDate();
-      updateCastDatalist(); // 🌟 オートフィル用の候補を更新
+      document.getElementById('addStoreName').value = ''; // モーダル表示時にクリア
+      updateStoreDatalist(); // 🌟 店舗名オートフィル用候補を更新
+      updateCastDatalist();  // 🌟 初期状態（全キャスト候補）を適用
       document.getElementById('addModal').style.display = 'flex';
     }
 
