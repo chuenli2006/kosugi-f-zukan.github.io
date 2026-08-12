@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ゆうだい観察BOT</title>
+  <title>YUDAI OBSERVER - Glassmorphism</title>
   <style>
     * {
       box-sizing: border-box;
@@ -11,95 +11,186 @@
       padding: 0;
     }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      background-color: #7494c0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      /* 背景の美しいグラデーション */
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
+      overflow: hidden;
+      position: relative;
     }
+
+    /* 背景に浮かぶ光のオブジェクト（すりガラス感を強調） */
+    .bg-circle-1 {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: rgba(255, 117, 140, 0.6);
+      top: 10%;
+      left: 18%;
+      filter: blur(60px);
+      z-index: 0;
+    }
+    .bg-circle-2 {
+      position: absolute;
+      width: 350px;
+      height: 350px;
+      border-radius: 50%;
+      background: rgba(120, 220, 255, 0.5);
+      bottom: 10%;
+      right: 18%;
+      filter: blur(70px);
+      z-index: 0;
+    }
+
+    /* チャット全体の外枠（メインのすりガラス） */
     .chat-container {
+      position: relative;
+      z-index: 1;
       width: 100%;
-      max-width: 450px;
-      height: 90vh;
-      background-color: #7494c0;
+      max-width: 440px;
+      height: 85vh;
+      /* すりガラス風スタイル */
+      background: rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 24px;
       display: flex;
       flex-direction: column;
-      border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
     }
+
+    /* ヘッダー */
     .chat-header {
-      background-color: #2c3e50;
-      color: white;
-      padding: 15px;
-      text-align: center;
-      font-weight: bold;
-      font-size: 1.1rem;
+      padding: 18px 20px;
+      background: rgba(255, 255, 255, 0.15);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      background-color: #00ffaa;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #00ffaa;
+    }
+    .chat-title {
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: 0.5px;
+      color: #ffffff;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* メッセージ表示エリア */
     .chat-messages {
       flex: 1;
-      padding: 15px;
+      padding: 20px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
     }
     .message {
-      max-width: 75%;
-      padding: 10px 14px;
-      border-radius: 15px;
-      font-size: 0.95rem;
-      line-height: 1.4;
+      max-width: 80%;
+      padding: 12px 16px;
+      border-radius: 18px;
+      font-size: 0.92rem;
+      line-height: 1.5;
       word-break: break-word;
+      animation: fadeIn 0.25s ease-out;
     }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ユーザーの吹き出し */
     .user-message {
       align-self: flex-end;
-      background-color: #85e249;
-      color: #000;
-      border-bottom-right-radius: 2px;
+      background: rgba(255, 255, 255, 0.9);
+      color: #2c3e50;
+      font-weight: 500;
+      border-bottom-right-radius: 4px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
+
+    /* BOTの吹き出し */
     .bot-message {
       align-self: flex-start;
-      background-color: #ffffff;
-      color: #000;
-      border-bottom-left-radius: 2px;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-bottom-left-radius: 4px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
+
+    /* 入力エリア */
     .chat-input-area {
       display: flex;
-      padding: 10px;
-      background-color: #ffffff;
-      border-top: 1px solid #ddd;
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.15);
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      gap: 10px;
     }
     .chat-input-area input {
       flex: 1;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 20px;
+      padding: 12px 18px;
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 16px;
+      color: #ffffff;
       outline: none;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
+    }
+    .chat-input-area input::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+    .chat-input-area input:focus {
+      background: rgba(255, 255, 255, 0.35);
+      border-color: #ffffff;
     }
     .chat-input-area button {
-      margin-left: 8px;
-      padding: 10px 16px;
-      background-color: #3b5998;
-      color: white;
+      padding: 12px 20px;
+      background: rgba(255, 255, 255, 0.9);
+      color: #4a00e0;
       border: none;
-      border-radius: 20px;
+      border-radius: 16px;
       cursor: pointer;
-      font-weight: bold;
+      font-weight: 700;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
     .chat-input-area button:hover {
-      background-color: #2d4373;
+      background: #ffffff;
+      transform: translateY(-1px);
     }
   </style>
 </head>
 <body>
 
+<!-- 背景の光ボケ効果 -->
+<div class="bg-circle-1"></div>
+<div class="bg-circle-2"></div>
+
 <div class="chat-container">
-  <div class="chat-header">ゆうだい情報BOT</div>
+  <div class="chat-header">
+    <div class="status-dot"></div>
+    <div class="chat-title">YUDAI OBSERVER</div>
+  </div>
   <div class="chat-messages" id="chatMessages">
-    <div class="message bot-message">ゆうだいの最新情報をお伝えします！</div>
+    <div class="message bot-message">ゆうだいの観察データを受信中... メッセージをどうぞ。</div>
   </div>
   <div class="chat-input-area">
     <input type="text" id="userInput" placeholder="メッセージを入力..." onkeydown="if(event.key==='Enter') sendMessage()">
@@ -108,7 +199,7 @@
 </div>
 
 <script>
-  // 第三者目線のメッセージリスト
+  // 第三者目線の「ゆうだい」メッセージ一覧
   const yudaiMessages = [
     "ゆうだいが今、めちゃくちゃお腹を鳴らしています。",
     "ゆうだいさ、さっきからずっとスマホ見て笑ってるよ。",
@@ -123,14 +214,13 @@
     "ゆうだいが『今日はお菓子食べ放題の日』って宣言してた。",
     "ゆうだいさ、話を聞きながらうんうん頷いてるよ。",
     "ゆうだいが『明日の準備完璧！』って自信満々に言ってる。",
-    "ゆうだいさ、最近ずっと同じアニメの曲聴いてるよね。",
+    "ゆうだいさ、最近ずっと同じ曲聴いてるよね。",
     "ゆうだいが『本気出せば楽勝』ってイキがってます笑",
     "ゆうだいさ、あなたのこと影からずっと応援してるみたいだよ。",
     "ゆうだいが『ちょっとコンビニ行ってくる』って出ていきました。",
     "ゆうだいさ、今日の夕飯ラーメンにしようか悩んでるらしい。",
     "ゆうだいが『ん？なんて言った？』って首をかしげてます。",
     "ゆうだいさ、なんだかんだ言って毎回強運を発揮するよね。"
-    // ↓ ここに「ゆうだいが…」「ゆうだいさ…」のメッセージを自由に追加できます！
   ];
 
   function sendMessage() {
@@ -139,16 +229,16 @@
 
     if (userText === "") return;
 
-    // ユーザーメッセージを表示
+    // ユーザーメッセージを追加
     addMessage(userText, "user-message");
     inputField.value = "";
 
-    // 0.6秒後にランダムでメッセージを返信
+    // 0.5秒後にランダム返信
     setTimeout(() => {
       const randomIndex = Math.floor(Math.random() * yudaiMessages.length);
       const randomResponse = yudaiMessages[randomIndex];
       addMessage(randomResponse, "bot-message");
-    }, 600);
+    }, 500);
   }
 
   function addMessage(text, className) {
@@ -157,7 +247,7 @@
     messageElement.classList.add("message", className);
     messageElement.textContent = text;
     chatMessages.appendChild(messageElement);
-    chatMessages.scrollTop = chatMessages.scrollHeight; // 自動で一番下にスクロール
+    chatMessages.scrollTop = chatMessages.scrollHeight;
   }
 </script>
 
