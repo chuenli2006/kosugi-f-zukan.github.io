@@ -154,6 +154,19 @@
     .counter-big { font-size: 1.6rem; font-weight: bold; color: var(--accent-pink); line-height: 1.1; }
     .countdown-anim { font-size: 1.2rem; font-weight: bold; color: var(--accent-pink); }
 
+    /* 🔔 ホーム画面用 アクション通知カード */
+    .home-action-card {
+      background: linear-gradient(135deg, #fff3bf, var(--card-bg));
+      border: 2px solid #fcc419; border-radius: var(--radius); padding: 12px 14px;
+      text-align: center; box-shadow: 0 4px 15px rgba(252, 196, 25, 0.3);
+      cursor: pointer; animation: pulseAlert 2s infinite; margin-bottom: 4px;
+    }
+    @keyframes pulseAlert {
+      0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); }
+    }
+    .home-action-title { font-size: 0.85rem; font-weight: bold; color: #d9480f; margin-bottom: 2px; }
+    .home-action-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: #fcc419; color: #5c3c00; border: none; padding: 6px 16px; border-radius: 20px; font-size: 0.82rem; font-weight: bold; margin-top: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+
     .dashboard { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 12px; margin-bottom: 12px; box-shadow: var(--shadow); width: 100%; }
     .dash-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; text-align: center; }
     .dash-item { background: var(--bg-color); padding: 6px; border-radius: 8px; border: 1px solid var(--border-color); }
@@ -163,8 +176,19 @@
 
     .controls { background: var(--card-bg); padding: 12px; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border-color); margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; width: 100%; }
     .search-row { display: flex; gap: 6px; width: 100%; }
-    .search-box { flex: 1; }
-    .search-box input { width: 100%; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 20px; font-size: 0.85rem; outline: none; background: var(--bg-color); color: var(--text-color); }
+    .search-box { flex: 1; display: flex; align-items: center; gap: 6px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 20px; padding: 2px 12px; }
+    .search-box input { flex: 1; border: none; font-size: 0.85rem; outline: none; background: transparent; color: var(--text-color); padding: 6px 0; }
+    
+    /* 🏷️ 検索用系統タグバッジ */
+    .search-type-badge {
+      display: inline-flex; align-items: center; gap: 4px; font-size: 0.72rem; font-weight: bold;
+      color: #f76707; background: #fff4e6; border: 1px solid #ff922b; border-radius: 12px;
+      padding: 1px 8px; white-space: nowrap; flex-shrink: 0;
+    }
+    .search-type-badge .btn-close-tag {
+      cursor: pointer; font-size: 0.85rem; font-weight: bold; color: #f76707; line-height: 1;
+      margin-left: 2px;
+    }
     
     .btn-options-toggle {
       background: var(--soft-pink);
@@ -491,6 +515,9 @@
         <div class="floating-container" id="homeFloatingArea"></div>
 
         <div class="home-top-panel">
+          <!-- 🔔 アクション通知エリア -->
+          <div id="homeActionCardsContainer" style="display:none; flex-direction:column; gap:8px; width:100%;"></div>
+
           <div class="home-card-a">
             <div style="font-size: 0.75rem; color: var(--light-text); font-weight: bold; margin-bottom: 2px;">今月のプレイ状況</div>
             <div style="display: flex; justify-content: space-between; align-items: baseline;">
@@ -522,7 +549,11 @@
         <div class="controls">
           <div class="search-row">
             <div class="search-box">
-              <input type="text" id="searchKeyword" list="searchDatalist" placeholder="キャスト名、店舗名やマークで検索..." oninput="render()">
+              <div id="selectedTypeBadge" class="search-type-badge" style="display:none;">
+                <span id="selectedTypeBadgeText">系統</span>
+                <span class="btn-close-tag" onclick="clearSelectedTypeTag(event)">×</span>
+              </div>
+              <input type="text" id="searchKeyword" list="searchDatalist" placeholder="キャスト名、店舗名、系統等で検索..." oninput="render()">
               <datalist id="searchDatalist"></datalist>
             </div>
             <button class="btn-options-toggle" onclick="toggleOptionsFold()">
@@ -956,6 +987,19 @@
             <option value="reservation">🎫 予約開始日 (枠取り・待機)</option>
           </select>
         </div>
+
+        <!-- 🌸 追加: 女の子名 ＆ 店舗名 入力欄（オートフィル対応） -->
+        <div style="display:flex; gap:6px;">
+          <div class="form-group" style="flex:1;">
+            <label>女の子の名前 (任意)</label>
+            <input type="text" id="schCastName" list="castDatalist" placeholder="例: ゆあ">
+          </div>
+          <div class="form-group" style="flex:1;">
+            <label>店舗名 (任意)</label>
+            <input type="text" id="schStoreName" list="storeDatalist" placeholder="例: ○○ヘルス 渋谷店">
+          </div>
+        </div>
+
         <div style="display:flex; gap:6px;">
           <div class="form-group" style="flex:1;">
             <label>日付</label>
@@ -966,14 +1010,35 @@
             <input type="time" id="schTime">
           </div>
         </div>
+
         <div class="form-group">
           <label>タイトル・内容</label>
           <input type="text" id="schTitle" required placeholder="例: 〇〇店 ゆあちゃん予約">
         </div>
+
+        <!-- 🎫 予約形態（電話予約/ネット予約/設定なし） -->
+        <div class="form-group">
+          <label>予約方法（任意）</label>
+          <select id="schBookingType" onchange="toggleBookingType()">
+            <option value="none">選択なし</option>
+            <option value="phone">📞 電話予約</option>
+            <option value="web">🌐 ネット予約</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="schPhoneGroup" style="display:none;">
+          <label>予約・確認用 電話番号</label>
+          <input type="tel" id="schPhoneNumber" placeholder="例: 03-1234-5678">
+        </div>
+
+        <div class="form-group" id="schWebUrlGroup" style="display:none;">
+          <label>ネット予約ページ URL</label>
+          <input type="url" id="schBookingUrl" placeholder="https://...">
+        </div>
         
         <div class="form-group" id="phoneConfirmGroup" style="display:none;">
           <label>📞 お店からの電話確認リマインダー</label>
-          <select id="schPhoneConfirm">
+          <select id="schPhoneConfirm" onchange="togglePhoneConfirmPhoneInput()">
             <option value="0">不要</option>
             <option value="15">15分前</option>
             <option value="30">30分前</option>
@@ -1015,6 +1080,19 @@
             <option value="reservation">🎫 予約開始日</option>
           </select>
         </div>
+
+        <!-- 🌸 追加: 女の子名 ＆ 店舗名 入力欄（オートフィル対応） -->
+        <div style="display:flex; gap:6px;">
+          <div class="form-group" style="flex:1;">
+            <label>女の子の名前 (任意)</label>
+            <input type="text" id="editSchCastName" list="castDatalist" placeholder="例: ゆあ">
+          </div>
+          <div class="form-group" style="flex:1;">
+            <label>店舗名 (任意)</label>
+            <input type="text" id="editSchStoreName" list="storeDatalist" placeholder="例: ○○ヘルス 渋谷店">
+          </div>
+        </div>
+
         <div style="display:flex; gap:6px;">
           <div class="form-group" style="flex:1;">
             <label>日付</label>
@@ -1029,10 +1107,29 @@
           <label>タイトル・内容</label>
           <input type="text" id="editSchTitle" required>
         </div>
+
+        <div class="form-group">
+          <label>予約方法（任意）</label>
+          <select id="editSchBookingType" onchange="toggleEditBookingType()">
+            <option value="none">選択なし</option>
+            <option value="phone">📞 電話予約</option>
+            <option value="web">🌐 ネット予約</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="editSchPhoneGroup" style="display:none;">
+          <label>予約・確認用 電話番号</label>
+          <input type="tel" id="editSchPhoneNumber" placeholder="例: 03-1234-5678">
+        </div>
+
+        <div class="form-group" id="editSchWebUrlGroup" style="display:none;">
+          <label>ネット予約ページ URL</label>
+          <input type="url" id="editSchBookingUrl" placeholder="https://...">
+        </div>
         
         <div class="form-group" id="editPhoneConfirmGroup" style="display:none;">
           <label>📞 お店からの電話確認リマインダー</label>
-          <select id="editSchPhoneConfirm">
+          <select id="editSchPhoneConfirm" onchange="toggleEditPhoneConfirmPhoneInput()">
             <option value="0">不要</option>
             <option value="15">15分前</option>
             <option value="30">30分前</option>
@@ -1080,6 +1177,7 @@
     let bubbleInterval;
     let dashPeriodType = 'month';
     let targetExportCastName = '';
+    let selectedTypeFilter = ''; // 🏷️ 選択中の系統タグフィルター
     
     window.typeChartInstance = null;
     window.storeChartInstance = null;
@@ -1139,7 +1237,7 @@
       calCurrentDate = new Date();
       renderCalendar();
       
-      setInterval(checkNotifications, 60000);
+      setInterval(checkNotifications, 30000); // 30秒ごとに通知チェック
       checkNotifications();
     }
 
@@ -1225,6 +1323,11 @@
       historyList.forEach(h => { 
         if(h.name) candidates.add(h.name);
         if(h.storeName) candidates.add(h.storeName);
+        if(h.typeTag) {
+          h.typeTag.split(',').forEach(t => {
+            if(t.trim()) candidates.add(t.trim());
+          });
+        }
       });
 
       datalist.innerHTML = Array.from(candidates).map(item => `<option value="${item}">`).join('');
@@ -1550,6 +1653,12 @@
              notifyStr += ` <span style="font-size:0.65rem; color:#339af0; border:1px solid #339af0; padding:1px 4px; border-radius:8px; margin-left:4px;">📞 電話 ${s.phoneConfirmMinutes}分前</span>`;
           }
 
+          let extraInfoStr = '';
+          if (s.castName) extraInfoStr += `👤 ${s.castName} `;
+          if (s.storeName) extraInfoStr += `🏬 ${s.storeName} `;
+          if (s.phoneNumber) extraInfoStr += `<a href="tel:${s.phoneNumber}" style="color:var(--accent-pink); font-weight:bold; margin-left:4px;">📞 ${s.phoneNumber}</a> `;
+          if (s.bookingUrl) extraInfoStr += `<a href="${s.bookingUrl}" target="_blank" style="color:#339af0; font-weight:bold; margin-left:4px;">🌐 予約URL</a> `;
+
           detailsPanel.innerHTML += `
             <div class="cal-detail-item">
               <div class="cal-detail-title">
@@ -1560,6 +1669,7 @@
                 </div>
               </div>
               <div class="cal-detail-sub" style="display:flex; align-items:center; flex-wrap:wrap; gap:4px;">${timeStr} ${notifyStr}</div>
+              ${extraInfoStr ? `<div style="font-size:0.75rem; margin-top:2px; color:var(--text-color);">${extraInfoStr}</div>` : ''}
             </div>
           `;
         });
@@ -1568,6 +1678,27 @@
       if(!foundContent) {
         detailsPanel.innerHTML += `<div style="text-align:center; color:var(--light-text); font-size:0.8rem; padding: 10px 0;">この日の記録・予定はありません</div>`;
       }
+    }
+
+    /* 📱 予約方法・電話番号入力欄の動的トグル関数 */
+    function toggleBookingType() {
+      const bType = document.getElementById('schBookingType').value;
+      document.getElementById('schPhoneGroup').style.display = (bType === 'phone' || document.getElementById('schPhoneConfirm').value !== '0') ? 'flex' : 'none';
+      document.getElementById('schWebUrlGroup').style.display = (bType === 'web') ? 'flex' : 'none';
+    }
+
+    function toggleEditBookingType() {
+      const bType = document.getElementById('editSchBookingType').value;
+      document.getElementById('editSchPhoneGroup').style.display = (bType === 'phone' || document.getElementById('editSchPhoneConfirm').value !== '0') ? 'flex' : 'none';
+      document.getElementById('editSchWebUrlGroup').style.display = (bType === 'web') ? 'flex' : 'none';
+    }
+
+    function togglePhoneConfirmPhoneInput() {
+      toggleBookingType();
+    }
+
+    function toggleEditPhoneConfirmPhoneInput() {
+      toggleEditBookingType();
     }
 
     function togglePhoneConfirm() {
@@ -1579,6 +1710,7 @@
         phoneGroup.style.display = 'none';
         document.getElementById('schPhoneConfirm').value = '0';
       }
+      toggleBookingType();
     }
 
     function toggleEditPhoneConfirm() {
@@ -1590,22 +1722,32 @@
         phoneGroup.style.display = 'none';
         document.getElementById('editSchPhoneConfirm').value = '0';
       }
+      toggleEditBookingType();
     }
 
     function openAddScheduleModal() {
+      updateCastDatalist();
+      updateStoreDatalist();
       if(selectedCalDateStr) document.getElementById('schDate').value = selectedCalDateStr;
       togglePhoneConfirm();
       document.getElementById('addScheduleModal').style.display = 'flex';
     }
 
     function openEditScheduleModal(id) {
+      updateCastDatalist();
+      updateStoreDatalist();
       const sch = scheduleList.find(s => s.id === id);
       if (!sch) return;
       document.getElementById('editSchId').value = sch.id;
       document.getElementById('editSchType').value = sch.type || 'plan';
+      document.getElementById('editSchCastName').value = sch.castName || '';
+      document.getElementById('editSchStoreName').value = sch.storeName || '';
       document.getElementById('editSchDate').value = sch.date || '';
       document.getElementById('editSchTime').value = sch.time || '';
       document.getElementById('editSchTitle').value = sch.title || '';
+      document.getElementById('editSchBookingType').value = sch.bookingType || 'none';
+      document.getElementById('editSchPhoneNumber').value = sch.phoneNumber || '';
+      document.getElementById('editSchBookingUrl').value = sch.bookingUrl || '';
       document.getElementById('editSchNotify').value = sch.notifyMinutes || 0;
       document.getElementById('editSchPhoneConfirm').value = sch.phoneConfirmMinutes || 0;
       toggleEditPhoneConfirm();
@@ -1624,9 +1766,14 @@
       const sch = {
         id: 'sch_' + new Date().getTime(),
         type: document.getElementById('schType').value,
+        castName: document.getElementById('schCastName').value.trim(),
+        storeName: document.getElementById('schStoreName').value.trim(),
         date: document.getElementById('schDate').value,
         time: document.getElementById('schTime').value,
-        title: document.getElementById('schTitle').value,
+        title: document.getElementById('schTitle').value.trim(),
+        bookingType: document.getElementById('schBookingType').value,
+        phoneNumber: document.getElementById('schPhoneNumber').value.trim(),
+        bookingUrl: document.getElementById('schBookingUrl').value.trim(),
         notifyMinutes: notifyMins,
         notified: false,
         phoneConfirmMinutes: phoneConfirmMins,
@@ -1638,9 +1785,14 @@
       
       closeModal('addScheduleModal');
       
+      document.getElementById('schCastName').value = '';
+      document.getElementById('schStoreName').value = '';
       document.getElementById('schTime').value = '';
       document.getElementById('schTitle').value = '';
+      document.getElementById('schPhoneNumber').value = '';
+      document.getElementById('schBookingUrl').value = '';
       document.getElementById('schPhoneConfirm').value = '0';
+      document.getElementById('schBookingType').value = 'none';
       
       renderCalendar();
       renderHomeMetrics();
@@ -1657,9 +1809,14 @@
       const phoneConfirmMins = parseInt(document.getElementById('editSchPhoneConfirm').value, 10);
 
       sch.type = document.getElementById('editSchType').value;
+      sch.castName = document.getElementById('editSchCastName').value.trim();
+      sch.storeName = document.getElementById('editSchStoreName').value.trim();
       sch.date = document.getElementById('editSchDate').value;
       sch.time = document.getElementById('editSchTime').value;
-      sch.title = document.getElementById('editSchTitle').value;
+      sch.title = document.getElementById('editSchTitle').value.trim();
+      sch.bookingType = document.getElementById('editSchBookingType').value;
+      sch.phoneNumber = document.getElementById('editSchPhoneNumber').value.trim();
+      sch.bookingUrl = document.getElementById('editSchBookingUrl').value.trim();
       
       if (sch.notifyMinutes !== notifyMins) sch.notified = false;
       if (sch.phoneConfirmMinutes !== phoneConfirmMins) sch.phoneNotified = false;
@@ -1684,7 +1841,6 @@
     }
 
     function checkNotifications() {
-      if (!("Notification" in window) || Notification.permission !== "granted") return;
       const now = new Date();
       let modified = false;
 
@@ -1696,16 +1852,18 @@
         if (!sch.notified && sch.notifyMinutes > 0) {
           const notifyMs = sch.notifyMinutes * 60000;
           if (diffMs > 0 && diffMs <= notifyMs) {
-            if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-              navigator.serviceWorker.ready.then(reg => {
-                reg.showNotification(`⚠️ リマインダー: ${sch.title}`, {
-                  body: `${sch.time} からの予定・予約が迫っています！`,
-                  icon: './icon.png',
-                  vibrate: [200, 100, 200]
+            if ("Notification" in window && Notification.permission === "granted") {
+              if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                navigator.serviceWorker.ready.then(reg => {
+                  reg.showNotification(`⚠️ リマインダー: ${sch.title}`, {
+                    body: `${sch.time} からの予定・予約が迫っています！`,
+                    icon: './icon.png',
+                    vibrate: [200, 100, 200]
+                  });
                 });
-              });
-            } else {
-              new Notification(`⚠️ リマインダー: ${sch.title}`, { body: `${sch.time} からの予定・予約が迫っています！` });
+              } else {
+                new Notification(`⚠️ リマインダー: ${sch.title}`, { body: `${sch.time} からの予定・予約が迫っています！` });
+              }
             }
             sch.notified = true;
             modified = true;
@@ -1715,16 +1873,18 @@
         if (!sch.phoneNotified && sch.phoneConfirmMinutes > 0) {
           const notifyPhoneMs = sch.phoneConfirmMinutes * 60000;
           if (diffMs > 0 && diffMs <= notifyPhoneMs) {
-            if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-              navigator.serviceWorker.ready.then(reg => {
-                reg.showNotification(`📞 電話確認リマインダー: ${sch.title}`, {
-                  body: `予約の${sch.phoneConfirmMinutes}分前です。お店から電話が来るかもしれません。`,
-                  icon: './icon.png',
-                  vibrate: [200, 100, 200]
+            if ("Notification" in window && Notification.permission === "granted") {
+              if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                navigator.serviceWorker.ready.then(reg => {
+                  reg.showNotification(`📞 電話確認リマインダー: ${sch.title}`, {
+                    body: `予約の${sch.phoneConfirmMinutes}分前です。お店から電話が来るかもしれません。`,
+                    icon: './icon.png',
+                    vibrate: [200, 100, 200]
+                  });
                 });
-              });
-            } else {
-              new Notification(`📞 電話確認リマインダー: ${sch.title}`, { body: `予約の${sch.phoneConfirmMinutes}分前です。お店から電話が来るかもしれません。` });
+              } else {
+                new Notification(`📞 電話確認リマインダー: ${sch.title}`, { body: `予約の${sch.phoneConfirmMinutes}分前です。お店から電話が来るかもしれません。` });
+              }
             }
             sch.phoneNotified = true;
             modified = true;
@@ -1733,6 +1893,7 @@
       });
 
       if(modified) saveData();
+      renderHomeMetrics(); // ホーム画面のアクションカードを更新
     }
 
     function startHomeAnimations() {
@@ -1740,6 +1901,7 @@
       startFloatingCards();
     }
 
+    /* 📞 ホーム画面でのアクションカード（電話確認・予約時間）描画 */
     function renderHomeMetrics() {
       const now = new Date();
       const curYear = String(now.getFullYear());
@@ -1792,6 +1954,61 @@
         }
       }
 
+      // 🔔 ホーム画面アクションカード（電話確認・予約）判定
+      const actionContainer = document.getElementById('homeActionCardsContainer');
+      actionContainer.innerHTML = '';
+      let activeCardsCount = 0;
+
+      scheduleList.forEach(sch => {
+        if (!sch.time) return;
+        const schDateTime = new Date(`${sch.date}T${sch.time}:00`);
+        const diffMs = schDateTime.getTime() - now.getTime();
+        
+        // 1. 電話確認カードの表示判定（確認時間前〜予定時刻を少し過ぎるまで）
+        if (sch.phoneConfirmMinutes > 0) {
+          const phoneStartMs = sch.phoneConfirmMinutes * 60000;
+          if (diffMs <= phoneStartMs && diffMs >= -1800000) { // 30分経過まで表示
+            activeCardsCount++;
+            const phoneNum = sch.phoneNumber || '';
+            const phoneAction = phoneNum ? `href="tel:${phoneNum}"` : `onclick="alert('電話番号が登録されていません');"`;
+            actionContainer.innerHTML += `
+              <div class="home-action-card">
+                <div class="home-action-title">📞 お店への電話確認の時間になりました！</div>
+                <div style="font-size:0.8rem; color:var(--text-color);">${sch.title} ${sch.castName ? '('+sch.castName+')' : ''}</div>
+                <a ${phoneAction} class="home-action-btn" style="text-decoration:none;">📞 店舗へ電話をかける (${phoneNum || '番号なし'})</a>
+              </div>
+            `;
+          }
+        }
+
+        // 2. 予約・リマインダーカードの表示判定
+        if (sch.notifyMinutes > 0 || sch.bookingType !== 'none') {
+          const notifyStartMs = (sch.notifyMinutes > 0 ? sch.notifyMinutes : 15) * 60000;
+          if (diffMs <= notifyStartMs && diffMs >= -1800000) {
+            activeCardsCount++;
+            let actionBtnHtml = '';
+            if (sch.bookingType === 'phone' || sch.phoneNumber) {
+              const pNum = sch.phoneNumber || '';
+              actionBtnHtml = `<a href="tel:${pNum}" class="home-action-btn" style="text-decoration:none; background:#339af0; color:white;">📞 電話予約・確認する (${pNum || '番号なし'})</a>`;
+            } else if (sch.bookingType === 'web' || sch.bookingUrl) {
+              actionBtnHtml = `<a href="${sch.bookingUrl}" target="_blank" class="home-action-btn" style="text-decoration:none; background:#20c997; color:white;">🌐 ネット予約ページを開く</a>`;
+            } else {
+              actionBtnHtml = `<button onclick="switchMainTab('calendar')" class="home-action-btn" style="background:var(--accent-pink); color:white;">📅 カレンダーで確認</button>`;
+            }
+
+            actionContainer.innerHTML += `
+              <div class="home-action-card" style="background:linear-gradient(135deg, #e7f5ff, var(--card-bg)); border-color:#339af0;">
+                <div class="home-action-title" style="color:#1c7ed6;">🎫 予約枠・予定の時間です！</div>
+                <div style="font-size:0.8rem; color:var(--text-color);">${sch.title} ${sch.storeName ? '['+sch.storeName+']' : ''}</div>
+                ${actionBtnHtml}
+              </div>
+            `;
+          }
+        }
+      });
+
+      actionContainer.style.display = activeCardsCount > 0 ? 'flex' : 'none';
+
       const nextTextElem = document.getElementById('homeNextVisitText');
       const futurePlans = scheduleList.filter(s => {
         const sTime = s.time ? `T${s.time}:00` : 'T00:00:00';
@@ -1808,6 +2025,7 @@
         const diffDaysNext = Math.ceil((targetMidnight - todayMidnight) / (1000 * 3600 * 24));
         
         let subText = next.type === 'plan' ? 'イク予定' : '予約戦';
+        if (next.castName) subText += ` (${next.castName})`;
         if(diffDaysNext === 0) {
           nextTextElem.innerHTML = `本日！<span style="font-size:0.75rem;">（${subText}）</span>`;
         } else {
@@ -1933,6 +2151,21 @@
     function changeSort(sort) { currentSort = sort; document.getElementById('sortCount').className = 'btn-toggle' + (sort === 'count' ? ' active' : ''); document.getElementById('sortRecent').className = 'btn-toggle' + (sort === 'recent' ? ' active' : ''); document.getElementById('sortName').className = 'btn-toggle' + (sort === 'name' ? ' active' : ''); render(); }
     function setFilter(filter) { currentFilter = filter; document.querySelectorAll('.ftag').forEach(el => el.classList.remove('active')); document.getElementById('ft' + filter.charAt(0).toUpperCase() + filter.slice(1)).classList.add('active'); render(); }
 
+    /* 🏷️ 系統タグによるフィルタリング選択・解除機能 */
+    function filterByTypeTag(tagName) {
+      selectedTypeFilter = tagName;
+      document.getElementById('selectedTypeBadgeText').innerText = tagName;
+      document.getElementById('selectedTypeBadge').style.display = 'inline-flex';
+      render();
+    }
+
+    function clearSelectedTypeTag(e) {
+      if(e) { e.preventDefault(); e.stopPropagation(); }
+      selectedTypeFilter = '';
+      document.getElementById('selectedTypeBadge').style.display = 'none';
+      render();
+    }
+
     function updateStats(map) {
       const list = Object.values(map);
       document.getElementById('stTotalVisits').innerText = historyList.length;
@@ -1979,7 +2212,25 @@
       if(currentFilter === 'active') list = list.filter(c => castData[c.name] && castData[c.name].link);
       if(currentFilter === 'fav') list = list.filter(c => c.favCount >= 1);
       if(currentFilter === 'super') list = list.filter(c => c.favCount >= 5);
-      if(keyword) list = list.filter(c => c.name.toLowerCase().includes(keyword) || c.visits.some(v => (v.visitNote||'').toLowerCase().includes(keyword) || (v.storeName||'').toLowerCase().includes(keyword)));
+
+      // 🏷️ 系統タグの絞り込み処理
+      if(selectedTypeFilter) {
+        list = list.filter(c => {
+          return c.visits.some(v => v.typeTag && v.typeTag.includes(selectedTypeFilter));
+        });
+      }
+
+      // 🔍 検索キーワードフィルタ（キャスト名、店舗名、メモ、系統タグ全て対象）
+      if(keyword) {
+        list = list.filter(c => 
+          c.name.toLowerCase().includes(keyword) || 
+          c.visits.some(v => 
+            (v.visitNote||'').toLowerCase().includes(keyword) || 
+            (v.storeName||'').toLowerCase().includes(keyword) ||
+            (v.typeTag||'').toLowerCase().includes(keyword)
+          )
+        );
+      }
 
       if (currentSort === 'count') list.sort((a,b) => b.visits.length - a.visits.length || b.lastIdx - a.lastIdx);
       else if (currentSort === 'recent') list.sort((a,b) => b.lastIdx - a.lastIdx);
@@ -2006,7 +2257,7 @@
         let typeBadgesHtml = '';
         if (latestType) {
           const types = latestType.split(',').map(t => t.trim()).filter(t => t);
-          typeBadgesHtml = types.map(t => `<div style="display:inline-flex; align-items:center; gap:4px; padding:3px 8px; font-size:0.75rem; font-weight:bold; color:#f76707; background:#fff4e6; border-radius:12px; border:1px solid #ff922b;">${t}</div>`).join('');
+          typeBadgesHtml = types.map(t => `<div onclick="filterByTypeTag('${t}')" style="display:inline-flex; align-items:center; gap:4px; padding:3px 8px; font-size:0.75rem; font-weight:bold; color:#f76707; background:#fff4e6; border-radius:12px; border:1px solid #ff922b; cursor:pointer;" title="この系統で絞り込み">${t}</div>`).join('');
         }
 
         const tagsRowHtml = (storeBadgeHtml || typeBadgesHtml) ? `<div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;">${storeBadgeHtml}${typeBadgesHtml}</div>` : '';
@@ -2079,7 +2330,12 @@
 
       Object.keys(groups).reverse().forEach(key => {
         let items = groups[key];
-        if(keyword) items = items.filter(i => i.name.toLowerCase().includes(keyword) || (i.visitNote||'').toLowerCase().includes(keyword) || (i.storeName||'').toLowerCase().includes(keyword));
+        if(selectedTypeFilter) {
+          items = items.filter(i => i.typeTag && i.typeTag.includes(selectedTypeFilter));
+        }
+        if(keyword) {
+          items = items.filter(i => i.name.toLowerCase().includes(keyword) || (i.visitNote||'').toLowerCase().includes(keyword) || (i.storeName||'').toLowerCase().includes(keyword) || (i.typeTag||'').toLowerCase().includes(keyword));
+        }
         if(items.length === 0) return;
 
         const sec = document.createElement('div'); sec.className = 'month-section';
@@ -2126,7 +2382,10 @@
 
       if (currentFilter === 'fav') list = list.filter(s => s.visits.some(v => v.flags && v.flags.includes('🆂')));
       if (currentFilter === 'super') list = list.filter(s => s.visits.filter(v => v.flags && v.flags.includes('🆂')).length >= 5);
-      if (keyword) list = list.filter(s => s.storeName.toLowerCase().includes(keyword) || s.visits.some(v => v.name.toLowerCase().includes(keyword) || (v.visitNote||'').toLowerCase().includes(keyword)));
+      if (selectedTypeFilter) {
+        list = list.filter(s => s.visits.some(v => v.typeTag && v.typeTag.includes(selectedTypeFilter)));
+      }
+      if (keyword) list = list.filter(s => s.storeName.toLowerCase().includes(keyword) || s.visits.some(v => v.name.toLowerCase().includes(keyword) || (v.visitNote||'').toLowerCase().includes(keyword) || (v.typeTag||'').toLowerCase().includes(keyword)));
 
       if (currentSort === 'count') list.sort((a,b) => b.visits.length - a.visits.length || b.lastIdx - a.lastIdx);
       else if (currentSort === 'recent') list.sort((a,b) => b.lastIdx - a.lastIdx);
