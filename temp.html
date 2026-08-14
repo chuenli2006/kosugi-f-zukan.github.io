@@ -2,8 +2,8 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LINE</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>LINE Style Chatbot</title>
   <style>
     /* --------------------------------------
        共通・カラー変数 (ライト / ダーク)
@@ -55,6 +55,13 @@
       margin: 0;
       padding: 0;
       user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
     }
 
     body {
@@ -63,16 +70,16 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      overflow: hidden;
       transition: background-color 0.3s;
     }
 
+    /* スマホのキーボード表示等に強い100dvh対応 */
     .app-container {
       position: relative;
       width: 100%;
       max-width: 440px;
       height: 100vh;
+      height: 100dvh;
       background-color: var(--chat-bg);
       display: flex;
       flex-direction: column;
@@ -96,6 +103,7 @@
       flex-direction: column;
       width: 100%;
       height: 100%;
+      overflow: hidden;
     }
 
     .screen.active {
@@ -114,6 +122,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-shrink: 0;
     }
 
     .home-body {
@@ -224,6 +233,7 @@
       color: var(--header-text);
       z-index: 10;
       transition: background-color 0.3s;
+      flex-shrink: 0; /* 縮小防止 */
     }
 
     .header-left {
@@ -264,11 +274,13 @@
 
     .chat-messages {
       flex: 1;
+      min-height: 0; /* 高さが狭まった際に適切にスクロールさせる */
       padding: 16px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
       gap: 12px;
+      -webkit-overflow-scrolling: touch;
     }
 
     .message-group {
@@ -329,6 +341,7 @@
       font-weight: 600;
     }
 
+    /* 入力エリア（画面下部に確実に固定・表示させる設定） */
     .chat-input-area {
       display: flex;
       padding: 10px 12px;
@@ -336,6 +349,8 @@
       gap: 8px;
       align-items: center;
       transition: background-color 0.3s;
+      flex-shrink: 0; /* スマホで縮小・消失するのを完全に防ぐ */
+      z-index: 10;
     }
 
     .chat-input-area input {
@@ -346,7 +361,8 @@
       border-radius: 20px;
       color: var(--input-text);
       outline: none;
-      font-size: 0.92rem;
+      font-size: 0.95rem;
+      user-select: text; /* 入力可能に保持 */
     }
 
     .chat-input-area button {
@@ -358,6 +374,7 @@
       cursor: pointer;
       font-weight: bold;
       font-size: 0.85rem;
+      flex-shrink: 0;
     }
 
     /* --------------------------------------
@@ -684,6 +701,10 @@
       document.getElementById('unreadBadge').classList.remove('active');
       clearInterval(homeTimer);
       homeTimer = null;
+      
+      // トーク画面に戻ったら最下部へスクロール
+      const chatMessages = document.getElementById("chatMessages");
+      chatMessages.scrollTop = chatMessages.scrollHeight;
     } else if (screenId === 'homeScreen') {
       // 30秒ごとの自動メッセージ送信タイマー開始
       if (!homeTimer) {
