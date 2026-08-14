@@ -3,203 +3,606 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>YUDAI OBSERVER - Glassmorphism</title>
+  <title>LINE</title>
   <style>
+    /* --------------------------------------
+       共通・カラー変数 (ライト / ダーク)
+    -------------------------------------- */
+    :root {
+      --bg-color: #7294c2;
+      --header-bg: #8ba8d2;
+      --header-text: #ffffff;
+      --chat-bg: #7294c2;
+      --home-bg: #111111;
+      --home-card-bg: #1e1e1e;
+      --home-text: #ffffff;
+      --user-msg-bg: #8de055;
+      --user-msg-text: #000000;
+      --bot-msg-bg: #ffffff;
+      --bot-msg-text: #000000;
+      --input-area-bg: #eeeeee;
+      --input-bg: #ffffff;
+      --input-text: #000000;
+      --time-color: #ffffff;
+      --read-color: #ffffff;
+      --modal-bg: #ffffff;
+      --modal-text: #333333;
+    }
+
+    [data-theme="dark"] {
+      --bg-color: #121212;
+      --header-bg: #1f1f1f;
+      --header-text: #f9fafb;
+      --chat-bg: #121212;
+      --home-bg: #0a0a0a;
+      --home-card-bg: #181818;
+      --home-text: #e5e5e5;
+      --user-msg-bg: #059669;
+      --user-msg-text: #ffffff;
+      --bot-msg-bg: #2a2a2a;
+      --bot-msg-text: #f3f4f6;
+      --input-area-bg: #1f1f1f;
+      --input-bg: #2a2a2a;
+      --input-text: #ffffff;
+      --time-color: #888888;
+      --read-color: #10b981;
+      --modal-bg: #1f1f1f;
+      --modal-text: #f3f4f6;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      user-select: none;
     }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      /* 背景の美しいグラデーション */
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg-color);
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
       overflow: hidden;
-      position: relative;
+      transition: background-color 0.3s;
     }
 
-    /* 背景に浮かぶ光のオブジェクト（すりガラス感を強調） */
-    .bg-circle-1 {
-      position: absolute;
-      width: 300px;
-      height: 300px;
-      border-radius: 50%;
-      background: rgba(255, 117, 140, 0.6);
-      top: 10%;
-      left: 18%;
-      filter: blur(60px);
-      z-index: 0;
-    }
-    .bg-circle-2 {
-      position: absolute;
-      width: 350px;
-      height: 350px;
-      border-radius: 50%;
-      background: rgba(120, 220, 255, 0.5);
-      bottom: 10%;
-      right: 18%;
-      filter: blur(70px);
-      z-index: 0;
-    }
-
-    /* チャット全体の外枠（メインのすりガラス） */
-    .chat-container {
+    .app-container {
       position: relative;
-      z-index: 1;
       width: 100%;
       max-width: 440px;
-      height: 85vh;
-      /* すりガラス風スタイル */
-      background: rgba(255, 255, 255, 0.18);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 24px;
+      height: 100vh;
+      background-color: var(--chat-bg);
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      transition: background-color 0.3s;
     }
 
-    /* ヘッダー */
-    .chat-header {
-      padding: 18px 20px;
-      background: rgba(255, 255, 255, 0.15);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    @media (min-height: 700px) and (min-width: 450px) {
+      .app-container {
+        height: 85vh;
+        border-radius: 24px;
+      }
+    }
+
+    /* --------------------------------------
+       画面切り替え制御
+    -------------------------------------- */
+    .screen {
+      display: none;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    /* --------------------------------------
+       偽のホーム画面 UI
+    -------------------------------------- */
+    .home-header {
+      padding: 16px 20px;
+      background-color: var(--home-bg);
+      color: var(--home-text);
+      font-size: 1.3rem;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .home-body {
+      flex: 1;
+      background-color: var(--home-bg);
+      color: var(--home-text);
+      overflow-y: auto;
+    }
+
+    .search-bar {
+      margin: 10px 16px;
+      padding: 8px 14px;
+      background-color: #262626;
+      border-radius: 8px;
+      color: #888;
+      font-size: 0.85rem;
+    }
+
+    .section-title {
+      padding: 12px 16px 6px;
+      font-size: 0.8rem;
+      color: #888;
+      font-weight: 600;
+    }
+
+    .chat-item {
       display: flex;
       align-items: center;
-      gap: 10px;
+      padding: 12px 16px;
+      cursor: pointer;
+      transition: background 0.2s;
     }
-    .status-dot {
-      width: 10px;
-      height: 10px;
-      background-color: #00ffaa;
-      border-radius: 50%;
-      box-shadow: 0 0 10px #00ffaa;
+
+    .chat-item:active {
+      background-color: rgba(255, 255, 255, 0.05);
     }
+
+    .avatar-lg {
+      position: relative;
+      width: 52px;
+      height: 52px;
+      border-radius: 20px;
+      background-color: #4a5568;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1.3rem;
+      margin-right: 14px;
+      flex-shrink: 0;
+    }
+
+    .chat-item-info {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .chat-item-top {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+
+    .chat-item-name {
+      font-weight: bold;
+      font-size: 1rem;
+      color: var(--home-text);
+    }
+
+    .chat-item-time {
+      font-size: 0.75rem;
+      color: #777;
+    }
+
+    .chat-item-msg {
+      font-size: 0.85rem;
+      color: #aaa;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .badge {
+      background-color: #06c755;
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: bold;
+      padding: 2px 6px;
+      border-radius: 10px;
+      margin-left: 6px;
+      display: none;
+    }
+
+    .badge.active {
+      display: inline-block;
+    }
+
+    /* --------------------------------------
+       トーク画面 UI
+    -------------------------------------- */
+    .chat-header {
+      padding: 12px 16px;
+      background-color: var(--header-bg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--header-text);
+      z-index: 10;
+      transition: background-color 0.3s;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .back-btn {
+      background: none;
+      border: none;
+      color: var(--header-text);
+      font-size: 1.4rem;
+      cursor: pointer;
+      padding: 0 4px;
+      display: flex;
+      align-items: center;
+    }
+
+    .chat-title-group {
+      display: flex;
+      flex-direction: column;
+    }
+
     .chat-title {
       font-weight: 700;
       font-size: 1.05rem;
-      letter-spacing: 0.5px;
-      color: #ffffff;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
-    /* メッセージ表示エリア */
+    .more-btn {
+      background: none;
+      border: none;
+      color: var(--header-text);
+      font-size: 1.3rem;
+      cursor: pointer;
+      padding: 4px 8px;
+    }
+
     .chat-messages {
       flex: 1;
-      padding: 20px;
+      padding: 16px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 12px;
     }
-    .message {
+
+    .message-group {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
       max-width: 80%;
-      padding: 12px 16px;
-      border-radius: 18px;
-      font-size: 0.92rem;
-      line-height: 1.5;
-      word-break: break-word;
-      animation: fadeIn 0.25s ease-out;
+      animation: fadeIn 0.2s ease-out;
     }
+
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
+      from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* ユーザーの吹き出し */
-    .user-message {
+    .user-group {
       align-self: flex-end;
-      background: rgba(255, 255, 255, 0.9);
-      color: #2c3e50;
-      font-weight: 500;
-      border-bottom-right-radius: 4px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      flex-direction: row-reverse;
     }
 
-    /* BOTの吹き出し */
-    .bot-message {
+    .bot-group {
       align-self: flex-start;
-      background: rgba(0, 0, 0, 0.3);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      border-bottom-left-radius: 4px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
 
-    /* 入力エリア */
+    .message-bubble {
+      padding: 9px 13px;
+      font-size: 0.92rem;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .user-group .message-bubble {
+      background-color: var(--user-msg-bg);
+      color: var(--user-msg-text);
+      border-radius: 16px 16px 4px 16px;
+    }
+
+    .bot-group .message-bubble {
+      background-color: var(--bot-msg-bg);
+      color: var(--bot-msg-text);
+      border-radius: 16px 16px 16px 4px;
+    }
+
+    .message-meta {
+      display: flex;
+      flex-direction: column;
+      font-size: 0.65rem;
+      color: var(--time-color);
+      white-space: nowrap;
+    }
+
+    .user-group .message-meta {
+      align-items: flex-end;
+    }
+
+    .read-status {
+      color: var(--read-color);
+      font-weight: 600;
+    }
+
     .chat-input-area {
       display: flex;
-      padding: 14px;
-      background: rgba(255, 255, 255, 0.15);
-      border-top: 1px solid rgba(255, 255, 255, 0.2);
-      gap: 10px;
+      padding: 10px 12px;
+      background-color: var(--input-area-bg);
+      gap: 8px;
+      align-items: center;
+      transition: background-color 0.3s;
     }
+
     .chat-input-area input {
       flex: 1;
-      padding: 12px 18px;
-      background: rgba(255, 255, 255, 0.25);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      border-radius: 16px;
-      color: #ffffff;
+      padding: 10px 14px;
+      background-color: var(--input-bg);
+      border: none;
+      border-radius: 20px;
+      color: var(--input-text);
       outline: none;
-      font-size: 0.9rem;
+      font-size: 0.92rem;
     }
-    .chat-input-area input::placeholder {
-      color: rgba(255, 255, 255, 0.7);
-    }
-    .chat-input-area input:focus {
-      background: rgba(255, 255, 255, 0.35);
-      border-color: #ffffff;
-    }
+
     .chat-input-area button {
-      padding: 12px 20px;
-      background: rgba(255, 255, 255, 0.9);
-      color: #4a00e0;
+      padding: 8px 14px;
+      background-color: #06c755;
+      color: #ffffff;
       border: none;
       border-radius: 16px;
       cursor: pointer;
-      font-weight: 700;
-      font-size: 0.9rem;
-      transition: all 0.2s;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      font-weight: bold;
+      font-size: 0.85rem;
     }
-    .chat-input-area button:hover {
-      background: #ffffff;
-      transform: translateY(-1px);
+
+    /* --------------------------------------
+       偽のLINE通知ポップアップ
+    -------------------------------------- */
+    .notification-banner {
+      position: absolute;
+      top: -80px;
+      left: 12px;
+      right: 12px;
+      background: rgba(30, 30, 30, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      z-index: 200;
+      transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .notification-banner.show {
+      top: 12px;
+    }
+
+    .notif-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 14px;
+      background-color: #4a5568;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    .notif-content {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .notif-title {
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .notif-text {
+      font-size: 0.8rem;
+      color: #ddd;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* --------------------------------------
+       仕込まれた設定モーダル
+    -------------------------------------- */
+    .modal-overlay {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      width: 80%;
+      max-width: 300px;
+      background-color: var(--modal-bg);
+      color: var(--modal-text);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-title {
+      font-weight: bold;
+      font-size: 1rem;
+      margin-bottom: 16px;
+      border-bottom: 1px solid rgba(150, 150, 150, 0.2);
+      padding-bottom: 8px;
+    }
+
+    .setting-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+
+    .switch input { opacity: 0; width: 0; height: 0; }
+
+    .slider {
+      position: absolute; cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #ccc;
+      transition: .3s;
+      border-radius: 24px;
+    }
+
+    .slider:before {
+      position: absolute; content: "";
+      height: 18px; width: 18px;
+      left: 3px; bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider { background-color: #06c755; }
+    input:checked + .slider:before { transform: translateX(20px); }
+
+    .modal-close-btn {
+      width: 100%;
+      padding: 8px;
+      background-color: #e2e8f0;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      color: #334155;
+      cursor: pointer;
+    }
+
+    [data-theme="dark"] .modal-close-btn {
+      background-color: #374151;
+      color: #f3f4f6;
     }
   </style>
 </head>
 <body>
 
-<!-- 背景の光ボケ効果 -->
-<div class="bg-circle-1"></div>
-<div class="bg-circle-2"></div>
+<div class="app-container" id="appContainer">
 
-<div class="chat-container">
-  <div class="chat-header">
-    <div class="status-dot"></div>
-    <div class="chat-title">ゆうだいbot bot</div>
+  <!-- 偽通知ポップアップ -->
+  <div class="notification-banner" id="notifBanner" onclick="openChatFromNotif()">
+    <div class="notif-avatar">ゆ</div>
+    <div class="notif-content">
+      <div class="notif-title">ゆうだいbot bot</div>
+      <div class="notif-text" id="notifText">新着メッセージがあります</div>
+    </div>
   </div>
-  <div class="chat-messages" id="chatMessages">
-    <div class="message bot-message">バイクのろ</div>
+
+  <!-- 1. 偽のホーム画面 -->
+  <div class="screen" id="homeScreen">
+    <div class="home-header">
+      <span>トーク</span>
+    </div>
+    <div class="home-body">
+      <div class="search-bar">🔍 検索</div>
+      <div class="section-title">すべてのトーク</div>
+      
+      <!-- 唯一のチャットリスト項目 -->
+      <div class="chat-item" onclick="showScreen('chatScreen')">
+        <div class="avatar-lg">ゆ</div>
+        <div class="chat-item-info">
+          <div class="chat-item-top">
+            <span class="chat-item-name">ゆうだいbot bot</span>
+            <span class="chat-item-time" id="homeLastTime">00:00</span>
+          </div>
+          <div class="chat-item-msg" id="homeLastMsg">メッセージはありません</div>
+        </div>
+        <span class="badge" id="unreadBadge">1</span>
+      </div>
+    </div>
   </div>
-  <div class="chat-input-area">
-    <input type="text" id="userInput" placeholder="メッセージを入力..." onkeydown="if(event.key==='Enter') sendMessage()">
-    <button onclick="sendMessage()">送信</button>
+
+  <!-- 2. トーク画面 -->
+  <div class="screen active" id="chatScreen">
+    <div class="chat-header">
+      <div class="header-left">
+        <!-- 偽ホームへ戻るボタン -->
+        <button class="back-btn" onclick="showScreen('homeScreen')">＜</button>
+        <div class="chat-title-group">
+          <div class="chat-title">ゆうだいbot bot</div>
+        </div>
+      </div>
+      <!-- 見た目はただのオプションアイコン（隠し設定ボタン） -->
+      <button class="more-btn" onclick="toggleSettingsModal()">⋮</button>
+    </div>
+
+    <!-- メッセージエリア -->
+    <div class="chat-messages" id="chatMessages"></div>
+
+    <!-- 入力エリア -->
+    <div class="chat-input-area">
+      <input type="text" id="userInput" placeholder="メッセージを入力" onkeydown="if(event.key==='Enter') sendMessage()">
+      <button onclick="sendMessage()">送信</button>
+    </div>
   </div>
+
+  <!-- 隠し設定画面（モーダル） -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal-card">
+      <div class="modal-title">トーク設定</div>
+      <div class="setting-item">
+        <span>ダークモード</span>
+        <label class="switch">
+          <input type="checkbox" id="themeToggle" onchange="toggleTheme()">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <button class="modal-close-btn" onclick="toggleSettingsModal()">閉じる</button>
+    </div>
+  </div>
+
 </div>
 
 <script>
-  // 第三者目線の「ゆうだい」メッセージ一覧
+  // 初回用メッセージリスト
+  const initialGreetingList = [
+    "バイクのろ",
+    "ごはんいこ",
+    "ひま",
+    "なにしてる",
+    "ゆうだいがやばいことなった",
+    "ゆうだいが",
+    "ゆうだい今日さ",
+    "彼女と東京なう",
+    "今日暇？"
+  ];
+
+  // 応答・定期送信用メッセージリスト
   const yudaiMessages = [
     "ゆうだいが今日朝ごはん食べてないみたいよ",
     "ゆうだいさ、さっきからずっとゲームしてるよ",
@@ -253,31 +656,143 @@
     "😡"
   ];
 
+  let currentScreen = "chatScreen";
+  let unreadCount = 0;
+  let homeTimer = null;
+
+  // 初期化処理
+  window.onload = () => {
+    // 初回ランダムメッセージの生成
+    const randomInitial = initialGreetingList[Math.floor(Math.random() * initialGreetingList.length)];
+    addMessage(randomInitial, "bot");
+  };
+
+  function getCurrentTime() {
+    const now = new Date();
+    return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  }
+
+  // 画面切り替え
+  function showScreen(screenId) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
+    currentScreen = screenId;
+
+    if (screenId === 'chatScreen') {
+      // 未読リセット
+      unreadCount = 0;
+      document.getElementById('unreadBadge').classList.remove('active');
+      clearInterval(homeTimer);
+      homeTimer = null;
+    } else if (screenId === 'homeScreen') {
+      // 30秒ごとの自動メッセージ送信タイマー開始
+      if (!homeTimer) {
+        homeTimer = setInterval(triggerAutoMessage, 30000);
+      }
+    }
+  }
+
+  // 通知クリックでトークへ戻る
+  function openChatFromNotif() {
+    document.getElementById('notifBanner').classList.remove('show');
+    showScreen('chatScreen');
+  }
+
+  // メッセージ送信
   function sendMessage() {
     const inputField = document.getElementById("userInput");
     const userText = inputField.value.trim();
-
     if (userText === "") return;
 
-    // ユーザーメッセージを追加
-    addMessage(userText, "user-message");
+    addMessage(userText, "user");
     inputField.value = "";
 
-    // 0.5秒後にランダム返信
     setTimeout(() => {
-      const randomIndex = Math.floor(Math.random() * yudaiMessages.length);
-      const randomResponse = yudaiMessages[randomIndex];
-      addMessage(randomResponse, "bot-message");
+      const randomResponse = yudaiMessages[Math.floor(Math.random() * yudaiMessages.length)];
+      addMessage(randomResponse, "bot");
     }, 500);
   }
 
-  function addMessage(text, className) {
+  // 自動定期送信 (ホーム画面滞在時)
+  function triggerAutoMessage() {
+    if (currentScreen !== 'homeScreen') return;
+
+    const randomResponse = yudaiMessages[Math.floor(Math.random() * yudaiMessages.length)];
+    addMessage(randomResponse, "bot");
+
+    // 通知ポップアップ表示
+    showNotification(randomResponse);
+  }
+
+  // 偽通知表示
+  function showNotification(text) {
+    const banner = document.getElementById('notifBanner');
+    document.getElementById('notifText').textContent = text;
+    banner.classList.add('show');
+
+    setTimeout(() => {
+      banner.classList.remove('show');
+    }, 3500);
+  }
+
+  // DOMにメッセージ追加
+  function addMessage(text, sender) {
     const chatMessages = document.getElementById("chatMessages");
-    const messageElement = document.createElement("div");
-    messageElement.classList.add("message", className);
-    messageElement.textContent = text;
-    chatMessages.appendChild(messageElement);
+    const timeStr = getCurrentTime();
+
+    const groupDiv = document.createElement("div");
+    groupDiv.classList.add("message-group", `${sender}-group`);
+
+    if (sender === "user") {
+      groupDiv.innerHTML = `
+        <div class="message-bubble">${escapeHtml(text)}</div>
+        <div class="message-meta">
+          <span class="read-status">既読</span>
+          <span class="time">${timeStr}</span>
+        </div>
+      `;
+    } else {
+      groupDiv.innerHTML = `
+        <div class="message-bubble">${escapeHtml(text)}</div>
+        <div class="message-meta">
+          <span class="time">${timeStr}</span>
+        </div>
+      `;
+
+      // ホーム画面側に未読加算
+      if (currentScreen === 'homeScreen') {
+        unreadCount++;
+        const badge = document.getElementById('unreadBadge');
+        badge.textContent = unreadCount;
+        badge.classList.add('active');
+      }
+    }
+
+    chatMessages.appendChild(groupDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    // ホーム画面プレビューの更新
+    document.getElementById('homeLastMsg').textContent = text;
+    document.getElementById('homeLastTime').textContent = timeStr;
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+  }
+
+  /* 隠し設定モーダル & テーマ */
+  function toggleSettingsModal() {
+    document.getElementById("settingsModal").classList.toggle("active");
+  }
+
+  function toggleTheme() {
+    const isDark = document.getElementById("themeToggle").checked;
+    const container = document.getElementById("appContainer");
+    if (isDark) {
+      container.setAttribute("data-theme", "dark");
+    } else {
+      container.removeAttribute("data-theme");
+    }
   }
 </script>
 
