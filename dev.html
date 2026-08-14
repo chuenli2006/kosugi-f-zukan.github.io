@@ -175,19 +175,28 @@
     .dash-charts-row { display: flex; flex-direction: column; gap: 0; width: 100%; }
 
     .controls { background: var(--card-bg); padding: 12px; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border-color); margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; width: 100%; }
-    .search-row { display: flex; gap: 6px; width: 100%; }
-    .search-box { flex: 1; display: flex; align-items: center; gap: 6px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 20px; padding: 2px 12px; }
-    .search-box input { flex: 1; border: none; font-size: 0.85rem; outline: none; background: transparent; color: var(--text-color); padding: 6px 0; }
     
-    /* 🏷️ 検索用系統タグバッジ */
+    /* 🔍 検索バー＆レイアウト横ずれ防止対策 */
+    .search-row { display: flex; gap: 6px; width: 100%; align-items: center; }
+    .search-box {
+      flex: 1; min-width: 0; display: flex; align-items: center; gap: 6px;
+      background: var(--bg-color); border: 1px solid var(--border-color);
+      border-radius: 20px; padding: 4px 10px; min-height: 38px;
+    }
+    .search-box input {
+      flex: 1; min-width: 60px; border: none; font-size: 0.85rem; outline: none;
+      background: transparent; color: var(--text-color); padding: 2px 0;
+    }
+    
+    /* 🏷️ 検索用タグバッジ（系統・店舗共通） */
     .search-type-badge {
       display: inline-flex; align-items: center; gap: 4px; font-size: 0.72rem; font-weight: bold;
-      color: #f76707; background: #fff4e6; border: 1px solid #ff922b; border-radius: 12px;
-      padding: 1px 8px; white-space: nowrap; flex-shrink: 0;
+      border-radius: 12px; padding: 2px 8px; white-space: nowrap; flex-shrink: 0;
     }
+    .search-type-badge.badge-type { color: #f76707; background: #fff4e6; border: 1px solid #ff922b; }
+    .search-type-badge.badge-store { color: var(--accent-pink); background: var(--soft-pink); border: 1px solid var(--primary-pink); }
     .search-type-badge .btn-close-tag {
-      cursor: pointer; font-size: 0.85rem; font-weight: bold; color: #f76707; line-height: 1;
-      margin-left: 2px;
+      cursor: pointer; font-size: 0.85rem; font-weight: bold; line-height: 1; margin-left: 2px;
     }
     
     .btn-options-toggle {
@@ -204,6 +213,8 @@
       align-items: center;
       gap: 4px;
       transition: all 0.2s;
+      flex-shrink: 0;
+      height: 38px;
     }
     .btn-options-toggle:active { transform: scale(0.95); }
 
@@ -549,11 +560,11 @@
         <div class="controls">
           <div class="search-row">
             <div class="search-box">
-              <div id="selectedTypeBadge" class="search-type-badge" style="display:none;">
-                <span id="selectedTypeBadgeText">系統</span>
+              <div id="selectedTypeBadge" class="search-type-badge badge-type" style="display:none;">
+                <span id="selectedTypeBadgeText">タグ</span>
                 <span class="btn-close-tag" onclick="clearSelectedTypeTag(event)">×</span>
               </div>
-              <input type="text" id="searchKeyword" list="searchDatalist" placeholder="キャスト名、店舗名、系統等で検索..." oninput="render()">
+              <input type="text" id="searchKeyword" list="searchDatalist" placeholder="キャスト名、店舗名、系統等で検索..." oninput="handleSearchInput(this.value)">
               <datalist id="searchDatalist"></datalist>
             </div>
             <button class="btn-options-toggle" onclick="toggleOptionsFold()">
@@ -657,7 +668,7 @@
     </main>
   </div>
 
-  <!-- 🌟 累計詳細モーダル (バッジ・ランク撤去版) -->
+  <!-- 🌟 累計詳細モーダル -->
   <div class="modal-overlay" id="badgeDetailModal">
     <div class="modal-content" style="padding: 24px 20px;">
       <h3 id="badgeModalCategory" style="margin-bottom:16px;">---</h3>
@@ -988,7 +999,6 @@
           </select>
         </div>
 
-        <!-- 🌸 追加: 女の子名 ＆ 店舗名 入力欄（オートフィル対応） -->
         <div style="display:flex; gap:6px;">
           <div class="form-group" style="flex:1;">
             <label>女の子の名前 (任意)</label>
@@ -1016,7 +1026,6 @@
           <input type="text" id="schTitle" required placeholder="例: 〇〇店 ゆあちゃん予約">
         </div>
 
-        <!-- 🎫 予約形態（電話予約/ネット予約/設定なし） -->
         <div class="form-group">
           <label>予約方法（任意）</label>
           <select id="schBookingType" onchange="toggleBookingType()">
@@ -1081,7 +1090,6 @@
           </select>
         </div>
 
-        <!-- 🌸 追加: 女の子名 ＆ 店舗名 入力欄（オートフィル対応） -->
         <div style="display:flex; gap:6px;">
           <div class="form-group" style="flex:1;">
             <label>女の子の名前 (任意)</label>
@@ -1177,8 +1185,10 @@
     let bubbleInterval;
     let dashPeriodType = 'month';
     let targetExportCastName = '';
-    let selectedTypeFilter = ''; // 🏷️ 選択中の系統タグフィルター
     
+    // 🏷️ タグフィルター状態（type: 系統 / store: 店舗）
+    let activeTagFilter = { type: null, value: '' }; 
+
     window.typeChartInstance = null;
     window.storeChartInstance = null;
 
@@ -1237,7 +1247,7 @@
       calCurrentDate = new Date();
       renderCalendar();
       
-      setInterval(checkNotifications, 30000); // 30秒ごとに通知チェック
+      setInterval(checkNotifications, 30000);
       checkNotifications();
     }
 
@@ -1680,7 +1690,6 @@
       }
     }
 
-    /* 📱 予約方法・電話番号入力欄の動的トグル関数 */
     function toggleBookingType() {
       const bType = document.getElementById('schBookingType').value;
       document.getElementById('schPhoneGroup').style.display = (bType === 'phone' || document.getElementById('schPhoneConfirm').value !== '0') ? 'flex' : 'none';
@@ -1693,13 +1702,8 @@
       document.getElementById('editSchWebUrlGroup').style.display = (bType === 'web') ? 'flex' : 'none';
     }
 
-    function togglePhoneConfirmPhoneInput() {
-      toggleBookingType();
-    }
-
-    function toggleEditPhoneConfirmPhoneInput() {
-      toggleEditBookingType();
-    }
+    function togglePhoneConfirmPhoneInput() { toggleBookingType(); }
+    function toggleEditPhoneConfirmPhoneInput() { toggleEditBookingType(); }
 
     function togglePhoneConfirm() {
       const type = document.getElementById('schType').value;
@@ -1893,7 +1897,7 @@
       });
 
       if(modified) saveData();
-      renderHomeMetrics(); // ホーム画面のアクションカードを更新
+      renderHomeMetrics();
     }
 
     function startHomeAnimations() {
@@ -1901,7 +1905,6 @@
       startFloatingCards();
     }
 
-    /* 📞 ホーム画面でのアクションカード（電話確認・予約時間）描画 */
     function renderHomeMetrics() {
       const now = new Date();
       const curYear = String(now.getFullYear());
@@ -1954,7 +1957,6 @@
         }
       }
 
-      // 🔔 ホーム画面アクションカード（電話確認・予約）判定
       const actionContainer = document.getElementById('homeActionCardsContainer');
       actionContainer.innerHTML = '';
       let activeCardsCount = 0;
@@ -1964,10 +1966,9 @@
         const schDateTime = new Date(`${sch.date}T${sch.time}:00`);
         const diffMs = schDateTime.getTime() - now.getTime();
         
-        // 1. 電話確認カードの表示判定（確認時間前〜予定時刻を少し過ぎるまで）
         if (sch.phoneConfirmMinutes > 0) {
           const phoneStartMs = sch.phoneConfirmMinutes * 60000;
-          if (diffMs <= phoneStartMs && diffMs >= -1800000) { // 30分経過まで表示
+          if (diffMs <= phoneStartMs && diffMs >= -1800000) {
             activeCardsCount++;
             const phoneNum = sch.phoneNumber || '';
             const phoneAction = phoneNum ? `href="tel:${phoneNum}"` : `onclick="alert('電話番号が登録されていません');"`;
@@ -1981,7 +1982,6 @@
           }
         }
 
-        // 2. 予約・リマインダーカードの表示判定
         if (sch.notifyMinutes > 0 || sch.bookingType !== 'none') {
           const notifyStartMs = (sch.notifyMinutes > 0 ? sch.notifyMinutes : 15) * 60000;
           if (diffMs <= notifyStartMs && diffMs >= -1800000) {
@@ -2151,18 +2151,60 @@
     function changeSort(sort) { currentSort = sort; document.getElementById('sortCount').className = 'btn-toggle' + (sort === 'count' ? ' active' : ''); document.getElementById('sortRecent').className = 'btn-toggle' + (sort === 'recent' ? ' active' : ''); document.getElementById('sortName').className = 'btn-toggle' + (sort === 'name' ? ' active' : ''); render(); }
     function setFilter(filter) { currentFilter = filter; document.querySelectorAll('.ftag').forEach(el => el.classList.remove('active')); document.getElementById('ft' + filter.charAt(0).toUpperCase() + filter.slice(1)).classList.add('active'); render(); }
 
-    /* 🏷️ 系統タグによるフィルタリング選択・解除機能 */
-    function filterByTypeTag(tagName) {
-      selectedTypeFilter = tagName;
-      document.getElementById('selectedTypeBadgeText').innerText = tagName;
-      document.getElementById('selectedTypeBadge').style.display = 'inline-flex';
+    /* 🏷️ 系統・店舗タグの選択設定 */
+    function setTagFilter(type, value) {
+      activeTagFilter = { type, value };
+      const badge = document.getElementById('selectedTypeBadge');
+      const badgeText = document.getElementById('selectedTypeBadgeText');
+      badgeText.innerText = (type === 'store' ? '🏬 ' : '') + value;
+      badge.className = 'search-type-badge ' + (type === 'store' ? 'badge-store' : 'badge-type');
+      badge.style.display = 'inline-flex';
+      document.getElementById('searchKeyword').value = '';
       render();
     }
 
     function clearSelectedTypeTag(e) {
       if(e) { e.preventDefault(); e.stopPropagation(); }
-      selectedTypeFilter = '';
+      activeTagFilter = { type: null, value: '' };
       document.getElementById('selectedTypeBadge').style.display = 'none';
+      render();
+    }
+
+    /* 🔍 手入力で「系統」または「店舗名」が入力された際に自動タグ化する関数 */
+    function handleSearchInput(val) {
+      const query = val.trim();
+      if (!query) {
+        render();
+        return;
+      }
+
+      // 1. 系統タグとの一致チェック
+      let foundType = false;
+      historyList.forEach(h => {
+        if (h.typeTag) {
+          const tags = h.typeTag.split(',').map(t => t.trim());
+          if (tags.some(t => t.toLowerCase() === query.toLowerCase())) {
+            foundType = true;
+          }
+        }
+      });
+      if (foundType) {
+        setTagFilter('type', query);
+        return;
+      }
+
+      // 2. 店舗名との一致チェック
+      let foundStore = false;
+      historyList.forEach(h => {
+        if (h.storeName && h.storeName.trim().toLowerCase() === query.toLowerCase()) {
+          foundStore = true;
+        }
+      });
+      if (foundStore) {
+        setTagFilter('store', query);
+        return;
+      }
+
       render();
     }
 
@@ -2213,14 +2255,14 @@
       if(currentFilter === 'fav') list = list.filter(c => c.favCount >= 1);
       if(currentFilter === 'super') list = list.filter(c => c.favCount >= 5);
 
-      // 🏷️ 系統タグの絞り込み処理
-      if(selectedTypeFilter) {
-        list = list.filter(c => {
-          return c.visits.some(v => v.typeTag && v.typeTag.includes(selectedTypeFilter));
-        });
+      // 🏷️ タグフィルター（系統 or 店舗名）の適用
+      if(activeTagFilter.type === 'type') {
+        list = list.filter(c => c.visits.some(v => v.typeTag && v.typeTag.includes(activeTagFilter.value)));
+      } else if(activeTagFilter.type === 'store') {
+        list = list.filter(c => c.visits.some(v => v.storeName && v.storeName.trim() === activeTagFilter.value));
       }
 
-      // 🔍 検索キーワードフィルタ（キャスト名、店舗名、メモ、系統タグ全て対象）
+      // 🔍 手入力キーワードフィルタ
       if(keyword) {
         list = list.filter(c => 
           c.name.toLowerCase().includes(keyword) || 
@@ -2252,12 +2294,14 @@
           if(!latestType && c.visits[i].typeTag) latestType = c.visits[i].typeTag;
         }
         
-        const storeBadgeHtml = latestStore ? `<div style="display:inline-flex; align-items:center; gap:4px; padding:3px 8px; font-size:0.75rem; font-weight:bold; color:var(--accent-pink); background:var(--soft-pink); border-radius:12px; border:1px solid var(--primary-pink);">🏬 ${latestStore}</div>` : '';
+        // 🏬 店舗名タグ（タップでフィルタリング）
+        const storeBadgeHtml = latestStore ? `<div onclick="setTagFilter('store', '${latestStore}')" style="display:inline-flex; align-items:center; gap:4px; padding:3px 8px; font-size:0.75rem; font-weight:bold; color:var(--accent-pink); background:var(--soft-pink); border-radius:12px; border:1px solid var(--primary-pink); cursor:pointer;" title="この店舗で絞り込み">🏬 ${latestStore}</div>` : '';
         
+        // 💖 系統タグ（タップでフィルタリング）
         let typeBadgesHtml = '';
         if (latestType) {
           const types = latestType.split(',').map(t => t.trim()).filter(t => t);
-          typeBadgesHtml = types.map(t => `<div onclick="filterByTypeTag('${t}')" style="display:inline-flex; align-items:center; gap:4px; padding:3px 8px; font-size:0.75rem; font-weight:bold; color:#f76707; background:#fff4e6; border-radius:12px; border:1px solid #ff922b; cursor:pointer;" title="この系統で絞り込み">${t}</div>`).join('');
+          typeBadgesHtml = types.map(t => `<div onclick="setTagFilter('type', '${t}')" style="display:inline-flex; align-items:center; gap:4px; padding:3px 8px; font-size:0.75rem; font-weight:bold; color:#f76707; background:#fff4e6; border-radius:12px; border:1px solid #ff922b; cursor:pointer;" title="この系統で絞り込み">${t}</div>`).join('');
         }
 
         const tagsRowHtml = (storeBadgeHtml || typeBadgesHtml) ? `<div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;">${storeBadgeHtml}${typeBadgesHtml}</div>` : '';
@@ -2330,9 +2374,12 @@
 
       Object.keys(groups).reverse().forEach(key => {
         let items = groups[key];
-        if(selectedTypeFilter) {
-          items = items.filter(i => i.typeTag && i.typeTag.includes(selectedTypeFilter));
+        if(activeTagFilter.type === 'type') {
+          items = items.filter(i => i.typeTag && i.typeTag.includes(activeTagFilter.value));
+        } else if(activeTagFilter.type === 'store') {
+          items = items.filter(i => i.storeName && i.storeName.trim() === activeTagFilter.value);
         }
+
         if(keyword) {
           items = items.filter(i => i.name.toLowerCase().includes(keyword) || (i.visitNote||'').toLowerCase().includes(keyword) || (i.storeName||'').toLowerCase().includes(keyword) || (i.typeTag||'').toLowerCase().includes(keyword));
         }
@@ -2382,9 +2429,13 @@
 
       if (currentFilter === 'fav') list = list.filter(s => s.visits.some(v => v.flags && v.flags.includes('🆂')));
       if (currentFilter === 'super') list = list.filter(s => s.visits.filter(v => v.flags && v.flags.includes('🆂')).length >= 5);
-      if (selectedTypeFilter) {
-        list = list.filter(s => s.visits.some(v => v.typeTag && v.typeTag.includes(selectedTypeFilter)));
+      
+      if (activeTagFilter.type === 'type') {
+        list = list.filter(s => s.visits.some(v => v.typeTag && v.typeTag.includes(activeTagFilter.value)));
+      } else if (activeTagFilter.type === 'store') {
+        list = list.filter(s => s.storeName === activeTagFilter.value);
       }
+
       if (keyword) list = list.filter(s => s.storeName.toLowerCase().includes(keyword) || s.visits.some(v => v.name.toLowerCase().includes(keyword) || (v.visitNote||'').toLowerCase().includes(keyword) || (v.typeTag||'').toLowerCase().includes(keyword)));
 
       if (currentSort === 'count') list.sort((a,b) => b.visits.length - a.visits.length || b.lastIdx - a.lastIdx);
@@ -2797,7 +2848,6 @@
       window.cumulativeData = { totalVisits, totalAmount, uniqueCasts, totalMinutes, uniqueStores, totalFavs, totalMemories, totalAmountDisplay, playTimeDisplay, durationDisplay };
     }
 
-    /* 🌟 実績数値のみを表示するシンプルモーダル関数 */
     function openBadge3DModal(catKey) {
       const data = window.cumulativeData;
       if (!data) return;
