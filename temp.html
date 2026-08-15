@@ -73,7 +73,6 @@
       transition: background-color 0.3s;
     }
 
-    /* スマホのキーボード表示等に強い100dvh対応 */
     .app-container {
       position: relative;
       width: 100%;
@@ -176,6 +175,10 @@
       flex-shrink: 0;
     }
 
+    .avatar-dosihana {
+      background-color: #e53e3e; /* ドシハナ君用アイコンカラー */
+    }
+
     .chat-item-info {
       flex: 1;
       overflow: hidden;
@@ -233,7 +236,7 @@
       color: var(--header-text);
       z-index: 10;
       transition: background-color 0.3s;
-      flex-shrink: 0; /* 縮小防止 */
+      flex-shrink: 0;
     }
 
     .header-left {
@@ -274,7 +277,7 @@
 
     .chat-messages {
       flex: 1;
-      min-height: 0; /* 高さが狭まった際に適切にスクロールさせる */
+      min-height: 0;
       padding: 16px;
       overflow-y: auto;
       display: flex;
@@ -341,7 +344,6 @@
       font-weight: 600;
     }
 
-    /* 入力エリア（画面下部に確実に固定・表示させる設定） */
     .chat-input-area {
       display: flex;
       padding: 10px 12px;
@@ -349,7 +351,7 @@
       gap: 8px;
       align-items: center;
       transition: background-color 0.3s;
-      flex-shrink: 0; /* スマホで縮小・消失するのを完全に防ぐ */
+      flex-shrink: 0;
       z-index: 10;
     }
 
@@ -362,7 +364,7 @@
       color: var(--input-text);
       outline: none;
       font-size: 0.95rem;
-      user-select: text; /* 入力可能に保持 */
+      user-select: text;
     }
 
     .chat-input-area button {
@@ -533,15 +535,15 @@
 
   <!-- 偽通知ポップアップ -->
   <div class="notification-banner" id="notifBanner" onclick="openChatFromNotif()">
-    <div class="notif-avatar">ゆ</div>
+    <div class="notif-avatar" id="notifAvatar">ゆ</div>
     <div class="notif-content">
-      <div class="notif-title">ゆうだいbot bot</div>
+      <div class="notif-title" id="notifTitle">ゆうだいbot bot</div>
       <div class="notif-text" id="notifText">新着メッセージがあります</div>
     </div>
   </div>
 
   <!-- 1. 偽のホーム画面 -->
-  <div class="screen" id="homeScreen">
+  <div class="screen active" id="homeScreen">
     <div class="home-header">
       <span>トーク</span>
     </div>
@@ -549,32 +551,45 @@
       <div class="search-bar">🔍 検索</div>
       <div class="section-title">すべてのトーク</div>
       
-      <!-- 唯一のチャットリスト項目 -->
-      <div class="chat-item" onclick="showScreen('chatScreen')">
+      <!-- 1つ目のチャットリスト項目 (ゆうだいbot bot) -->
+      <div class="chat-item" onclick="openChat('yudai')">
         <div class="avatar-lg">ゆ</div>
         <div class="chat-item-info">
           <div class="chat-item-top">
             <span class="chat-item-name">ゆうだいbot bot</span>
-            <span class="chat-item-time" id="homeLastTime">00:00</span>
+            <span class="chat-item-time" id="homeLastTime_yudai">00:00</span>
           </div>
-          <div class="chat-item-msg" id="homeLastMsg">メッセージはありません</div>
+          <div class="chat-item-msg" id="homeLastMsg_yudai">メッセージはありません</div>
         </div>
-        <span class="badge" id="unreadBadge">1</span>
+        <span class="badge" id="unreadBadge_yudai">1</span>
       </div>
+
+      <!-- 2つ目のチャットリスト項目 (ドシハナ君) -->
+      <div class="chat-item" onclick="openChat('dosihana')">
+        <div class="avatar-lg avatar-dosihana">ド</div>
+        <div class="chat-item-info">
+          <div class="chat-item-top">
+            <span class="chat-item-name">ドシハナ君</span>
+            <span class="chat-item-time" id="homeLastTime_dosihana">00:00</span>
+          </div>
+          <div class="chat-item-msg" id="homeLastMsg_dosihana">おつかれ〜</div>
+        </div>
+        <span class="badge" id="unreadBadge_dosihana">1</span>
+      </div>
+
     </div>
   </div>
 
   <!-- 2. トーク画面 -->
-  <div class="screen active" id="chatScreen">
+  <div class="screen" id="chatScreen">
     <div class="chat-header">
       <div class="header-left">
         <!-- 偽ホームへ戻るボタン -->
         <button class="back-btn" onclick="showScreen('homeScreen')">＜</button>
         <div class="chat-title-group">
-          <div class="chat-title">ゆうだいbot bot</div>
+          <div class="chat-title" id="chatHeaderTitle">ゆうだいbot bot</div>
         </div>
       </div>
-      <!-- 見た目はただのオプションアイコン（隠し設定ボタン） -->
       <button class="more-btn" onclick="toggleSettingsModal()">⋮</button>
     </div>
 
@@ -606,127 +621,103 @@
 </div>
 
 <script>
-  // 初回用メッセージリスト
+  // ゆうだいbot bot用
   const initialGreetingList = [
-    "バイクのろ",
-    "ごはんいこ",
-    "ひま",
-    "なにしてる",
-    "ゆうだいがやばいことなった",
-    "ゆうだいが",
-    "ゆうだい今日さ",
-    "彼女と東京なう",
-    "今日暇？"
+    "バイクのろ", "ごはんいこ", "ひま", "なにしてる",
+    "ゆうだいがやばいことなった", "ゆうだいが", "ゆうだい今日さ",
+    "彼女と東京なう", "今日暇？"
   ];
 
-  // 応答・定期送信用メッセージリスト
   const yudaiMessages = [
-    "ゆうだいが今日朝ごはん食べてないみたいよ",
-    "ゆうだいさ、さっきからずっとゲームしてるよ",
-    "ゆうだいが『俺に任せろ』ってドヤ顔で言ってました。",
-    "ゆうだいさ、実は昨日から全然寝てないらしいよ。",
-    "ゆうだいが何か言いたそうにこちらを見ています。",
-    "ゆうだいさっき、自分の名前で呼ばれてドヤ顔してました。",
-    "ゆうだいさ3級持ってるくせにボルトの締め方も間違えるって。",
-    "ゆうだいさ、ゲームのプレイ動画見ながらイメトレしてるみたい。",
-    "ゆうだいがこの前、むげんのムーブとこめすの車壊した",
-    "ゆうだいさ、今日お客さんの車を壊した",
-    "ゆうだいさ、今日上司におこられたよ",
-    "ゆうだいさ、昨日も上司におこられたよ",
-    "ゆうだいが準備してないのに『明日の準備完璧！』って自信満々に言ってる。",
-    "ゆうだいさ、最近ずっと同じ曲聴いてるよね。",
-    "ゆうだいが『本気出せば楽勝』ってイキがってます笑",
-    "ゆうだい授業中ずっとねてるよね",
-    "ゆうだいが『ちょっとコンビニ行ってくる』って出ていきました。",
-    "ゆうだいさ、作業中でもずっとぼーとしてるよね",
-    "ゆうだいの3級ってアリエクで買ったかも",
-    "ゆうだいさ、まじでクビにしたい",
-    "ゆうだいが、「ロードスターよりS2000の方が早いよ」って言ってたよ",
-    "ゆうだいが、今日仕事お母さんに送ってもらったらしいよ",
-    "うん",
-    "ゆうだいが、原付で330の右車線走ってたらしいよ",
-    "ゆうだいさ、原付でガス欠したのに「限界試しただけや」って意地張ってたよ",
-    "ゆうだいはねえ",
-    "最近ゆうだいが",
-    "ゆうだいはなんかみんなに嫌われてるよ",
-    "ゆうだいせんせいのまえでいい子じらーするから",
-    "ゆうだい最近7歳の女子尾行してたよ",
-    "ゆうだい最近児ポで捕まったらしいよ",
-    "ゆうだいは一生研修センターから出られないよ",
-    "ゆうだいの家は貧乏だ",
-    "ゆうだいは小学生の女子が好きみたいってよ",
-    "ゆうだいが",
-    "w",
-    "ゆうだいは、",
-    "ゆうだいがダンク納車してる",
-    "ゆうだいのよだれ0w16",
-    "ゆうだいのよだれ5w30だよ",
-    "you die",
-    "wwww",
-    "ゆうだいの口座はおかあさんが管理してるらしい",
-    "ゆうだいが来たらみんな離れる",
-    "一切誰もゆうだいに声かけない",
-    "なんかゆうだいさ、ゲームしすぎてとりあげされたって",
-    "ゆうだいのゲーム機取り上げされてておじさんの家に置かれてるから",
-    "ゆうだい休みの日はおじさんの家にゲームしに行ってる",
-    "ゆうだいカローラのヘッドランプとるのに30分かかってた",
-    "ゆうだいがちやばい",
-    "ゆうだい、マークされてる。w",
-    "ゆうだいさ、なんか髭伸ばし始めてんだよね",
-    "ゆうだいさ、職場で帰りに呼び出しくらってた",
-    "ゆうだい、スマホの勤怠登録の説明の時とかスマホでゲームしてるよ",
-    "ゆうだい、2回も職質された事あるらしい",
-    "ゆうだい、朝6時から研修センターの前で待機してる",
-    "ゆうだいEVカートでまた暴走してる",
-    "なんかゆうだい、どこからもハブられてる",
-    "ゆうだい、糖尿病ってよ",
-    "ゆうだい、会社の親睦会ちこくしてきてたw",
-    "ゆうだいずっと寝てん？",
-    "ゆうだいが、赤点の人の名前書かれた白板見ながら、「いやぁ、赤点多くて悲しいなぁって思って」とか言うてたよ",
-    "ゆうだい、入社したら先輩とかにアドバイスしだしそう",
-    "ゆうだいさー、見てるだけでなんもしない",
-    "ゆうだいめちゃてすとのときみてくる‼️",
-    "ゆうだい、ヨダレ床下到達時間　10秒",
-    "ゆうだいアパートのベランダからなんか投げてた",
-    "ゆうだいがちのろまなんだから、少しは人の事考えて欲しいわ、",
-    "ゆうだいまるぱくりしすぎてさ誤字まで一緒だよ。",
-    "ゆうだいキチガイだよなあ、",
-    "ゆうだいはいつも、誰かに乗せてもらうってしか、考えがないさ",
-    "ゆうだいと同じ班なのやだな",
-    "ゆうだいと同じ班の時高確率で居残りなる",
-    "やっぱりゆうだいは普通の人じゃないらしい",
-    "ゆうだいがちやばい",
-    "ゆうだいとはやっぱり極力関わらないことにきめた",
-    "ゆうだいなんであんなにむかつくんかな",
-    "今日たまたま琉大の抜け道から通ってそのアパート見たらゆうだいのdioとまってた",
-    "ゆうだいやっぱじぶんが楽したいだけってのがわかった",
-    "ゆうだいだるかったー、",
-    "ゆうだい、遊びに誘ってないのについてきた",
-    "きょうもゆうだいやばかったな",
-    "ゆうだいがおれのとこチラって見て「俺原付で行く気ないよ」って笑いながら言ってた",
-    "やっぱだるいわゆうだい",
-    "ゆうだい、怖いのがさ",
-    "ゆうだいみたいな子は認められたい欲が強いのよ",
-    "被害者ズラするよね。ゆうだい。",
-    "ゆうだい、Dioでじこったみたい",
-    "俺今彼女と東京にいるよ",
-    "ゆうだい後輩いじめる",
-    "おれ3級整備士だよ（ ◜ω◝ ）ﾆﾁｬｱってゆうだいが言ってた",
-    "ゆうだいのお母さんに言いたいなあ、お前の息子いらんって",
-    "ゆうだい友だちいないよ",
-    "ゆうだい早速入社式前にゲームしてた",
-    "😡"
+    "ゆうだいが今日朝ごはん食べてないみたいよ", "ゆうだいさ、さっきからずっとゲームしてるよ",
+    "ゆうだいが『俺に任せろ』ってドヤ顔で言ってました。", "ゆうだいさ、実は昨日から全然寝てないらしいよ。",
+    "ゆうだいが何か言いたそうにこちらを見ています。", "ゆうだいさっき、自分の名前で呼ばれてドヤ顔してました。",
+    "ゆうだい3級持ってるくせにボルトの締め方も間違えるって。", "ゆうだいさ、ゲームのプレイ動画見ながらイメトレしてるみたい。",
+    "ゆうだいがこの前、むげんのムーブとこめすの車壊した", "ゆうだいさ、今日お客さんの車を壊した",
+    "ゆうだいさ、今日上司におこられたよ", "ゆうだいさ、昨日も上司におこられたよ",
+    "ゆうだいが準備してないのに『明日の準備完璧！』って自信満々に言ってる。", "ゆうだいさ、最近ずっと同じ曲聴いてるよね。",
+    "ゆうだいが『本気出せば楽勝』ってイキがってます笑", "ゆうだい授業中ずっとねてるよね",
+    "ゆうだいが『ちょっとコンビニ行ってくる』って出ていきました。", "ゆうだいさ、作業中でもずっとぼーとしてるよね",
+    "ゆうだいの3級ってアリエクで買ったかも", "ゆうだいさ、まじでクビにしたい",
+    "ゆうだいが、「ロードスターよりS2000の方が早いよ」って言ってたよ", "ゆうだいが、今日仕事お母さんに送ってもらったらしいよ",
+    "うん", "ゆうだいが、原付で330の右車線走ってたらしいよ",
+    "ゆうだいさ、原付でガス欠したのに「限界試しただけや」って意地張ってたよ", "ゆうだいはねえ",
+    "最近ゆうだいが", "ゆうだいはなんかみんなに嫌われてるよ",
+    "ゆうだいせんせいのまえでいい子じらーするから", "ゆうだい最近7歳の女子尾行してたよ",
+    "ゆうだい最近児ポで捕まったらしいよ", "ゆうだいは一生研修センターから出られないよ",
+    "ゆうだいの家は貧乏だ", "ゆうだいは小学生の女子が好きみたいってよ",
+    "ゆうだいが", "w", "ゆうだいは、", "ゆうだいがダンク納車してる",
+    "ゆうだいのよだれ0w16", "ゆうだいのよだれ5w30だよ", "you die", "wwww",
+    "ゆうだいの口座はおかあさんが管理してるらしい", "ゆうだいが来たらみんな離れる",
+    "一切誰もゆうだいに声かけない", "なんかゆうだいさ、ゲームしすぎてとりあげされたって",
+    "ゆうだいのゲーム機取り上げされてておじさんの家に置かれてるから", "ゆうだい休みの日はおじさんの家にゲームしに行ってる",
+    "ゆうだいカローラのヘッドランプとるのに30分かかってた", "ゆうだいがちやばい",
+    "ゆうだい、マークされてる。w", "ゆうだいさ、なんか髭伸ばし始めてんだよね",
+    "ゆうだいさ、職場で帰りに呼び出しくらってた", "ゆうだい、スマホの勤怠登録の説明の時とかスマホでゲームしてるよ",
+    "ゆうだい、2回も職質された事あるらしい", "ゆうだい、朝6時から研修センターの前で待機してる",
+    "ゆうだいEVカートでまた暴走してる", "なんかゆうだい、どこからもハブられてる",
+    "ゆうだい、糖尿病ってよ", "ゆうだい、会社の親睦会ちこくしてきてたw",
+    "ゆうだいずっと寝てん？", "ゆうだいが、赤点の人の名前書かれた白板見ながら、「いやぁ、赤点多くて悲しいなぁって思って」とか言うてたよ",
+    "ゆうだい、入社したら先輩とかにアドバイスしだしそう", "ゆうだいさー、見てるだけでなんもしない",
+    "ゆうだいめちゃてすとのときみてくる‼️", "ゆうだい、ヨダレ床下到達時間　10秒",
+    "ゆうだいアパートのベランダからなんか投げてた", "ゆうだいがちのろまなんだから、少しは人の事考えて欲しいわ、",
+    "ゆうだいまるぱくりしすぎてさ誤字まで一緒だよ。", "ゆうだいキチガイだよなあ、",
+    "ゆうだいはいつも、誰かに乗せてもらうってしか、考えがないさ", "ゆうだいと同じ班なのやだな",
+    "ゆうだいと同じ班の時高確率で居残りなる", "やっぱりゆうだいは普通の人じゃないらしい",
+    "ゆうだいがちやばい", "ゆうだいとはやっぱり極力関わらないことにきめた",
+    "ゆうだいなんであんなにむかつくんかな", "今日たまたま琉大の抜け道から通ってそのアパート見たらゆうだいのdioとまってた",
+    "ゆうだいやっぱじぶんが楽したいだけってのがわかった", "ゆうだいだるかったー、",
+    "ゆうだい、遊びに誘ってないのついてきた", "きょうもゆうだいやばかったな",
+    "ゆうだいがおれのとこチラって見て「俺原付で行く気ないよ」って笑いながら言ってた", "やっぱだるいわゆうだい",
+    "ゆうだい、怖いのがさ", "ゆうだいみたいな子は認められたい欲が強いのよ",
+    "被害者ズラするよね。ゆうだい。", "ゆうだい、Dioでじこったみたい",
+    "俺今彼女と東京にいるよ", "ゆうだい後輩いじめる",
+    "おれ3級整備士だよ（ ◜ω◝ ）ﾆﾁｬｱってゆうだいが言ってた", "ゆうだいのお母さんに言いたいなあ、お前の息子いらんって",
+    "ゆうだい友だちいないよ", "ゆうだい早速入社式前にゲームしてた", "😡"
   ];
 
-  let currentScreen = "chatScreen";
-  let unreadCount = 0;
+  // ドシハナ君用返信シナリオ
+  const dosihanaScenario = [
+    "あーそれは相手が悪いわ",
+    "俺ならそんな思いさせへんのに",
+    "また今度飲み行こいや",
+    "お前は妹みたいなもんやし手出すわけないやん",
+    "守ってあげたいし",
+    "後輩にそんなことするわけないやん",
+    "じゃ、挿れるで……"
+  ];
+
+  // 各ボットの状態管理
+  const chatData = {
+    yudai: {
+      name: "ゆうだいbot bot",
+      avatar: "ゆ",
+      messages: [],
+      unread: 1,
+      scenarioIndex: 0,
+      hasOpened: false
+    },
+    dosihana: {
+      name: "ドシハナ君",
+      avatar: "ド",
+      messages: [],
+      unread: 1,
+      scenarioIndex: 0,
+      hasOpened: false
+    }
+  };
+
+  let activeBotKey = "yudai";
+  let currentScreen = "homeScreen";
   let homeTimer = null;
 
-  // 初期化処理
   window.onload = () => {
-    // 初回ランダムメッセージの生成
+    // ゆうだいbotの初期化
     const randomInitial = initialGreetingList[Math.floor(Math.random() * initialGreetingList.length)];
-    addMessage(randomInitial, "bot");
+    addMessageToData("yudai", randomInitial, "bot");
+
+    // ドシハナ君の初期メッセージ
+    addMessageToData("dosihana", "おつかれ〜", "bot");
   };
 
   function getCurrentTime() {
@@ -734,66 +725,104 @@
     return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
   }
 
-  // 画面切り替え
+  // チャットを開く
+  function openChat(botKey) {
+    activeBotKey = botKey;
+    document.getElementById("chatHeaderTitle").textContent = chatData[botKey].name;
+    
+    // 未読解除
+    chatData[botKey].unread = 0;
+    const badge = document.getElementById(`unreadBadge_${botKey}`);
+    badge.classList.remove('active');
+
+    // メッセージ描画
+    renderMessages();
+    showScreen('chatScreen');
+
+    // ドシハナ君の初回オープン（1秒後の自動追撃メッセージ）
+    if (botKey === 'dosihana' && !chatData.dosihana.hasOpened) {
+      chatData.dosihana.hasOpened = true;
+      setTimeout(() => {
+        addMessage("どうしたん、話聞こうか…？", "bot", "dosihana");
+      }, 1000);
+    }
+  }
+
   function showScreen(screenId) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(screenId).classList.add('active');
     currentScreen = screenId;
 
     if (screenId === 'chatScreen') {
-      // 未読リセット
-      unreadCount = 0;
-      document.getElementById('unreadBadge').classList.remove('active');
       clearInterval(homeTimer);
       homeTimer = null;
-      
-      // トーク画面に戻ったら最下部へスクロール
       const chatMessages = document.getElementById("chatMessages");
       chatMessages.scrollTop = chatMessages.scrollHeight;
     } else if (screenId === 'homeScreen') {
-      // 30秒ごとの自動メッセージ送信タイマー開始
       if (!homeTimer) {
         homeTimer = setInterval(triggerAutoMessage, 30000);
       }
     }
   }
 
-  // 通知クリックでトークへ戻る
   function openChatFromNotif() {
     document.getElementById('notifBanner').classList.remove('show');
-    showScreen('chatScreen');
+    openChat(activeBotKey);
   }
 
-  // メッセージ送信
+  function renderMessages() {
+    const chatMessages = document.getElementById("chatMessages");
+    chatMessages.innerHTML = "";
+    
+    chatData[activeBotKey].messages.forEach(msg => {
+      appendMessageDOM(msg.text, msg.sender, msg.time);
+    });
+
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
   function sendMessage() {
     const inputField = document.getElementById("userInput");
     const userText = inputField.value.trim();
     if (userText === "") return;
 
-    addMessage(userText, "user");
+    // ユーザー発言
+    addMessage(userText, "user", activeBotKey);
     inputField.value = "";
 
+    // ボット返信ロジック
     setTimeout(() => {
-      const randomResponse = yudaiMessages[Math.floor(Math.random() * yudaiMessages.length)];
-      addMessage(randomResponse, "bot");
+      let responseText = "";
+      if (activeBotKey === "yudai") {
+        responseText = yudaiMessages[Math.floor(Math.random() * yudaiMessages.length)];
+      } else if (activeBotKey === "dosihana") {
+        const index = chatData.dosihana.scenarioIndex;
+        if (index < dosihanaScenario.length) {
+          responseText = dosihanaScenario[index];
+          chatData.dosihana.scenarioIndex++;
+        } else {
+          // シナリオ走破後のループ（または最後のセリフを継続）
+          responseText = dosihanaScenario[dosihanaScenario.length - 1];
+        }
+      }
+      addMessage(responseText, "bot", activeBotKey);
     }, 500);
   }
 
-  // 自動定期送信 (ホーム画面滞在時)
+  // 自動定期送信 (ゆうだいbot用)
   function triggerAutoMessage() {
     if (currentScreen !== 'homeScreen') return;
 
     const randomResponse = yudaiMessages[Math.floor(Math.random() * yudaiMessages.length)];
-    addMessage(randomResponse, "bot");
-
-    // 通知ポップアップ表示
-    showNotification(randomResponse);
+    addMessage(randomResponse, "bot", "yudai");
+    showNotification("ゆうだいbot bot", randomResponse, "ゆ");
   }
 
-  // 偽通知表示
-  function showNotification(text) {
+  function showNotification(title, text, avatar) {
     const banner = document.getElementById('notifBanner');
+    document.getElementById('notifTitle').textContent = title;
     document.getElementById('notifText').textContent = text;
+    document.getElementById('notifAvatar').textContent = avatar;
     banner.classList.add('show');
 
     setTimeout(() => {
@@ -801,11 +830,33 @@
     }, 3500);
   }
 
-  // DOMにメッセージ追加
-  function addMessage(text, sender) {
-    const chatMessages = document.getElementById("chatMessages");
+  function addMessage(text, sender, botKey) {
     const timeStr = getCurrentTime();
+    addMessageToData(botKey, text, sender, timeStr);
 
+    if (currentScreen === 'chatScreen' && activeBotKey === botKey) {
+      appendMessageDOM(text, sender, timeStr);
+    }
+  }
+
+  function addMessageToData(botKey, text, sender, timeStr = getCurrentTime()) {
+    chatData[botKey].messages.push({ text, sender, time: timeStr });
+
+    // ホーム表示の更新
+    document.getElementById(`homeLastMsg_${botKey}`).textContent = text;
+    document.getElementById(`homeLastTime_${botKey}`).textContent = timeStr;
+
+    // 非アクティブな場合未読を増やす
+    if (sender === "bot" && (currentScreen !== 'chatScreen' || activeBotKey !== botKey)) {
+      chatData[botKey].unread++;
+      const badge = document.getElementById(`unreadBadge_${botKey}`);
+      badge.textContent = chatData[botKey].unread;
+      badge.classList.add('active');
+    }
+  }
+
+  function appendMessageDOM(text, sender, timeStr) {
+    const chatMessages = document.getElementById("chatMessages");
     const groupDiv = document.createElement("div");
     groupDiv.classList.add("message-group", `${sender}-group`);
 
@@ -824,29 +875,16 @@
           <span class="time">${timeStr}</span>
         </div>
       `;
-
-      // ホーム画面側に未読加算
-      if (currentScreen === 'homeScreen') {
-        unreadCount++;
-        const badge = document.getElementById('unreadBadge');
-        badge.textContent = unreadCount;
-        badge.classList.add('active');
-      }
     }
 
     chatMessages.appendChild(groupDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
-
-    // ホーム画面プレビューの更新
-    document.getElementById('homeLastMsg').textContent = text;
-    document.getElementById('homeLastTime').textContent = timeStr;
   }
 
   function escapeHtml(str) {
     return str.replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
   }
 
-  /* 隠し設定モーダル & テーマ */
   function toggleSettingsModal() {
     document.getElementById("settingsModal").classList.toggle("active");
   }
