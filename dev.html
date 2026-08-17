@@ -168,6 +168,45 @@
     .home-action-title { font-size: 0.85rem; font-weight: bold; color: #d9480f; margin-bottom: 2px; }
     .home-action-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: #fcc419; color: #5c3c00; border: none; padding: 6px 16px; border-radius: 20px; font-size: 0.82rem; font-weight: bold; margin-top: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
 
+    /* 💭 タイムカプセルカード（あの頃の思い出） */
+    .time-capsule-card {
+      background: linear-gradient(135deg, #fff0d6, var(--card-bg));
+      border: 2px solid #f3c642;
+      box-shadow: 0 4px 15px rgba(243, 198, 66, 0.25);
+      animation: none;
+      cursor: default;
+    }
+
+    /* 🎉 アニバーサリー祝賀モーダル演出 */
+    .anniversary-modal-content {
+      text-align: center;
+      background: linear-gradient(160deg, var(--gold-bg-start), var(--card-bg) 60%);
+      border: 2px solid var(--gold-border);
+      position: relative;
+      overflow: hidden;
+    }
+    .anniversary-confetti {
+      font-size: 1.4rem;
+      letter-spacing: 4px;
+      margin-bottom: 4px;
+      animation: confettiBounce 1.6s ease-in-out infinite;
+    }
+    @keyframes confettiBounce {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-6px) rotate(-4deg); }
+    }
+    .anniversary-title {
+      font-size: 1.25rem;
+      font-weight: bold;
+      color: var(--gold-text);
+      margin-bottom: 14px;
+      animation: anniversaryPulse 1.8s ease-in-out infinite;
+    }
+    @keyframes anniversaryPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+    }
+
     .dashboard { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 12px; margin-bottom: 12px; box-shadow: var(--shadow); width: 100%; }
     .dash-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; text-align: center; }
     .dash-item { background: var(--bg-color); padding: 6px; border-radius: 8px; border: 1px solid var(--border-color); }
@@ -907,6 +946,35 @@
       <div style="font-size:0.78rem; font-weight:bold; color:var(--accent-pink); margin-bottom:6px;">📜 過去の利用履歴</div>
       <div id="storeCastDetailHistory" style="display:flex; flex-direction:column; gap:6px; max-height:40vh; overflow-y:auto;"></div>
       <button class="close-btn" onclick="closeModal('storeCastDetailModal')" style="margin-top:14px;">閉じる</button>
+    </div>
+  </div>
+
+  <!-- 🎉 デビュー〇周年アニバーサリー祝賀モーダル -->
+  <div class="modal-overlay" id="anniversaryModal">
+    <div class="modal-content anniversary-modal-content">
+      <div class="anniversary-confetti">🎉🎊✨🎉🎊✨🎉</div>
+      <h3 id="anniversaryYearsText" class="anniversary-title">祝！風俗デビューから○周年！</h3>
+
+      <div class="stat-section" style="margin-bottom:10px;">
+        <div class="stat-section-title">📊 これまでの総括</div>
+        <div class="stat-grid-4" style="grid-template-columns: repeat(3, 1fr);">
+          <div class="stat-card"><div class="stat-card-lbl">総利用回数</div><div class="stat-card-val" id="annivTotalVisits">0回</div></div>
+          <div class="stat-card"><div class="stat-card-lbl">使った総額</div><div class="stat-card-val" id="annivTotalAmount" style="font-size:1rem;">¥0</div></div>
+          <div class="stat-card"><div class="stat-card-lbl">総経験人数</div><div class="stat-card-val" id="annivTotalCasts">0人</div></div>
+        </div>
+      </div>
+
+      <div class="stat-section" style="margin-bottom:0;">
+        <div class="stat-section-title">🌱 原点の記憶（最初の記録）</div>
+        <div style="display:flex; flex-direction:column; gap:6px; font-size:0.82rem;">
+          <div><span style="color:var(--light-text); font-weight:bold;">📅 日付：</span><span id="annivFirstDate">---</span></div>
+          <div><span style="color:var(--light-text); font-weight:bold;">🏬 店舗：</span><span id="annivFirstStore">---</span></div>
+          <div><span style="color:var(--light-text); font-weight:bold;">🌸 お相手：</span><span id="annivFirstCast">---</span></div>
+          <div><span style="color:var(--light-text); font-weight:bold;">📝 当時のメモ：</span><span id="annivFirstNote">---</span></div>
+        </div>
+      </div>
+
+      <button class="close-btn" onclick="closeModal('anniversaryModal')" style="margin-top:16px;">これからもよろしく♡ 閉じる</button>
     </div>
   </div>
 
@@ -2250,6 +2318,8 @@
     function startHomeAnimations() {
       renderHomeMetrics();
       startFloatingCards();
+      renderTimeCapsuleCard();
+      checkAnniversary();
     }
 
     function renderHomeMetrics() {
@@ -2379,6 +2449,116 @@
           nextTextElem.innerHTML = `あと ${diffDaysNext} 日 <span style="font-size:0.75rem;">（${next.date.slice(5)} ${subText}）</span>`;
         }
       }
+    }
+
+    /* 💭 タイムカプセル機能：ちょうど○年前 / ○ヶ月前の今日の記録を探す */
+    function getTimeCapsuleMatch() {
+      const now = new Date();
+      const curYear = now.getFullYear();
+      const curMonth = now.getMonth() + 1;
+      const curDay = now.getDate();
+
+      let yearMatch = null;
+      let monthMatch = null;
+
+      historyList.forEach(v => {
+        const y = parseInt(v.year, 10);
+        const m = parseInt(v.month, 10);
+        const d = parseInt(v.day, 10);
+        if (!y || !m || !d) return;
+        if (d !== curDay) return;
+
+        const diffMonths = (curYear - y) * 12 + (curMonth - m);
+        if (diffMonths <= 0) return;
+
+        if (diffMonths % 12 === 0) {
+          if (!yearMatch || diffMonths > yearMatch.diffMonths) {
+            yearMatch = { record: v, diffMonths, years: diffMonths / 12 };
+          }
+        } else {
+          if (!monthMatch || diffMonths > monthMatch.diffMonths) {
+            monthMatch = { record: v, diffMonths };
+          }
+        }
+      });
+
+      return yearMatch || monthMatch;
+    }
+
+    function renderTimeCapsuleCard() {
+      const actionContainer = document.getElementById('homeActionCardsContainer');
+      if (!actionContainer) return;
+
+      const capsule = getTimeCapsuleMatch();
+      if (!capsule) return;
+
+      const v = capsule.record;
+      const agoLabel = capsule.years ? `${capsule.years}年前` : `${capsule.diffMonths}ヶ月前`;
+      const storeText = (v.storeName && v.storeName.trim()) ? v.storeName.trim() : '某店';
+      const noteText = (v.visitNote && v.visitNote.trim()) ? v.visitNote.trim() : '（当時のメモは残っていません）';
+
+      actionContainer.innerHTML += `
+        <div class="home-action-card time-capsule-card">
+          <div class="home-action-title" style="color:#8a5a00;">💭 あの頃の思い出（${agoLabel}の今日）</div>
+          <div style="font-size:0.8rem; color:var(--text-color); text-align:left; line-height:1.6;">
+            ${agoLabel}の今日、あなたは<strong>${storeText}</strong>で<strong>${v.name}</strong>ちゃんと遊んでいました。<br>
+            当時の感想：『${noteText}』
+          </div>
+        </div>
+      `;
+      actionContainer.style.display = 'flex';
+    }
+
+    /* 🎉 デビュー○周年アニバーサリー通知 */
+    function getDebutRecord() {
+      let earliest = null;
+      historyList.forEach(v => {
+        const y = parseInt(v.year, 10);
+        if (!y) return;
+        const m = parseInt(v.month, 10) || 1;
+        const d = parseInt(v.day, 10) || 1;
+        const dt = new Date(y, m - 1, d);
+        if (!earliest || dt < earliest.date) earliest = { date: dt, record: v };
+      });
+      return earliest;
+    }
+
+    function checkAnniversary() {
+      if (historyList.length === 0) return;
+      const debut = getDebutRecord();
+      if (!debut) return;
+
+      const now = new Date();
+      const debutDate = debut.date;
+      const isAnniversaryDay = (now.getMonth() === debutDate.getMonth() && now.getDate() === debutDate.getDate());
+      const yearsPassed = now.getFullYear() - debutDate.getFullYear();
+      if (!isAnniversaryDay || yearsPassed < 1) return;
+
+      const todayKey = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+      const shownKey = `anniversary_shown_${currentUserName}_${todayKey}`;
+      if (localStorage.getItem(shownKey)) return;
+
+      showAnniversaryModal(debut.record, yearsPassed);
+      localStorage.setItem(shownKey, '1');
+    }
+
+    function showAnniversaryModal(record, years) {
+      const totalVisits = historyList.length;
+      const totalAmount = historyList.reduce((s, v) => s + (Number(v.amount) || 0), 0);
+      const uniqueCasts = Object.keys(castData).length || new Set(historyList.map(v => v.name)).size;
+      const totalAmountDisp = currentAmountHide === 'hide' ? '***' : `¥${totalAmount.toLocaleString()}`;
+
+      document.getElementById('anniversaryYearsText').innerText = `祝！風俗デビューから${years}周年！`;
+      document.getElementById('annivTotalVisits').innerText = `${totalVisits}回`;
+      document.getElementById('annivTotalAmount').innerText = totalAmountDisp;
+      document.getElementById('annivTotalCasts').innerText = `${uniqueCasts}人`;
+
+      document.getElementById('annivFirstStore').innerText = (record.storeName && record.storeName.trim()) ? record.storeName.trim() : '（店舗未記録）';
+      document.getElementById('annivFirstCast').innerText = record.name || '---';
+      document.getElementById('annivFirstNote').innerText = (record.visitNote && record.visitNote.trim()) ? record.visitNote.trim() : '（メモなし）';
+      document.getElementById('annivFirstDate').innerText = `${record.year}年${record.month}月${record.day || ''}日`;
+
+      document.getElementById('anniversaryModal').style.display = 'flex';
     }
 
     function startFloatingCards() {
