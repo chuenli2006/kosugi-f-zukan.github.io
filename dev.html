@@ -90,6 +90,50 @@
     .nav-item.active { color: var(--accent-pink); transform: scale(1.1); }
     .nav-icon { font-size: 1.1rem; }
 
+    /* 📱 拡張メニュー：ボトムシート */
+    .bottom-sheet-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+      z-index: 1050; opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .bottom-sheet-overlay.open { opacity: 1; pointer-events: auto; }
+
+    .bottom-sheet {
+      position: fixed; left: 0; right: 0; bottom: 0; margin: 0 auto;
+      width: 100%; max-width: 800px;
+      background: var(--card-bg); border-radius: 22px 22px 0 0;
+      box-shadow: 0 -8px 30px rgba(0,0,0,0.25);
+      z-index: 1060; padding: 8px 16px calc(20px + env(safe-area-inset-bottom, 0px));
+      max-height: 70vh; overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+    }
+    .bottom-sheet.open { transform: translateY(0); }
+
+    .bottom-sheet-handle {
+      width: 38px; height: 5px; border-radius: 3px; background: var(--border-color);
+      margin: 6px auto 12px; cursor: pointer;
+    }
+    .bottom-sheet-header {
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 1rem; font-weight: bold; color: var(--accent-pink);
+      margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid var(--soft-pink);
+    }
+    .bottom-sheet-close-btn {
+      background: var(--soft-pink); color: var(--accent-pink); border: none;
+      width: 26px; height: 26px; border-radius: 50%; font-size: 0.8rem; font-weight: bold; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .bottom-sheet-body { display: flex; flex-direction: column; gap: 8px; }
+    .sheet-nav-item {
+      display: flex; align-items: center; gap: 10px; width: 100%;
+      background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color);
+      padding: 12px 14px; border-radius: 14px; font-size: 0.9rem; font-weight: bold; cursor: pointer;
+      transition: transform 0.1s;
+    }
+    .sheet-nav-item:active { transform: scale(0.97); }
+    .sheet-nav-item .nav-icon { font-size: 1.15rem; }
+
     .fab-container {
       position: fixed; bottom: 85px; right: 20px; z-index: 900;
       display: flex; flex-direction: column; align-items: flex-end; gap: 10px;
@@ -683,8 +727,8 @@
         <button class="nav-item" id="nav-dashboard" onclick="switchMainTab('dashboard')">
           <span class="nav-icon">📊</span><span>統計</span>
         </button>
-        <button class="nav-item" id="nav-shared" onclick="switchMainTab('shared')">
-          <span class="nav-icon">👥</span><span>共有 (<span id="sharedCount">0</span>)</span>
+        <button class="nav-item" id="nav-more" onclick="openMoreMenu()">
+          <span class="nav-icon">🔼</span><span>メニュー</span>
         </button>
       </nav>
 
@@ -845,6 +889,21 @@
         <div id="sharedContent"></div>
       </div>
     </main>
+  </div>
+
+  <!-- 📱 拡張メニュー：ボトムシート（ナビゲーションの5枠に入りきらない機能を格納） -->
+  <div class="bottom-sheet-overlay" id="moreMenuOverlay" onclick="closeMoreMenu()"></div>
+  <div class="bottom-sheet" id="moreMenuSheet">
+    <div class="bottom-sheet-handle" onclick="closeMoreMenu()"></div>
+    <div class="bottom-sheet-header">
+      <span>🔼 メニュー</span>
+      <button class="bottom-sheet-close-btn" onclick="closeMoreMenu()">✕</button>
+    </div>
+    <div class="bottom-sheet-body">
+      <button class="sheet-nav-item" id="nav-shared" onclick="switchMainTab('shared'); closeMoreMenu();">
+        <span class="nav-icon">👥</span><span>共有 (<span id="sharedCount">0</span>)</span>
+      </button>
+    </div>
   </div>
 
   <!-- 🌟 店舗専用 編集モーダル -->
@@ -1907,6 +1966,16 @@
     function toggleFabMenu() {
       const container = document.getElementById('fabContainer');
       container.classList.toggle('open');
+    }
+
+    /* 📱 拡張メニュー：ボトムシートの開閉 */
+    function openMoreMenu() {
+      document.getElementById('moreMenuOverlay').classList.add('open');
+      document.getElementById('moreMenuSheet').classList.add('open');
+    }
+    function closeMoreMenu() {
+      document.getElementById('moreMenuOverlay').classList.remove('open');
+      document.getElementById('moreMenuSheet').classList.remove('open');
     }
 
     function switchMainTab(type) {
