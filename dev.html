@@ -1327,7 +1327,7 @@
         </div>
         
         <div class="form-group" id="phoneConfirmGroup" style="display:none;">
-          <label>📞 お店からの電話確認リマインダー</label>
+          <label>📞 お電話の確認リマインダー</label>
           <select id="schPhoneConfirm" onchange="togglePhoneConfirmPhoneInput()">
             <option value="0">不要</option>
             <option value="15">15分前</option>
@@ -1366,7 +1366,7 @@
         <div class="form-group">
           <label>予定の種類</label>
           <select id="editSchType" required onchange="toggleEditPhoneConfirm()">
-            <option value="plan">⚔️ イク予定</option>
+            <option value="plan">✨ イク予定</option>
             <option value="reservation">🎫 予約開始日</option>
           </select>
         </div>
@@ -2181,13 +2181,13 @@
               if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
                 navigator.serviceWorker.ready.then(reg => {
                   reg.showNotification(`📞 電話確認リマインダー: ${sch.title}`, {
-                    body: `予約の${sch.phoneConfirmMinutes}分前です。お店から電話が来るかもしれません。`,
+                    body: `予約の${sch.phoneConfirmMinutes}分前です。お電話の確認が必要の場合は店舗に連絡してください`,
                     icon: './icon.png',
                     vibrate: [200, 100, 200]
                   });
                 });
               } else {
-                new Notification(`📞 電話確認リマインダー: ${sch.title}`, { body: `予約の${sch.phoneConfirmMinutes}分前です。お店から電話が来るかもしれません。` });
+                new Notification(`📞 電話確認リマインダー: ${sch.title}`, { body: `予約の${sch.phoneConfirmMinutes}分前です。お電話の確認が必要の場合は店舗に連絡してください` });
               }
             }
             sch.phoneNotified = true;
@@ -2236,7 +2236,7 @@
 
       const daysElem = document.getElementById('homeDaysSinceLast');
       if(historyList.length === 0) {
-        daysElem.innerText = "まだ記録がありません";
+        daysElem.innerText = "1回もイッたことないじゃん童貞くん♡";
       } else {
         let latestDate = null;
         historyList.forEach(v => {
@@ -2250,7 +2250,7 @@
         if(latestDate) {
           const diffTime = now.getTime() - latestDate.getTime();
           const diffDays = Math.floor(diffTime / (1000 * 3600 * 24));
-          if(diffDays <= 0) daysElem.innerText = "直近の利用から 0日経過";
+          if(diffDays <= 0) daysElem.innerText = "お疲れさん！たのしかった？🥰";
           else daysElem.innerText = `最後の記録から ${diffDays} 日経過`;
         } else {
           daysElem.innerText = "計測データなし";
@@ -2590,7 +2590,7 @@
           if(!latestType && c.visits[i].typeTag) latestType = c.visits[i].typeTag;
         }
         
-        const storeBadgeHtml = latestStore ? `<div onclick="setTagFilter('store', '${latestStore}')" style="display:inline-flex; align-items:center; gap:4px; padding:3px 8px; font-size:0.75rem; font-weight:bold; color:var(--accent-pink); background:var(--soft-pink); border-radius:12px; border:1px solid var(--primary-pink); cursor:pointer;" title="この店舗で絞り込み">🏬 ${latestStore}</div>` : '';
+        const storeBadgeHtml = latestStore ? `<div onclick="setTagFilter('store', '${latestStore}')" style="display:inline-flex; align-items:center; gap:4px; padding:3px 8px; font-size:0.75rem; font-weight:bold; color:var(--accent-pink); background:var(--soft-pink); border-radius:12px; border:1px solid var(--primary-pink); cursor:pointer;" title="この店舗で絞り込み"> ${latestStore}</div>` : '';
         
         let typeBadgesHtml = '';
         if (latestType) {
@@ -2774,7 +2774,7 @@
           }
         });
 
-        const topCastDisp = topCastName ? `最推し: 🌸 ${topCastName} (${maxCastCount}回)` : '指名履歴なし';
+        const topCastDisp = topCastName ? `一推し: 🌸 ${topCastName} (${maxCastCount}回)` : '指名履歴なし';
 
         // 電話・Webリンクボタン
         let phoneBtnHtml = phoneNum ? `<a href="tel:${phoneNum}" class="store-contact-btn store-btn-phone">📞 電話をかける (${phoneNum})</a>` : '';
@@ -2787,7 +2787,7 @@
           castsSummaryHtml += `
             <div style="display:flex; justify-content:space-between; align-items:center; background:var(--bg-color); border:1px solid var(--border-color); padding:6px 10px; border-radius:8px; font-size:0.78rem;">
               <span style="font-weight:bold; color:var(--accent-pink);">🌸 ${cName} (${stat.count}回)</span>
-              <span style="font-weight:bold; color:var(--text-color); margin-left:auto;">使った金額: ${cAmtDisp}</span>
+              <span style="font-weight:bold; color:var(--text-color); margin-left:auto;"> ${cAmtDisp}</span>
             </div>
           `;
         });
@@ -2799,14 +2799,14 @@
           <summary class="store-fold-summary">
             <div class="store-summary-head">
               <div class="store-summary-title">
-                <span class="arrow-icon">▼</span> 🏬 ${s.storeName}
+                <span class="arrow-icon">▼</span>  ${s.storeName}
               </div>
               <span class="badge-count">${totalVisits}回</span>
             </div>
             
             <div class="store-summary-meta">
-              <span class="store-badge-cat">業種: ${categoryText}</span>
-              <span class="store-badge-pref">📍 ${prefText}</span>
+              <span class="store-badge-cat"> ${categoryText}</span>
+              <span class="store-badge-pref"> ${prefText}</span>
               <span class="store-top-cast-badge">${topCastDisp}</span>
             </div>
           </summary>
@@ -2825,7 +2825,7 @@
             </div>
 
             <div>
-              <div style="font-size:0.75rem; font-weight:bold; color:var(--accent-pink); margin-bottom:4px;">💕 一指名（指名した女の子）と使った金額</div>
+              <div style="font-size:0.75rem; font-weight:bold; color:var(--accent-pink); margin-bottom:4px;">💕 遊んだことある女の子</div>
               <div style="display:flex; flex-direction:column; gap:4px;">
                 ${castsSummaryHtml}
               </div>
