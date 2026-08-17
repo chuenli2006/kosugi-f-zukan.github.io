@@ -526,6 +526,22 @@
     .stat-card-val { font-size: 1.2rem; font-weight: bold; color: var(--accent-pink); }
     .chart-wrap { position: relative; width: 100%; height: 200px; margin-top: 6px; }
     .chart-wrap.donut { height: 220px; }
+
+    /* 🗺️ 統計タブ：日本地図の折りたたみ */
+    details.map-fold-details { padding: 0; }
+    summary.map-fold-summary { cursor: pointer; list-style: none; display: flex; align-items: center; }
+    summary.map-fold-summary::-webkit-details-marker { display: none; }
+    .map-fold-arrow { margin-left: auto; font-size: 0.7rem; transition: transform 0.3s; }
+    details.map-fold-details[open] .map-fold-arrow { transform: rotate(180deg); }
+
+    /* 🌸 店舗別：遊んだことある女の子グリッド */
+    .store-cast-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+    .store-cast-btn {
+      background: var(--bg-color); border: 1px solid var(--border-color); color: var(--accent-pink);
+      font-size: 0.78rem; font-weight: bold; padding: 6px 8px; border-radius: 10px; cursor: pointer;
+      text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; transition: transform 0.1s;
+    }
+    .store-cast-btn:active { transform: scale(0.96); }
     .rank-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
     .rank-row { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; }
     .rank-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
@@ -829,11 +845,12 @@
           <div class="form-group" style="flex:1;">
             <label>店舗業種</label>
             <select id="editModalStoreCategory">
+              <option value="デリヘル">デリヘル</option>
               <option value="ヘルス">ヘルス</option>
               <option value="ソープ">ソープ</option>
               <option value="エステ">エステ</option>
               <option value="ピンサロ">ピンサロ</option>
-              <option value="裏風">裏風</option>
+              <option value="その他">その他</option>
             </select>
           </div>
         </div>
@@ -867,6 +884,29 @@
       </div>
 
       <button class="close-btn" onclick="closeModal('badgeDetailModal')" style="margin-top:20px;">閉じる</button>
+    </div>
+  </div>
+
+  <!-- 🗾 都道府県別詳細モーダル -->
+  <div class="modal-overlay" id="prefDetailModal">
+    <div class="modal-content">
+      <h3 id="prefDetailTitle">🗾 ---</h3>
+      <div id="prefDetailBody"></div>
+      <button class="close-btn" onclick="closeModal('prefDetailModal')" style="margin-top:16px;">閉じる</button>
+    </div>
+  </div>
+
+  <!-- 🌸 店舗別：遊んだことある女の子の詳細モーダル -->
+  <div class="modal-overlay" id="storeCastDetailModal">
+    <div class="modal-content">
+      <h3 id="storeCastDetailTitle">🌸 ---</h3>
+      <div class="stat-grid-4" style="grid-template-columns: repeat(2, 1fr); margin-bottom:12px;">
+        <div class="stat-card"><div class="stat-card-lbl">指名回数</div><div class="stat-card-val" id="storeCastDetailCount">0回</div></div>
+        <div class="stat-card"><div class="stat-card-lbl">使った金額</div><div class="stat-card-val" id="storeCastDetailAmount">¥0</div></div>
+      </div>
+      <div style="font-size:0.78rem; font-weight:bold; color:var(--accent-pink); margin-bottom:6px;">📜 過去の利用履歴</div>
+      <div id="storeCastDetailHistory" style="display:flex; flex-direction:column; gap:6px; max-height:40vh; overflow-y:auto;"></div>
+      <button class="close-btn" onclick="closeModal('storeCastDetailModal')" style="margin-top:14px;">閉じる</button>
     </div>
   </div>
 
@@ -1066,57 +1106,63 @@
           <datalist id="castDatalist"></datalist>
         </div>
 
-        <div class="form-group">
-          <label>店舗名</label>
-          <input type="text" id="addStoreName" list="storeDatalist" oninput="onStoreNameInput(this.value)" placeholder="例: ○○ヘルス 渋谷店">
-          <datalist id="storeDatalist"></datalist>
-        </div>
+        <details class="detail-fold">
+          <summary>🏬 店舗情報（タップで入力・自動入力対応）</summary>
+          <div class="fold-body">
+            <div class="form-group">
+              <label>店舗名</label>
+              <input type="text" id="addStoreName" list="storeDatalist" oninput="onStoreNameInput(this.value)" placeholder="例: ○○ヘルス 渋谷店">
+              <datalist id="storeDatalist"></datalist>
+            </div>
 
-        <div style="display:flex; gap:6px;">
-          <div class="form-group" style="flex:1;">
-            <label>店舗所在地</label>
-            <select id="addStorePref">
-              <option value="">未選択</option>
-              <option value="北海道">北海道</option><option value="青森県">青森県</option><option value="岩手県">岩手県</option>
-              <option value="宮城県">宮城県</option><option value="秋田県">秋田県</option><option value="山形県">山形県</option>
-              <option value="福島県">福島県</option><option value="茨城県">茨城県</option><option value="栃木県">栃木県</option>
-              <option value="群馬県">群馬県</option><option value="埼玉県">埼玉県</option><option value="千葉県">千葉県</option>
-              <option value="東京都">東京都</option><option value="神奈川県">神奈川県</option><option value="新潟県">新潟県</option>
-              <option value="富山県">富山県</option><option value="石川県">石川県</option><option value="福井県">福井県</option>
-              <option value="山梨県">山梨県</option><option value="長野県">長野県</option><option value="岐阜県">岐阜県</option>
-              <option value="静岡県">静岡県</option><option value="愛知県">愛知県</option><option value="三重県">三重県</option>
-              <option value="滋賀県">滋賀県</option><option value="京都府">京都府</option><option value="大阪府">大阪府</option>
-              <option value="兵庫県">兵庫県</option><option value="奈良県">奈良県</option><option value="和歌山県">和歌山県</option>
-              <option value="鳥取県">鳥取県</option><option value="島根県">島根県</option><option value="岡山県">岡山県</option>
-              <option value="広島県">広島県</option><option value="山口県">山口県</option><option value="徳島県">徳島県</option>
-              <option value="香川県">香川県</option><option value="愛媛県">愛媛県</option><option value="高知県">高知県</option>
-              <option value="福岡県">福岡県</option><option value="佐賀県">佐賀県</option><option value="長崎県">長崎県</option>
-              <option value="熊本県">熊本県</option><option value="大分県">大分県</option><option value="宮崎県">宮崎県</option>
-              <option value="鹿児島県">鹿児島県</option><option value="沖縄県">沖縄県</option><option value="海外">海外</option>
-            </select>
-          </div>
-          <div class="form-group" style="flex:1;">
-            <label>店舗業種</label>
-            <select id="addStoreCategory">
-              <option value="ヘルス">ヘルス</option>
-              <option value="ソープ">ソープ</option>
-              <option value="エステ">エステ</option>
-              <option value="ピンサロ">ピンサロ</option>
-              <option value="裏風">裏風</option>
-            </select>
-          </div>
-        </div>
+            <div style="display:flex; gap:6px;">
+              <div class="form-group" style="flex:1;">
+                <label>店舗所在地</label>
+                <select id="addStorePref">
+                  <option value="">未選択</option>
+                  <option value="北海道">北海道</option><option value="青森県">青森県</option><option value="岩手県">岩手県</option>
+                  <option value="宮城県">宮城県</option><option value="秋田県">秋田県</option><option value="山形県">山形県</option>
+                  <option value="福島県">福島県</option><option value="茨城県">茨城県</option><option value="栃木県">栃木県</option>
+                  <option value="群馬県">群馬県</option><option value="埼玉県">埼玉県</option><option value="千葉県">千葉県</option>
+                  <option value="東京都">東京都</option><option value="神奈川県">神奈川県</option><option value="新潟県">新潟県</option>
+                  <option value="富山県">富山県</option><option value="石川県">石川県</option><option value="福井県">福井県</option>
+                  <option value="山梨県">山梨県</option><option value="長野県">長野県</option><option value="岐阜県">岐阜県</option>
+                  <option value="静岡県">静岡県</option><option value="愛知県">愛知県</option><option value="三重県">三重県</option>
+                  <option value="滋賀県">滋賀県</option><option value="京都府">京都府</option><option value="大阪府">大阪府</option>
+                  <option value="兵庫県">兵庫県</option><option value="奈良県">奈良県</option><option value="和歌山県">和歌山県</option>
+                  <option value="鳥取県">鳥取県</option><option value="島根県">島根県</option><option value="岡山県">岡山県</option>
+                  <option value="広島県">広島県</option><option value="山口県">山口県</option><option value="徳島県">徳島県</option>
+                  <option value="香川県">香川県</option><option value="愛媛県">愛媛県</option><option value="高知県">高知県</option>
+                  <option value="福岡県">福岡県</option><option value="佐賀県">佐賀県</option><option value="長崎県">長崎県</option>
+                  <option value="熊本県">熊本県</option><option value="大分県">大分県</option><option value="宮崎県">宮崎県</option>
+                  <option value="鹿児島県">鹿児島県</option><option value="沖縄県">沖縄県</option><option value="海外">海外</option>
+                </select>
+              </div>
+              <div class="form-group" style="flex:1;">
+                <label>店舗業種</label>
+                <select id="addStoreCategory">
+                  <option value="デリヘル">デリヘル</option>
+                  <option value="ヘルス">ヘルス</option>
+                  <option value="ソープ">ソープ</option>
+                  <option value="エステ">エステ</option>
+                  <option value="ピンサロ">ピンサロ</option>
+                  <option value="その他">その他</option>
+                </select>
+              </div>
+            </div>
 
-        <div style="display:flex; gap:6px;">
-          <div class="form-group" style="flex:1;">
-            <label>店舗 電話番号</label>
-            <input type="tel" id="addStorePhone" placeholder="03-1234-5678">
+            <div style="display:flex; gap:6px;">
+              <div class="form-group" style="flex:1;">
+                <label>店舗 電話番号</label>
+                <input type="tel" id="addStorePhone" placeholder="03-1234-5678">
+              </div>
+              <div class="form-group" style="flex:1;">
+                <label>店舗 Webリンク</label>
+                <input type="url" id="addStoreWeb" placeholder="https://...">
+              </div>
+            </div>
           </div>
-          <div class="form-group" style="flex:1;">
-            <label>店舗 Webリンク</label>
-            <input type="url" id="addStoreWeb" placeholder="https://...">
-          </div>
-        </div>
+        </details>
 
         <div class="form-group"><label>系統タグ（複数時はカンマ区切り）</label>
           <div class="flag-picker">
@@ -1223,11 +1269,12 @@
           <div class="form-group" style="flex:1;">
             <label>店舗業種</label>
             <select id="editStoreCategory">
+              <option value="デリヘル">デリヘル</option>
               <option value="ヘルス">ヘルス</option>
               <option value="ソープ">ソープ</option>
               <option value="エステ">エステ</option>
               <option value="ピンサロ">ピンサロ</option>
-              <option value="裏風">裏風</option>
+              <option value="その他">その他</option>
             </select>
           </div>
         </div>
@@ -1327,7 +1374,7 @@
         </div>
         
         <div class="form-group" id="phoneConfirmGroup" style="display:none;">
-          <label>📞 お電話の確認リマインダー</label>
+          <label>📞 お店からの電話確認リマインダー</label>
           <select id="schPhoneConfirm" onchange="togglePhoneConfirmPhoneInput()">
             <option value="0">不要</option>
             <option value="15">15分前</option>
@@ -1366,7 +1413,7 @@
         <div class="form-group">
           <label>予定の種類</label>
           <select id="editSchType" required onchange="toggleEditPhoneConfirm()">
-            <option value="plan">✨ イク予定</option>
+            <option value="plan">⚔️ イク予定</option>
             <option value="reservation">🎫 予約開始日</option>
           </select>
         </div>
@@ -2181,13 +2228,13 @@
               if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
                 navigator.serviceWorker.ready.then(reg => {
                   reg.showNotification(`📞 電話確認リマインダー: ${sch.title}`, {
-                    body: `予約の${sch.phoneConfirmMinutes}分前です。お電話の確認が必要の場合は店舗に連絡してください`,
+                    body: `予約の${sch.phoneConfirmMinutes}分前です。お店から電話が来るかもしれません。`,
                     icon: './icon.png',
                     vibrate: [200, 100, 200]
                   });
                 });
               } else {
-                new Notification(`📞 電話確認リマインダー: ${sch.title}`, { body: `予約の${sch.phoneConfirmMinutes}分前です。お電話の確認が必要の場合は店舗に連絡してください` });
+                new Notification(`📞 電話確認リマインダー: ${sch.title}`, { body: `予約の${sch.phoneConfirmMinutes}分前です。お店から電話が来るかもしれません。` });
               }
             }
             sch.phoneNotified = true;
@@ -2236,7 +2283,7 @@
 
       const daysElem = document.getElementById('homeDaysSinceLast');
       if(historyList.length === 0) {
-        daysElem.innerText = "1回もイッたことないじゃん童貞くん♡";
+        daysElem.innerText = "まだ記録がありません";
       } else {
         let latestDate = null;
         historyList.forEach(v => {
@@ -2250,7 +2297,7 @@
         if(latestDate) {
           const diffTime = now.getTime() - latestDate.getTime();
           const diffDays = Math.floor(diffTime / (1000 * 3600 * 24));
-          if(diffDays <= 0) daysElem.innerText = "お疲れさん！たのしかった？🥰";
+          if(diffDays <= 0) daysElem.innerText = "直近の利用から 0日経過";
           else daysElem.innerText = `最後の記録から ${diffDays} 日経過`;
         } else {
           daysElem.innerText = "計測データなし";
@@ -2590,7 +2637,7 @@
           if(!latestType && c.visits[i].typeTag) latestType = c.visits[i].typeTag;
         }
         
-        const storeBadgeHtml = latestStore ? `<div onclick="setTagFilter('store', '${latestStore}')" style="display:inline-flex; align-items:center; gap:4px; padding:3px 8px; font-size:0.75rem; font-weight:bold; color:var(--accent-pink); background:var(--soft-pink); border-radius:12px; border:1px solid var(--primary-pink); cursor:pointer;" title="この店舗で絞り込み"> ${latestStore}</div>` : '';
+        const storeBadgeHtml = latestStore ? `<div onclick="setTagFilter('store', '${latestStore}')" style="display:inline-flex; align-items:center; gap:4px; padding:3px 8px; font-size:0.75rem; font-weight:bold; color:var(--accent-pink); background:var(--soft-pink); border-radius:12px; border:1px solid var(--primary-pink); cursor:pointer;" title="この店舗で絞り込み">🏬 ${latestStore}</div>` : '';
         
         let typeBadgesHtml = '';
         if (latestType) {
@@ -2698,6 +2745,47 @@
     }
 
     /* 🏬 【機能改修】マイ図鑑：店舗別表示（折りたたみ式＋一番指名している子表示＋店舗情報編集モーダル） */
+    /* 🎨 店舗業種ごとのバッジカラー */
+    function getCategoryStyle(cat) {
+      const map = {
+        'デリヘル': { bg: '#ffd9e6', color: '#c2185b' },
+        'ヘルス':   { bg: '#ff8fab', color: '#ffffff' },
+        'ソープ':   { bg: '#b197fc', color: '#ffffff' },
+        'エステ':   { bg: '#d3f9d8', color: '#2b8a3e' },
+        'ピンサロ': { bg: '#ffd8a8', color: '#d9480f' },
+        'その他':   { bg: '#e0e0e0', color: '#495057' }
+      };
+      return map[cat] || map['その他'];
+    }
+
+    /* 🌸 店舗別ビュー：遊んだ女の子の詳細（指名回数・使った金額・過去履歴） */
+    function openStoreCastDetail(event, storeName, castName) {
+      if(event) { event.preventDefault(); event.stopPropagation(); }
+
+      const visits = historyList.filter(v => v.storeName === storeName && v.name === castName);
+      const count = visits.length;
+      const amount = visits.reduce((s,v) => s + (Number(v.amount) || 0), 0);
+      const amountDisp = currentAmountHide === 'hide' ? '***' : `¥${amount.toLocaleString()}`;
+
+      const sorted = visits.slice().sort((a,b) => (b.originalIndex||0) - (a.originalIndex||0));
+      const historyHtml = sorted.map(v => {
+        const dt = `${v.year}年${v.month}月${v.day || '?'}日`;
+        const amt = currentAmountHide === 'hide' ? '***' : `¥${(Number(v.amount)||0).toLocaleString()}`;
+        return `
+          <div style="display:flex; justify-content:space-between; align-items:center; background:var(--bg-color); border:1px solid var(--border-color); padding:6px 10px; border-radius:8px; font-size:0.78rem;">
+            <span>${dt}</span>
+            <span style="font-weight:bold; color:var(--accent-pink);">${amt}</span>
+          </div>`;
+      }).join('');
+
+      document.getElementById('storeCastDetailTitle').innerText = `🌸 ${castName}（${storeName}）`;
+      document.getElementById('storeCastDetailCount').innerText = `${count}回`;
+      document.getElementById('storeCastDetailAmount').innerText = amountDisp;
+      document.getElementById('storeCastDetailHistory').innerHTML = historyHtml || '<div style="text-align:center; color:var(--light-text); font-size:0.8rem; padding:10px 0;">履歴がありません</div>';
+
+      document.getElementById('storeCastDetailModal').style.display = 'flex';
+    }
+
     function renderStoreView(target, keyword) {
       const storeMap = {};
       
@@ -2774,22 +2862,21 @@
           }
         });
 
-        const topCastDisp = topCastName ? `一推し: 🌸 ${topCastName} (${maxCastCount}回)` : '指名履歴なし';
+        const topCastDisp = topCastName ? `最推し: 🌸 ${topCastName} (${maxCastCount}回)` : '指名履歴なし';
 
         // 電話・Webリンクボタン
         let phoneBtnHtml = phoneNum ? `<a href="tel:${phoneNum}" class="store-contact-btn store-btn-phone">📞 電話をかける (${phoneNum})</a>` : '';
         let webBtnHtml = webUrl ? `<a href="${webUrl}" target="_blank" class="store-contact-btn store-btn-web">🌐 公式Webサイト</a>` : '';
 
-        // 指名キャストごとの利用額リスト
-        let castsSummaryHtml = '';
+        // 業種による色分け
+        const catStyle = getCategoryStyle(categoryText);
+
+        // 遊んだことある女の子ボタン一覧（タップで詳細モーダル）
+        const safeStoreAttr = s.storeName.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+        let castsButtonsHtml = '';
         s.castSet.forEach((stat, cName) => {
-          const cAmtDisp = currentAmountHide === 'hide' ? '***' : `¥${stat.amount.toLocaleString()}`;
-          castsSummaryHtml += `
-            <div style="display:flex; justify-content:space-between; align-items:center; background:var(--bg-color); border:1px solid var(--border-color); padding:6px 10px; border-radius:8px; font-size:0.78rem;">
-              <span style="font-weight:bold; color:var(--accent-pink);">🌸 ${cName} (${stat.count}回)</span>
-              <span style="font-weight:bold; color:var(--text-color); margin-left:auto;"> ${cAmtDisp}</span>
-            </div>
-          `;
+          const safeCastAttr = cName.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+          castsButtonsHtml += `<button type="button" class="store-cast-btn" onclick="openStoreCastDetail(event, '${safeStoreAttr}', '${safeCastAttr}')">🌸 ${cName}</button>`;
         });
 
         const details = document.createElement('details');
@@ -2799,14 +2886,14 @@
           <summary class="store-fold-summary">
             <div class="store-summary-head">
               <div class="store-summary-title">
-                <span class="arrow-icon">▼</span>  ${s.storeName}
+                <span class="arrow-icon">▼</span> 🏬 ${s.storeName}
               </div>
               <span class="badge-count">${totalVisits}回</span>
             </div>
             
             <div class="store-summary-meta">
-              <span class="store-badge-cat"> ${categoryText}</span>
-              <span class="store-badge-pref"> ${prefText}</span>
+              <span class="store-badge-cat" style="background:${catStyle.bg}; color:${catStyle.color};">${categoryText}</span>
+              <span class="store-badge-pref">📍 ${prefText}</span>
               <span class="store-top-cast-badge">${topCastDisp}</span>
             </div>
           </summary>
@@ -2826,8 +2913,8 @@
 
             <div>
               <div style="font-size:0.75rem; font-weight:bold; color:var(--accent-pink); margin-bottom:4px;">💕 遊んだことある女の子</div>
-              <div style="display:flex; flex-direction:column; gap:4px;">
-                ${castsSummaryHtml}
+              <div class="store-cast-grid">
+                ${castsButtonsHtml}
               </div>
             </div>
           </div>
@@ -2877,6 +2964,7 @@
 
     let monthlyChartInstance = null;
     let rankingChartInstance = null;
+    let amountChartInstance = null;
 
     function renderDashboard() {
       const wrap = document.getElementById('dashboardContent');
@@ -2921,18 +3009,21 @@
           </div>
         </div>
 
-        <div class="stat-section">
-          <div class="stat-section-title">🗺️ 全国制覇MAP（訪問都道府県マップ）</div>
+        <details class="stat-section map-fold-details" open>
+          <summary class="stat-section-title map-fold-summary">🗺️ 全国制覇MAP（訪問都道府県マップ）<span class="map-fold-arrow">▼</span></summary>
           <div style="font-size:0.72rem; color:var(--light-text); text-align:center; margin-bottom:4px;">
-            行ったことのあるお店の都道府県に色がつきます（未訪問は灰色）
+            行ったことのあるお店の都道府県に色がつきます（未訪問は灰色）。タップで詳細統計を表示します。
           </div>
           <div class="japan-map-container" id="japanMapContainer"></div>
-        </div>
+        </details>
 
         <div class="dash-charts-row">
           <div class="stat-section">
             <div class="stat-section-title">📈 推移グラフ</div>
+            <div style="font-size:0.75rem; font-weight:bold; color:var(--light-text); margin-bottom:4px;">📆 利用回数の推移</div>
             <div class="chart-wrap"><canvas id="dashTrendChart"></canvas></div>
+            <div style="font-size:0.75rem; font-weight:bold; color:var(--light-text); margin:12px 0 4px;">💰 月利用金額の推移</div>
+            <div class="chart-wrap"><canvas id="dashAmountChart"></canvas></div>
           </div>
 
           <div class="stat-section">
@@ -3048,7 +3139,7 @@
         const stateClass = isVisited ? "visited" : "unvisited";
 
         svgContent += `
-          <g onclick="alert('${p.code}: ${isVisited ? '訪問・登録済み！✨' : '未訪問'}')" cursor="pointer">
+          <g onclick="openPrefDetailModal('${p.code}')" cursor="pointer">
             <rect class="pref-rect ${stateClass}" x="${p.x}" y="${p.y}" width="${p.w}" height="${p.h}" />
             <text class="pref-text ${stateClass}" x="${p.x + p.w / 2}" y="${p.y + p.h / 2}">${p.name}</text>
           </g>
@@ -3067,6 +3158,52 @@
         </div>
         ${svgContent}
       `;
+    }
+
+    /* 🗾 都道府県別の統計モーダル：一番行ってるお店・一番指名してる女の子・最終利用日・合計金額 */
+    function openPrefDetailModal(prefCode) {
+      const bodyEl = document.getElementById('prefDetailBody');
+      document.getElementById('prefDetailTitle').innerText = `🗾 ${prefCode}`;
+
+      const recs = historyList.filter(v => v.storeName && storeInfoData[v.storeName] && storeInfoData[v.storeName].pref === prefCode);
+
+      if (recs.length === 0) {
+        bodyEl.innerHTML = `<div style="text-align:center; color:var(--light-text); padding:24px 10px; font-size:0.85rem;">まだ未訪問の都道府県です。</div>`;
+        document.getElementById('prefDetailModal').style.display = 'flex';
+        return;
+      }
+
+      // 一番行ってるお店
+      const storeCounts = {};
+      recs.forEach(v => { storeCounts[v.storeName] = (storeCounts[v.storeName] || 0) + 1; });
+      let topStore = '', topStoreCount = 0;
+      Object.keys(storeCounts).forEach(st => { if (storeCounts[st] > topStoreCount) { topStoreCount = storeCounts[st]; topStore = st; } });
+
+      // 一番指名してる女の子
+      const castCounts = {};
+      recs.forEach(v => { castCounts[v.name] = (castCounts[v.name] || 0) + 1; });
+      let topCast = '', topCastCount = 0;
+      Object.keys(castCounts).forEach(c => { if (castCounts[c] > topCastCount) { topCastCount = castCounts[c]; topCast = c; } });
+
+      // 最後に行ったのはいつ
+      let lastRec = null;
+      recs.forEach(v => { if (!lastRec || (v.originalIndex||0) > (lastRec.originalIndex||0)) lastRec = v; });
+      const lastVisitDisp = lastRec ? `${lastRec.year}年${lastRec.month}月${lastRec.day || '?'}日` : '---';
+
+      // 合計使った金額
+      const totalAmount = recs.reduce((s,v) => s + (Number(v.amount)||0), 0);
+      const totalAmountDisp = currentAmountHide === 'hide' ? '***' : `¥${totalAmount.toLocaleString()}`;
+
+      bodyEl.innerHTML = `
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <div class="stat-card"><div class="stat-card-lbl">🏬 一番行ってるお店</div><div class="stat-card-val" style="font-size:1rem;">${topStore}（${topStoreCount}回）</div></div>
+          <div class="stat-card"><div class="stat-card-lbl">🌸 一番指名してる女の子</div><div class="stat-card-val" style="font-size:1rem;">${topCast}（${topCastCount}回）</div></div>
+          <div class="stat-card"><div class="stat-card-lbl">📅 最後に行った日</div><div class="stat-card-val" style="font-size:1rem;">${lastVisitDisp}</div></div>
+          <div class="stat-card"><div class="stat-card-lbl">💰 合計使った金額</div><div class="stat-card-val">${totalAmountDisp}</div></div>
+        </div>
+      `;
+
+      document.getElementById('prefDetailModal').style.display = 'flex';
     }
 
     function setDashPeriod(type) { dashPeriodType = type; renderDashboard(); }
@@ -3116,6 +3253,23 @@
         },
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
       });
+
+      const canvasAmount = document.getElementById('dashAmountChart');
+      if (canvasAmount) {
+        if(amountChartInstance) amountChartInstance.destroy();
+        amountChartInstance = new Chart(canvasAmount.getContext('2d'), {
+          type: 'line',
+          data: {
+            labels: keys.map(k => k.replace('-', '年') + '月'),
+            datasets: [{ label: '利用金額', data: keys.map(k => agg[k].amount), borderColor: getCssVar('--rank-c2'), backgroundColor: 'transparent', tension: 0.3 }]
+          },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { ticks: { callback: v => currentAmountHide === 'hide' ? '***' : ('¥' + Number(v).toLocaleString()) } } }
+          }
+        });
+      }
 
       const byCast = {};
       records.forEach(v => {
@@ -3274,8 +3428,7 @@
           let years = now.getFullYear() - oldestDate.getFullYear();
           let months = now.getMonth() - oldestDate.getMonth();
           if (months < 0) { years--; months += 12; }
-          if (years > 0) durationDisplay = `利用開始から ${years}年${months > 0 ? months + 'ヶ月' : ''}`;
-          else durationDisplay = `利用開始から ${months}ヶ月`;
+          durationDisplay = `利用開始から ${years}年${months}ヶ月`;
         }
       }
 
