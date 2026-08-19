@@ -134,6 +134,42 @@
     .sheet-nav-item:active { transform: scale(0.97); }
     .sheet-nav-item .nav-icon { font-size: 1.15rem; }
 
+    /* --- 拡張メニュー：広告カルーセル --- */
+    .sheet-ad-carousel {
+      display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
+      gap: 10px; -ms-overflow-style: none; scrollbar-width: none;
+      padding-bottom: 2px;
+    }
+    .sheet-ad-carousel::-webkit-scrollbar { display: none; }
+    .sheet-ad-card {
+      flex: 0 0 100%; scroll-snap-align: center;
+      width: 100%; aspect-ratio: 686 / 400;
+      background: linear-gradient(135deg, var(--soft-pink), var(--card-bg));
+      border: 1px solid var(--border-color); border-radius: 16px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 6px; color: var(--light-text); text-align: center; padding: 10px;
+      box-sizing: border-box;
+    }
+    .sheet-ad-card .ad-icon { font-size: 1.6rem; }
+    .sheet-ad-card .ad-label { font-size: 0.78rem; font-weight: bold; color: var(--accent-pink); }
+    .sheet-ad-card .ad-sub { font-size: 0.65rem; color: var(--light-text); }
+    .sheet-ad-dots {
+      display: flex; justify-content: center; gap: 6px; margin: 8px 0 2px;
+    }
+    .sheet-ad-dot {
+      width: 6px; height: 6px; border-radius: 50%; background: var(--border-color);
+      transition: background 0.2s, transform 0.2s;
+    }
+    .sheet-ad-dot.active { background: var(--accent-pink); transform: scale(1.2); }
+
+    /* --- 拡張メニュー：開発中の機能枠 --- */
+    .sheet-dev-item {
+      display: flex; align-items: center; gap: 10px; width: 100%;
+      background: var(--bg-color); border: 1px dashed var(--border-color); color: var(--light-text);
+      padding: 12px 14px; border-radius: 14px; font-size: 0.85rem; font-weight: bold;
+      box-sizing: border-box;
+    }
+
     .fab-container {
       position: fixed; bottom: 85px; right: 20px; z-index: 900;
       display: flex; flex-direction: column; align-items: flex-end; gap: 10px;
@@ -582,6 +618,48 @@
     .flag-btn { font-size: 0.72rem; padding: 4px 8px; border-radius: 12px; border: 1.5px solid var(--border-color); background: var(--card-bg); color: var(--text-color); cursor: pointer; }
     .flag-btn-clear { background: rgba(150, 150, 150, 0.2); color: var(--light-text); }
 
+    /* --- 🌸 女の子別設定タブ --- */
+    .cs-lookup-bar {
+      display: flex; align-items: flex-end; gap: 8px;
+      background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius);
+      padding: 12px; box-shadow: var(--shadow); margin-bottom: 12px; width: 100%; box-sizing: border-box;
+    }
+    .cs-lookup-bar .form-group { margin-bottom: 0; }
+    .cs-lookup-btn {
+      background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink)); color: #fff; border: none;
+      padding: 9px 14px; border-radius: 20px; font-weight: bold; font-size: 0.82rem; cursor: pointer;
+      white-space: nowrap; box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+    }
+    .cs-lookup-btn:active { transform: scale(0.96); }
+    .cs-not-found {
+      font-size: 0.8rem; color: var(--light-text); text-align: center;
+      background: var(--card-bg); border: 1px dashed var(--border-color); border-radius: var(--radius);
+      padding: 16px; width: 100%; box-sizing: border-box;
+    }
+    .cs-edit-form {
+      display: flex; flex-direction: column; gap: 10px; width: 100%; box-sizing: border-box;
+      background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius);
+      padding: 14px; box-shadow: var(--shadow); animation: slideUpFade 0.3s ease forwards;
+    }
+    .cs-target-name {
+      font-size: 0.9rem; font-weight: bold; color: var(--accent-pink); text-align: center;
+      padding-bottom: 6px; border-bottom: 1.5px dashed var(--soft-pink);
+    }
+    .cs-status-toggle { display: flex; gap: 8px; width: 100%; }
+    .cs-status-option {
+      flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 10px 8px; border-radius: 14px; border: 1.5px solid var(--border-color);
+      background: var(--bg-color); color: var(--light-text); font-size: 0.85rem; font-weight: bold;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .cs-status-option input { display: none; }
+    .cs-status-option.cs-status-selected.cs-status-active {
+      background: #e6fcf5; color: #0ca678; border-color: #20c997;
+    }
+    .cs-status-option.cs-status-selected.cs-status-retired {
+      background: var(--soft-pink); color: var(--accent-pink); border-color: var(--primary-pink);
+    }
+
     details.detail-fold { border: 1px dashed var(--border-color); border-radius: 10px; background: var(--bg-color); width: 100%; }
     details.detail-fold summary { padding: 8px 10px; font-size: 0.78rem; font-weight: bold; color: var(--accent-pink); cursor: pointer; list-style: none; display: flex; align-items: center; gap: 4px; }
     details.detail-fold summary::-webkit-details-marker { display: none; }
@@ -888,6 +966,55 @@
         </div>
         <div id="sharedContent"></div>
       </div>
+
+      <!-- 6. 女の子別設定タブ -->
+      <div id="viewCastSettings" class="tab-content">
+        <div class="cs-lookup-bar">
+          <div class="form-group">
+            <label>編集対象の女の子の名前</label>
+            <input type="text" id="csTargetName" list="castDatalist" placeholder="例: ゆあ">
+          </div>
+          <button type="button" class="cs-lookup-btn" onclick="loadCastSettingsForm()">🔍 データを呼び出す</button>
+        </div>
+
+        <div id="csNotFoundMsg" class="cs-not-found" style="display:none;">
+          該当するキャストデータが見つかりませんでした。名前をご確認ください。
+        </div>
+
+        <div id="csEditForm" class="cs-edit-form" style="display:none;">
+          <div class="cs-target-name" id="csTargetNameDisp"></div>
+
+          <div class="form-group">
+            <label>在籍状況ステータス</label>
+            <div class="cs-status-toggle">
+              <label class="cs-status-option cs-status-active" id="csStatusActiveLabel">
+                <input type="radio" name="csStatus" id="csStatusActive" value="active" onchange="updateCsStatusUI()">🟢 在籍
+              </label>
+              <label class="cs-status-option cs-status-retired" id="csStatusRetiredLabel">
+                <input type="radio" name="csStatus" id="csStatusRetired" value="retired" onchange="updateCsStatusUI()">❀ 卒業
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group"><label>スリーサイズ</label>
+            <div class="style-grid-compact">
+              <input type="text" id="csStyleT" placeholder="T" oninput="updateInputColor(this, 'T')">
+              <input type="text" id="csStyleB" placeholder="B" oninput="updateInputColor(this, 'B')">
+              <input type="text" id="csStyleW" placeholder="W" oninput="updateInputColor(this, 'W')">
+              <input type="text" id="csStyleH" placeholder="H" oninput="updateInputColor(this, 'H')">
+            </div>
+          </div>
+
+          <div class="form-group"><label>旧・源氏名</label><input type="text" id="csOldName" placeholder="例: ここみ"></div>
+          <div class="form-group"><label>店舗WebプロフURL</label><input type="url" id="csLink" placeholder="https://..."></div>
+          <div class="form-group"><label>メモ・特徴</label><textarea id="csNotes" rows="4" placeholder="キャストの特徴やメモなど"></textarea></div>
+
+          <div style="display:flex; gap:8px; margin-top:2px;">
+            <button type="button" class="close-btn" style="background:#888; flex:1;" onclick="cancelCastSettingsForm()">キャンセル</button>
+            <button type="button" class="close-btn" style="flex:2;" onclick="saveCastSettingsForm()">💾 キャスト情報を更新</button>
+          </div>
+        </div>
+      </div>
     </main>
   </div>
 
@@ -903,6 +1030,39 @@
       <button class="sheet-nav-item" id="nav-shared" onclick="switchMainTab('shared'); closeMoreMenu();">
         <span class="nav-icon">👥</span><span>共有 (<span id="sharedCount">0</span>)</span>
       </button>
+      <button class="sheet-nav-item" id="nav-castSettings" onclick="switchMainTab('castSettings'); closeMoreMenu();">
+        <span class="nav-icon">🌸</span><span>女の子別設定</span>
+      </button>
+
+      <div class="sheet-ad-carousel" id="sheetAdCarousel" onscroll="handleSheetAdScroll()">
+        <div class="sheet-ad-card">
+          <span class="ad-icon">🎀</span>
+          <span class="ad-label">広告枠 ①</span>
+          <span class="ad-sub">686×400 バナー掲載スペース</span>
+        </div>
+        <div class="sheet-ad-card">
+          <span class="ad-icon">✨</span>
+          <span class="ad-label">広告枠 ②</span>
+          <span class="ad-sub">686×400 バナー掲載スペース</span>
+        </div>
+        <div class="sheet-ad-card">
+          <span class="ad-icon">💌</span>
+          <span class="ad-label">広告枠 ③</span>
+          <span class="ad-sub">686×400 バナー掲載スペース</span>
+        </div>
+      </div>
+      <div class="sheet-ad-dots" id="sheetAdDots">
+        <span class="sheet-ad-dot active"></span>
+        <span class="sheet-ad-dot"></span>
+        <span class="sheet-ad-dot"></span>
+      </div>
+
+      <div class="sheet-dev-item">
+        <span class="nav-icon">🔒</span><span>開発中の機能 ①</span>
+      </div>
+      <div class="sheet-dev-item">
+        <span class="nav-icon">🔒</span><span>開発中の機能 ②</span>
+      </div>
     </div>
   </div>
 
@@ -1963,6 +2123,95 @@
       return tagsHtml;
     }
 
+    /* 🌸 女の子別設定タブ：呼び出し・編集・保存ロジック */
+    function resetCastSettingsForm() {
+      document.getElementById('csTargetName').value = '';
+      document.getElementById('csEditForm').style.display = 'none';
+      document.getElementById('csNotFoundMsg').style.display = 'none';
+    }
+
+    function updateCsStatusUI() {
+      const isActive = document.getElementById('csStatusActive').checked;
+      document.getElementById('csStatusActiveLabel').classList.toggle('cs-status-selected', isActive);
+      document.getElementById('csStatusRetiredLabel').classList.toggle('cs-status-selected', !isActive && document.getElementById('csStatusRetired').checked);
+    }
+
+    function loadCastSettingsForm() {
+      const name = document.getElementById('csTargetName').value.trim();
+      const notFoundMsg = document.getElementById('csNotFoundMsg');
+      const editForm = document.getElementById('csEditForm');
+
+      if (!name || !castData[name]) {
+        editForm.style.display = 'none';
+        notFoundMsg.style.display = 'block';
+        return;
+      }
+
+      const info = castData[name];
+      notFoundMsg.style.display = 'none';
+      editForm.style.display = 'flex';
+      document.getElementById('csTargetNameDisp').innerText = `🌸 ${name}`;
+
+      const status = info.status === 'retired' ? 'retired' : 'active';
+      document.getElementById('csStatusActive').checked = (status === 'active');
+      document.getElementById('csStatusRetired').checked = (status === 'retired');
+      updateCsStatusUI();
+
+      const styleStr = (info.style || '').toUpperCase();
+      const tMatch = styleStr.match(/T\s*:?\s*(\d+)/i);
+      const bMatch = styleStr.match(/B\s*:?\s*(\d+)\s*(\([A-Z\+]+\))?/i);
+      const wMatch = styleStr.match(/W\s*:?\s*(\d+)/i);
+      const hMatch = styleStr.match(/H\s*:?\s*(\d+)/i);
+
+      const tEl = document.getElementById('csStyleT');
+      const bEl = document.getElementById('csStyleB');
+      const wEl = document.getElementById('csStyleW');
+      const hEl = document.getElementById('csStyleH');
+      tEl.value = tMatch ? tMatch[1] : '';
+      bEl.value = bMatch ? (bMatch[1] + (bMatch[2] ? bMatch[2].replace(/[()]/g, '') : '')) : '';
+      wEl.value = wMatch ? wMatch[1] : '';
+      hEl.value = hMatch ? hMatch[1] : '';
+      [['T', tEl], ['B', bEl], ['W', wEl], ['H', hEl]].forEach(([t, el]) => updateInputColor(el, t));
+
+      document.getElementById('csOldName').value = info.oldName || '';
+      document.getElementById('csLink').value = info.link || '';
+      document.getElementById('csNotes').value = info.notes || '';
+    }
+
+    function cancelCastSettingsForm() {
+      resetCastSettingsForm();
+    }
+
+    function saveCastSettingsForm() {
+      const name = document.getElementById('csTargetName').value.trim();
+      if (!name || !castData[name]) { alert('データが呼び出されていません。'); return; }
+
+      const rawT = document.getElementById('csStyleT').value.trim();
+      const rawB = document.getElementById('csStyleB').value.trim();
+      const rawW = document.getElementById('csStyleW').value.trim();
+      const rawH = document.getElementById('csStyleH').value.trim();
+      const parts = [];
+      if (rawT) parts.push(rawT.toLowerCase().startsWith('t') ? rawT : 'T:' + rawT + (rawT.includes('cm') ? '' : 'cm'));
+      if (rawB) parts.push(rawB.toLowerCase().startsWith('b') ? rawB : 'B:' + rawB);
+      if (rawW) parts.push(rawW.toLowerCase().startsWith('w') ? rawW : 'W:' + rawW);
+      if (rawH) parts.push(rawH.toLowerCase().startsWith('h') ? rawH : 'H:' + rawH);
+
+      const status = document.getElementById('csStatusRetired').checked ? 'retired' : 'active';
+
+      castData[name].status = status;
+      castData[name].style = parts.join(' ');
+      castData[name].oldName = document.getElementById('csOldName').value.trim();
+      castData[name].link = document.getElementById('csLink').value.trim();
+      castData[name].notes = document.getElementById('csNotes').value;
+      if (!castData[name].letters) castData[name].letters = [];
+
+      saveData();
+      render();
+      renderDashboard();
+      alert('キャスト情報を更新しました！');
+      resetCastSettingsForm();
+    }
+
     function toggleFabMenu() {
       const container = document.getElementById('fabContainer');
       container.classList.toggle('open');
@@ -1978,6 +2227,16 @@
       document.getElementById('moreMenuSheet').classList.remove('open');
     }
 
+    /* 📱 拡張メニュー：広告カルーセルのドットインジケーター連動 */
+    function handleSheetAdScroll() {
+      const carousel = document.getElementById('sheetAdCarousel');
+      const dots = document.querySelectorAll('#sheetAdDots .sheet-ad-dot');
+      if (!carousel || !dots.length) return;
+      const cardWidth = carousel.clientWidth;
+      const activeIndex = Math.round(carousel.scrollLeft / cardWidth);
+      dots.forEach((dot, i) => dot.classList.toggle('active', i === activeIndex));
+    }
+
     function switchMainTab(type) {
       document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
       const targetNav = document.getElementById('nav-' + type);
@@ -1988,6 +2247,7 @@
       const calendarView = document.getElementById('viewCalendar');
       const sharedView = document.getElementById('viewShared');
       const dashView = document.getElementById('viewDashboard');
+      const castSettingsView = document.getElementById('viewCastSettings');
       const headerTitle = document.getElementById('headerTitle');
       const fabContainer = document.getElementById('fabContainer');
 
@@ -2005,6 +2265,7 @@
         calendarView.style.display = 'none';
         sharedView.style.display = 'none';
         dashView.style.display = 'none';
+        castSettingsView.style.display = 'none';
         startHomeAnimations();
       } else {
         homeView.classList.remove('active');
@@ -2015,11 +2276,13 @@
         calendarView.style.display = 'none';
         sharedView.style.display = 'none';
         dashView.style.display = 'none';
+        castSettingsView.style.display = 'none';
 
         if(type === 'my') myView.style.display = 'block';
         else if (type === 'calendar') { calendarView.style.display = 'block'; renderCalendar(); }
         else if (type === 'shared') { sharedView.style.display = 'block'; renderSharedArea(); }
         else if (type === 'dashboard') { dashView.style.display = 'block'; renderDashboard(); }
+        else if (type === 'castSettings') { castSettingsView.style.display = 'block'; resetCastSettingsForm(); updateCastDatalist(); }
 
         setTimeout(() => {
           const area = document.getElementById('homeFloatingArea');
@@ -2845,7 +3108,11 @@
 
     function renderCastView(target, map, keyword) {
       let list = Object.values(map);
-      if(currentFilter === 'active') list = list.filter(c => castData[c.name] && castData[c.name].link);
+      if(currentFilter === 'active') list = list.filter(c => {
+        const info = castData[c.name];
+        if (!info) return false;
+        return info.status ? info.status === 'active' : !!info.link;
+      });
       if(currentFilter === 'fav') list = list.filter(c => c.favCount >= 1);
       if(currentFilter === 'super') list = list.filter(c => c.favCount >= 5);
 
@@ -2877,7 +3144,7 @@
         const details = document.createElement('details');
         details.className = 'cast-card' + (c.favCount >= 5 ? ' super-favorite' : (c.favCount >= 1 ? ' favorite' : ''));
         const info = castData[c.name] || { link: '', notes: '', oldName: '', style: '', letters: [] };
-        const isActive = info.link && info.link.trim() !== '';
+        const isActive = info.status ? info.status === 'active' : (info.link && info.link.trim() !== '');
 
         let latestStore = '';
         let latestType = '';
