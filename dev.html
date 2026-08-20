@@ -37,6 +37,7 @@
     [data-theme="champagne"] { --bg-color: #fdfbf7; --card-bg: #ffffff; --primary-pink: #d4af37; --soft-pink: #fdf6e2; --accent-pink: #b8860b; --text-color: #3d3522; --light-text: #998c6d; --border-color: #f5e8c4; --shadow: 0 4px 15px rgba(212, 175, 55, 0.12); --badge-bg: var(--soft-pink); --badge-color: var(--accent-pink); --gold-bg-start: #fff5cc; --gold-bg-end: #ffe680; --gold-border: #d4af37; --gold-text: #665200; --map-unvisited: #e6dfcc; --map-stroke: #ffffff; }
     [data-theme="violet"] { --bg-color: #faf8ff; --card-bg: #ffffff; --primary-pink: #b197fc; --soft-pink: #f3f0ff; --accent-pink: #845ef7; --text-color: #3b354d; --light-text: #8c829e; --border-color: #e5dbff; --shadow: 0 4px 15px rgba(132, 94, 247, 0.1); --badge-bg: var(--soft-pink); --badge-color: var(--accent-pink); --gold-bg-start: #fff9e6; --gold-bg-end: #fff0c2; --gold-border: #f3c642; --gold-text: #8a6200; --map-unvisited: #e0d9f5; --map-stroke: #ffffff; }
     [data-theme="peach"] { --bg-color: #fffaf8; --card-bg: #ffffff; --primary-pink: #ff922b; --soft-pink: #fff4e6; --accent-pink: #f76707; --text-color: #42362b; --light-text: #9c8978; --border-color: #ffe8cc; --shadow: 0 4px 15px rgba(247, 103, 7, 0.08); --badge-bg: var(--soft-pink); --badge-color: var(--accent-pink); --gold-bg-start: #fff9e6; --gold-bg-end: #fff0c2; --gold-border: #f3c642; --gold-text: #8a6200; --map-unvisited: #e8d9cc; --map-stroke: #ffffff; }
+    [data-theme="jreast"] { --bg-color: #f4f5f7; --card-bg: #ffffff; --primary-pink: #008e43; --soft-pink: #e6f4ed; --accent-pink: #008040; --text-color: #1a1a1a; --light-text: #666666; --border-color: #dce1e6; --shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06); --radius: 6px; --badge-bg: #008e43; --badge-color: #ffffff; --gold-bg-start: #f4f5f7; --gold-bg-end: #ffffff; --gold-border: #008e43; --gold-text: #008040; --map-unvisited: #d0d5dd; --map-stroke: #f4f5f7; }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
 
@@ -234,6 +235,109 @@
     .home-card-c:active { transform: scale(0.98); }
     .counter-big { font-size: 1.6rem; font-weight: bold; color: var(--accent-pink); line-height: 1.1; }
     .countdown-anim { font-size: 1.2rem; font-weight: bold; color: var(--accent-pink); }
+
+    /* 🚃 JR東日本風テーマ：カード・境界線の質感（フラット＆ピシッとした構造） */
+    [data-theme="jreast"] .home-card-a,
+    [data-theme="jreast"] details.cast-card,
+    [data-theme="jreast"] .stat-card,
+    [data-theme="jreast"] details.store-card-fold {
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow);
+    }
+    [data-theme="jreast"] details.cast-card.favorite,
+    [data-theme="jreast"] details.cast-card.super-favorite {
+      border: 1px solid var(--border-color);
+      border-left: 5px solid var(--primary-pink);
+      box-shadow: var(--shadow);
+      background: var(--card-bg);
+    }
+
+    /* 🚃 JR東日本風テーマ：発車標（電光掲示板）風コンポーネント */
+    [data-theme="jreast"] .home-card-b,
+    [data-theme="jreast"] .home-card-c {
+      background: #111111 !important;
+      border: 2px solid #333333 !important;
+      border-radius: 6px;
+      box-shadow: inset 0 0 8px rgba(0,0,0,0.8);
+    }
+    [data-theme="jreast"] .home-card-b .countdown-anim {
+      color: #ff9d00 !important;
+      font-family: 'Courier New', 'DejaVu Sans Mono', 'Consolas', monospace;
+      font-weight: 700;
+      text-shadow: 0 0 6px rgba(255, 157, 0, 0.6);
+      letter-spacing: 1px;
+    }
+    [data-theme="jreast"] .home-card-c #homeNextVisitText {
+      color: #00ff66 !important;
+      font-family: 'Courier New', 'DejaVu Sans Mono', 'Consolas', monospace;
+      font-weight: 700;
+      text-shadow: 0 0 6px rgba(0, 255, 102, 0.6);
+      letter-spacing: 1px;
+    }
+    [data-theme="jreast"] .counter-big {
+      font-family: 'Courier New', 'DejaVu Sans Mono', 'Consolas', monospace;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    /* 🚃 JR東日本風テーマ：運行情報バッジ（ステータス表示） */
+    [data-theme="jreast"] .status-badge,
+    [data-theme="jreast"] .super-tag {
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    [data-theme="jreast"] .status-active {
+      background: #008e43; color: #ffffff; border: none;
+    }
+    [data-theme="jreast"] .status-retired {
+      background: #888888; color: #ffffff; border: none;
+    }
+    [data-theme="jreast"] .super-tag {
+      background: #e60012; color: #ffffff;
+    }
+    [data-theme="jreast"] #ftBad.active {
+      background: #e60012; border-color: #e60012; color: #ffffff;
+    }
+    [data-theme="jreast"] .ftag.active {
+      background: #008e43; border-color: #008e43;
+    }
+
+    /* 🚃 JR東日本風テーマ：時系列ビュー（路線図風ライン） */
+    [data-theme="jreast"] .month-title {
+      border-left: 4px solid #008e43;
+      color: #008040;
+      font-weight: 800;
+    }
+    [data-theme="jreast"] details.timeline-item {
+      border-left: 3px solid #008e43;
+      border-radius: 0 6px 6px 0;
+    }
+
+    /* 🚃 JR東日本風テーマ：店舗別カード（駅名標風レイアウト） */
+    [data-theme="jreast"] summary.store-fold-summary {
+      background: #ffffff;
+      border-top: 6px solid #008e43;
+      border-bottom: 1px solid var(--border-color);
+    }
+    [data-theme="jreast"] .store-summary-title {
+      color: #1a1a1a;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    /* 🚃 JR東日本風テーマ：ナビゲーション・ボタンピル */
+    [data-theme="jreast"] .pill-btn {
+      background: #e6f4ed;
+      color: #008040;
+      border: 1px solid #008e43;
+      font-weight: bold;
+    }
+    [data-theme="jreast"] .nav-item.active {
+      color: #008e43;
+      font-weight: 800;
+    }
 
     /* 🔔 ホーム画面用 アクション通知カード */
     .home-action-card {
@@ -614,6 +718,25 @@
     .form-group input, .form-group select, .form-group textarea { padding: 8px 10px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.85rem; outline: none; background: var(--bg-color); color: var(--text-color); width: 100%; }
     .style-grid-compact { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; width: 100%; }
     .style-grid-compact input { padding: 6px 2px; text-align: center; font-size: 0.78rem; font-weight: bold; }
+
+    /* ⭐ 五角形レーダー評価：スコア入力スライダー */
+    .score-slider-grid { display: flex; flex-direction: column; gap: 8px; }
+    .score-slider-row { display: flex; align-items: center; gap: 8px; }
+    .score-slider-label { flex: 0 0 62px; font-size: 0.75rem; font-weight: bold; color: var(--text-color); }
+    .score-slider-row input[type="range"] { flex: 1; accent-color: var(--accent-pink); }
+    .score-slider-val { flex: 0 0 34px; text-align: center; font-size: 0.78rem; font-weight: bold; color: var(--accent-pink); }
+
+    /* ⭐ キャストカード内：五角形レーダーチャート */
+    .radar-chart-block { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px; text-align: center; }
+    .radar-avg-score { font-size: 1.05rem; font-weight: bold; color: var(--accent-pink); margin-bottom: 4px; }
+    .radar-chart-wrap { position: relative; width: 100%; max-width: 260px; height: 190px; margin: 0 auto; }
+
+    /* ⭐ 統計タブ：項目別NO.1キャスト */
+    .score-rank-list { display: flex; flex-direction: column; gap: 6px; }
+    .score-rank-item { display: flex; align-items: center; justify-content: space-between; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 10px; padding: 8px 12px; }
+    .score-rank-label { font-size: 0.78rem; font-weight: bold; color: var(--light-text); }
+    .score-rank-name { font-size: 0.85rem; font-weight: bold; color: var(--text-color); }
+    .score-rank-val { font-size: 0.8rem; font-weight: bold; color: var(--accent-pink); }
     .flag-picker { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 4px; }
     .flag-btn { font-size: 0.72rem; padding: 4px 8px; border-radius: 12px; border: 1.5px solid var(--border-color); background: var(--card-bg); color: var(--text-color); cursor: pointer; }
     .flag-btn-clear { background: rgba(150, 150, 150, 0.2); color: var(--light-text); }
@@ -1401,6 +1524,7 @@
             <button class="theme-item-btn" onclick="setTheme('champagne')">👑 ゴールド</button>
             <button class="theme-item-btn" onclick="setTheme('violet')">💜 ヴァイオレット</button>
             <button class="theme-item-btn" onclick="setTheme('peach')">🍑 ピーチ</button>
+            <button class="theme-item-btn" onclick="setTheme('jreast')">🚃 JR東日本風</button>
           </div>
         </div>
       </details>
@@ -1640,6 +1764,16 @@
           </div>
         </div>
 
+        <div class="form-group"><label>⭐ 五角形レーダー評価（1〜5）</label>
+          <div class="score-slider-grid">
+            <div class="score-slider-row"><span class="score-slider-label">ルックス</span><input type="range" id="addScoreLooks" min="1" max="5" value="3" oninput="document.getElementById('addScoreLooksVal').innerText=this.value"><span class="score-slider-val" id="addScoreLooksVal">3</span></div>
+            <div class="score-slider-row"><span class="score-slider-label">接客</span><input type="range" id="addScoreService" min="1" max="5" value="3" oninput="document.getElementById('addScoreServiceVal').innerText=this.value"><span class="score-slider-val" id="addScoreServiceVal">3</span></div>
+            <div class="score-slider-row"><span class="score-slider-label">スタイル</span><input type="range" id="addScoreStyle" min="1" max="5" value="3" oninput="document.getElementById('addScoreStyleVal').innerText=this.value"><span class="score-slider-val" id="addScoreStyleVal">3</span></div>
+            <div class="score-slider-row"><span class="score-slider-label">イチャ度</span><input type="range" id="addScoreIntimacy" min="1" max="5" value="3" oninput="document.getElementById('addScoreIntimacyVal').innerText=this.value"><span class="score-slider-val" id="addScoreIntimacyVal">3</span></div>
+            <div class="score-slider-row"><span class="score-slider-label">コスパ</span><input type="range" id="addScoreValue" min="1" max="5" value="3" oninput="document.getElementById('addScoreValueVal').innerText=this.value"><span class="score-slider-val" id="addScoreValueVal">3</span></div>
+          </div>
+        </div>
+
         <div class="form-group"><label>マーク・フラグ</label>
           <div class="flag-picker">
             <button type="button" class="flag-btn" onclick="addFlagChar('🆂')">🆂 当たり</button>
@@ -1757,6 +1891,16 @@
             <button type="button" class="flag-btn flag-btn-clear" onclick="clearEditTypeInput()">クリア</button>
           </div>
           <input type="text" id="editTypeTag" placeholder="例: アイドル系, 清楚系">
+        </div>
+
+        <div class="form-group"><label>⭐ 五角形レーダー評価（1〜5）</label>
+          <div class="score-slider-grid">
+            <div class="score-slider-row"><span class="score-slider-label">ルックス</span><input type="range" id="editScoreLooks" min="1" max="5" value="3" oninput="document.getElementById('editScoreLooksVal').innerText=this.value"><span class="score-slider-val" id="editScoreLooksVal">3</span></div>
+            <div class="score-slider-row"><span class="score-slider-label">接客</span><input type="range" id="editScoreService" min="1" max="5" value="3" oninput="document.getElementById('editScoreServiceVal').innerText=this.value"><span class="score-slider-val" id="editScoreServiceVal">3</span></div>
+            <div class="score-slider-row"><span class="score-slider-label">スタイル</span><input type="range" id="editScoreStyle" min="1" max="5" value="3" oninput="document.getElementById('editScoreStyleVal').innerText=this.value"><span class="score-slider-val" id="editScoreStyleVal">3</span></div>
+            <div class="score-slider-row"><span class="score-slider-label">イチャ度</span><input type="range" id="editScoreIntimacy" min="1" max="5" value="3" oninput="document.getElementById('editScoreIntimacyVal').innerText=this.value"><span class="score-slider-val" id="editScoreIntimacyVal">3</span></div>
+            <div class="score-slider-row"><span class="score-slider-label">コスパ</span><input type="range" id="editScoreValue" min="1" max="5" value="3" oninput="document.getElementById('editScoreValueVal').innerText=this.value"><span class="score-slider-val" id="editScoreValueVal">3</span></div>
+          </div>
         </div>
 
         <div class="form-group"><label>メモ</label><textarea id="editVisitNote" rows="2"></textarea></div>
@@ -3337,6 +3481,20 @@
       if(panel) panel.classList.toggle('open');
     }
 
+    /* ⭐ 五角形レーダー評価：平均スコア計算 */
+    function computeCastScoreAverages(visits) {
+      const keys = ['looks', 'service', 'style', 'intimacy', 'value'];
+      const sums = { looks: 0, service: 0, style: 0, intimacy: 0, value: 0 };
+      const n = visits.length || 1;
+      visits.forEach(v => {
+        keys.forEach(k => { sums[k] += (Number(v[k]) || 3); });
+      });
+      const avgs = {};
+      keys.forEach(k => { avgs[k] = sums[k] / n; });
+      avgs.overall = keys.reduce((s, k) => s + avgs[k], 0) / keys.length;
+      return avgs;
+    }
+
     function buildRowDetailHTML(v) {
       const hasDetail = v.amount || v.courseTime || v.storeName;
       if(!hasDetail) return { btn: '', panel: '' };
@@ -3495,6 +3653,7 @@
 
       const grid = document.createElement('div');
       grid.className = 'grid';
+      let radarCanvasCounter = 0;
 
       list.forEach(c => {
         const details = document.createElement('details');
@@ -3525,6 +3684,18 @@
           : '';
 
         const copyBtnHtml = `<button class="copy-btn" onclick="openExportCastModal(event, '${c.name}')">📤 友だちへ共有</button>`;
+
+        let radarBlockHtml = '';
+        if (c.visits.length > 0) {
+          const avgs = computeCastScoreAverages(c.visits);
+          radarCanvasCounter++;
+          const canvasId = 'radarChart_' + radarCanvasCounter;
+          radarBlockHtml = `
+            <div class="radar-chart-block" data-cast-name="${c.name.replace(/"/g,'&quot;')}" data-avg='${JSON.stringify(avgs)}'>
+              <div class="radar-avg-score">🌟 ${avgs.overall.toFixed(1)} / 5.0</div>
+              <div class="radar-chart-wrap"><canvas id="${canvasId}"></canvas></div>
+            </div>`;
+        }
 
         let rowsHtml = '';
         c.visits.forEach(v => {
@@ -3570,6 +3741,7 @@
                 ${isActive?`<button class="link-btn" onclick="window.open('${info.link}','_blank')">プロフ</button>`:''}
               </div>
             </div>
+            ${radarBlockHtml}
             ${rowsHtml}
           </div></div></div>`;
         grid.appendChild(details);
@@ -3928,10 +4100,16 @@
           <div class="stat-section-title">🏆 累計メモリアル (タップで詳細表示)</div>
           <div class="stat-grid-4" id="cumulativeGrid"></div>
         </div>
+
+        <div class="stat-section">
+          <div class="stat-section-title">⭐ 項目別NO.1キャスト</div>
+          <div class="score-rank-list" id="scoreRankingGrid"></div>
+        </div>
       `;
 
       renderDashCharts(filteredRecords);
       renderCumulativeMemorial();
+      renderScoreRanking(filteredRecords);
     }
 
     /* ==================================================================
@@ -4436,6 +4614,48 @@
       }
     }
 
+    /* ⭐ 五角形レーダー評価：キャストカード展開時にチャートを初期化 */
+    function initCastRadarChart(detailsEl) {
+      const block = detailsEl.querySelector('.radar-chart-block');
+      if (!block || block.dataset.chartInit === 'true') return;
+      const canvas = block.querySelector('canvas');
+      if (!canvas) return;
+      let avgs;
+      try { avgs = JSON.parse(block.getAttribute('data-avg')); } catch(e) { return; }
+
+      const accentColor = getCssVar('--accent-pink') || '#f72585';
+      const softColor = getCssVar('--soft-pink') || 'rgba(247,37,133,0.15)';
+
+      new Chart(canvas.getContext('2d'), {
+        type: 'radar',
+        data: {
+          labels: ['ルックス', '接客', 'スタイル', 'イチャ度', 'コスパ'],
+          datasets: [{
+            data: [avgs.looks, avgs.service, avgs.style, avgs.intimacy, avgs.value],
+            backgroundColor: softColor,
+            borderColor: accentColor,
+            borderWidth: 2,
+            pointBackgroundColor: accentColor,
+            pointRadius: 3
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            r: {
+              min: 0, max: 5, ticks: { display: false, stepSize: 1 },
+              pointLabels: { font: { size: 10 } },
+              grid: { color: getCssVar('--border-color') || '#e0e0e0' },
+              angleLines: { color: getCssVar('--border-color') || '#e0e0e0' }
+            }
+          }
+        }
+      });
+      block.dataset.chartInit = 'true';
+    }
+
     function renderCumulativeMemorial() {
       const el = document.getElementById('cumulativeGrid');
       if(!el) return;
@@ -4489,6 +4709,46 @@
       `;
 
       window.cumulativeData = { totalVisits, totalAmount, uniqueCasts, totalMinutes, uniqueStores, totalFavs, totalMemories, totalAmountDisplay, playTimeDisplay, durationDisplay };
+    }
+
+    /* ⭐ 統計タブ：項目別NO.1キャスト */
+    function renderScoreRanking(records) {
+      const el = document.getElementById('scoreRankingGrid');
+      if (!el) return;
+
+      const list = records && records.length ? records : historyList;
+      if (list.length === 0) {
+        el.innerHTML = '<div style="text-align:center;font-size:0.8rem;color:var(--light-text);padding:10px;">評価データがありません</div>';
+        return;
+      }
+
+      const castMap = {};
+      list.forEach(v => {
+        if (!castMap[v.name]) castMap[v.name] = [];
+        castMap[v.name].push(v);
+      });
+
+      const items = [
+        { key: 'looks', label: 'ルックス最高値' },
+        { key: 'service', label: '接客最高値' },
+        { key: 'style', label: 'スタイル最高値' },
+        { key: 'intimacy', label: 'イチャ度最高値' },
+        { key: 'value', label: 'コスパ最高値' }
+      ];
+
+      el.innerHTML = items.map(item => {
+        let topName = '---', topVal = 0;
+        Object.keys(castMap).forEach(name => {
+          const avgs = computeCastScoreAverages(castMap[name]);
+          if (avgs[item.key] > topVal) { topVal = avgs[item.key]; topName = name; }
+        });
+        return `
+          <div class="score-rank-item">
+            <span class="score-rank-label">${item.label}</span>
+            <span class="score-rank-name">${topName}</span>
+            <span class="score-rank-val">${topVal > 0 ? '⭐ ' + topVal.toFixed(1) : '---'}</span>
+          </div>`;
+      }).join('');
     }
 
     function openBadge3DModal(catKey) {
@@ -4736,6 +4996,10 @@
       document.getElementById('addStoreCategory').value = 'ヘルス';
       document.getElementById('addStorePhone').value = '';
       document.getElementById('addStoreWeb').value = '';
+      ['addScoreLooks','addScoreService','addScoreStyle','addScoreIntimacy','addScoreValue'].forEach(id => {
+        document.getElementById(id).value = 3;
+        document.getElementById(id + 'Val').innerText = 3;
+      });
       updateStoreDatalist();
       updateCastDatalist();
       document.getElementById('addModal').style.display = 'flex';
@@ -4783,7 +5047,12 @@
         storeName: storeName,
         reportUrl: document.getElementById('addReportUrl').value || '',
         chekiImg: document.getElementById('addLetterImg').value || '',
-        typeTag: document.getElementById('addTypeTag').value || ''
+        typeTag: document.getElementById('addTypeTag').value || '',
+        looks: parseInt(document.getElementById('addScoreLooks').value, 10) || 3,
+        service: parseInt(document.getElementById('addScoreService').value, 10) || 3,
+        style: parseInt(document.getElementById('addScoreStyle').value, 10) || 3,
+        intimacy: parseInt(document.getElementById('addScoreIntimacy').value, 10) || 3,
+        value: parseInt(document.getElementById('addScoreValue').value, 10) || 3
       };
 
       historyList.push(rec);
@@ -4830,6 +5099,12 @@
       document.getElementById('editStoreWeb').value = storeInfo.web || '';
 
       document.getElementById('editReportUrl').value = rec.reportUrl || '';
+      ['Looks','Service','Style','Intimacy','Value'].forEach(key => {
+        const propMap = { Looks: 'looks', Service: 'service', Style: 'style', Intimacy: 'intimacy', Value: 'value' };
+        const v = rec[propMap[key]] || 3;
+        document.getElementById('editScore' + key).value = v;
+        document.getElementById('editScore' + key + 'Val').innerText = v;
+      });
       document.getElementById('editRecordModal').style.display = 'flex';
     }
 
@@ -4860,6 +5135,11 @@
         }
 
         rec.reportUrl = document.getElementById('editReportUrl').value;
+        rec.looks = parseInt(document.getElementById('editScoreLooks').value, 10) || 3;
+        rec.service = parseInt(document.getElementById('editScoreService').value, 10) || 3;
+        rec.style = parseInt(document.getElementById('editScoreStyle').value, 10) || 3;
+        rec.intimacy = parseInt(document.getElementById('editScoreIntimacy').value, 10) || 3;
+        rec.value = parseInt(document.getElementById('editScoreValue').value, 10) || 3;
         saveData(); render(); renderDashboard(); closeModal('editRecordModal');
       }
     }
@@ -4947,6 +5227,7 @@
         details.setAttribute('open', '');
         void details.offsetWidth; 
         details.classList.add('is-open');
+        setTimeout(() => { initCastRadarChart(details); }, 310);
       }
     });
 
