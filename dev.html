@@ -688,13 +688,6 @@
     .chart-wrap { position: relative; width: 100%; height: 200px; margin-top: 6px; }
     .chart-wrap.donut { height: 220px; }
 
-    /* 🗺️ 統計タブ：日本地図の折りたたみ */
-    details.map-fold-details { padding: 0; }
-    summary.map-fold-summary { cursor: pointer; list-style: none; display: flex; align-items: center; }
-    summary.map-fold-summary::-webkit-details-marker { display: none; }
-    .map-fold-arrow { margin-left: auto; font-size: 0.7rem; transition: transform 0.3s; }
-    details.map-fold-details[open] .map-fold-arrow { transform: rotate(180deg); }
-
     /* 🌸 店舗別：遊んだことある女の子グリッド */
     .store-cast-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
     .store-cast-btn {
@@ -719,33 +712,72 @@
     .carousel-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border-color); transition: all 0.3s; cursor: pointer; }
     .carousel-dot.active { background: var(--accent-pink); width: 16px; border-radius: 4px; }
 
-    /* 🗾 日本地図（47都道府県MAP）コンポーネントのスタイル */
-    .japan-map-container {
-      width: 100%;
-      max-width: 500px;
-      margin: 10px auto;
-      text-align: center;
-      position: relative;
+    /* 🗾 都道府県シルエット日本地図（新設・専用画面） */
+    .map-fullscreen-modal .modal-content.map-fullscreen-content {
+      width: 100%; max-width: 720px; height: 92vh; max-height: 92vh;
+      display: flex; flex-direction: column; padding: 14px; overflow: hidden;
     }
-    .japan-map-svg {
-      width: 100%;
-      height: auto;
-      max-height: 380px;
-      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.08));
+    .map-modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; flex-shrink: 0; }
+    .map-modal-header h3 { margin: 0; }
+    .map-modal-close-x { background: none; border: none; font-size: 1.3rem; color: var(--light-text); cursor: pointer; line-height: 1; padding: 4px 8px; }
+
+    .map-heatmap-tabs { display: flex; gap: 6px; margin-bottom: 8px; flex-shrink: 0; }
+    .map-heatmap-tab {
+      flex: 1; text-align: center; padding: 8px 4px; border-radius: 12px; border: 1.5px solid var(--border-color);
+      background: var(--bg-color); color: var(--light-text); font-size: 0.72rem; font-weight: bold; cursor: pointer;
     }
-    .pref-rect {
-      cursor: pointer;
-      stroke: var(--map-stroke);
-      stroke-width: 1.5;
-      rx: 4; ry: 4;
-      transition: all 0.25s ease;
+    .map-heatmap-tab.active { background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink)); color: #fff; border-color: transparent; }
+
+    .map-scroll-body { flex: 1; overflow-y: auto; min-height: 0; }
+    .map-legend-line { font-size: 0.72rem; color: var(--light-text); text-align: center; margin-bottom: 4px; }
+    .map-svg-wrap { width: 100%; max-width: 480px; margin: 0 auto; text-align: center; position: relative; }
+    .map-svg-wrap svg { width: 100%; height: auto; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.1)); }
+    .map-svg-wrap .prefecture, .map-svg-wrap path {
+      cursor: pointer; stroke: var(--map-stroke); stroke-width: 0.75;
+      transition: filter 0.2s ease, transform 0.2s ease; transform-box: fill-box; transform-origin: center;
     }
-    .pref-rect.visited { fill: var(--accent-pink); }
-    .pref-rect.unvisited { fill: var(--map-unvisited); }
-    .pref-rect:hover { opacity: 0.8; transform: scale(1.05); transform-origin: center; }
-    .pref-text { font-size: 11px; font-weight: bold; pointer-events: none; text-anchor: middle; dominant-baseline: central; }
-    .pref-text.visited { fill: #ffffff; }
-    .pref-text.unvisited { fill: var(--light-text); }
+    .map-svg-wrap .prefecture:hover, .map-svg-wrap path:hover { filter: brightness(1.15); transform: scale(1.08); }
+    .map-svg-wrap .prefecture.map-pref-selected, .map-svg-wrap path.map-pref-selected { filter: brightness(1.2); transform: scale(1.1); stroke: var(--accent-pink); stroke-width: 1.5; }
+    .map-svg-loading { text-align: center; color: var(--light-text); font-size: 0.8rem; padding: 40px 10px; }
+
+    .map-pref-detail-panel {
+      margin-top: 12px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius);
+      padding: 12px; box-shadow: var(--shadow); animation: slideUpFade 0.3s ease forwards;
+    }
+    .map-pref-detail-title { font-size: 0.95rem; font-weight: bold; color: var(--accent-pink); text-align: center; margin-bottom: 8px; }
+    .map-pref-stat-row { display: flex; gap: 8px; margin-bottom: 10px; }
+    .map-pref-stat-row .stat-card { flex: 1; }
+    .map-action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .map-action-btn {
+      display: flex; align-items: center; justify-content: space-between; gap: 6px;
+      background: var(--bg-color); border: 1.5px solid var(--border-color); border-radius: 14px;
+      padding: 12px 12px; font-size: 0.78rem; font-weight: bold; color: var(--text-color); cursor: pointer;
+    }
+    .map-action-btn.map-action-full { grid-column: 1 / -1; }
+    .map-action-btn.active { background: var(--soft-pink); border-color: var(--accent-pink); color: var(--accent-pink); }
+    .map-action-btn .map-action-arrow { opacity: 0.6; }
+
+    .map-content-area { margin-top: 10px; animation: slideUpFade 0.3s ease forwards; display: flex; flex-direction: column; gap: 8px; }
+    .map-cast-item, .map-store-item {
+      display: flex; flex-direction: column; gap: 4px; background: var(--bg-color); border: 1px solid var(--border-color);
+      border-radius: 12px; padding: 10px 12px;
+    }
+    .map-item-top-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+    .map-item-name { font-weight: bold; font-size: 0.85rem; color: var(--text-color); }
+    .map-badge-count { font-size: 0.68rem; font-weight: bold; background: var(--soft-pink); color: var(--accent-pink); padding: 2px 8px; border-radius: 10px; }
+    .map-badge-okini { font-size: 0.65rem; font-weight: bold; background: var(--gold-bg-start); color: var(--gold-text); border: 1px solid var(--gold-border); padding: 1px 7px; border-radius: 10px; margin-left: 4px; }
+    .map-badge-retired { font-size: 0.65rem; font-weight: bold; background: var(--soft-pink); color: var(--accent-pink); padding: 1px 7px; border-radius: 10px; margin-left: 4px; }
+    .map-profile-link { align-self: flex-start; font-size: 0.7rem; color: var(--accent-pink); text-decoration: underline; }
+    .map-store-cat-badge { font-size: 0.65rem; font-weight: bold; padding: 2px 8px; border-radius: 10px; }
+    .map-store-sub-line { font-size: 0.72rem; color: var(--light-text); }
+    .map-store-btn-row { display: flex; gap: 6px; margin-top: 4px; }
+
+    .map-gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .map-gallery-item { position: relative; aspect-ratio: 1; border-radius: 10px; overflow: hidden; cursor: pointer; border: 1px solid var(--border-color); }
+    .map-gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .map-gallery-date { position: absolute; bottom: 0; left: 0; right: 0; font-size: 0.6rem; color: #fff; background: rgba(0,0,0,0.5); padding: 2px 4px; text-align: center; }
+    .map-empty-note { text-align: center; color: var(--light-text); font-size: 0.8rem; padding: 20px 10px; }
+    .map-lightbox-img { width: 100%; border-radius: 12px; }
 
     @media (min-width: 768px) {
       .app-layout { padding: 24px; max-width: 1200px; flex-direction: row; gap: 24px; align-items: flex-start; }
@@ -1099,6 +1131,9 @@
       <button class="sheet-nav-item" id="nav-castSettings" onclick="switchMainTab('castSettings'); closeMoreMenu();">
         <span class="nav-icon">🌸</span><span>女の子別設定</span>
       </button>
+      <button class="sheet-nav-item" id="nav-japanMap" onclick="openJapanMapModal(); closeMoreMenu();">
+        <span class="nav-icon">🗺️</span><span>地図</span>
+      </button>
 
       <div class="sheet-ad-carousel" id="sheetAdCarousel" onscroll="handleSheetAdScroll()">
         <div class="sheet-ad-card">
@@ -1211,15 +1246,6 @@
     </div>
   </div>
 
-  <!-- 🗾 都道府県別詳細モーダル -->
-  <div class="modal-overlay" id="prefDetailModal">
-    <div class="modal-content">
-      <h3 id="prefDetailTitle">🗾 ---</h3>
-      <div id="prefDetailBody"></div>
-      <button class="close-btn" onclick="closeModal('prefDetailModal')" style="margin-top:16px;">閉じる</button>
-    </div>
-  </div>
-
   <!-- 🌸 店舗別：遊んだことある女の子の詳細モーダル -->
   <div class="modal-overlay" id="storeCastDetailModal">
     <div class="modal-content">
@@ -1269,6 +1295,42 @@
       <h3 id="letterModalTitle">💌 メッセージカード・手紙</h3>
       <div id="letterModalContainer" style="display:flex; flex-direction:column; gap:10px; max-height:60vh; overflow-y:auto; padding-right:4px;"></div>
       <button class="close-btn" onclick="closeModal('letterModal')" style="margin-top:12px;">閉じる</button>
+    </div>
+  </div>
+
+  <!-- 🗾 都道府県シルエット日本地図（専用画面） -->
+  <div class="modal-overlay map-fullscreen-modal" id="japanMapModal">
+    <div class="modal-content map-fullscreen-content">
+      <div class="map-modal-header">
+        <h3>🗾 都道府県MAP</h3>
+        <button type="button" class="map-modal-close-x" onclick="closeModal('japanMapModal')">✕</button>
+      </div>
+
+      <div class="map-heatmap-tabs">
+        <button type="button" class="map-heatmap-tab active" id="mapTabVisits" onclick="setMapHeatmapMode('visits')">🌸 訪問回数</button>
+        <button type="button" class="map-heatmap-tab" id="mapTabAmount" onclick="setMapHeatmapMode('amount')">💰 総支出</button>
+        <button type="button" class="map-heatmap-tab" id="mapTabOkini" onclick="setMapHeatmapMode('okini')">👑 オキニ人数</button>
+      </div>
+
+      <div class="map-scroll-body">
+        <div class="map-legend-line" id="mapLegendLine">全国制覇率: 0 / 47 都道府県 (0%)</div>
+        <div class="map-svg-wrap" id="mapSvgWrap">
+          <div class="map-svg-loading">地図を読み込み中...</div>
+        </div>
+
+        <div id="mapPrefDetailPanel"></div>
+        <div id="mapPrefContentArea"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🗾 地図：思い出画像ライトボックス -->
+  <div class="modal-overlay" id="mapImageLightbox">
+    <div class="modal-content" style="max-width:420px;">
+      <div id="mapLightboxDate" style="font-size:0.78rem; font-weight:bold; color:var(--light-text); margin-bottom:6px;"></div>
+      <img id="mapLightboxImg" class="map-lightbox-img" src="" alt="思い出画像">
+      <div id="mapLightboxText" style="font-size:0.8rem; color:var(--text-color); margin-top:8px;"></div>
+      <button class="close-btn" onclick="closeModal('mapImageLightbox')" style="margin-top:12px;">閉じる</button>
     </div>
   </div>
 
@@ -3819,14 +3881,6 @@
           </div>
         </div>
 
-        <details class="stat-section map-fold-details" open>
-          <summary class="stat-section-title map-fold-summary">🗺️ 全国制覇MAP（訪問都道府県マップ）<span class="map-fold-arrow">▼</span></summary>
-          <div style="font-size:0.72rem; color:var(--light-text); text-align:center; margin-bottom:4px;">
-            行ったことのあるお店の都道府県に色がつきます（未訪問は灰色）。タップで詳細統計を表示します。
-          </div>
-          <div class="japan-map-container" id="japanMapContainer"></div>
-        </details>
-
         <div class="dash-charts-row">
           <div class="stat-section">
             <div class="stat-section-title">📈 推移グラフ</div>
@@ -3876,144 +3930,323 @@
         </div>
       `;
 
-      renderJapanMap();
       renderDashCharts(filteredRecords);
       renderCumulativeMemorial();
     }
 
-    function renderJapanMap() {
-      const container = document.getElementById('japanMapContainer');
-      if (!container) return;
+    /* ==================================================================
+       🗾 都道府県シルエット日本地図（新設・専用画面）
+       ================================================================== */
+    const PREF_CODE_MAP = [
+      { code: 1, name: "北海道" }, { code: 2, name: "青森県" }, { code: 3, name: "岩手県" },
+      { code: 4, name: "宮城県" }, { code: 5, name: "秋田県" }, { code: 6, name: "山形県" },
+      { code: 7, name: "福島県" }, { code: 8, name: "茨城県" }, { code: 9, name: "栃木県" },
+      { code: 10, name: "群馬県" }, { code: 11, name: "埼玉県" }, { code: 12, name: "千葉県" },
+      { code: 13, name: "東京都" }, { code: 14, name: "神奈川県" }, { code: 15, name: "新潟県" },
+      { code: 16, name: "富山県" }, { code: 17, name: "石川県" }, { code: 18, name: "福井県" },
+      { code: 19, name: "山梨県" }, { code: 20, name: "長野県" }, { code: 21, name: "岐阜県" },
+      { code: 22, name: "静岡県" }, { code: 23, name: "愛知県" }, { code: 24, name: "三重県" },
+      { code: 25, name: "滋賀県" }, { code: 26, name: "京都府" }, { code: 27, name: "大阪府" },
+      { code: 28, name: "兵庫県" }, { code: 29, name: "奈良県" }, { code: 30, name: "和歌山県" },
+      { code: 31, name: "鳥取県" }, { code: 32, name: "島根県" }, { code: 33, name: "岡山県" },
+      { code: 34, name: "広島県" }, { code: 35, name: "山口県" }, { code: 36, name: "徳島県" },
+      { code: 37, name: "香川県" }, { code: 38, name: "愛媛県" }, { code: 39, name: "高知県" },
+      { code: 40, name: "福岡県" }, { code: 41, name: "佐賀県" }, { code: 42, name: "長崎県" },
+      { code: 43, name: "熊本県" }, { code: 44, name: "大分県" }, { code: 45, name: "宮崎県" },
+      { code: 46, name: "鹿児島県" }, { code: 47, name: "沖縄県" }
+    ];
+    const JAPAN_MAP_SVG_URLS = [
+      'https://geolonia.github.io/japanese-prefectures/map-mobile.svg',
+      'https://geolonia.github.io/japanese-prefectures/map-full.svg'
+    ];
 
-      const visitedPrefs = new Set();
-      historyList.forEach(v => {
-        if (v.storeName && storeInfoData[v.storeName] && storeInfoData[v.storeName].pref) {
-          visitedPrefs.add(storeInfoData[v.storeName].pref);
-        }
-      });
+    let mapSvgLoaded = false;
+    let mapHeatmapMode = 'visits'; // visits | amount | okini
+    let mapSelectedPref = null;
+    let mapSelectedContentType = null; // cast | store | gallery
 
-      const prefGrid = [
-        { name: "北海道", code: "北海道", x: 380, y: 10, w: 80, h: 45 },
-        { name: "青森", code: "青森県", x: 380, y: 70, w: 40, h: 28 },
-        { name: "岩手", code: "岩手県", x: 422, y: 100, w: 38, h: 28 },
-        { name: "宮城", code: "宮城県", x: 422, y: 130, w: 38, h: 28 },
-        { name: "秋田", code: "秋田県", x: 380, y: 100, w: 40, h: 28 },
-        { name: "山形", code: "山形県", x: 380, y: 130, w: 40, h: 28 },
-        { name: "福島", code: "福島県", x: 380, y: 160, w: 80, h: 28 },
-        { name: "茨城", code: "茨城県", x: 422, y: 190, w: 38, h: 28 },
-        { name: "栃木", code: "栃木県", x: 422, y: 220, w: 38, h: 28 },
-        { name: "群馬", code: "群馬県", x: 380, y: 190, w: 40, h: 28 },
-        { name: "埼玉", code: "埼玉県", x: 380, y: 220, w: 40, h: 28 },
-        { name: "千葉", code: "千葉県", x: 422, y: 250, w: 38, h: 40 },
-        { name: "東京", code: "東京都", x: 380, y: 250, w: 40, h: 28 },
-        { name: "神奈川", code: "神奈川県", x: 380, y: 280, w: 40, h: 28 },
-        { name: "新潟", code: "新潟県", x: 338, y: 160, w: 40, h: 28 },
-        { name: "富山", code: "富山県", x: 296, y: 190, w: 40, h: 28 },
-        { name: "石川", code: "石川県", x: 254, y: 190, w: 40, h: 28 },
-        { name: "福井", code: "福井県", x: 254, y: 220, w: 40, h: 28 },
-        { name: "山梨", code: "山梨県", x: 338, y: 220, w: 40, h: 28 },
-        { name: "長野", code: "長野県", x: 338, y: 190, w: 40, h: 28 },
-        { name: "岐阜", code: "岐阜県", x: 296, y: 220, w: 40, h: 28 },
-        { name: "静岡", code: "静岡県", x: 338, y: 250, w: 40, h: 28 },
-        { name: "愛知", code: "愛知県", x: 296, y: 250, w: 40, h: 28 },
-        { name: "三重", code: "三重県", x: 254, y: 280, w: 40, h: 28 },
-        { name: "滋賀", code: "滋賀県", x: 254, y: 250, w: 40, h: 28 },
-        { name: "京都", code: "京都府", x: 212, y: 220, w: 40, h: 28 },
-        { name: "大阪", code: "大阪府", x: 212, y: 250, w: 40, h: 28 },
-        { name: "兵庫", code: "兵庫県", x: 170, y: 220, w: 40, h: 28 },
-        { name: "奈良", code: "奈良県", x: 212, y: 280, w: 40, h: 28 },
-        { name: "和歌山", code: "和歌山県", x: 170, y: 280, w: 40, h: 28 },
-        { name: "鳥取", code: "鳥取県", x: 128, y: 220, w: 40, h: 28 },
-        { name: "島根", code: "島根県", x: 86,  y: 220, w: 40, h: 28 },
-        { name: "岡山", code: "岡山県", x: 128, y: 250, w: 40, h: 28 },
-        { name: "広島", code: "広島県", x: 86,  y: 250, w: 40, h: 28 },
-        { name: "山口", code: "山口県", x: 44,  y: 235, w: 40, h: 43 },
-        { name: "徳島", code: "徳島県", x: 128, y: 320, w: 40, h: 28 },
-        { name: "香川", code: "香川県", x: 128, y: 292, w: 40, h: 26 },
-        { name: "愛媛", code: "愛媛県", x: 86,  y: 292, w: 40, h: 26 },
-        { name: "高知", code: "高知県", x: 86,  y: 320, w: 40, h: 28 },
-        { name: "福岡", code: "福岡県", x: 44,  y: 290, w: 40, h: 28 },
-        { name: "佐賀", code: "佐賀県", x: 2,   y: 290, w: 40, h: 28 },
-        { name: "長崎", code: "長崎県", x: 2,   y: 320, w: 40, h: 28 },
-        { name: "熊本", code: "熊本県", x: 44,  y: 320, w: 40, h: 28 },
-        { name: "大分", code: "大分県", x: 44,  y: 350, w: 40, h: 28 },
-        { name: "宮崎", code: "宮崎県", x: 44,  y: 380, w: 40, h: 28 },
-        { name: "鹿児島", code: "鹿児島県", x: 2, y: 350, w: 40, h: 58 },
-        { name: "沖縄", code: "沖縄県", x: 128, y: 380, w: 80, h: 28 }
-      ];
-
-      let svgContent = `<svg class="japan-map-svg" viewBox="0 0 470 415">`;
-
-      prefGrid.forEach(p => {
-        const isVisited = visitedPrefs.has(p.code);
-        const stateClass = isVisited ? "visited" : "unvisited";
-
-        svgContent += `
-          <g onclick="openPrefDetailModal('${p.code}')" cursor="pointer">
-            <rect class="pref-rect ${stateClass}" x="${p.x}" y="${p.y}" width="${p.w}" height="${p.h}" />
-            <text class="pref-text ${stateClass}" x="${p.x + p.w / 2}" y="${p.y + p.h / 2}">${p.name}</text>
-          </g>
-        `;
-      });
-
-      svgContent += `</svg>`;
-
-      const visitedCount = visitedPrefs.size;
-      const totalCount = 47;
-      const pct = Math.round((visitedCount / totalCount) * 100);
-
-      container.innerHTML = `
-        <div style="font-size:0.85rem; font-weight:bold; color:var(--accent-pink); margin-bottom:6px;">
-          全国制覇率: ${visitedCount} / ${totalCount} 都道府県 (${pct}%)
-        </div>
-        ${svgContent}
-      `;
+    function openJapanMapModal() {
+      document.getElementById('japanMapModal').style.display = 'flex';
+      document.getElementById('mapPrefDetailPanel').innerHTML = '';
+      document.getElementById('mapPrefContentArea').innerHTML = '';
+      mapSelectedPref = null;
+      mapSelectedContentType = null;
+      if (!mapSvgLoaded) {
+        loadJapanMapSvg();
+      } else {
+        applyMapHeatmapColors();
+      }
     }
 
-    /* 🗾 都道府県別の統計モーダル：一番行ってるお店・一番指名してる女の子・最終利用日・合計金額 */
-    function openPrefDetailModal(prefCode) {
-      const bodyEl = document.getElementById('prefDetailBody');
-      document.getElementById('prefDetailTitle').innerText = `🗾 ${prefCode}`;
+    async function loadJapanMapSvg() {
+      const wrap = document.getElementById('mapSvgWrap');
+      for (const url of JAPAN_MAP_SVG_URLS) {
+        try {
+          const res = await fetch(url);
+          if (!res.ok) continue;
+          const svgText = await res.text();
+          wrap.innerHTML = svgText;
+          const svgEl = wrap.querySelector('svg');
+          if (svgEl) svgEl.classList.add('geolonia-svg-map');
+          mapSvgLoaded = true;
+          attachMapPrefEvents();
+          applyMapHeatmapColors();
+          return;
+        } catch (err) {
+          console.log('地図の読み込みに失敗しました:', url, err);
+        }
+      }
+      wrap.innerHTML = '<div class="map-svg-loading">地図の読み込みに失敗しました。ネットワーク環境をご確認ください。</div>';
+    }
 
-      const recs = historyList.filter(v => v.storeName && storeInfoData[v.storeName] && storeInfoData[v.storeName].pref === prefCode);
+    function attachMapPrefEvents() {
+      const wrap = document.getElementById('mapSvgWrap');
+      const els = wrap.querySelectorAll('[data-code]');
+      els.forEach(el => {
+        const codeNum = parseInt(el.getAttribute('data-code'), 10);
+        const prefInfo = PREF_CODE_MAP.find(p => p.code === codeNum);
+        if (!prefInfo) return;
+        el.style.cursor = 'pointer';
+        el.addEventListener('click', () => selectMapPref(prefInfo.name, el));
+      });
+    }
 
-      if (recs.length === 0) {
-        bodyEl.innerHTML = `<div style="text-align:center; color:var(--light-text); padding:24px 10px; font-size:0.85rem;">まだ未訪問の都道府県です。</div>`;
-        document.getElementById('prefDetailModal').style.display = 'flex';
+    function getMapPrefStats(prefName) {
+      const recs = historyList.filter(v => v.storeName && storeInfoData[v.storeName] && storeInfoData[v.storeName].pref === prefName);
+      const totalVisits = recs.length;
+      const totalAmount = recs.reduce((s, v) => s + (Number(v.amount) || 0), 0);
+      const okiniNames = new Set();
+      recs.forEach(v => { if (v.flags && v.flags.includes('🆂')) okiniNames.add(v.name); });
+      return { recs, totalVisits, totalAmount, okiniCount: okiniNames.size };
+    }
+
+    function mixHexColor(hex1, hex2, t) {
+      const c1 = hex1.replace('#', '').trim();
+      const c2 = hex2.replace('#', '').trim();
+      if (c1.length !== 6 || c2.length !== 6) return hex1;
+      const r1 = parseInt(c1.substr(0,2),16), g1 = parseInt(c1.substr(2,2),16), b1 = parseInt(c1.substr(4,2),16);
+      const r2 = parseInt(c2.substr(0,2),16), g2 = parseInt(c2.substr(2,2),16), b2 = parseInt(c2.substr(4,2),16);
+      const r = Math.round(r1 + (r2 - r1) * t);
+      const g = Math.round(g1 + (g2 - g1) * t);
+      const b = Math.round(b1 + (b2 - b1) * t);
+      return '#' + [r,g,b].map(x => x.toString(16).padStart(2,'0')).join('');
+    }
+
+    function setMapHeatmapMode(mode) {
+      mapHeatmapMode = mode;
+      document.querySelectorAll('.map-heatmap-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById(mode === 'visits' ? 'mapTabVisits' : mode === 'amount' ? 'mapTabAmount' : 'mapTabOkini').classList.add('active');
+      applyMapHeatmapColors();
+    }
+
+    function applyMapHeatmapColors() {
+      const wrap = document.getElementById('mapSvgWrap');
+      if (!wrap) return;
+      const els = wrap.querySelectorAll('[data-code]');
+      if (!els.length) return;
+
+      const style = getComputedStyle(document.documentElement);
+      const baseColor = (style.getPropertyValue('--map-unvisited') || '#e0e0e0').trim();
+      const endColor = mapHeatmapMode === 'okini' ? (style.getPropertyValue('--gold-border') || '#f3c642').trim() : (style.getPropertyValue('--accent-pink') || '#f72585').trim();
+
+      const values = {};
+      let maxVal = 0;
+      PREF_CODE_MAP.forEach(p => {
+        const stats = getMapPrefStats(p.name);
+        const v = mapHeatmapMode === 'visits' ? stats.totalVisits : mapHeatmapMode === 'amount' ? stats.totalAmount : stats.okiniCount;
+        values[p.name] = v;
+        if (v > maxVal) maxVal = v;
+      });
+
+      let visitedCount = 0;
+      els.forEach(el => {
+        const codeNum = parseInt(el.getAttribute('data-code'), 10);
+        const prefInfo = PREF_CODE_MAP.find(p => p.code === codeNum);
+        if (!prefInfo) return;
+        const v = values[prefInfo.name] || 0;
+        let fillColor = baseColor;
+        if (v > 0) {
+          visitedCount++;
+          const t = Math.max(0.35, Math.min(1, Math.sqrt(v / maxVal)));
+          fillColor = mixHexColor(baseColor, endColor, t);
+        }
+        el.style.fill = fillColor;
+      });
+
+      const pct = Math.round((visitedCount / 47) * 100);
+      const modeLabel = mapHeatmapMode === 'visits' ? '訪問回数' : mapHeatmapMode === 'amount' ? '総支出' : 'オキニ人数';
+      document.getElementById('mapLegendLine').innerText = `全国制覇率: ${visitedCount} / 47 都道府県 (${pct}%) ｜ 表示中: ${modeLabel}`;
+    }
+
+    function selectMapPref(prefName, el) {
+      document.querySelectorAll('.map-svg-wrap .map-pref-selected').forEach(e => e.classList.remove('map-pref-selected'));
+      if (el) el.classList.add('map-pref-selected');
+
+      mapSelectedPref = prefName;
+      mapSelectedContentType = null;
+      document.getElementById('mapPrefContentArea').innerHTML = '';
+
+      const panel = document.getElementById('mapPrefDetailPanel');
+      const stats = getMapPrefStats(prefName);
+
+      if (stats.totalVisits === 0) {
+        panel.innerHTML = `
+          <div class="map-pref-detail-panel">
+            <div class="map-pref-detail-title">🗾 ${prefName}</div>
+            <div class="map-empty-note">まだ未訪問の都道府県です。</div>
+          </div>`;
         return;
       }
 
-      // 一番行ってるお店
-      const storeCounts = {};
-      recs.forEach(v => { storeCounts[v.storeName] = (storeCounts[v.storeName] || 0) + 1; });
-      let topStore = '', topStoreCount = 0;
-      Object.keys(storeCounts).forEach(st => { if (storeCounts[st] > topStoreCount) { topStoreCount = storeCounts[st]; topStore = st; } });
+      const totalAmountDisp = currentAmountHide === 'hide' ? '***' : `¥${stats.totalAmount.toLocaleString()}`;
 
-      // 一番指名してる女の子
-      const castCounts = {};
-      recs.forEach(v => { castCounts[v.name] = (castCounts[v.name] || 0) + 1; });
-      let topCast = '', topCastCount = 0;
-      Object.keys(castCounts).forEach(c => { if (castCounts[c] > topCastCount) { topCastCount = castCounts[c]; topCast = c; } });
+      panel.innerHTML = `
+        <div class="map-pref-detail-panel">
+          <div class="map-pref-detail-title">🗾 ${prefName}</div>
+          <div class="map-pref-stat-row">
+            <div class="stat-card"><div class="stat-card-lbl">総利用回数</div><div class="stat-card-val">${stats.totalVisits}回</div></div>
+            <div class="stat-card"><div class="stat-card-lbl">総支出額</div><div class="stat-card-val">${totalAmountDisp}</div></div>
+          </div>
+          <div class="map-action-grid">
+            <button type="button" class="map-action-btn" id="mapActionCast" onclick="showMapContent('cast')">
+              <span>🌸 キャスト一覧</span><span class="map-action-arrow">➔</span>
+            </button>
+            <button type="button" class="map-action-btn" id="mapActionStore" onclick="showMapContent('store')">
+              <span>🏬 店舗一覧</span><span class="map-action-arrow">➔</span>
+            </button>
+            <button type="button" class="map-action-btn map-action-full" id="mapActionGallery" onclick="showMapContent('gallery')">
+              <span>💌 メッセージカード</span><span class="map-action-arrow">➔</span>
+            </button>
+          </div>
+        </div>`;
+    }
 
-      // 最後に行ったのはいつ
-      let lastRec = null;
-      recs.forEach(v => { if (!lastRec || (v.originalIndex||0) > (lastRec.originalIndex||0)) lastRec = v; });
-      const lastVisitDisp = lastRec ? `${lastRec.year}年${lastRec.month}月${lastRec.day || '?'}日` : '---';
+    function showMapContent(type) {
+      if (!mapSelectedPref) return;
+      mapSelectedContentType = type;
+      document.querySelectorAll('.map-action-btn').forEach(b => b.classList.remove('active'));
+      const btnId = type === 'cast' ? 'mapActionCast' : type === 'store' ? 'mapActionStore' : 'mapActionGallery';
+      const btnEl = document.getElementById(btnId);
+      if (btnEl) btnEl.classList.add('active');
 
-      // 合計使った金額
-      const totalAmount = recs.reduce((s,v) => s + (Number(v.amount)||0), 0);
-      const totalAmountDisp = currentAmountHide === 'hide' ? '***' : `¥${totalAmount.toLocaleString()}`;
+      if (type === 'cast') renderMapCastList(mapSelectedPref);
+      else if (type === 'store') renderMapStoreList(mapSelectedPref);
+      else renderMapMessageGallery(mapSelectedPref);
+    }
 
-      bodyEl.innerHTML = `
-        <div style="display:flex; flex-direction:column; gap:10px;">
-          <div class="stat-card"><div class="stat-card-lbl">🏬 一番行ってるお店</div><div class="stat-card-val" style="font-size:1rem;">${topStore}（${topStoreCount}回）</div></div>
-          <div class="stat-card"><div class="stat-card-lbl">🌸 一番指名してる女の子</div><div class="stat-card-val" style="font-size:1rem;">${topCast}（${topCastCount}回）</div></div>
-          <div class="stat-card"><div class="stat-card-lbl">📅 最後に行った日</div><div class="stat-card-val" style="font-size:1rem;">${lastVisitDisp}</div></div>
-          <div class="stat-card"><div class="stat-card-lbl">💰 合計使った金額</div><div class="stat-card-val">${totalAmountDisp}</div></div>
-        </div>
-      `;
+    function renderMapCastList(prefName) {
+      const area = document.getElementById('mapPrefContentArea');
+      const recs = historyList.filter(v => v.storeName && storeInfoData[v.storeName] && storeInfoData[v.storeName].pref === prefName);
 
-      document.getElementById('prefDetailModal').style.display = 'flex';
+      const castMap = {};
+      recs.forEach(v => {
+        if (!castMap[v.name]) castMap[v.name] = { name: v.name, count: 0, favCount: 0 };
+        castMap[v.name].count++;
+        if (v.flags && v.flags.includes('🆂')) castMap[v.name].favCount++;
+      });
+
+      const list = Object.values(castMap).sort((a,b) => b.count - a.count);
+      if (list.length === 0) {
+        area.innerHTML = '<div class="map-content-area"><div class="map-empty-note">キャストデータがありません。</div></div>';
+        return;
+      }
+
+      area.innerHTML = `<div class="map-content-area">${list.map(c => {
+        const info = castData[c.name] || {};
+        const isRetired = info.status === 'retired';
+        const linkHtml = info.link ? `<a href="${info.link}" target="_blank" class="map-profile-link">🔗 プロフィールを見る</a>` : '';
+        return `
+          <div class="map-cast-item">
+            <div class="map-item-top-row">
+              <span class="map-item-name">🌸 ${c.name}${isRetired ? '<span class="map-badge-retired">❀ 卒業</span>' : ''}${c.favCount>=1 ? '<span class="map-badge-okini">🆂 オキニ</span>' : ''}</span>
+              <span class="map-badge-count">${c.count}回指名</span>
+            </div>
+            ${linkHtml}
+          </div>`;
+      }).join('')}</div>`;
+    }
+
+    function renderMapStoreList(prefName) {
+      const area = document.getElementById('mapPrefContentArea');
+      const recs = historyList.filter(v => v.storeName && storeInfoData[v.storeName] && storeInfoData[v.storeName].pref === prefName);
+
+      const storeMap = {};
+      recs.forEach(v => {
+        const sName = v.storeName;
+        if (!storeMap[sName]) storeMap[sName] = { name: sName, count: 0, amount: 0 };
+        storeMap[sName].count++;
+        storeMap[sName].amount += Number(v.amount) || 0;
+      });
+
+      const list = Object.values(storeMap).sort((a,b) => b.count - a.count);
+      if (list.length === 0) {
+        area.innerHTML = '<div class="map-content-area"><div class="map-empty-note">店舗データがありません。</div></div>';
+        return;
+      }
+
+      area.innerHTML = `<div class="map-content-area">${list.map(s => {
+        const info = storeInfoData[s.name] || {};
+        const cat = info.category || 'その他';
+        const catStyle = getCategoryStyle(cat);
+        const avgAmount = s.count > 0 ? Math.round(s.amount / s.count) : 0;
+        const avgDisp = currentAmountHide === 'hide' ? '***' : `¥${avgAmount.toLocaleString()}`;
+        const phoneBtn = info.phone ? `<a href="tel:${info.phone}" class="store-contact-btn store-btn-phone" style="font-size:0.7rem; padding:6px 10px;">📞 電話</a>` : '';
+        const webBtn = info.web ? `<a href="${info.web}" target="_blank" class="store-contact-btn store-btn-web" style="font-size:0.7rem; padding:6px 10px;">🌐 Web</a>` : '';
+        return `
+          <div class="map-store-item">
+            <div class="map-item-top-row">
+              <span class="map-item-name">🏬 ${s.name}</span>
+              <span class="map-badge-count">${s.count}回訪問</span>
+            </div>
+            <div><span class="map-store-cat-badge" style="background:${catStyle.bg}; color:${catStyle.color};">${cat}</span></div>
+            <div class="map-store-sub-line">平均単価: ${avgDisp}</div>
+            ${(phoneBtn || webBtn) ? `<div class="map-store-btn-row">${phoneBtn}${webBtn}</div>` : ''}
+          </div>`;
+      }).join('')}</div>`;
+    }
+
+    function renderMapMessageGallery(prefName) {
+      const area = document.getElementById('mapPrefContentArea');
+      const recs = historyList.filter(v => v.storeName && storeInfoData[v.storeName] && storeInfoData[v.storeName].pref === prefName);
+      const castNamesInPref = new Set(recs.map(v => v.name));
+
+      const gallery = [];
+      recs.forEach(v => {
+        if (v.chekiImg) gallery.push({ date: `${v.year}年${v.month}${(currentDateFormat === 'ymd' && v.day) ? v.day+'日' : ''}`, img: v.chekiImg, text: v.visitNote || '' });
+      });
+      castNamesInPref.forEach(name => {
+        const info = castData[name];
+        if (info && info.letters) {
+          info.letters.forEach(l => {
+            if (l.imageUrl && !gallery.some(g => g.img === l.imageUrl)) {
+              gallery.push({ date: l.date || '思い出', img: l.imageUrl, text: l.text || '' });
+            }
+          });
+        }
+      });
+
+      if (gallery.length === 0) {
+        area.innerHTML = '<div class="map-content-area"><div class="map-empty-note">この都道府県に関連する画像がまだありません。</div></div>';
+        return;
+      }
+
+      area.innerHTML = `<div class="map-content-area"><div class="map-gallery-grid">${gallery.map((g, i) => `
+        <div class="map-gallery-item" onclick="openMapImageLightbox(${i}, '${prefName.replace(/'/g,"\\'")}')">
+          <img src="${g.img}" alt="思い出画像">
+          <div class="map-gallery-date">${g.date}</div>
+        </div>`).join('')}</div></div>`;
+
+      window._mapGalleryCache = gallery;
+    }
+
+    function openMapImageLightbox(index) {
+      const gallery = window._mapGalleryCache || [];
+      const item = gallery[index];
+      if (!item) return;
+      document.getElementById('mapLightboxImg').src = item.img;
+      document.getElementById('mapLightboxDate').innerText = item.date;
+      document.getElementById('mapLightboxText').innerText = item.text || '';
+      document.getElementById('mapImageLightbox').style.display = 'flex';
     }
 
     function setDashPeriod(type) { dashPeriodType = type; renderDashboard(); }
