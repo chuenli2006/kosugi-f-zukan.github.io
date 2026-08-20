@@ -773,9 +773,75 @@
       .dash-charts-row { flex-direction: row; gap: 14px; }
       .dash-charts-row > .stat-section { flex: 1; margin-bottom: 14px; }
     }
+
+    /* --- 🔒 セキュリティ・画面ロック --- */
+    .toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; cursor: pointer; inset: 0; background: var(--border-color); transition: 0.2s; border-radius: 24px; }
+    .toggle-slider::before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background: #fff; transition: 0.2s; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+    .toggle-switch input:checked + .toggle-slider { background: var(--accent-pink); }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(20px); }
+    .toggle-switch input:disabled + .toggle-slider { opacity: 0.4; cursor: not-allowed; }
+    .sec-toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 6px 0; font-size: 0.82rem; font-weight: bold; color: var(--text-color); }
+    .sec-toggle-row .sec-toggle-note { display: block; font-size: 0.68rem; font-weight: normal; color: var(--light-text); margin-top: 2px; }
+    .sec-divider { border: none; border-top: 1px dashed var(--border-color); margin: 10px 0; }
+    .sec-pin-row { display: flex; gap: 8px; align-items: flex-end; }
+    .sec-pin-row .form-group { flex: 1; margin-bottom: 0; }
+    .sec-pin-row input { letter-spacing: 4px; text-align: center; font-weight: bold; }
+    .sec-save-pin-btn { background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink)); color: #fff; border: none; padding: 9px 14px; border-radius: 10px; font-weight: bold; font-size: 0.8rem; cursor: pointer; white-space: nowrap; }
+    .sec-status-note { font-size: 0.7rem; color: var(--light-text); margin-top: 4px; }
+
+    #appLockScreen {
+      position: fixed; inset: 0; z-index: 5000;
+      display: none; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+      background: rgba(20, 15, 20, 0.55); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+      text-align: center; padding: 24px; box-sizing: border-box;
+      opacity: 0; transition: opacity 0.35s ease;
+    }
+    #appLockScreen.open { display: flex; }
+    #appLockScreen.visible { opacity: 1; }
+    #appLockScreen.shake { animation: lockShake 0.4s; }
+    @keyframes lockShake { 10%,90%{transform:translateX(-4px);} 20%,80%{transform:translateX(6px);} 30%,50%,70%{transform:translateX(-10px);} 40%,60%{transform:translateX(10px);} }
+    .lock-icon { font-size: 2.6rem; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.4)); }
+    .lock-title { color: #fff; font-size: 1.05rem; font-weight: bold; text-shadow: 0 2px 6px rgba(0,0,0,0.4); }
+    .lock-dots { display: flex; gap: 14px; margin: 4px 0 6px; }
+    .lock-dot { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.8); background: transparent; transition: background 0.15s, transform 0.15s; }
+    .lock-dot.filled { background: #fff; transform: scale(1.15); }
+    .lock-keypad { display: grid; grid-template-columns: repeat(3, 64px); gap: 14px; }
+    .lock-key { width: 64px; height: 64px; border-radius: 50%; border: none; background: rgba(255,255,255,0.14); color: #fff; font-size: 1.3rem; font-weight: bold; cursor: pointer; backdrop-filter: blur(4px); }
+    .lock-key:active { background: rgba(255,255,255,0.3); }
+    .lock-key.lock-key-empty { background: transparent; cursor: default; }
+    .lock-biometric-btn { margin-top: 6px; background: rgba(255,255,255,0.14); color: #fff; border: 1px solid rgba(255,255,255,0.5); padding: 10px 18px; border-radius: 22px; font-size: 0.85rem; font-weight: bold; cursor: pointer; }
+    .lock-biometric-btn:active { transform: scale(0.96); }
+    .lock-error-msg { color: #ffa8a8; font-size: 0.75rem; min-height: 1em; }
   </style>
 </head>
 <body>
+
+  <!-- 🔒 アプリロック画面 -->
+  <div id="appLockScreen">
+    <div class="lock-icon">🔒</div>
+    <div class="lock-title">アプリはロックされています</div>
+    <div class="lock-dots" id="lockDots">
+      <span class="lock-dot"></span><span class="lock-dot"></span><span class="lock-dot"></span><span class="lock-dot"></span>
+    </div>
+    <div class="lock-error-msg" id="lockErrorMsg"></div>
+    <div class="lock-keypad">
+      <button type="button" class="lock-key" onclick="lockKeyPress('1')">1</button>
+      <button type="button" class="lock-key" onclick="lockKeyPress('2')">2</button>
+      <button type="button" class="lock-key" onclick="lockKeyPress('3')">3</button>
+      <button type="button" class="lock-key" onclick="lockKeyPress('4')">4</button>
+      <button type="button" class="lock-key" onclick="lockKeyPress('5')">5</button>
+      <button type="button" class="lock-key" onclick="lockKeyPress('6')">6</button>
+      <button type="button" class="lock-key" onclick="lockKeyPress('7')">7</button>
+      <button type="button" class="lock-key" onclick="lockKeyPress('8')">8</button>
+      <button type="button" class="lock-key" onclick="lockKeyPress('9')">9</button>
+      <div class="lock-key lock-key-empty"></div>
+      <button type="button" class="lock-key" onclick="lockKeyPress('0')">0</button>
+      <button type="button" class="lock-key" onclick="lockKeyBackspace()">⌫</button>
+    </div>
+    <button type="button" class="lock-biometric-btn" id="lockBiometricBtn" style="display:none;" onclick="attemptBiometricUnlock()">👆 生体認証で解除</button>
+  </div>
 
   <div class="app-layout">
     <aside class="sidebar-area">
@@ -1287,6 +1353,47 @@
           <button class="close-btn" style="width:100%; margin-top:0; font-size:0.75rem; padding:6px; background:linear-gradient(135deg, #4dabf7, #339af0);" onclick="exportJSONFile()">💾 JSONダウンロード</button>
           <button class="close-btn" style="width:100%; margin-top:6px; font-size:0.75rem; padding:6px; background:#20c997;" onclick="triggerJSONFileInput()">📂 JSONファイルを選択して復元</button>
           <input type="file" id="jsonFileInput" accept=".json,application/json,text/plain" style="display:none;" onchange="importJSONFile(event)">
+        </div>
+      </details>
+
+      <details class="settings-acc-card">
+        <summary class="settings-acc-summary">
+          <span>🔒 セキュリティ・画面ロック</span>
+          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+        </summary>
+        <div class="settings-acc-body">
+          <div class="sec-toggle-row">
+            <span>アプリロック機能
+              <span class="sec-toggle-note">起動時・復帰時にロック画面を表示します</span>
+            </span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="secLockEnabledToggle" onchange="toggleAppLockEnabled(this.checked)">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <hr class="sec-divider">
+
+          <div class="form-group">
+            <label>4桁パスコード（PIN）の設定・変更</label>
+            <div class="sec-pin-row">
+              <input type="password" id="secPinInput" inputmode="numeric" maxlength="4" pattern="[0-9]*" placeholder="例: 1234">
+              <button type="button" class="sec-save-pin-btn" onclick="saveAppLockPin()">保存</button>
+            </div>
+            <div class="sec-status-note" id="secPinStatusNote"></div>
+          </div>
+
+          <hr class="sec-divider">
+
+          <div class="sec-toggle-row">
+            <span>生体認証（Touch ID / Face ID）
+              <span class="sec-toggle-note" id="secBiometricNote">対応端末のみ設定できます</span>
+            </span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="secBiometricToggle" onchange="toggleBiometricLock(this.checked)">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
         </div>
       </details>
 
@@ -1807,6 +1914,193 @@
 
     window.typeChartInstance = null;
     window.storeChartInstance = null;
+
+    // 🔒 セキュリティ・画面ロック 状態
+    let appLockEnabled = localStorage.getItem('app_lock_enabled') === 'true';
+    let appLockBiometric = localStorage.getItem('app_lock_biometric') === 'true';
+    let appLockCredentialId = localStorage.getItem('app_lock_webauthn_id') || '';
+    let lockInputBuffer = '';
+    let lockUnlockedThisSession = false;
+    let lockVisibilityArmed = false;
+
+    async function sha256Hex(text) {
+      const enc = new TextEncoder().encode(text);
+      const digest = await crypto.subtle.digest('SHA-256', enc);
+      return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    function isWebAuthnSupported() {
+      return !!(window.PublicKeyCredential && navigator.credentials);
+    }
+
+    function initAppLock() {
+      if (appLockEnabled) {
+        showLockScreen(true);
+      }
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+          if (appLockEnabled && lockVisibilityArmed) {
+            lockUnlockedThisSession = false;
+            showLockScreen(true);
+          }
+        } else {
+          if (appLockEnabled) lockVisibilityArmed = true;
+        }
+      });
+    }
+
+    function showLockScreen(autoBiometric) {
+      const screen = document.getElementById('appLockScreen');
+      lockInputBuffer = '';
+      updateLockDots();
+      document.getElementById('lockErrorMsg').innerText = '';
+      document.getElementById('lockBiometricBtn').style.display = appLockBiometric ? 'inline-block' : 'none';
+      screen.classList.add('open');
+      requestAnimationFrame(() => screen.classList.add('visible'));
+      if (autoBiometric && appLockBiometric) {
+        setTimeout(() => attemptBiometricUnlock(), 300);
+      }
+    }
+
+    function hideLockScreen() {
+      const screen = document.getElementById('appLockScreen');
+      lockUnlockedThisSession = true;
+      lockVisibilityArmed = false;
+      screen.classList.remove('visible');
+      setTimeout(() => { screen.classList.remove('open'); }, 350);
+    }
+
+    function updateLockDots() {
+      const dots = document.querySelectorAll('#lockDots .lock-dot');
+      dots.forEach((d, i) => d.classList.toggle('filled', i < lockInputBuffer.length));
+    }
+
+    function lockKeyPress(digit) {
+      if (lockInputBuffer.length >= 4) return;
+      lockInputBuffer += digit;
+      updateLockDots();
+      if (lockInputBuffer.length === 4) {
+        setTimeout(() => verifyLockPasscode(), 120);
+      }
+    }
+
+    function lockKeyBackspace() {
+      lockInputBuffer = lockInputBuffer.slice(0, -1);
+      updateLockDots();
+    }
+
+    async function verifyLockPasscode() {
+      const savedHash = localStorage.getItem('app_lock_passcode_hash') || '';
+      const inputHash = await sha256Hex(lockInputBuffer);
+      if (savedHash && inputHash === savedHash) {
+        hideLockScreen();
+      } else {
+        const screen = document.getElementById('appLockScreen');
+        document.getElementById('lockErrorMsg').innerText = 'パスコードが違います';
+        screen.classList.add('shake');
+        setTimeout(() => screen.classList.remove('shake'), 400);
+        lockInputBuffer = '';
+        updateLockDots();
+      }
+    }
+
+    async function attemptBiometricUnlock() {
+      if (!appLockBiometric || !isWebAuthnSupported() || !appLockCredentialId) return;
+      try {
+        const credentialIdBytes = Uint8Array.from(atob(appLockCredentialId), c => c.charCodeAt(0));
+        const challenge = crypto.getRandomValues(new Uint8Array(32));
+        const assertion = await navigator.credentials.get({
+          publicKey: {
+            challenge: challenge,
+            allowCredentials: [{ id: credentialIdBytes, type: 'public-key' }],
+            userVerification: 'required',
+            timeout: 30000
+          }
+        });
+        if (assertion) hideLockScreen();
+      } catch (err) {
+        console.log('生体認証がキャンセルまたは失敗しました:', err);
+      }
+    }
+
+    function updateSecuritySettingsUI() {
+      document.getElementById('secLockEnabledToggle').checked = appLockEnabled;
+      document.getElementById('secBiometricToggle').checked = appLockBiometric;
+      const hasPin = !!localStorage.getItem('app_lock_passcode_hash');
+      document.getElementById('secPinStatusNote').innerText = hasPin ? '✅ パスコード設定済み' : 'パスコード未設定（アプリロックには設定が必須です）';
+
+      const biometricToggle = document.getElementById('secBiometricToggle');
+      const biometricNote = document.getElementById('secBiometricNote');
+      if (!isWebAuthnSupported()) {
+        biometricToggle.disabled = true;
+        biometricNote.innerText = 'この端末・ブラウザは生体認証に対応していません';
+      } else {
+        biometricToggle.disabled = false;
+        biometricNote.innerText = '対応端末のみ設定できます';
+      }
+    }
+
+    function toggleAppLockEnabled(checked) {
+      if (checked && !localStorage.getItem('app_lock_passcode_hash')) {
+        alert('先に4桁パスコードを設定してください。');
+        document.getElementById('secLockEnabledToggle').checked = false;
+        return;
+      }
+      appLockEnabled = checked;
+      localStorage.setItem('app_lock_enabled', checked ? 'true' : 'false');
+    }
+
+    async function saveAppLockPin() {
+      const pin = document.getElementById('secPinInput').value.trim();
+      if (!/^\d{4}$/.test(pin)) {
+        alert('4桁の数字を入力してください。');
+        return;
+      }
+      const hash = await sha256Hex(pin);
+      localStorage.setItem('app_lock_passcode_hash', hash);
+      document.getElementById('secPinInput').value = '';
+      updateSecuritySettingsUI();
+      alert('パスコードを保存しました！');
+    }
+
+    async function toggleBiometricLock(checked) {
+      if (!checked) {
+        appLockBiometric = false;
+        localStorage.setItem('app_lock_biometric', 'false');
+        return;
+      }
+      if (!isWebAuthnSupported()) {
+        alert('この端末・ブラウザは生体認証に対応していません。');
+        document.getElementById('secBiometricToggle').checked = false;
+        return;
+      }
+      try {
+        const challenge = crypto.getRandomValues(new Uint8Array(32));
+        const userId = crypto.getRandomValues(new Uint8Array(16));
+        const credential = await navigator.credentials.create({
+          publicKey: {
+            challenge: challenge,
+            rp: { name: '風俗履歴図鑑' },
+            user: { id: userId, name: currentUserName || 'user', displayName: currentUserName || 'user' },
+            pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }],
+            authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required' },
+            timeout: 30000
+          }
+        });
+        if (credential) {
+          const idB64 = btoa(String.fromCharCode(...new Uint8Array(credential.rawId)));
+          appLockCredentialId = idB64;
+          appLockBiometric = true;
+          localStorage.setItem('app_lock_webauthn_id', idB64);
+          localStorage.setItem('app_lock_biometric', 'true');
+          alert('生体認証を登録しました！');
+        }
+      } catch (err) {
+        console.log('生体認証の登録に失敗しました:', err);
+        alert('生体認証の登録に失敗しました。');
+        document.getElementById('secBiometricToggle').checked = false;
+      }
+    }
 
     function toggleOptionsFold() {
       const wrapper = document.getElementById('optionsFoldWrapper');
@@ -4351,7 +4645,7 @@
       }
     }
     
-    function openSettingsModal() { document.getElementById('inputUserName').value = currentUserName; document.getElementById('settingsModal').style.display = 'flex'; }
+    function openSettingsModal() { document.getElementById('inputUserName').value = currentUserName; document.getElementById('settingsModal').style.display = 'flex'; updateSecuritySettingsUI(); }
     function openHelpModal() { document.getElementById('helpModal').style.display = 'flex'; }
     
     function applyTheme(t) {
@@ -4423,6 +4717,7 @@
       }
     });
 
+    initAppLock();
     initUserData();
   </script>
 </body>
