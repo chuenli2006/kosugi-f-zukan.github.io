@@ -1,5 +1,5 @@
 // 1. バージョン名を更新（今後アプリをアップデートする時はここを v2, v3... と書き換えます）
-const CACHE_NAME = 'fuzoku-zukan-v2';
+const CACHE_NAME = 'fuzoku-zukan-v3';
 
 const urlsToCache = [
   './index.html',
