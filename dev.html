@@ -726,10 +726,18 @@
     .score-slider-row input[type="range"] { flex: 1; accent-color: var(--accent-pink); }
     .score-slider-val { flex: 0 0 34px; text-align: center; font-size: 0.78rem; font-weight: bold; color: var(--accent-pink); }
 
-    /* ⭐ キャストカード内：五角形レーダーチャート */
-    .radar-chart-block { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px; text-align: center; }
-    .radar-avg-score { font-size: 1.05rem; font-weight: bold; color: var(--accent-pink); margin-bottom: 4px; }
-    .radar-chart-wrap { position: relative; width: 100%; max-width: 260px; height: 190px; margin: 0 auto; }
+    /* ⭐ キャストカード内：五角形レーダーチャート（アコーディオン・スリム表示） */
+    .radar-slim-block { margin-top: 4px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; }
+    .radar-slim-toggle {
+      width: 100%; display: flex; align-items: center; justify-content: space-between;
+      padding: 9px 12px; background: none; border: none; cursor: pointer; font-family: inherit;
+    }
+    .radar-slim-toggle-score { font-size: 0.82rem; font-weight: bold; color: var(--accent-pink); }
+    .radar-slim-toggle-arrow { font-size: 0.7rem; font-weight: bold; color: var(--light-text); }
+    .radar-slim-chart-collapse { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .radar-slim-chart-collapse.open { grid-template-rows: 1fr; }
+    .radar-slim-chart-inner { overflow: hidden; }
+    .radar-chart-wrap { position: relative; width: 100%; max-width: 240px; height: 170px; margin: 0 auto; padding-bottom: 10px; }
 
     /* ⭐ 統計タブ：項目別NO.1キャスト */
     .score-rank-list { display: flex; flex-direction: column; gap: 6px; }
@@ -1226,6 +1234,16 @@
             </div>
           </div>
 
+          <div class="form-group" id="csScoreGroup"><label>⭐ キャスト基本評価（1〜5・プレイ記録の平均とは別に保存されます）</label>
+            <div class="score-slider-grid">
+              <div class="score-slider-row"><span class="score-slider-label">ルックス</span><input type="range" id="csScoreLooks" min="1" max="5" value="3" oninput="document.getElementById('csScoreLooksVal').innerText=this.value"><span class="score-slider-val" id="csScoreLooksVal">3</span></div>
+              <div class="score-slider-row"><span class="score-slider-label">接客</span><input type="range" id="csScoreService" min="1" max="5" value="3" oninput="document.getElementById('csScoreServiceVal').innerText=this.value"><span class="score-slider-val" id="csScoreServiceVal">3</span></div>
+              <div class="score-slider-row"><span class="score-slider-label">スタイル</span><input type="range" id="csScoreStyle" min="1" max="5" value="3" oninput="document.getElementById('csScoreStyleVal').innerText=this.value"><span class="score-slider-val" id="csScoreStyleVal">3</span></div>
+              <div class="score-slider-row"><span class="score-slider-label">イチャ度</span><input type="range" id="csScoreIntimacy" min="1" max="5" value="3" oninput="document.getElementById('csScoreIntimacyVal').innerText=this.value"><span class="score-slider-val" id="csScoreIntimacyVal">3</span></div>
+              <div class="score-slider-row"><span class="score-slider-label">コスパ</span><input type="range" id="csScoreValue" min="1" max="5" value="3" oninput="document.getElementById('csScoreValueVal').innerText=this.value"><span class="score-slider-val" id="csScoreValueVal">3</span></div>
+            </div>
+          </div>
+
           <div class="form-group"><label>旧・源氏名</label><input type="text" id="csOldName" placeholder="例: ここみ"></div>
           <div class="form-group"><label>店舗WebプロフURL</label><input type="url" id="csLink" placeholder="https://..."></div>
           <div class="form-group"><label>メモ・特徴</label><textarea id="csNotes" rows="4" placeholder="キャストの特徴やメモなど"></textarea></div>
@@ -1507,6 +1525,24 @@
         </div>
       </details>
 
+      <details class="settings-acc-card">
+        <summary class="settings-acc-summary">
+          <span>⭐ キャスト評価機能</span>
+          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+        </summary>
+        <div class="settings-acc-body">
+          <div class="sec-toggle-row">
+            <span>キャスト評価（五角形レーダーチャート）
+              <span class="sec-toggle-note">OFFにすると評価の入力欄・チャートを全画面で非表示にします</span>
+            </span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="ratingEnabledToggle" onchange="toggleRatingEnabled(this.checked)">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </details>
+
       <details class="settings-acc-card" open>
         <summary class="settings-acc-summary">
           <span>🎨 カラーテーマの着せ替え</span>
@@ -1764,7 +1800,7 @@
           </div>
         </div>
 
-        <div class="form-group"><label>⭐ 五角形レーダー評価（1〜5）</label>
+        <div class="form-group" id="addScoreGroup"><label>⭐ 五角形レーダー評価（1〜5）</label>
           <div class="score-slider-grid">
             <div class="score-slider-row"><span class="score-slider-label">ルックス</span><input type="range" id="addScoreLooks" min="1" max="5" value="3" oninput="document.getElementById('addScoreLooksVal').innerText=this.value"><span class="score-slider-val" id="addScoreLooksVal">3</span></div>
             <div class="score-slider-row"><span class="score-slider-label">接客</span><input type="range" id="addScoreService" min="1" max="5" value="3" oninput="document.getElementById('addScoreServiceVal').innerText=this.value"><span class="score-slider-val" id="addScoreServiceVal">3</span></div>
@@ -1893,7 +1929,7 @@
           <input type="text" id="editTypeTag" placeholder="例: アイドル系, 清楚系">
         </div>
 
-        <div class="form-group"><label>⭐ 五角形レーダー評価（1〜5）</label>
+        <div class="form-group" id="editScoreGroup"><label>⭐ 五角形レーダー評価（1〜5）</label>
           <div class="score-slider-grid">
             <div class="score-slider-row"><span class="score-slider-label">ルックス</span><input type="range" id="editScoreLooks" min="1" max="5" value="3" oninput="document.getElementById('editScoreLooksVal').innerText=this.value"><span class="score-slider-val" id="editScoreLooksVal">3</span></div>
             <div class="score-slider-row"><span class="score-slider-label">接客</span><input type="range" id="editScoreService" min="1" max="5" value="3" oninput="document.getElementById('editScoreServiceVal').innerText=this.value"><span class="score-slider-val" id="editScoreServiceVal">3</span></div>
@@ -2106,6 +2142,7 @@
     let currentTheme = localStorage.getItem('app_theme') || 'default';
     let currentDateFormat = localStorage.getItem('app_date_format') || 'ymd';
     let currentAmountHide = localStorage.getItem('app_amount_hide') || 'show';
+    let ratingEnabled = localStorage.getItem('app_rating_enabled') !== 'false';
     let historyList = [];
     let castData = {};
     let storeInfoData = {}; // 🏬 店舗マスターデータ
@@ -2404,6 +2441,17 @@
       }
     }
 
+    function toggleRatingEnabled(checked) {
+      ratingEnabled = checked;
+      localStorage.setItem('app_rating_enabled', checked ? 'true' : 'false');
+      render();
+      if (document.getElementById('viewDashboard').style.display === 'block') {
+        renderDashboard();
+      }
+      const csScoreGroup = document.getElementById('csScoreGroup');
+      if (csScoreGroup) csScoreGroup.style.display = ratingEnabled ? 'flex' : 'none';
+    }
+
     function openNextVisitPrompt() {
       switchMainTab('calendar');
     }
@@ -2673,6 +2721,14 @@
       hEl.value = hMatch ? hMatch[1] : '';
       [['T', tEl], ['B', bEl], ['W', wEl], ['H', hEl]].forEach(([t, el]) => updateInputColor(el, t));
 
+      const baseScore = info.baseScore || {};
+      document.getElementById('csScoreGroup').style.display = ratingEnabled ? 'flex' : 'none';
+      [['Looks','looks'],['Service','service'],['Style','style'],['Intimacy','intimacy'],['Value','value']].forEach(([key, prop]) => {
+        const v = baseScore[prop] || 3;
+        document.getElementById('csScore' + key).value = v;
+        document.getElementById('csScore' + key + 'Val').innerText = v;
+      });
+
       document.getElementById('csOldName').value = info.oldName || '';
       document.getElementById('csLink').value = info.link || '';
       document.getElementById('csNotes').value = info.notes || '';
@@ -2703,6 +2759,13 @@
       castData[name].oldName = document.getElementById('csOldName').value.trim();
       castData[name].link = document.getElementById('csLink').value.trim();
       castData[name].notes = document.getElementById('csNotes').value;
+      castData[name].baseScore = {
+        looks: parseInt(document.getElementById('csScoreLooks').value, 10) || 3,
+        service: parseInt(document.getElementById('csScoreService').value, 10) || 3,
+        style: parseInt(document.getElementById('csScoreStyle').value, 10) || 3,
+        intimacy: parseInt(document.getElementById('csScoreIntimacy').value, 10) || 3,
+        value: parseInt(document.getElementById('csScoreValue').value, 10) || 3
+      };
       if (!castData[name].letters) castData[name].letters = [];
 
       saveData();
@@ -3481,12 +3544,18 @@
       if(panel) panel.classList.toggle('open');
     }
 
-    /* ⭐ 五角形レーダー評価：平均スコア計算 */
-    function computeCastScoreAverages(visits) {
+    /* ⭐ 五角形レーダー評価：平均スコア計算（プレイ記録があればその平均、無ければキャスト基本評価を使用） */
+    function computeCastScoreAverages(visits, baseScore) {
       const keys = ['looks', 'service', 'style', 'intimacy', 'value'];
+      if ((!visits || visits.length === 0) && baseScore) {
+        const avgs = {};
+        keys.forEach(k => { avgs[k] = Number(baseScore[k]) || 3; });
+        avgs.overall = keys.reduce((s, k) => s + avgs[k], 0) / keys.length;
+        return avgs;
+      }
       const sums = { looks: 0, service: 0, style: 0, intimacy: 0, value: 0 };
-      const n = visits.length || 1;
-      visits.forEach(v => {
+      const n = (visits && visits.length) || 1;
+      (visits || []).forEach(v => {
         keys.forEach(k => { sums[k] += (Number(v[k]) || 3); });
       });
       const avgs = {};
@@ -3686,15 +3755,26 @@
         const copyBtnHtml = `<button class="copy-btn" onclick="openExportCastModal(event, '${c.name}')">📤 友だちへ共有</button>`;
 
         let radarBlockHtml = '';
-        if (c.visits.length > 0) {
-          const avgs = computeCastScoreAverages(c.visits);
-          radarCanvasCounter++;
-          const canvasId = 'radarChart_' + radarCanvasCounter;
-          radarBlockHtml = `
-            <div class="radar-chart-block" data-cast-name="${c.name.replace(/"/g,'&quot;')}" data-avg='${JSON.stringify(avgs)}'>
-              <div class="radar-avg-score">🌟 ${avgs.overall.toFixed(1)} / 5.0</div>
-              <div class="radar-chart-wrap"><canvas id="${canvasId}"></canvas></div>
-            </div>`;
+        if (ratingEnabled) {
+          const info2 = castData[c.name] || {};
+          const hasScoreData = c.visits.length > 0 || info2.baseScore;
+          if (hasScoreData) {
+            const avgs = computeCastScoreAverages(c.visits, info2.baseScore);
+            radarCanvasCounter++;
+            const canvasId = 'radarChart_' + radarCanvasCounter;
+            radarBlockHtml = `
+              <div class="radar-slim-block" data-avg='${JSON.stringify(avgs)}'>
+                <button type="button" class="radar-slim-toggle" onclick="toggleCastRadarChart(this)">
+                  <span class="radar-slim-toggle-score">🌟 評価: ${avgs.overall.toFixed(1)}</span>
+                  <span class="radar-slim-toggle-arrow">📊 チャートを見る ▾</span>
+                </button>
+                <div class="radar-slim-chart-collapse">
+                  <div class="radar-slim-chart-inner">
+                    <div class="radar-chart-wrap"><canvas id="${canvasId}"></canvas></div>
+                  </div>
+                </div>
+              </div>`;
+          }
         }
 
         let rowsHtml = '';
@@ -4101,7 +4181,7 @@
           <div class="stat-grid-4" id="cumulativeGrid"></div>
         </div>
 
-        <div class="stat-section">
+        <div class="stat-section" id="scoreRankingSection">
           <div class="stat-section-title">⭐ 項目別NO.1キャスト</div>
           <div class="score-rank-list" id="scoreRankingGrid"></div>
         </div>
@@ -4614,46 +4694,55 @@
       }
     }
 
-    /* ⭐ 五角形レーダー評価：キャストカード展開時にチャートを初期化 */
-    function initCastRadarChart(detailsEl) {
-      const block = detailsEl.querySelector('.radar-chart-block');
-      if (!block || block.dataset.chartInit === 'true') return;
-      const canvas = block.querySelector('canvas');
-      if (!canvas) return;
-      let avgs;
-      try { avgs = JSON.parse(block.getAttribute('data-avg')); } catch(e) { return; }
+    /* ⭐ 五角形レーダー評価：スリム表示のアコーディオン開閉＋チャート遅延初期化 */
+    function toggleCastRadarChart(btn) {
+      const block = btn.closest('.radar-slim-block');
+      if (!block) return;
+      const collapse = block.querySelector('.radar-slim-chart-collapse');
+      const arrowEl = btn.querySelector('.radar-slim-toggle-arrow');
+      const isOpen = collapse.classList.toggle('open');
+      if (arrowEl) arrowEl.innerText = isOpen ? '📊 閉じる ▴' : '📊 チャートを見る ▾';
 
-      const accentColor = getCssVar('--accent-pink') || '#f72585';
-      const softColor = getCssVar('--soft-pink') || 'rgba(247,37,133,0.15)';
+      if (isOpen && collapse.dataset.chartInit !== 'true') {
+        collapse.dataset.chartInit = 'true';
+        setTimeout(() => {
+          const canvas = collapse.querySelector('canvas');
+          if (!canvas) return;
+          let avgs;
+          try { avgs = JSON.parse(block.getAttribute('data-avg')); } catch(e) { return; }
 
-      new Chart(canvas.getContext('2d'), {
-        type: 'radar',
-        data: {
-          labels: ['ルックス', '接客', 'スタイル', 'イチャ度', 'コスパ'],
-          datasets: [{
-            data: [avgs.looks, avgs.service, avgs.style, avgs.intimacy, avgs.value],
-            backgroundColor: softColor,
-            borderColor: accentColor,
-            borderWidth: 2,
-            pointBackgroundColor: accentColor,
-            pointRadius: 3
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            r: {
-              min: 0, max: 5, ticks: { display: false, stepSize: 1 },
-              pointLabels: { font: { size: 10 } },
-              grid: { color: getCssVar('--border-color') || '#e0e0e0' },
-              angleLines: { color: getCssVar('--border-color') || '#e0e0e0' }
+          const accentColor = getCssVar('--accent-pink') || '#f72585';
+          const softColor = getCssVar('--soft-pink') || 'rgba(247,37,133,0.15)';
+
+          new Chart(canvas.getContext('2d'), {
+            type: 'radar',
+            data: {
+              labels: ['ルックス', '接客', 'スタイル', 'イチャ度', 'コスパ'],
+              datasets: [{
+                data: [avgs.looks, avgs.service, avgs.style, avgs.intimacy, avgs.value],
+                backgroundColor: softColor,
+                borderColor: accentColor,
+                borderWidth: 2,
+                pointBackgroundColor: accentColor,
+                pointRadius: 3
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { display: false } },
+              scales: {
+                r: {
+                  min: 0, max: 5, ticks: { display: false, stepSize: 1 },
+                  pointLabels: { font: { size: 10 } },
+                  grid: { color: getCssVar('--border-color') || '#e0e0e0' },
+                  angleLines: { color: getCssVar('--border-color') || '#e0e0e0' }
+                }
+              }
             }
-          }
-        }
-      });
-      block.dataset.chartInit = 'true';
+          });
+        }, 310);
+      }
     }
 
     function renderCumulativeMemorial() {
@@ -4713,8 +4802,12 @@
 
     /* ⭐ 統計タブ：項目別NO.1キャスト */
     function renderScoreRanking(records) {
+      const section = document.getElementById('scoreRankingSection');
       const el = document.getElementById('scoreRankingGrid');
-      if (!el) return;
+      if (!el || !section) return;
+
+      if (!ratingEnabled) { section.style.display = 'none'; return; }
+      section.style.display = 'block';
 
       const list = records && records.length ? records : historyList;
       if (list.length === 0) {
@@ -5000,6 +5093,7 @@
         document.getElementById(id).value = 3;
         document.getElementById(id + 'Val').innerText = 3;
       });
+      document.getElementById('addScoreGroup').style.display = ratingEnabled ? 'flex' : 'none';
       updateStoreDatalist();
       updateCastDatalist();
       document.getElementById('addModal').style.display = 'flex';
@@ -5105,6 +5199,7 @@
         document.getElementById('editScore' + key).value = v;
         document.getElementById('editScore' + key + 'Val').innerText = v;
       });
+      document.getElementById('editScoreGroup').style.display = ratingEnabled ? 'flex' : 'none';
       document.getElementById('editRecordModal').style.display = 'flex';
     }
 
@@ -5158,7 +5253,7 @@
       }
     }
     
-    function openSettingsModal() { document.getElementById('inputUserName').value = currentUserName; document.getElementById('settingsModal').style.display = 'flex'; updateSecuritySettingsUI(); }
+    function openSettingsModal() { document.getElementById('inputUserName').value = currentUserName; document.getElementById('settingsModal').style.display = 'flex'; updateSecuritySettingsUI(); document.getElementById('ratingEnabledToggle').checked = ratingEnabled; }
     function openHelpModal() { document.getElementById('helpModal').style.display = 'flex'; }
     
     function applyTheme(t) {
@@ -5227,7 +5322,6 @@
         details.setAttribute('open', '');
         void details.offsetWidth; 
         details.classList.add('is-open');
-        setTimeout(() => { initCastRadarChart(details); }, 310);
       }
     });
 
