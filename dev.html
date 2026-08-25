@@ -977,6 +977,18 @@
     .lock-biometric-btn { margin-top: 6px; background: rgba(255,255,255,0.14); color: #fff; border: 1px solid rgba(255,255,255,0.5); padding: 10px 18px; border-radius: 22px; font-size: 0.85rem; font-weight: bold; cursor: pointer; }
     .lock-biometric-btn:active { transform: scale(0.96); }
     .lock-error-msg { color: #ffa8a8; font-size: 0.75rem; min-height: 1em; }
+    .lock-key-question { font-size: 1.1rem; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+
+    /* ❓ パスコード再設定モーダル・🚨 緊急削除トラップ用フェイクダイアログ */
+    .modal-overlay.lock-recovery-modal { z-index: 5500; }
+    .modal-overlay.fake-bag-modal { z-index: 5600; }
+    .recovery-step-note { font-size: 0.78rem; color: var(--light-text); margin-bottom: 10px; line-height: 1.5; }
+    .recovery-error-msg { color: #e03131; font-size: 0.75rem; min-height: 1em; margin-top: 4px; }
+    .fake-bag-body { font-size: 0.95rem; color: var(--text-color); text-align: center; padding: 20px 4px 24px; font-weight: bold; }
+    .fake-bag-btn-row { display: flex; gap: 10px; }
+    .fake-bag-btn { flex: 1; border: none; padding: 12px; border-radius: 12px; font-size: 0.85rem; font-weight: bold; cursor: pointer; }
+    .fake-bag-btn-no { background: #e03131; color: #fff; }
+    .fake-bag-btn-yes { background: #adb5bd; color: #fff; }
   </style>
 </head>
 <body>
@@ -999,11 +1011,56 @@
       <button type="button" class="lock-key" onclick="lockKeyPress('7')">7</button>
       <button type="button" class="lock-key" onclick="lockKeyPress('8')">8</button>
       <button type="button" class="lock-key" onclick="lockKeyPress('9')">9</button>
-      <div class="lock-key lock-key-empty"></div>
+      <button type="button" class="lock-key lock-key-question" id="lockQuestionBtn">？</button>
       <button type="button" class="lock-key" onclick="lockKeyPress('0')">0</button>
       <button type="button" class="lock-key" onclick="lockKeyBackspace()">⌫</button>
     </div>
     <button type="button" class="lock-biometric-btn" id="lockBiometricBtn" style="display:none;" onclick="attemptBiometricUnlock()">👆 生体認証で解除</button>
+  </div>
+
+  <!-- ❓ パスコード再設定モーダル（合言葉による救済） -->
+  <div class="modal-overlay lock-recovery-modal" id="lockRecoveryModal">
+    <div class="modal-content">
+      <h3>❓ パスコードを忘れた場合</h3>
+
+      <div id="recoveryStepWord">
+        <div class="recovery-step-note">直近に追加した記録のキャスト名、または一番最初に追加した記録のキャスト名を入力してください。</div>
+        <div class="form-group">
+          <label>キャスト名</label>
+          <input type="text" id="recoveryWordInput" placeholder="例: ゆあ">
+        </div>
+        <div class="recovery-error-msg" id="recoveryWordError"></div>
+        <div style="display:flex; gap:8px; margin-top:6px;">
+          <button type="button" class="close-btn" style="background:#888; flex:1;" onclick="closeModal('lockRecoveryModal')">キャンセル</button>
+          <button type="button" class="close-btn" style="flex:2;" onclick="verifyRecoveryWord()">確認する</button>
+        </div>
+      </div>
+
+      <div id="recoveryStepNewPin" style="display:none;">
+        <div class="recovery-step-note">合言葉が確認できました。新しい4桁パスコードを設定してください。</div>
+        <div class="form-group">
+          <label>新しいパスコード（4桁）</label>
+          <input type="password" id="recoveryNewPin" inputmode="numeric" maxlength="4" pattern="[0-9]*" placeholder="例: 1234" style="letter-spacing:4px; text-align:center; font-weight:bold;">
+        </div>
+        <div class="form-group">
+          <label>新しいパスコード（確認）</label>
+          <input type="password" id="recoveryNewPinConfirm" inputmode="numeric" maxlength="4" pattern="[0-9]*" placeholder="例: 1234" style="letter-spacing:4px; text-align:center; font-weight:bold;">
+        </div>
+        <div class="recovery-error-msg" id="recoveryPinError"></div>
+        <button type="button" class="close-btn" style="width:100%; margin-top:6px;" onclick="saveRecoveryNewPin()">💾 このパスコードを設定する</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🚨 緊急削除トラップ：偽装ダイアログ -->
+  <div class="modal-overlay fake-bag-modal" id="fakeBagModal">
+    <div class="modal-content" style="max-width:320px;">
+      <div class="fake-bag-body">レジ袋をつけますか？</div>
+      <div class="fake-bag-btn-row">
+        <button type="button" class="fake-bag-btn fake-bag-btn-no" onclick="closeFakeBagModal()">いいえ</button>
+        <button type="button" class="fake-bag-btn fake-bag-btn-yes" onclick="closeFakeBagModal()">はい</button>
+      </div>
+    </div>
   </div>
 
   <div class="app-layout">
@@ -1616,6 +1673,13 @@
               <span class="toggle-slider"></span>
             </label>
           </div>
+
+          <hr class="sec-divider">
+
+          <div class="form-group">
+            <label>❓ パスコードを忘れた場合</label>
+            <div class="sec-status-note">ロック画面の「？」ボタンから、直近に追加した記録のキャスト名、または一番最初に追加した記録のキャスト名を入力することでパスコードを再設定できます（別途の合言葉登録は不要です）。</div>
+          </div>
         </div>
       </details>
 
@@ -2177,6 +2241,7 @@
     }
 
     function initAppLock() {
+      initQuestionButton();
       if (appLockEnabled) {
         showLockScreen(true);
       }
@@ -2344,6 +2409,114 @@
         document.getElementById('secBiometricToggle').checked = false;
       }
     }
+
+    /* ❓ パスコード再設定モーダル（ロック画面「？」タップ時） */
+    function openPasscodeRecoveryModal() {
+      document.getElementById('recoveryWordInput').value = '';
+      document.getElementById('recoveryWordError').innerText = '';
+      document.getElementById('recoveryNewPin').value = '';
+      document.getElementById('recoveryNewPinConfirm').value = '';
+      document.getElementById('recoveryPinError').innerText = '';
+      document.getElementById('recoveryStepWord').style.display = 'block';
+      document.getElementById('recoveryStepNewPin').style.display = 'none';
+      document.getElementById('lockRecoveryModal').style.display = 'flex';
+    }
+
+    function verifyRecoveryWord() {
+      const word = document.getElementById('recoveryWordInput').value.trim().toLowerCase();
+      const errEl = document.getElementById('recoveryWordError');
+      if (!word) { errEl.innerText = 'キャスト名を入力してください。'; return; }
+      if (!historyList || historyList.length === 0) {
+        errEl.innerText = '記録データがないため復元できません。';
+        return;
+      }
+      const firstName = (historyList[0].name || '').trim().toLowerCase();
+      const latestName = (historyList[historyList.length - 1].name || '').trim().toLowerCase();
+      if (word === firstName || word === latestName) {
+        document.getElementById('recoveryStepWord').style.display = 'none';
+        document.getElementById('recoveryStepNewPin').style.display = 'block';
+      } else {
+        errEl.innerText = 'キャスト名が違います。';
+      }
+    }
+
+    async function saveRecoveryNewPin() {
+      const pin = document.getElementById('recoveryNewPin').value.trim();
+      const pinConfirm = document.getElementById('recoveryNewPinConfirm').value.trim();
+      const errEl = document.getElementById('recoveryPinError');
+      if (!/^\d{4}$/.test(pin)) { errEl.innerText = '4桁の数字を入力してください。'; return; }
+      if (pin !== pinConfirm) { errEl.innerText = '確認用パスコードが一致しません。'; return; }
+      const hash = await sha256Hex(pin);
+      localStorage.setItem('app_lock_passcode_hash', hash);
+      closeModal('lockRecoveryModal');
+      alert('新しいパスコードを設定しました。');
+      hideLockScreen();
+    }
+
+    /* 🚨 「？」ボタン：タップ＝再設定 / 長押し(1.5秒)＝緊急データ削除トラップ */
+    let questionBtnTimer = null;
+    let questionBtnLongPressFired = false;
+
+    function questionBtnPointerDown() {
+      questionBtnLongPressFired = false;
+      clearTimeout(questionBtnTimer);
+      questionBtnTimer = setTimeout(() => {
+        questionBtnLongPressFired = true;
+        triggerEmergencyWipe();
+      }, 1500);
+    }
+    function questionBtnPointerUp() {
+      clearTimeout(questionBtnTimer);
+      if (!questionBtnLongPressFired) {
+        openPasscodeRecoveryModal();
+      }
+    }
+    function questionBtnPointerCancel() {
+      clearTimeout(questionBtnTimer);
+    }
+
+    function initQuestionButton() {
+      const btn = document.getElementById('lockQuestionBtn');
+      if (!btn) return;
+      btn.addEventListener('pointerdown', questionBtnPointerDown);
+      btn.addEventListener('pointerup', questionBtnPointerUp);
+      btn.addEventListener('pointercancel', questionBtnPointerCancel);
+      btn.addEventListener('pointerleave', questionBtnPointerCancel);
+      btn.addEventListener('contextmenu', (e) => e.preventDefault());
+    }
+
+    function exportAllLocalStorageAsJSON() {
+      try {
+        const allData = {};
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          allData[key] = localStorage.getItem(key);
+        }
+        const blob = new Blob([JSON.stringify(allData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `emergency_full_backup_${Date.now()}.json`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      } catch (err) {
+        console.log('緊急バックアップの書き出しに失敗しました:', err);
+      }
+    }
+
+    function triggerEmergencyWipe() {
+      exportAllLocalStorageAsJSON();
+      localStorage.clear();
+      document.getElementById('fakeBagModal').style.display = 'flex';
+    }
+
+    function closeFakeBagModal() {
+      document.getElementById('fakeBagModal').style.display = 'none';
+      location.reload();
+    }
+
 
     function toggleOptionsFold() {
       const wrapper = document.getElementById('optionsFoldWrapper');
