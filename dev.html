@@ -38,6 +38,8 @@
     [data-theme="violet"] { --bg-color: #faf8ff; --card-bg: #ffffff; --primary-pink: #b197fc; --soft-pink: #f3f0ff; --accent-pink: #845ef7; --text-color: #3b354d; --light-text: #8c829e; --border-color: #e5dbff; --shadow: 0 4px 15px rgba(132, 94, 247, 0.1); --badge-bg: var(--soft-pink); --badge-color: var(--accent-pink); --gold-bg-start: #fff9e6; --gold-bg-end: #fff0c2; --gold-border: #f3c642; --gold-text: #8a6200; --map-unvisited: #e0d9f5; --map-stroke: #ffffff; }
     [data-theme="peach"] { --bg-color: #fffaf8; --card-bg: #ffffff; --primary-pink: #ff922b; --soft-pink: #fff4e6; --accent-pink: #f76707; --text-color: #42362b; --light-text: #9c8978; --border-color: #ffe8cc; --shadow: 0 4px 15px rgba(247, 103, 7, 0.08); --badge-bg: var(--soft-pink); --badge-color: var(--accent-pink); --gold-bg-start: #fff9e6; --gold-bg-end: #fff0c2; --gold-border: #f3c642; --gold-text: #8a6200; --map-unvisited: #e8d9cc; --map-stroke: #ffffff; }
     [data-theme="jreast"] { --bg-color: #f4f5f7; --card-bg: #ffffff; --primary-pink: #008e43; --soft-pink: #e6f4ed; --accent-pink: #008040; --text-color: #1a1a1a; --light-text: #666666; --border-color: #dce1e6; --shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06); --radius: 6px; --badge-bg: #008e43; --badge-color: #ffffff; --gold-bg-start: #f4f5f7; --gold-bg-end: #ffffff; --gold-border: #008e43; --gold-text: #008040; --map-unvisited: #d0d5dd; --map-stroke: #f4f5f7; }
+    /* --- テーマ：SAKINA（静けさと華やぎのモダンナチュラル） --- */
+    [data-theme="sakina"] { --bg-color: #faf8f6; --card-bg: #ffffff; --primary-pink: #e08b97; --soft-pink: #fcf0f2; --accent-pink: #b85c6c; --text-color: #3d3235; --light-text: #8c7b7e; --border-color: #f2e8e8; --shadow: 0 4px 16px rgba(184, 92, 108, 0.08); --badge-bg: var(--soft-pink); --badge-color: var(--accent-pink); --gold-bg-start: #fff9e6; --gold-bg-end: #fff0c2; --gold-border: #f3c642; --gold-text: #8a6200; --map-unvisited: #efe3e3; --map-stroke: #ffffff; }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
 
@@ -803,6 +805,7 @@
     .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 100%; }
     .theme-item-btn { padding: 8px; border-radius: 10px; border: 1.5px solid var(--border-color); background: var(--card-bg); color: var(--text-color); font-size: 0.75rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px; }
     .theme-item-btn.active-theme { border: 2px solid var(--accent-pink); box-shadow: 0 0 8px rgba(247,37,133,0.3); }
+    .theme-swatch-dot { display: inline-block; width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.08); }
 
     .help-box { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 10px; padding: 10px; text-align: left; font-size: 0.8rem; margin-bottom: 6px; }
     .help-box h4 { color: var(--accent-pink); margin-bottom: 3px; font-size: 0.85rem; }
@@ -1618,6 +1621,7 @@
             <button class="theme-item-btn" onclick="setTheme('violet')">💜 ヴァイオレット</button>
             <button class="theme-item-btn" onclick="setTheme('peach')">🍑 ピーチ</button>
             <button class="theme-item-btn" onclick="setTheme('jreast')">🚃 JR東日本風</button>
+            <button class="theme-item-btn" onclick="setTheme('sakina')"><span class="theme-swatch-dot" style="background:linear-gradient(135deg, #e08b97, #b85c6c);"></span>SAKINA</button>
           </div>
         </div>
       </details>
