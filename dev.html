@@ -823,6 +823,51 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
 
+    /* 📊 通勤中モード：Excel風カモフラージュUI */
+    #excelModeContainer { display: none; }
+    [data-ui-mode="excel"] #excelModeContainer {
+      display: flex; flex-direction: column; position: fixed; inset: 0; z-index: 50;
+      background: #ffffff; font-family: 'Segoe UI', 'Yu Gothic', 'Meiryo', sans-serif; color: #1a1a1a;
+    }
+    [data-ui-mode="excel"] .app-layout { display: none !important; }
+
+    .xl-titlebar { background: #107C41; color: #fff; padding: 6px 12px; font-size: 0.78rem; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .xl-title-icon { font-size: 0.9rem; }
+    .xl-ribbon-tabs { background: #0F7A40; display: flex; gap: 16px; padding: 4px 12px 0; font-size: 0.72rem; color: #e8f5ec; flex-shrink: 0; overflow-x: auto; white-space: nowrap; }
+    .xl-ribbon-tab { padding: 6px 6px; cursor: pointer; }
+    .xl-ribbon-tab.active { background: #fff; color: #107C41; font-weight: bold; border-radius: 4px 4px 0 0; }
+    .xl-ribbon-buttons { background: #f3f2f1; border-bottom: 1px solid #d0d0d0; display: flex; gap: 6px; padding: 6px 10px; flex-shrink: 0; overflow-x: auto; }
+    .xl-ribbon-btn { background: #fff; border: 1px solid #d0d0d0; border-radius: 3px; padding: 5px 10px; font-size: 0.7rem; font-weight: bold; color: #333; cursor: pointer; white-space: nowrap; }
+    .xl-ribbon-btn:active { background: #e6f4ea; border-color: #107C41; }
+    .xl-formula-bar { display: flex; align-items: center; gap: 6px; padding: 5px 10px; border-bottom: 1px solid #d0d0d0; background: #fff; flex-shrink: 0; }
+    .xl-cell-ref { width: 44px; font-size: 0.72rem; font-weight: bold; color: #333; border-right: 1px solid #d0d0d0; padding-right: 6px; flex-shrink: 0; }
+    .xl-fx-icon { font-style: italic; color: #107C41; font-weight: bold; font-size: 0.78rem; flex-shrink: 0; }
+    .xl-formula-input { flex: 1; border: none; outline: none; font-size: 0.78rem; padding: 3px 4px; min-width: 0; }
+    .xl-grid-wrap { flex: 1; overflow: auto; background: #fff; }
+    .xl-loading-note { text-align: center; padding: 30px; color: #888; font-size: 0.8rem; }
+
+    .xl-table { border-collapse: collapse; width: max-content; min-width: 100%; font-size: 0.72rem; }
+    .xl-table th, .xl-table td { border: 1px solid #d4d4d4; padding: 4px 8px; text-align: left; white-space: nowrap; }
+    .xl-col-header, .xl-corner-cell { background: #f3f2f1; color: #444; text-align: center; font-weight: bold; position: sticky; top: 0; z-index: 2; }
+    .xl-row-header { background: #f3f2f1; color: #444; text-align: center; font-weight: bold; position: sticky; left: 0; z-index: 1; }
+    .xl-corner-cell { left: 0; z-index: 3; }
+    .xl-header-row-cell { background: #E6F4EA; font-weight: bold; color: #0F5C31; }
+    .xl-cell { cursor: pointer; }
+    .xl-cell:hover { background: #f0faf3; }
+    .xl-cell.selected { outline: 2px solid #107C41; outline-offset: -2px; background: #eaf7ee; }
+    .xl-status-code-S { color: #107C41; font-weight: bold; }
+    .xl-status-code-A { color: #b8860b; font-weight: bold; }
+    .xl-status-code-B { color: #555; }
+    .xl-status-code-C { color: #888; }
+
+    .xl-sheet-tabs { display: flex; gap: 2px; background: #e6e6e6; padding: 4px 8px 0; flex-shrink: 0; overflow-x: auto; white-space: nowrap; }
+    .xl-sheet-tab { padding: 6px 14px; font-size: 0.72rem; font-weight: bold; color: #555; background: #dcdcdc; border-radius: 4px 4px 0 0; cursor: pointer; }
+    .xl-sheet-tab.active { background: #fff; color: #107C41; border-top: 2px solid #107C41; }
+
+    .xl-status-bar { background: #107C41; color: #fff; display: flex; justify-content: space-between; align-items: center; padding: 4px 12px; font-size: 0.68rem; flex-shrink: 0; }
+    .xl-status-zoom { cursor: pointer; padding: 2px 8px; border-radius: 3px; -webkit-user-select: none; user-select: none; }
+    .xl-status-zoom:active { background: rgba(255,255,255,0.2); }
+
     /* 🖼️ スマートモード：円形アイコンバッジシステム（Android設定画面風） */
     .icon-badge { display: inline-flex; align-items: center; justify-content: center; }
     .icon-badge .smart-icon { display: none; width: 18px; height: 18px; }
@@ -1121,6 +1166,59 @@
         <button type="button" class="fake-bag-btn fake-bag-btn-no" onclick="closeFakeBagModal()">いいえ</button>
         <button type="button" class="fake-bag-btn fake-bag-btn-yes" onclick="closeFakeBagModal()">はい</button>
       </div>
+    </div>
+  </div>
+
+  <!-- 📊 通勤中モード（Excel風UIカモフラージュ画面） -->
+  <div id="excelModeContainer">
+    <div class="xl-titlebar">
+      <span class="xl-title-icon">📗</span>
+      <span class="xl-title-text">顧客データ_2026.xlsx - Excel</span>
+    </div>
+    <div class="xl-ribbon-tabs">
+      <span class="xl-ribbon-tab active">ホーム</span>
+      <span class="xl-ribbon-tab">挿入</span>
+      <span class="xl-ribbon-tab">ページレイアウト</span>
+      <span class="xl-ribbon-tab">数式</span>
+      <span class="xl-ribbon-tab">データ</span>
+      <span class="xl-ribbon-tab">校閲</span>
+      <span class="xl-ribbon-tab">表示</span>
+    </div>
+    <div class="xl-ribbon-buttons">
+      <button type="button" class="xl-ribbon-btn" onclick="openAddModal()">📋 貼り付け</button>
+      <button type="button" class="xl-ribbon-btn" onclick="document.getElementById('xlSearchBar').focus()">🔍 検索</button>
+      <button type="button" class="xl-ribbon-btn" onclick="switchExcelSheet(3)">Σ 集計</button>
+      <button type="button" class="xl-ribbon-btn" onclick="openAddModal()">＋ 新規行</button>
+    </div>
+    <div class="xl-formula-bar">
+      <span class="xl-cell-ref" id="xlCellRef">A1</span>
+      <span class="xl-fx-icon">fx</span>
+      <input type="text" class="xl-formula-input" id="xlSearchBar" placeholder="セル内容を検索・入力..." oninput="handleExcelSearch(this.value)">
+    </div>
+    <div class="xl-grid-wrap" id="xlGridWrap">
+      <div class="xl-loading-note">読み込み中...</div>
+    </div>
+    <div class="xl-sheet-tabs">
+      <span class="xl-sheet-tab active" id="xlSheetTab1" onclick="switchExcelSheet(1)">Sheet1（一覧）</span>
+      <span class="xl-sheet-tab" id="xlSheetTab2" onclick="switchExcelSheet(2)">Sheet2（カレンダー）</span>
+      <span class="xl-sheet-tab" id="xlSheetTab3" onclick="switchExcelSheet(3)">Sheet3（集計）</span>
+    </div>
+    <div class="xl-status-bar">
+      <span class="xl-status-left" id="xlStatusLeft">準備完了</span>
+      <span class="xl-status-zoom" id="xlZoomBtn" onclick="handleExcelZoomTap()">100%</span>
+    </div>
+  </div>
+
+  <!-- 🖼️ クイックモード切り替えダイアログ（通勤中モードからの緊急復帰用） -->
+  <div class="modal-overlay" id="quickModeSwitchModal" style="z-index:6000;">
+    <div class="modal-content" style="max-width:320px;">
+      <h3>表示モードの切り替え</h3>
+      <div class="ui-mode-toggle-row" style="flex-direction:column;">
+        <button type="button" class="ui-mode-btn" onclick="setUIMode('original'); closeModal('quickModeSwitchModal');">🌸 オリジナルモード</button>
+        <button type="button" class="ui-mode-btn" onclick="setUIMode('smart'); closeModal('quickModeSwitchModal');">🔘 スマートモード</button>
+        <button type="button" class="ui-mode-btn" onclick="setUIMode('excel'); closeModal('quickModeSwitchModal');">📊 通勤中モード</button>
+      </div>
+      <button type="button" class="close-btn" style="width:100%; margin-top:10px;" onclick="closeModal('quickModeSwitchModal')">閉じる</button>
     </div>
   </div>
 
@@ -1674,8 +1772,9 @@
             <div class="ui-mode-toggle-row" id="uiModeToggleRow">
               <button type="button" class="ui-mode-btn" id="uiModeBtnOriginal" onclick="setUIMode('original')">🌸 オリジナル</button>
               <button type="button" class="ui-mode-btn" id="uiModeBtnSmart" onclick="setUIMode('smart')">🔘 スマート</button>
+              <button type="button" class="ui-mode-btn" id="uiModeBtnExcel" onclick="setUIMode('excel')">📊 通勤中</button>
             </div>
-            <div class="sec-status-note">スマートモードでは、主要なメニューやカテゴリのアイコンが、円形カラーバッジ＋フラットアイコン（Lucide）表示に切り替わります。</div>
+            <div class="sec-status-note">スマートモードでは円形カラーバッジ＋フラットアイコン表示に、通勤中モードではExcel風の画面に擬態します（周囲の目を気にせず操作できます）。</div>
           </div>
 
           <div class="theme-grid" id="themeButtonsGrid">
@@ -5524,20 +5623,175 @@
     }
     function setTheme(t) { applyTheme(t); }
 
-    /* 🖼️ UI表示モード（オリジナル / スマート）切り替え */
+    /* 🖼️ UI表示モード（オリジナル / スマート / 通勤中）切り替え */
     function applyUIMode(mode) {
       currentUIMode = mode;
       document.documentElement.setAttribute('data-ui-mode', mode);
       localStorage.setItem('app_ui_mode', mode);
       const btnOriginal = document.getElementById('uiModeBtnOriginal');
       const btnSmart = document.getElementById('uiModeBtnSmart');
-      if (btnOriginal && btnSmart) {
+      const btnExcel = document.getElementById('uiModeBtnExcel');
+      if (btnOriginal && btnSmart && btnExcel) {
         btnOriginal.classList.toggle('active', mode === 'original');
         btnSmart.classList.toggle('active', mode === 'smart');
+        btnExcel.classList.toggle('active', mode === 'excel');
       }
       if (window.lucide) lucide.createIcons();
+      if (mode === 'excel') {
+        switchExcelSheet(currentExcelSheet || 1);
+      }
     }
     function setUIMode(mode) { applyUIMode(mode); }
+
+    /* 📊 通勤中モード（Excel風カモフラージュUI） */
+    let currentExcelSheet = 1;
+    let lastExcelZoomTapTime = 0;
+
+    function openQuickModeSwitch() { document.getElementById('quickModeSwitchModal').style.display = 'flex'; }
+
+    function handleExcelZoomTap() {
+      const now = Date.now();
+      if (now - lastExcelZoomTapTime < 400) {
+        setUIMode('original');
+      } else {
+        openQuickModeSwitch();
+      }
+      lastExcelZoomTapTime = now;
+    }
+
+    function getExcelStatusCode(flags) {
+      if (!flags) return 'B';
+      if (flags.includes('🆂')) return 'S';
+      if (flags.includes('⚔')) return 'C';
+      if (flags.includes('🈠')) return 'A';
+      return 'B';
+    }
+
+    function switchExcelSheet(n) {
+      currentExcelSheet = n;
+      [1, 2, 3].forEach(i => {
+        const tab = document.getElementById('xlSheetTab' + i);
+        if (tab) tab.classList.toggle('active', i === n);
+      });
+      renderExcelGrid();
+    }
+
+    function selectExcelCell(ref, el, ev, originalIndex) {
+      document.querySelectorAll('.xl-cell.selected').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      document.getElementById('xlCellRef').innerText = ref;
+      const searchBar = document.getElementById('xlSearchBar');
+      if (searchBar) searchBar.value = el.innerText;
+      if (typeof originalIndex === 'number' && originalIndex >= 0 && ev) {
+        openEditRecordModal(ev, originalIndex);
+      }
+    }
+
+    function handleExcelSearch(keyword) {
+      const kw = keyword.trim().toLowerCase();
+      document.querySelectorAll('#xlGridWrap .xl-cell').forEach(cell => {
+        const row = cell.closest('tr');
+        if (!row) return;
+        if (!kw) { row.style.display = ''; return; }
+        const text = row.innerText.toLowerCase();
+        row.style.display = text.includes(kw) ? '' : 'none';
+      });
+    }
+
+    function renderExcelGrid() {
+      const wrap = document.getElementById('xlGridWrap');
+      if (!wrap) return;
+      if (currentExcelSheet === 1) renderExcelSheet1(wrap);
+      else if (currentExcelSheet === 2) renderExcelSheet2(wrap);
+      else renderExcelSheet3(wrap);
+    }
+
+    function renderExcelSheet1(wrap) {
+      const cols = ['A', 'B', 'C', 'D', 'E'];
+      const headers = ['担当者/コード', '取引先/拠点', '実施日', '金額/コスト', 'ステータス'];
+      let html = `<table class="xl-table"><tr><th class="xl-corner-cell"></th>${cols.map(c => `<th class="xl-col-header">${c}</th>`).join('')}</tr>`;
+      html += `<tr><td class="xl-row-header">1</td>${headers.map(h => `<td class="xl-cell xl-header-row-cell">${h}</td>`).join('')}</tr>`;
+
+      const list = historyList.slice(-200);
+      list.forEach((v) => {
+        const originalIndex = historyList.indexOf(v);
+        const rowNum = originalIndex + 2;
+        const dateStr = `${v.year || ''}/${(v.month || '').replace('月', '')}${v.day ? '/' + v.day : ''}`;
+        const amountDisp = v.amount ? Number(v.amount).toLocaleString() : '';
+        const code = getExcelStatusCode(v.flags);
+        html += `<tr>
+          <td class="xl-row-header">${rowNum}</td>
+          <td class="xl-cell" onclick="selectExcelCell('A${rowNum}', this, event, ${originalIndex})">${v.name || ''}</td>
+          <td class="xl-cell" onclick="selectExcelCell('B${rowNum}', this, event, ${originalIndex})">${v.storeName || ''}</td>
+          <td class="xl-cell" onclick="selectExcelCell('C${rowNum}', this, event, ${originalIndex})">${dateStr}</td>
+          <td class="xl-cell" onclick="selectExcelCell('D${rowNum}', this, event, ${originalIndex})">${amountDisp}</td>
+          <td class="xl-cell xl-status-code-${code}" onclick="selectExcelCell('E${rowNum}', this, event, ${originalIndex})">${code}</td>
+        </tr>`;
+      });
+
+      html += '</table>';
+      wrap.innerHTML = html;
+      document.getElementById('xlStatusLeft').innerText = `${list.length} 件のレコード`;
+    }
+
+    function renderExcelSheet2(wrap) {
+      const cols = ['A', 'B', 'C'];
+      const headers = ['年月', '件数', '金額/コスト'];
+      let html = `<table class="xl-table"><tr><th class="xl-corner-cell"></th>${cols.map(c => `<th class="xl-col-header">${c}</th>`).join('')}</tr>`;
+      html += `<tr><td class="xl-row-header">1</td>${headers.map(h => `<td class="xl-cell xl-header-row-cell">${h}</td>`).join('')}</tr>`;
+
+      const monthMap = {};
+      historyList.forEach(v => {
+        const key = `${v.year || ''}/${(v.month || '').replace('月', '')}`;
+        if (!monthMap[key]) monthMap[key] = { count: 0, amount: 0 };
+        monthMap[key].count++;
+        monthMap[key].amount += Number(v.amount) || 0;
+      });
+
+      let rowNum = 2;
+      Object.keys(monthMap).sort().forEach(key => {
+        const d = monthMap[key];
+        html += `<tr>
+          <td class="xl-row-header">${rowNum}</td>
+          <td class="xl-cell" onclick="selectExcelCell('A${rowNum}', this)">${key}</td>
+          <td class="xl-cell" onclick="selectExcelCell('B${rowNum}', this)">${d.count}</td>
+          <td class="xl-cell" onclick="selectExcelCell('C${rowNum}', this)">${d.amount.toLocaleString()}</td>
+        </tr>`;
+        rowNum++;
+      });
+
+      html += '</table>';
+      wrap.innerHTML = html;
+      document.getElementById('xlStatusLeft').innerText = `${Object.keys(monthMap).length} 件の月次データ`;
+    }
+
+    function renderExcelSheet3(wrap) {
+      const totalCount = historyList.length;
+      const totalAmount = historyList.reduce((s, v) => s + (Number(v.amount) || 0), 0);
+      const uniqueCast = new Set(historyList.map(v => v.name)).size;
+      const uniqueStore = new Set(historyList.map(v => v.storeName).filter(Boolean)).size;
+
+      const rows = [
+        ['総レコード数', totalCount],
+        ['総担当者数', uniqueCast],
+        ['総取引先数', uniqueStore],
+        ['総金額/コスト', totalAmount.toLocaleString()]
+      ];
+
+      let html = `<table class="xl-table"><tr><th class="xl-corner-cell"></th><th class="xl-col-header">A</th><th class="xl-col-header">B</th></tr>`;
+      html += `<tr><td class="xl-row-header">1</td><td class="xl-cell xl-header-row-cell">項目</td><td class="xl-cell xl-header-row-cell">値</td></tr>`;
+      rows.forEach((r, i) => {
+        const rowNum = i + 2;
+        html += `<tr>
+          <td class="xl-row-header">${rowNum}</td>
+          <td class="xl-cell" onclick="selectExcelCell('A${rowNum}', this)">${r[0]}</td>
+          <td class="xl-cell" onclick="selectExcelCell('B${rowNum}', this)">${r[1]}</td>
+        </tr>`;
+      });
+      html += '</table>';
+      wrap.innerHTML = html;
+      document.getElementById('xlStatusLeft').innerText = '集計完了';
+    }
 
     function saveUserName(e) {
       e.preventDefault();
