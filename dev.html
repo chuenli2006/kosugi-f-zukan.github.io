@@ -868,6 +868,19 @@
     .xl-status-zoom { cursor: pointer; padding: 2px 8px; border-radius: 3px; -webkit-user-select: none; user-select: none; }
     .xl-status-zoom:active { background: rgba(255,255,255,0.2); }
 
+    .xl-chart-area { display: flex; flex-wrap: wrap; gap: 14px; padding: 16px; background: #fafafa; }
+    .xl-chart-window {
+      width: 300px; background: #fff; border: 1px solid #c8c8c8; border-radius: 2px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+    .xl-chart-window-wide { width: 100%; max-width: 620px; }
+    .xl-chart-titlebar {
+      background: #f3f2f1; border-bottom: 1px solid #d4d4d4; padding: 5px 10px;
+      font-size: 0.68rem; font-weight: bold; color: #333; display: flex; align-items: center; justify-content: space-between;
+    }
+    .xl-chart-close { color: #999; font-size: 0.7rem; cursor: default; }
+    .xl-chart-canvas-wrap { padding: 10px; height: 190px; position: relative; box-sizing: border-box; }
+
     /* 🖼️ スマートモード：円形アイコンバッジシステム（Android設定画面風） */
     .icon-badge { display: inline-flex; align-items: center; justify-content: center; }
     .icon-badge .smart-icon { display: none; width: 18px; height: 18px; }
@@ -5789,8 +5802,92 @@
         </tr>`;
       });
       html += '</table>';
+      html += `
+        <div class="xl-chart-area">
+          <div class="xl-chart-window">
+            <div class="xl-chart-titlebar"><span>📊 グラフ 1：月別件数推移</span><span class="xl-chart-close">✕</span></div>
+            <div class="xl-chart-canvas-wrap"><canvas id="xlChartCanvas1"></canvas></div>
+          </div>
+          <div class="xl-chart-window">
+            <div class="xl-chart-titlebar"><span>📊 グラフ 2：ステータス内訳</span><span class="xl-chart-close">✕</span></div>
+            <div class="xl-chart-canvas-wrap"><canvas id="xlChartCanvas2"></canvas></div>
+          </div>
+          <div class="xl-chart-window xl-chart-window-wide">
+            <div class="xl-chart-titlebar"><span>📊 グラフ 3：月別金額/コスト推移</span><span class="xl-chart-close">✕</span></div>
+            <div class="xl-chart-canvas-wrap"><canvas id="xlChartCanvas3"></canvas></div>
+          </div>
+        </div>`;
       wrap.innerHTML = html;
       document.getElementById('xlStatusLeft').innerText = '集計完了';
+      renderExcelCharts();
+    }
+
+    /* 📊 通勤中モード Sheet3：Excel風の埋め込みグラフ（Chart.js） */
+    let xlChartInstance1 = null;
+    let xlChartInstance2 = null;
+    let xlChartInstance3 = null;
+
+    function renderExcelCharts() {
+      const canvas1 = document.getElementById('xlChartCanvas1');
+      const canvas2 = document.getElementById('xlChartCanvas2');
+      const canvas3 = document.getElementById('xlChartCanvas3');
+      if (!canvas1 || !canvas2 || !canvas3) return;
+
+      if (xlChartInstance1) xlChartInstance1.destroy();
+      if (xlChartInstance2) xlChartInstance2.destroy();
+      if (xlChartInstance3) xlChartInstance3.destroy();
+
+      const officeColors = ['#4472C4', '#ED7D31', '#A5A5A5', '#FFC000', '#5B9BD5', '#70AD47'];
+
+      const monthMap = {};
+      historyList.forEach(v => {
+        const key = `${v.year || ''}/${(v.month || '').replace('月', '')}`;
+        if (!monthMap[key]) monthMap[key] = { count: 0, amount: 0 };
+        monthMap[key].count++;
+        monthMap[key].amount += Number(v.amount) || 0;
+      });
+      const monthKeys = Object.keys(monthMap).sort();
+
+      xlChartInstance1 = new Chart(canvas1.getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: monthKeys,
+          datasets: [{ label: '件数', data: monthKeys.map(k => monthMap[k].count), backgroundColor: officeColors[0] }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { x: { ticks: { font: { size: 8 } } }, y: { ticks: { font: { size: 8 } } } }
+        }
+      });
+
+      const codeCount = { S: 0, A: 0, B: 0, C: 0 };
+      historyList.forEach(v => { codeCount[getExcelStatusCode(v.flags)]++; });
+
+      xlChartInstance2 = new Chart(canvas2.getContext('2d'), {
+        type: 'pie',
+        data: {
+          labels: ['S', 'A', 'B', 'C'],
+          datasets: [{ data: [codeCount.S, codeCount.A, codeCount.B, codeCount.C], backgroundColor: officeColors }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 9 } } } }
+        }
+      });
+
+      xlChartInstance3 = new Chart(canvas3.getContext('2d'), {
+        type: 'line',
+        data: {
+          labels: monthKeys,
+          datasets: [{ label: '金額/コスト', data: monthKeys.map(k => monthMap[k].amount), borderColor: officeColors[1], backgroundColor: officeColors[1] + '33', fill: true, tension: 0.25 }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { x: { ticks: { font: { size: 8 } } }, y: { ticks: { font: { size: 8 } } } }
+        }
+      });
     }
 
     function saveUserName(e) {
