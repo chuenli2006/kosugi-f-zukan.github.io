@@ -508,6 +508,32 @@
     .badge-count-gold { background: var(--gold-border) !important; color: #ffffff !important; }
     .badge-count-gray { background: #94a3b8 !important; color: #ffffff !important; }
 
+    /* ⏳ キャスト別 継続期間フリップ＆振動表示機能 */
+    .badge-count-flip-wrap { display: inline-block; cursor: pointer; -webkit-user-select: none; user-select: none; }
+    .badge-count-flip-wrap .badge-count { display: inline-block; transform: scaleX(1); transition: transform 0.2s ease; white-space: nowrap; }
+    .badge-count-flip-wrap.flipping .badge-count { transform: scaleX(0); }
+
+    @keyframes purururuShake {
+      0%, 100% { transform: translateX(0) rotate(0); }
+      10% { transform: translateX(-2px) rotate(-4deg); }
+      20% { transform: translateX(2px) rotate(4deg); }
+      30% { transform: translateX(-3px) rotate(-5deg); }
+      40% { transform: translateX(3px) rotate(5deg); }
+      50% { transform: translateX(-2px) rotate(-3deg); }
+      60% { transform: translateX(2px) rotate(3deg); }
+      70% { transform: translateX(-1px) rotate(-2deg); }
+      80% { transform: translateX(1px) rotate(2deg); }
+      90% { transform: translateX(0) rotate(0); }
+    }
+    .badge-count-flip-wrap.badge-count-shake { animation: purururuShake 0.4s ease; }
+
+    /* 🔘 スマートモード時もバッジ配色・フォントを維持したまま連動 */
+    [data-ui-mode="smart"] .badge-count-flip-wrap .badge-count {
+      border-radius: 999px !important;
+      font-weight: 700;
+    }
+
+
     .card-body { padding: 10px 14px 12px; border-top: 1px dashed var(--border-color); background-color: var(--card-bg); display: flex; flex-direction: column; gap: 8px; width: 100%; }
     
     .style-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 2px; }
@@ -903,6 +929,7 @@
     .icon-cat-cast      { --icon-bg: #FFE4E6; --icon-color: #E11D48; }
     .icon-cat-map       { --icon-bg: #CCFBF1; --icon-color: #0F766E; }
     .icon-cat-store     { --icon-bg: #FEF08A; --icon-color: #A16207; }
+    .icon-cat-keep      { --icon-bg: #FEF08A; --icon-color: #A16207; }
     .icon-cat-security  { --icon-bg: #E2E8F0; --icon-color: #334155; }
     .icon-cat-settings  { --icon-bg: #F3F4F6; --icon-color: #374151; }
     .icon-cat-help      { --icon-bg: #E0E7FF; --icon-color: #4338CA; }
@@ -1021,6 +1048,38 @@
     .map-store-cat-badge { font-size: 0.65rem; font-weight: bold; padding: 2px 8px; border-radius: 10px; }
     .map-store-sub-line { font-size: 0.72rem; color: var(--light-text); }
     .map-store-btn-row { display: flex; gap: 6px; margin-top: 4px; }
+
+    /* 🌟 キープ機能：カードデザイン（オリジナルモード＝パステル調） */
+    .keep-card {
+      display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px;
+      background: linear-gradient(135deg, #FFF9E6, var(--card-bg));
+      border: 1.5px solid #FDE68A; border-radius: 16px; padding: 12px 14px;
+      box-shadow: var(--shadow);
+    }
+    .keep-card-top { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+    .keep-card-name { font-weight: bold; font-size: 0.9rem; color: var(--text-color); display: flex; align-items: center; gap: 6px; }
+    .keep-star-badge {
+      font-size: 0.65rem; font-weight: bold; background: #FEF08A; color: #A16207;
+      padding: 2px 9px; border-radius: 999px; flex-shrink: 0;
+    }
+    .keep-card-store { font-size: 0.75rem; color: var(--light-text); }
+    .keep-card-memo { font-size: 0.78rem; color: var(--text-color); background: rgba(255,255,255,0.5); border-radius: 8px; padding: 6px 8px; }
+    .keep-card-btn-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-top: 4px; }
+    .keep-action-btn {
+      display: flex; align-items: center; justify-content: center; gap: 4px;
+      background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px;
+      padding: 8px 6px; font-size: 0.72rem; font-weight: bold; color: var(--text-color); cursor: pointer;
+    }
+    .keep-action-btn:active { transform: scale(0.96); }
+    .keep-action-btn-promote { background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink)); color: #fff; border: none; grid-column: 1 / -1; }
+    .keep-card-delete { align-self: flex-end; font-size: 0.68rem; color: var(--light-text); background: none; border: none; cursor: pointer; text-decoration: underline; padding: 0; }
+
+    /* 🔘 スマートモード：キープカードのバッジをアンバー系に統一 */
+    [data-ui-mode="smart"] .keep-star-badge {
+      border-radius: 999px !important; background: #FEF08A !important; color: #A16207 !important; font-weight: 700;
+    }
+    [data-ui-mode="smart"] .keep-card { border-color: #FEF08A; }
+
 
     .map-gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
     .map-gallery-item { position: relative; aspect-ratio: 1; border-radius: 10px; overflow: hidden; cursor: pointer; border: 1px solid var(--border-color); }
@@ -1215,6 +1274,7 @@
       <span class="xl-sheet-tab active" id="xlSheetTab1" onclick="switchExcelSheet(1)">Sheet1（一覧）</span>
       <span class="xl-sheet-tab" id="xlSheetTab2" onclick="switchExcelSheet(2)">Sheet2（カレンダー）</span>
       <span class="xl-sheet-tab" id="xlSheetTab3" onclick="switchExcelSheet(3)">Sheet3（集計）</span>
+      <span class="xl-sheet-tab" id="xlSheetTab4" onclick="switchExcelSheet(4)">Sheet4（検討リスト）</span>
     </div>
     <div class="xl-status-bar">
       <span class="xl-status-left" id="xlStatusLeft">準備完了</span>
@@ -1506,6 +1566,9 @@
       <button class="sheet-nav-item" id="nav-japanMap" onclick="openJapanMapModal(); closeMoreMenu();">
         <span class="nav-icon icon-badge icon-cat-map icon-badge-sm"><span class="emoji-icon">🗺️</span><i data-lucide="map" class="smart-icon"></i></span><span>地図</span>
       </button>
+      <button class="sheet-nav-item" id="nav-keeps" onclick="openKeepsListModal(); closeMoreMenu();">
+        <span class="nav-icon icon-badge icon-cat-keep icon-badge-sm"><span class="emoji-icon">🌟</span><i data-lucide="bookmark" class="smart-icon"></i></span><span>キープ (<span id="keepsCount">0</span>)</span>
+      </button>
 
       <div class="sheet-ad-carousel" id="sheetAdCarousel" onscroll="handleSheetAdScroll()">
         <div class="sheet-ad-card">
@@ -1703,6 +1766,39 @@
       <img id="mapLightboxImg" class="map-lightbox-img" src="" alt="思い出画像">
       <div id="mapLightboxText" style="font-size:0.8rem; color:var(--text-color); margin-top:8px;"></div>
       <button class="close-btn" onclick="closeModal('mapImageLightbox')" style="margin-top:12px;">閉じる</button>
+    </div>
+  </div>
+
+  <!-- 🌟 キープ一覧モーダル -->
+  <div class="modal-overlay map-fullscreen-modal" id="keepsListModal">
+    <div class="modal-content map-fullscreen-content">
+      <div class="map-modal-header">
+        <h3>🌟 キープ一覧（気になる子）</h3>
+        <button type="button" class="map-modal-close-x" onclick="closeModal('keepsListModal')">✕</button>
+      </div>
+      <div class="map-scroll-body">
+        <button type="button" class="close-btn" style="width:100%; margin-bottom:10px;" onclick="openKeepAddModal()">＋ 新しくキープを追加</button>
+        <div id="keepsListContainer"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🌟 キープ追加・編集モーダル -->
+  <div class="modal-overlay" id="keepAddModal">
+    <div class="modal-content">
+      <h3>🌟 気になる子をキープ</h3>
+      <form class="add-form" onsubmit="saveKeep(event)">
+        <input type="hidden" id="keepEditId" value="">
+        <div class="form-group"><label>女の子の名前</label><input type="text" id="keepCastName" placeholder="例: ゆあ" required></div>
+        <div class="form-group"><label>店舗名</label><input type="text" id="keepStoreName" placeholder="例: ○○ヘルス 渋谷店"></div>
+        <div class="form-group"><label>プロフ/出勤URL</label><input type="url" id="keepLink" placeholder="https://..."></div>
+        <div class="form-group"><label>電話番号</label><input type="tel" id="keepPhone" placeholder="03-1234-5678"></div>
+        <div class="form-group"><label>メモ</label><textarea id="keepMemo" rows="3" placeholder="気になったポイントなど"></textarea></div>
+        <div style="display:flex; gap:8px; margin-top:4px;">
+          <button type="button" class="close-btn" style="background:#888; flex:1;" onclick="closeModal('keepAddModal')">キャンセル</button>
+          <button type="submit" class="close-btn" style="flex:2;">💾 キープに保存</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -2398,6 +2494,8 @@
     let storeInfoData = {}; // 🏬 店舗マスターデータ
     let sharedRecords = [];
     let scheduleList = [];
+    let keepsList = []; // 🌟 キープ（未訪問の気になるキャスト）
+    let pendingKeepPromotionId = null;
     let bubbleInterval;
     let dashPeriodType = 'month';
     let targetExportCastName = '';
@@ -2734,11 +2832,13 @@
       const savedCast = localStorage.getItem('user_cast_' + currentUserName);
       const savedStoreInfo = localStorage.getItem('user_store_info_' + currentUserName);
       const savedSchedules = localStorage.getItem('user_schedules_' + currentUserName);
+      const savedKeeps = localStorage.getItem('user_keeps_' + currentUserName);
       
       historyList = savedHist ? JSON.parse(savedHist) : [];
       castData = savedCast ? JSON.parse(savedCast) : {};
       storeInfoData = savedStoreInfo ? JSON.parse(savedStoreInfo) : {};
       scheduleList = savedSchedules ? JSON.parse(savedSchedules) : [];
+      keepsList = savedKeeps ? JSON.parse(savedKeeps) : [];
       
       const savedShared = localStorage.getItem('user_shared_list_' + currentUserName);
       sharedRecords = savedShared ? JSON.parse(savedShared) : [];
@@ -2764,6 +2864,7 @@
       
       setInterval(checkNotifications, 30000);
       checkNotifications();
+      checkShareTargetParams();
     }
 
     function updateUIHeader() {
@@ -2772,6 +2873,8 @@
       document.getElementById('pageTitle').innerText = titleText + " [V18.6 Pro]";
       document.getElementById('currentUserNameDisplay').innerText = currentUserName;
       document.getElementById('sharedCount').innerText = sharedRecords.length;
+      const keepsCountEl = document.getElementById('keepsCount');
+      if (keepsCountEl) keepsCountEl.innerText = keepsList.length;
     }
 
     function saveData() {
@@ -2781,9 +2884,140 @@
       localStorage.setItem('user_store_info_' + currentUserName, JSON.stringify(storeInfoData));
       localStorage.setItem('user_shared_list_' + currentUserName, JSON.stringify(sharedRecords));
       localStorage.setItem('user_schedules_' + currentUserName, JSON.stringify(scheduleList));
+      localStorage.setItem('user_keeps_' + currentUserName, JSON.stringify(keepsList));
       historyList.forEach((h, i) => h.originalIndex = i);
       updateUIHeader();
       updateSearchDatalist();
+    }
+
+    /* ==================================================================
+       🌟 キープ機能（未訪問の気になるキャストの保存・管理）
+       ================================================================== */
+    function openKeepsListModal() {
+      renderKeepsList();
+      document.getElementById('keepsListModal').style.display = 'flex';
+    }
+
+    function renderKeepsList() {
+      const container = document.getElementById('keepsListContainer');
+      const countEl = document.getElementById('keepsCount');
+      if (countEl) countEl.innerText = keepsList.length;
+      if (!container) return;
+
+      if (keepsList.length === 0) {
+        container.innerHTML = '<div class="map-empty-note">まだキープした子がいません。気になる子を見つけたら「＋ 新しくキープを追加」から登録しましょう。</div>';
+        return;
+      }
+
+      container.innerHTML = keepsList.slice().reverse().map(k => `
+        <div class="keep-card">
+          <button type="button" class="keep-card-delete" onclick="deleteKeep('${k.id}')">🗑️ 削除</button>
+          <div class="keep-card-top">
+            <div class="keep-card-name">🌟 ${k.castName}</div>
+            <span class="keep-star-badge">キープ中</span>
+          </div>
+          ${k.storeName ? `<div class="keep-card-store">🏬 ${k.storeName}</div>` : ''}
+          ${k.memo ? `<div class="keep-card-memo">${k.memo}</div>` : ''}
+          <div class="keep-card-btn-row">
+            ${k.link ? `<button type="button" class="keep-action-btn" onclick="window.open('${k.link}','_blank')">🌐 プロフ/出勤</button>` : `<span></span>`}
+            ${k.phone ? `<a href="tel:${k.phone}" class="keep-action-btn" style="text-decoration:none;">📞 電話</a>` : `<span></span>`}
+            <button type="button" class="keep-action-btn" onclick="keepToSchedule('${k.id}')">📅 予定化</button>
+            <button type="button" class="keep-action-btn keep-action-btn-promote" onclick="keepToRecord('${k.id}')">✨ 記録へ</button>
+          </div>
+        </div>`).join('');
+    }
+
+    function openKeepAddModal(prefill) {
+      document.getElementById('keepEditId').value = '';
+      document.getElementById('keepCastName').value = (prefill && prefill.castName) || '';
+      document.getElementById('keepStoreName').value = (prefill && prefill.storeName) || '';
+      document.getElementById('keepLink').value = (prefill && prefill.link) || '';
+      document.getElementById('keepPhone').value = (prefill && prefill.phone) || '';
+      document.getElementById('keepMemo').value = (prefill && prefill.memo) || '';
+      document.getElementById('keepAddModal').style.display = 'flex';
+    }
+
+    function saveKeep(e) {
+      e.preventDefault();
+      const entry = {
+        id: 'keep_' + Date.now(),
+        castName: document.getElementById('keepCastName').value.trim(),
+        storeName: document.getElementById('keepStoreName').value.trim(),
+        link: document.getElementById('keepLink').value.trim(),
+        phone: document.getElementById('keepPhone').value.trim(),
+        memo: document.getElementById('keepMemo').value.trim(),
+        createdAt: new Date().toISOString()
+      };
+      if (!entry.castName) { alert('女の子の名前を入力してください。'); return; }
+
+      keepsList.push(entry);
+      saveData();
+      closeModal('keepAddModal');
+      renderKeepsList();
+      if (document.getElementById('keepsListModal').style.display !== 'flex') {
+        document.getElementById('keepsListModal').style.display = 'flex';
+      }
+      if (currentUIMode === 'excel' && currentExcelSheet === 4) renderExcelGrid();
+    }
+
+    function deleteKeep(id) {
+      if (!confirm('このキープを削除しますか？')) return;
+      keepsList = keepsList.filter(k => k.id !== id);
+      saveData();
+      renderKeepsList();
+      if (currentUIMode === 'excel' && currentExcelSheet === 4) renderExcelGrid();
+    }
+
+    function keepToSchedule(id) {
+      const k = keepsList.find(x => x.id === id);
+      if (!k) return;
+      closeModal('keepsListModal');
+      openAddScheduleModal();
+      document.getElementById('schCastName').value = k.castName || '';
+      document.getElementById('schStoreName').value = k.storeName || '';
+      document.getElementById('schTitle').value = `${k.storeName || ''} ${k.castName || ''}`.trim() + ' キープからの予定';
+      if (k.phone) {
+        document.getElementById('schBookingType').value = 'phone';
+        document.getElementById('schPhoneNumber').value = k.phone;
+        toggleBookingType();
+      } else if (k.link) {
+        document.getElementById('schBookingType').value = 'web';
+        document.getElementById('schBookingUrl').value = k.link;
+        toggleBookingType();
+      }
+    }
+
+    function keepToRecord(id) {
+      const k = keepsList.find(x => x.id === id);
+      if (!k) return;
+      closeModal('keepsListModal');
+      openAddModal();
+      document.getElementById('addName').value = k.castName || '';
+      if (k.storeName) document.getElementById('addStoreName').value = k.storeName;
+      if (k.link) document.getElementById('addLink').value = k.link;
+      if (k.phone) document.getElementById('addStorePhone').value = k.phone;
+      pendingKeepPromotionId = id;
+    }
+
+    /* 📱 Web Share Target API 連携（Android共有からのキープ自動登録） */
+    function checkShareTargetParams() {
+      const params = new URLSearchParams(window.location.search);
+      const sharedTitle = params.get('title');
+      const sharedText = params.get('text');
+      const sharedUrl = params.get('url');
+
+      if (!sharedTitle && !sharedText && !sharedUrl) return;
+
+      const guessedName = (sharedTitle || sharedText || '').split(/[\s\-｜|/／　]/)[0].slice(0, 20);
+      openKeepAddModal({
+        castName: guessedName,
+        storeName: '',
+        link: sharedUrl || '',
+        phone: '',
+        memo: [sharedTitle, sharedText].filter(Boolean).join('\n')
+      });
+
+      history.replaceState(null, '', window.location.pathname);
     }
 
     function saveDateFormat(val) {
@@ -3924,6 +4158,53 @@
       return avgs;
     }
 
+    /* ⏳ キャスト別 継続期間フリップ＆振動表示機能 */
+    function computeCastDurationText(visits) {
+      if (!visits || visits.length < 3) return '';
+      const dates = visits.map(v => {
+        const y = parseInt(v.year, 10) || 2000;
+        const m = parseInt((v.month || '1月').replace('月', ''), 10) || 1;
+        const d = parseInt(v.day, 10) || 1;
+        return new Date(y, m - 1, d);
+      }).sort((a, b) => a - b);
+
+      const first = dates[0];
+      const last = dates[dates.length - 1];
+      let months = (last.getFullYear() - first.getFullYear()) * 12 + (last.getMonth() - first.getMonth());
+      if (last.getDate() < first.getDate()) months--;
+      if (months < 0) months = 0;
+
+      if (months < 1) return '1ヶ月未満';
+      const years = Math.floor(months / 12);
+      const remMonths = months % 12;
+      if (years === 0) return `${remMonths}ヶ月`;
+      if (remMonths === 0) return `${years}年`;
+      return `${years}年${remMonths}ヶ月`;
+    }
+
+    function handleBadgeCountTap(wrapEl, ev) {
+      if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+      const count = parseInt(wrapEl.dataset.count, 10) || 0;
+      if (count <= 1) return;
+
+      if (count === 2) {
+        wrapEl.classList.remove('badge-count-shake');
+        void wrapEl.offsetWidth;
+        wrapEl.classList.add('badge-count-shake');
+        setTimeout(() => wrapEl.classList.remove('badge-count-shake'), 400);
+        return;
+      }
+
+      const badgeEl = wrapEl.querySelector('.badge-count');
+      if (!badgeEl || wrapEl.classList.contains('flipping')) return;
+      const isFlipped = wrapEl.classList.toggle('flipped');
+      wrapEl.classList.add('flipping');
+      setTimeout(() => {
+        badgeEl.textContent = isFlipped ? (wrapEl.dataset.duration || '') : (count + '回');
+        wrapEl.classList.remove('flipping');
+      }, 200);
+    }
+
     function buildRowDetailHTML(v) {
       const hasDetail = v.amount || v.courseTime || v.storeName;
       if(!hasDetail) return { btn: '', panel: '' };
@@ -4115,6 +4396,12 @@
 
         const copyBtnHtml = `<button class="copy-btn" onclick="openExportCastModal(event, '${c.name}')">📤 友だちへ共有</button>`;
 
+        const countColorClass = c.favCount>=5 ? 'badge-count-gold' : (c.hasNextNashi ? 'badge-count-gray' : '');
+        const durationText = computeCastDurationText(c.visits);
+        const badgeCountHtml = `<span class="badge-count-flip-wrap" data-count="${c.visits.length}" data-duration="${(durationText || '').replace(/"/g,'&quot;')}" onclick="handleBadgeCountTap(this, event)">
+          <span class="badge-count ${countColorClass}">${c.visits.length}回</span>
+        </span>`;
+
         let radarBlockHtml = '';
         if (ratingEnabled) {
           const info2 = castData[c.name] || {};
@@ -4169,7 +4456,7 @@
               <span class="status-badge ${isActive?'status-active':'status-retired'}">${isActive?'在籍':'卒業'}</span>
               ${c.favCount>=5?'<span class="super-tag">オキニ</span>':''}
             </div>
-            <span class="badge-count${c.favCount>=5?' badge-count-gold':(c.hasNextNashi?' badge-count-gray':'')}">${c.visits.length}回</span>
+            ${badgeCountHtml}
           </summary>
           <div class="anim-wrapper"><div class="anim-inner"><div class="card-body">
             ${renderStyleTags(info.style)}
@@ -5527,6 +5814,10 @@
         castData[name].letters.push({ date: rec.year + rec.month, imageUrl: rec.chekiImg, text: rec.visitNote });
       }
 
+      if (pendingKeepPromotionId) {
+        keepsList = keepsList.filter(k => k.id !== pendingKeepPromotionId);
+        pendingKeepPromotionId = null;
+      }
       saveData(); closeModal('addModal'); render(); renderDashboard(); alert('保存しました！');
     }
 
@@ -5682,7 +5973,7 @@
 
     function switchExcelSheet(n) {
       currentExcelSheet = n;
-      [1, 2, 3].forEach(i => {
+      [1, 2, 3, 4].forEach(i => {
         const tab = document.getElementById('xlSheetTab' + i);
         if (tab) tab.classList.toggle('active', i === n);
       });
@@ -5716,7 +6007,31 @@
       if (!wrap) return;
       if (currentExcelSheet === 1) renderExcelSheet1(wrap);
       else if (currentExcelSheet === 2) renderExcelSheet2(wrap);
-      else renderExcelSheet3(wrap);
+      else if (currentExcelSheet === 3) renderExcelSheet3(wrap);
+      else renderExcelSheet4(wrap);
+    }
+
+    function renderExcelSheet4(wrap) {
+      const cols = ['A', 'B', 'C', 'D', 'E'];
+      const headers = ['担当者/コード', '取引先/拠点', 'URL', '電話', 'メモ'];
+      let html = `<table class="xl-table"><tr><th class="xl-corner-cell"></th>${cols.map(c => `<th class="xl-col-header">${c}</th>`).join('')}</tr>`;
+      html += `<tr><td class="xl-row-header">1</td>${headers.map(h => `<td class="xl-cell xl-header-row-cell">${h}</td>`).join('')}</tr>`;
+
+      keepsList.forEach((k, idx) => {
+        const rowNum = idx + 2;
+        html += `<tr>
+          <td class="xl-row-header">${rowNum}</td>
+          <td class="xl-cell" onclick="selectExcelCell('A${rowNum}', this)">${k.castName || ''}</td>
+          <td class="xl-cell" onclick="selectExcelCell('B${rowNum}', this)">${k.storeName || ''}</td>
+          <td class="xl-cell" onclick="selectExcelCell('C${rowNum}', this)">${k.link || ''}</td>
+          <td class="xl-cell" onclick="selectExcelCell('D${rowNum}', this)">${k.phone || ''}</td>
+          <td class="xl-cell" onclick="selectExcelCell('E${rowNum}', this)">${k.memo || ''}</td>
+        </tr>`;
+      });
+
+      html += '</table>';
+      wrap.innerHTML = html;
+      document.getElementById('xlStatusLeft').innerText = `検討リスト ${keepsList.length} 件`;
     }
 
     function renderExcelSheet1(wrap) {
