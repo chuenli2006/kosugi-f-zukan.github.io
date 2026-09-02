@@ -6,6 +6,7 @@
   <title id="pageTitle">童貞の風俗履歴図鑑</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   
   <!-- PWA用マニフェストの読み込み -->
   <link rel="manifest" href="./manifest.json">
@@ -894,6 +895,16 @@
     .xl-status-zoom { cursor: pointer; padding: 2px 8px; border-radius: 3px; -webkit-user-select: none; user-select: none; }
     .xl-status-zoom:active { background: rgba(255,255,255,0.2); }
 
+    /* 📊 通勤中モード：新設UI（クラウド連携・キープ等）もExcel風の質感に統一 */
+    [data-ui-mode="excel"] .modal-overlay:not(.map-fullscreen-modal) .modal-content {
+      font-family: 'Segoe UI', 'Yu Gothic', 'Meiryo', sans-serif;
+      border-radius: 4px; border: 1px solid #b0b0b0;
+    }
+    [data-ui-mode="excel"] .modal-overlay:not(.map-fullscreen-modal) .modal-content h3 { color: #107C41; }
+    [data-ui-mode="excel"] .close-btn { border-radius: 3px !important; }
+    [data-ui-mode="excel"] .keep-star-badge,
+    [data-ui-mode="excel"] .cloud-status-badge { border-radius: 3px !important; }
+
     .xl-chart-area { display: flex; flex-wrap: wrap; gap: 14px; padding: 16px; background: #fafafa; }
     .xl-chart-window {
       width: 300px; background: #fff; border: 1px solid #c8c8c8; border-radius: 2px;
@@ -937,6 +948,7 @@
     .icon-cat-theme     { --icon-bg: #FDF2F8; --icon-color: #BE185D; }
     .icon-cat-devlock   { --icon-bg: #F5F5F4; --icon-color: #78716C; }
     .icon-cat-visibility{ --icon-bg: #F0F9FF; --icon-color: #0369A1; }
+    .icon-cat-cloud     { --icon-bg: #DBEAFE; --icon-color: #1D4ED8; }
 
     /* ⭐ ステータスタグ：スマートモード時はピルバッジ形式に統一 */
     [data-ui-mode="smart"] .status-badge,
@@ -1161,6 +1173,24 @@
     .modal-overlay.lock-recovery-modal { z-index: 5500; }
     .modal-overlay.fake-bag-modal { z-index: 5600; }
     .recovery-step-note { font-size: 0.78rem; color: var(--light-text); margin-bottom: 10px; line-height: 1.5; }
+
+    /* ☁️ Supabase クラウド連携モーダル */
+    .auth-modal-icon { text-align: center; font-size: 1.8rem; margin-bottom: 4px; }
+    .auth-modal-content h3 { text-align: center; }
+    .auth-submit-btn { width: 100%; margin-top: 6px; }
+    .auth-toggle-row { text-align: center; margin-top: 10px; font-size: 0.78rem; color: var(--light-text); }
+    .auth-toggle-link { color: var(--accent-pink); font-weight: bold; margin-left: 4px; text-decoration: underline; cursor: pointer; }
+    .cloud-status-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 0; }
+    .cloud-status-badge { font-size: 0.72rem; font-weight: bold; padding: 3px 10px; border-radius: 999px; }
+    .cloud-status-badge.online { background: #DCFCE7; color: #15803D; }
+    .cloud-status-badge.offline { background: #F1F5F9; color: #64748B; }
+    .cloud-logout-btn { background: #f1f1f1; color: #555; border: 1px solid var(--border-color); border-radius: 10px; padding: 6px 12px; font-size: 0.72rem; font-weight: bold; cursor: pointer; }
+
+    /* 🔘 スマートモード：クラウド連携UIもアンバー/フラット基調に統一 */
+    [data-ui-mode="smart"] .auth-submit-btn,
+    [data-ui-mode="smart"] .cloud-logout-btn { border-radius: 12px !important; }
+    [data-ui-mode="smart"] .cloud-status-badge { border-radius: 999px !important; font-weight: 700; }
+
     .recovery-error-msg { color: #e03131; font-size: 0.75rem; min-height: 1em; margin-top: 4px; }
     .fake-bag-body { font-size: 0.95rem; color: var(--text-color); text-align: center; padding: 20px 4px 24px; font-weight: bold; }
     .fake-bag-btn-row { display: flex; gap: 10px; }
@@ -1238,6 +1268,24 @@
         <button type="button" class="fake-bag-btn fake-bag-btn-no" onclick="closeFakeBagModal()">いいえ</button>
         <button type="button" class="fake-bag-btn fake-bag-btn-yes" onclick="closeFakeBagModal()">はい</button>
       </div>
+    </div>
+  </div>
+
+  <!-- ☁️ Supabase クラウド連携：ユーザー登録・ログインモーダル -->
+  <div class="modal-overlay auth-modal" id="authModal" style="z-index:7000;">
+    <div class="modal-content auth-modal-content" style="max-width:360px;">
+      <div class="auth-modal-icon">☁️</div>
+      <h3 id="authModalTitle">🔐 ログイン</h3>
+      <div class="recovery-step-note">ユーザー名とパスワードでログインすると、データがクラウドに自動保存・同期されます。</div>
+      <div class="form-group"><label>ユーザー名</label><input type="text" id="authUserName" placeholder="例: 童貞" autocomplete="username"></div>
+      <div class="form-group"><label>パスワード</label><input type="password" id="authPassword" placeholder="4文字以上" autocomplete="current-password"></div>
+      <div class="recovery-error-msg" id="authErrorMsg"></div>
+      <button type="button" class="close-btn auth-submit-btn" id="authSubmitBtn" onclick="handleAuthSubmit()">ログイン</button>
+      <div class="auth-toggle-row">
+        <span id="authToggleModeText">アカウントをお持ちでないですか？</span>
+        <a href="javascript:void(0)" onclick="toggleAuthMode()" id="authToggleModeLink" class="auth-toggle-link">新規登録</a>
+      </div>
+      <button type="button" class="close-btn" style="width:100%; margin-top:14px; background:#888;" onclick="skipCloudLogin()">オフラインのまま使う（ローカル保存のみ）</button>
     </div>
   </div>
 
@@ -1900,6 +1948,22 @@
             <button class="theme-item-btn" onclick="setTheme('jreast')">🚃 JR東日本風</button>
             <button class="theme-item-btn" onclick="setTheme('sakina')"><span class="theme-swatch-dot" style="background:linear-gradient(135deg, #e08b97, #b85c6c);"></span>SAKINA</button>
           </div>
+        </div>
+      </details>
+
+      <details class="settings-acc-card">
+        <summary class="settings-acc-summary">
+          <span class="settings-summary-label"><span class="icon-badge icon-cat-cloud icon-badge-sm"><span class="emoji-icon">☁️</span><i data-lucide="cloud" class="smart-icon"></i></span>クラウド同期（Supabase）</span>
+          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+        </summary>
+        <div class="settings-acc-body">
+          <div class="cloud-status-row">
+            <span class="cloud-status-badge" id="cloudStatusBadge">未ログイン</span>
+            <span id="cloudStatusUserName" style="font-size:0.75rem; color:var(--light-text);"></span>
+          </div>
+          <button type="button" class="close-btn" style="width:100%; margin-top:6px;" id="cloudLoginPromptBtn" onclick="openAuthModal()">🔐 ログイン / 新規登録</button>
+          <button type="button" class="cloud-logout-btn" style="width:100%; margin-top:6px; display:none;" id="cloudLogoutBtn" onclick="logoutCloud()">ログアウト</button>
+          <div class="sec-status-note" style="margin-top:6px;">ログインすると、記録・予定・キープ等のデータが自動でクラウドに同期されます。</div>
         </div>
       </details>
 
@@ -2877,6 +2941,170 @@
       if (keepsCountEl) keepsCountEl.innerText = keepsList.length;
     }
 
+    /* ==================================================================
+       ☁️ Supabase クラウド連携（ユーザー認証・自動同期）
+       ================================================================== */
+    const SUPABASE_URL = 'https://fjrlqjdfsdazqcveatak.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_em0l5kuNS02yfnK5eXeI7A_dEhXx4M9';
+    let supabaseClient = null;
+    try {
+      if (window.supabase && window.supabase.createClient) {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      }
+    } catch (err) {
+      console.log('Supabase初期化に失敗しました:', err);
+    }
+
+    let authMode = 'login'; // 'login' | 'signup'
+    let cloudSyncEnabled = false;
+    let cloudLoggedInUserName = localStorage.getItem('app_cloud_user') || '';
+    let cloudSyncTimer = null;
+
+    function initCloudAuth() {
+      if (cloudLoggedInUserName) {
+        cloudSyncEnabled = true;
+        updateCloudStatusUI();
+      } else {
+        openAuthModal();
+      }
+    }
+
+    function openAuthModal() {
+      document.getElementById('authErrorMsg').innerText = '';
+      document.getElementById('authModal').style.display = 'flex';
+      updateAuthModalUI();
+    }
+
+    function toggleAuthMode() {
+      authMode = authMode === 'login' ? 'signup' : 'login';
+      updateAuthModalUI();
+    }
+
+    function updateAuthModalUI() {
+      const isLogin = authMode === 'login';
+      document.getElementById('authModalTitle').innerText = isLogin ? '🔐 ログイン' : '🆕 ユーザー登録';
+      document.getElementById('authSubmitBtn').innerText = isLogin ? 'ログイン' : '登録する';
+      document.getElementById('authToggleModeText').innerText = isLogin ? 'アカウントをお持ちでないですか？' : 'すでにアカウントをお持ちですか？';
+      document.getElementById('authToggleModeLink').innerText = isLogin ? '新規登録' : 'ログイン';
+      document.getElementById('authErrorMsg').innerText = '';
+    }
+
+    function skipCloudLogin() {
+      closeModal('authModal');
+    }
+
+    function collectAllAppData() {
+      return { historyList, castData, storeInfoData, scheduleList, keepsList, sharedRecords };
+    }
+
+    function applyCloudData(data) {
+      if (!data) return;
+      historyList = data.historyList || [];
+      castData = data.castData || {};
+      storeInfoData = data.storeInfoData || {};
+      scheduleList = data.scheduleList || [];
+      keepsList = data.keepsList || [];
+      sharedRecords = data.sharedRecords || [];
+      historyList.forEach((h, i) => { h.originalIndex = i; if (!h.day) h.day = '1'; });
+      saveData();
+      render(); renderDashboard(); renderCalendar();
+      const keepsModal = document.getElementById('keepsListModal');
+      if (keepsModal && keepsModal.style.display === 'flex') renderKeepsList();
+    }
+
+    async function handleAuthSubmit() {
+      const name = document.getElementById('authUserName').value.trim();
+      const pw = document.getElementById('authPassword').value;
+      const errEl = document.getElementById('authErrorMsg');
+      errEl.innerText = '';
+
+      if (!name || !pw) { errEl.innerText = 'ユーザー名とパスワードを入力してください。'; return; }
+      if (pw.length < 4) { errEl.innerText = 'パスワードは4文字以上にしてください。'; return; }
+      if (!supabaseClient) { errEl.innerText = 'クラウド機能が利用できません（読み込みに失敗しました）。'; return; }
+
+      const pwHash = await sha256Hex(pw);
+
+      try {
+        if (authMode === 'signup') {
+          const { data: existing, error: checkErr } = await supabaseClient
+            .from('user_backups').select('user_name').eq('user_name', name).maybeSingle();
+          if (checkErr) throw checkErr;
+          if (existing) { errEl.innerText = 'このユーザー名はすでに使われています。'; return; }
+
+          const { error: insertErr } = await supabaseClient
+            .from('user_backups')
+            .insert({ user_name: name, password_hash: pwHash, data: collectAllAppData(), updated_at: new Date().toISOString() });
+          if (insertErr) throw insertErr;
+
+          finalizeCloudLogin(name);
+        } else {
+          const { data: row, error: fetchErr } = await supabaseClient
+            .from('user_backups').select('user_name, password_hash, data').eq('user_name', name).maybeSingle();
+          if (fetchErr) throw fetchErr;
+          if (!row || row.password_hash !== pwHash) { errEl.innerText = 'ユーザー名またはパスワードが違います。'; return; }
+
+          applyCloudData(row.data);
+          finalizeCloudLogin(name);
+        }
+      } catch (err) {
+        console.log('クラウド認証エラー:', err);
+        errEl.innerText = '通信エラーが発生しました。時間をおいて再度お試しください。';
+      }
+    }
+
+    function finalizeCloudLogin(name) {
+      cloudSyncEnabled = true;
+      cloudLoggedInUserName = name;
+      localStorage.setItem('app_cloud_user', name);
+      closeModal('authModal');
+      updateCloudStatusUI();
+      alert('クラウドログインしました！これ以降、データが自動的に同期されます。');
+    }
+
+    function logoutCloud() {
+      cloudSyncEnabled = false;
+      cloudLoggedInUserName = '';
+      localStorage.removeItem('app_cloud_user');
+      updateCloudStatusUI();
+      alert('ログアウトしました（ローカルのデータはそのまま残ります）。');
+    }
+
+    function updateCloudStatusUI() {
+      const badge = document.getElementById('cloudStatusBadge');
+      const nameEl = document.getElementById('cloudStatusUserName');
+      const loginBtn = document.getElementById('cloudLoginPromptBtn');
+      const logoutBtn = document.getElementById('cloudLogoutBtn');
+      if (!badge) return;
+      if (cloudSyncEnabled && cloudLoggedInUserName) {
+        badge.innerText = 'オンライン同期中';
+        badge.classList.remove('offline'); badge.classList.add('online');
+        nameEl.innerText = cloudLoggedInUserName;
+        loginBtn.style.display = 'none';
+        logoutBtn.style.display = 'block';
+      } else {
+        badge.innerText = '未ログイン';
+        badge.classList.remove('online'); badge.classList.add('offline');
+        nameEl.innerText = '';
+        loginBtn.style.display = 'block';
+        logoutBtn.style.display = 'none';
+      }
+    }
+
+    function syncDataToCloud() {
+      if (!cloudSyncEnabled || !supabaseClient || !cloudLoggedInUserName) return;
+      clearTimeout(cloudSyncTimer);
+      cloudSyncTimer = setTimeout(async () => {
+        try {
+          await supabaseClient
+            .from('user_backups')
+            .update({ data: collectAllAppData(), updated_at: new Date().toISOString() })
+            .eq('user_name', cloudLoggedInUserName);
+        } catch (err) {
+          console.log('クラウド同期に失敗しました:', err);
+        }
+      }, 800);
+    }
+
     function saveData() {
       localStorage.setItem('app_user_name', currentUserName);
       localStorage.setItem('user_hist_' + currentUserName, JSON.stringify(historyList));
@@ -2888,6 +3116,7 @@
       historyList.forEach((h, i) => h.originalIndex = i);
       updateUIHeader();
       updateSearchDatalist();
+      syncDataToCloud();
     }
 
     /* ==================================================================
@@ -5905,7 +6134,7 @@
       }
     }
     
-    function openSettingsModal() { document.getElementById('inputUserName').value = currentUserName; document.getElementById('settingsModal').style.display = 'flex'; updateSecuritySettingsUI(); document.getElementById('ratingEnabledToggle').checked = ratingEnabled; }
+    function openSettingsModal() { document.getElementById('inputUserName').value = currentUserName; document.getElementById('settingsModal').style.display = 'flex'; updateSecuritySettingsUI(); document.getElementById('ratingEnabledToggle').checked = ratingEnabled; updateCloudStatusUI(); }
     function openHelpModal() { document.getElementById('helpModal').style.display = 'flex'; }
     
     function applyTheme(t) {
@@ -6257,6 +6486,7 @@
 
     initAppLock();
     initUserData();
+    initCloudAuth();
   </script>
 </body>
 </html>
