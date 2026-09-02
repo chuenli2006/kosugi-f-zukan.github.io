@@ -3048,7 +3048,8 @@
         }
       } catch (err) {
         console.log('クラウド認証エラー:', err);
-        errEl.innerText = '通信エラーが発生しました。時間をおいて再度お試しください。';
+        const detail = (err && (err.message || err.error_description || err.hint || err.details)) || '';
+        errEl.innerText = '通信エラーが発生しました。' + (detail ? `（詳細: ${detail}）` : '時間をおいて再度お試しください。');
       }
     }
 
