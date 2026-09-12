@@ -232,100 +232,6 @@
     }
 
     .home-top-panel { position: relative; z-index: 2; width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
-    /* ==================================================================
-       🌐 コミュニティタイムライン・伏字アンロック・バッジ・フォロー機能
-       ================================================================== */
-    .home-subtab-row { display: flex; gap: 6px; margin-bottom: 10px; width: 100%; }
-    .home-subtab {
-      flex: 1; padding: 9px 6px; border-radius: 12px; border: 1.5px solid var(--border-color);
-      background: var(--card-bg); color: var(--light-text); font-size: 0.76rem; font-weight: bold; cursor: pointer;
-    }
-    .home-subtab.active { background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink)); color: #fff; border-color: transparent; }
-    .home-subview { display: none; }
-    .home-subview.active { display: block; }
-
-    .profile-badge-row { display: flex; flex-wrap: wrap; gap: 6px; width: 100%; margin-bottom: 2px; }
-    .profile-badge-chip {
-      display: inline-flex; align-items: center; gap: 4px; background: var(--soft-pink); color: var(--accent-pink);
-      border: 1px solid var(--primary-pink); border-radius: 999px; padding: 3px 10px; font-size: 0.68rem; font-weight: bold;
-    }
-    .profile-badge-empty { font-size: 0.72rem; color: var(--light-text); }
-
-    /* --- 投稿カード（X風） --- */
-    .post-card {
-      display: flex; flex-direction: column; gap: 8px; background: var(--card-bg);
-      border: 1px solid var(--border-color); border-radius: 16px; padding: 12px 14px;
-      margin-bottom: 10px; box-shadow: var(--shadow);
-    }
-    .post-card-header { display: flex; align-items: center; gap: 8px; }
-    .post-avatar {
-      width: 38px; height: 38px; border-radius: 50%; background: var(--soft-pink);
-      display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0;
-    }
-    .post-user-info { flex: 1; min-width: 0; }
-    .post-user-name-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-    .post-user-name { font-weight: bold; font-size: 0.85rem; color: var(--text-color); }
-    .post-badges-inline { display: flex; gap: 3px; }
-    .post-badge-mini { font-size: 0.7rem; }
-    .post-meta-line { font-size: 0.68rem; color: var(--light-text); }
-    .post-follow-btn {
-      flex-shrink: 0; font-size: 0.68rem; font-weight: bold; padding: 5px 12px; border-radius: 999px;
-      border: 1.5px solid var(--primary-pink); background: var(--card-bg); color: var(--accent-pink); cursor: pointer;
-    }
-    .post-follow-btn.following { background: var(--bg-color); color: var(--light-text); border-color: var(--border-color); }
-
-    .post-tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
-    .post-tag { font-size: 0.68rem; font-weight: bold; padding: 2px 9px; border-radius: 999px; background: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); }
-    .post-tag-area { background: #E0F2FE; color: #0284C7; border-color: transparent; }
-    .post-tag-category { background: #F3E8FF; color: #7E22CE; border-color: transparent; }
-    .post-tag-score { background: #FFF9E6; color: #A16207; border-color: transparent; }
-
-    .post-masked-header {
-      display: flex; align-items: center; justify-content: space-between; gap: 8px;
-      background: repeating-linear-gradient(135deg, #f1f1f1, #f1f1f1 6px, #e8e8e8 6px, #e8e8e8 12px);
-      border: 1px dashed #bbb; border-radius: 10px; padding: 10px 12px;
-    }
-    .post-masked-text { font-size: 0.75rem; font-weight: bold; color: #888; filter: blur(0.3px); -webkit-user-select: none; user-select: none; }
-    .post-unlock-btn {
-      flex-shrink: 0; background: linear-gradient(135deg, #FFD700, #FFA500); color: #5c3d00;
-      border: none; border-radius: 999px; padding: 7px 14px; font-size: 0.72rem; font-weight: bold; cursor: pointer;
-      box-shadow: 0 2px 8px rgba(255,165,0,0.4);
-    }
-    .post-unlocked-header {
-      display: flex; flex-direction: column; gap: 2px; background: var(--soft-pink); border-radius: 10px; padding: 10px 12px;
-    }
-    .post-unlocked-name { font-weight: bold; font-size: 0.85rem; color: var(--accent-pink); }
-    .post-unlocked-store { font-size: 0.75rem; color: var(--text-color); }
-    .post-import-row { display: flex; gap: 6px; margin-top: 4px; }
-    .post-import-btn {
-      flex: 1; font-size: 0.7rem; font-weight: bold; padding: 7px 6px; border-radius: 10px;
-      border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); cursor: pointer;
-    }
-
-    .post-note-text { font-size: 0.82rem; color: var(--text-color); line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
-    .post-empty-note { text-align: center; color: var(--light-text); font-size: 0.82rem; padding: 30px 10px; }
-
-    /* --- うっすいフローティングトースト（unlocked等） --- */
-    .app-toast {
-      position: fixed; left: 50%; bottom: 110px; transform: translateX(-50%) translateY(10px);
-      background: rgba(0,0,0,0.72); color: #fff; font-size: 0.78rem; font-weight: bold;
-      padding: 8px 18px; border-radius: 999px; z-index: 9000; opacity: 0; pointer-events: none;
-      transition: opacity 0.25s ease, transform 0.25s ease; white-space: nowrap;
-    }
-    .app-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-    /* --- NGワード警告ダイアログ --- */
-    .ng-warning-icon { font-size: 2rem; text-align: center; margin-bottom: 6px; }
-    .ng-warning-text { font-size: 0.85rem; color: var(--text-color); text-align: center; font-weight: bold; margin-bottom: 6px; }
-    .ng-warning-sub { font-size: 0.72rem; color: var(--light-text); text-align: center; }
-
-    /* 🔘 スマートモード：投稿カード・バッジ類をフラット化 */
-    [data-ui-mode="smart"] .post-tag,
-    [data-ui-mode="smart"] .profile-badge-chip,
-    [data-ui-mode="smart"] .post-follow-btn,
-    [data-ui-mode="smart"] .post-unlock-btn { border-radius: 999px !important; font-weight: 700; }
-    [data-ui-mode="smart"] .post-card { border-radius: 12px; }
-
     .home-card-a { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 12px 16px; box-shadow: var(--shadow); backdrop-filter: blur(8px); }
     [data-theme="midnight"] .home-card-a, [data-theme="velvet"] .home-card-a, [data-theme="cyber"] .home-card-a { background: rgba(26,26,36,0.85); }
     .home-card-b { background: linear-gradient(135deg, var(--soft-pink), var(--card-bg)); border: 1.5px dashed var(--primary-pink); border-radius: var(--radius); padding: 10px 16px; text-align: center; box-shadow: var(--shadow); }
@@ -670,6 +576,20 @@
       flex-direction: column;
       gap: 6px;
       background: linear-gradient(135deg, var(--soft-pink), var(--card-bg));
+      position: relative;
+      overflow: hidden;
+    }
+    summary.store-fold-summary .store-web-preview-img {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; object-position: center; z-index: 0;
+    }
+    summary.store-fold-summary .store-preview-overlay {
+      position: absolute; inset: 0; z-index: 1;
+      background: linear-gradient(135deg, var(--soft-pink) 0%, var(--soft-pink) 32%, rgba(255,255,255,0.55) 58%, rgba(255,255,255,0.3) 100%);
+    }
+    summary.store-fold-summary > .store-summary-head,
+    summary.store-fold-summary > .store-summary-meta {
+      position: relative; z-index: 2;
     }
     summary.store-fold-summary::-webkit-details-marker { display: none; }
     
@@ -998,22 +918,6 @@
     [data-ui-mode="excel"] .close-btn { border-radius: 3px !important; }
     [data-ui-mode="excel"] .keep-star-badge,
     [data-ui-mode="excel"] .cloud-status-badge { border-radius: 3px !important; }
-
-    /* 📊 通勤中モード：NGワード警告を「Excelエラーダイアログ」風に */
-    [data-ui-mode="excel"] #ngWarningModal .modal-content.ng-warning-content {
-      border: 1px solid #888; border-radius: 2px; box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-      padding: 0; overflow: hidden;
-    }
-    [data-ui-mode="excel"] #ngWarningModal .ng-warning-icon {
-      background: #f3f2f1; margin: 0; padding: 8px 12px; text-align: left; font-size: 1rem;
-      border-bottom: 1px solid #d4d4d4;
-    }
-    [data-ui-mode="excel"] #ngWarningModal .ng-warning-icon::before { content: '⚠ Microsoft Excel'; font-size: 0.78rem; font-weight: bold; color: #333; }
-    [data-ui-mode="excel"] #ngWarningModal .ng-warning-icon { font-size: 0; }
-    [data-ui-mode="excel"] #ngWarningModal .ng-warning-text,
-    [data-ui-mode="excel"] #ngWarningModal .ng-warning-sub { padding-left: 16px; padding-right: 16px; text-align: left; }
-    [data-ui-mode="excel"] #ngWarningModal .ng-warning-text { margin-top: 10px; }
-    [data-ui-mode="excel"] #ngWarningModal .close-btn { margin: 12px 16px 16px !important; width: calc(100% - 32px) !important; background: #107C41 !important; }
 
     .xl-chart-area { display: flex; flex-wrap: wrap; gap: 14px; padding: 16px; background: #fafafa; }
     .xl-chart-window {
@@ -1433,7 +1337,6 @@
       <span class="xl-sheet-tab" id="xlSheetTab2" onclick="switchExcelSheet(2)">Sheet2（カレンダー）</span>
       <span class="xl-sheet-tab" id="xlSheetTab3" onclick="switchExcelSheet(3)">Sheet3（集計）</span>
       <span class="xl-sheet-tab" id="xlSheetTab4" onclick="switchExcelSheet(4)">Sheet4（検討リスト）</span>
-      <span class="xl-sheet-tab" id="xlSheetTab5" onclick="switchExcelSheet(5)">Sheet5（共有ログ）</span>
     </div>
     <div class="xl-status-bar">
       <span class="xl-status-left" id="xlStatusLeft">準備完了</span>
@@ -1503,19 +1406,9 @@
     <main class="content-area">
       <!-- 1. ホーム画面 -->
       <div id="viewHome" class="active">
-        <div class="home-subtab-row">
-          <button class="home-subtab active" id="homeSubtabProfile" onclick="switchHomeSubtab('profile')">👤 マイページ</button>
-          <button class="home-subtab" id="homeSubtabTimeline" onclick="switchHomeSubtab('timeline')">🌐 タイムライン</button>
-          <button class="home-subtab" id="homeSubtabFollowing" onclick="switchHomeSubtab('following')">⭐ フォロー中</button>
-        </div>
-
-        <div id="homeSubviewProfile" class="home-subview active">
         <div class="floating-container" id="homeFloatingArea"></div>
 
         <div class="home-top-panel">
-          <!-- 🏅 バッジ実績エリア -->
-          <div class="profile-badge-row" id="profileBadgeRow"></div>
-
           <!-- 🔔 アクション通知エリア -->
           <div id="homeActionCardsContainer" style="display:none; flex-direction:column; gap:8px; width:100%;"></div>
 
@@ -1542,16 +1435,6 @@
             <div style="font-size: 0.72rem; color: var(--light-text); font-weight: bold; margin-bottom: 2px;">次回の予定</div>
             <div style="font-size: 0.95rem; font-weight: bold; color: var(--accent-pink);" id="homeNextVisitText">次はいつイクのー？♡</div>
           </div>
-        </div>
-        </div>
-
-        <div id="homeSubviewTimeline" class="home-subview" style="display:none;">
-          <button type="button" class="close-btn" style="width:100%; margin-bottom:10px;" onclick="openPostComposerModal()">✏️ コミュニティに投稿する</button>
-          <div id="timelinePostsContainer"></div>
-        </div>
-
-        <div id="homeSubviewFollowing" class="home-subview" style="display:none;">
-          <div id="followingPostsContainer"></div>
         </div>
       </div>
 
@@ -1978,45 +1861,6 @@
           <button type="submit" class="close-btn" style="flex:2;">💾 キープに保存</button>
         </div>
       </form>
-    </div>
-  </div>
-
-  <!-- 🌐 コミュニティ投稿モーダル -->
-  <div class="modal-overlay" id="postComposerModal">
-    <div class="modal-content">
-      <h3>✏️ コミュニティに投稿する</h3>
-      <div class="recovery-step-note">キャスト名・店舗名・プロフURLは、プレミアム限定データとして無料ユーザーには伏字表示されます。エリア・業種・メモは全員に公開されます。</div>
-      <form class="add-form" onsubmit="submitPost(event)">
-        <div class="form-group"><label>エリア（例: 渋谷）</label><input type="text" id="postArea" placeholder="例: 渋谷" required></div>
-        <div class="form-group"><label>業種</label>
-          <select id="postCategory">
-            <option value="デリヘル">デリヘル</option>
-            <option value="ホテヘル">ホテヘル</option>
-            <option value="ソープ">ソープ</option>
-            <option value="箱ヘル">箱ヘル</option>
-            <option value="風俗エステ">風俗エステ</option>
-            <option value="その他">その他</option>
-          </select>
-        </div>
-        <div class="form-group"><label>🔒 キャスト名（プレミアム限定）</label><input type="text" id="postCastName" placeholder="例: ゆあ" required></div>
-        <div class="form-group"><label>🔒 店舗名（プレミアム限定）</label><input type="text" id="postStoreName" placeholder="例: ○○ヘルス 渋谷店" required></div>
-        <div class="form-group"><label>🔒 プロフURL（プレミアム限定・任意）</label><input type="url" id="postProfileUrl" placeholder="https://..."></div>
-        <div class="form-group"><label>メモ・レポート（公開）</label><textarea id="postNote" rows="4" placeholder="感想やレポートを書こう（個人情報・違法な内容はNGです）" required></textarea></div>
-        <div style="display:flex; gap:8px; margin-top:4px;">
-          <button type="button" class="close-btn" style="background:#888; flex:1;" onclick="closeModal('postComposerModal')">キャンセル</button>
-          <button type="submit" class="close-btn" style="flex:2;">📤 投稿する</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- ⚠️ NGワード・ガイドライン違反警告モーダル -->
-  <div class="modal-overlay" id="ngWarningModal">
-    <div class="modal-content ng-warning-content" style="max-width:320px;">
-      <div class="ng-warning-icon">⚠️</div>
-      <div class="ng-warning-text">ガイドライン違反の表現が含まれています</div>
-      <div class="ng-warning-sub">違法行為を示唆する表現、電話番号・メールアドレス・LINE IDなどの個人情報、誹謗中傷・脅迫的な表現は投稿できません。内容を見直してください。</div>
-      <button type="button" class="close-btn" style="width:100%; margin-top:14px;" onclick="closeModal('ngWarningModal')">修正する</button>
     </div>
   </div>
 
@@ -3099,7 +2943,6 @@
       setInterval(checkNotifications, 30000);
       checkNotifications();
       checkShareTargetParams();
-      renderProfileBadges();
     }
 
     function updateUIHeader() {
@@ -3135,7 +2978,6 @@
       if (cloudLoggedInUserName) {
         cloudSyncEnabled = true;
         updateCloudStatusUI();
-        fetchCommunityPostsFromCloud();
       } else {
         openAuthModal();
       }
@@ -3231,7 +3073,6 @@
       localStorage.setItem('app_cloud_user', name);
       closeModal('authModal');
       updateCloudStatusUI();
-      fetchCommunityPostsFromCloud();
       alert('クラウドログインしました！これ以降、データが自動的に同期されます。');
     }
 
@@ -3421,339 +3262,6 @@
       });
 
       history.replaceState(null, '', window.location.pathname);
-    }
-
-    /* ==================================================================
-       🌐 コミュニティタイムライン・伏字アンロック・バッジ・フォロー機能
-       ================================================================== */
-    let communityPosts = JSON.parse(localStorage.getItem('community_posts') || '[]');
-    let followingUsers = JSON.parse(localStorage.getItem('following_users') || '[]');
-    let isPremiumUser = localStorage.getItem('app_is_premium') === 'true';
-
-    /* --- 🛡️ XSS・制御文字対策 --- */
-    function escapeHTML(str) {
-      if (str === null || str === undefined) return '';
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;')
-        .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
-    }
-
-    /* --- 🚫 NGワード・違法行為・個人情報フィルター --- */
-    const NG_WORD_LIST = [
-      '本番', '挿入', '生挿入', '中出し', '基盤', 'nn/ns', 'ns/nn',
-      'ライン交換', 'LINE交換', 'ラインID', 'ライン ID'
-    ];
-    const NG_REGEX_LIST = [
-      /0\d{1,4}[-‐ー\s]?\d{1,4}[-‐ー\s]?\d{3,4}/,      // 電話番号らしきパターン
-      /[\w.+-]+@[\w-]+\.[a-zA-Z]{2,}/,                  // メールアドレス
-      /死ね|殺す|ぶっ殺|晒す|バラす|通報するぞ|住所特定/    // 誹謗中傷・脅迫
-    ];
-    function containsNGWord(text) {
-      if (!text) return false;
-      const lower = String(text).toLowerCase();
-      if (NG_WORD_LIST.some(w => lower.includes(w.toLowerCase()))) return true;
-      if (NG_REGEX_LIST.some(r => r.test(text))) return true;
-      return false;
-    }
-
-    /* --- 🍞 うっすいフローティングトースト --- */
-    function showAppToast(message) {
-      let toast = document.getElementById('appToast');
-      if (!toast) {
-        toast = document.createElement('div');
-        toast.id = 'appToast';
-        toast.className = 'app-toast';
-        document.body.appendChild(toast);
-      }
-      toast.textContent = message;
-      toast.classList.add('show');
-      clearTimeout(window._appToastTimer);
-      window._appToastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
-    }
-
-    /* --- ⚠️ ガイドライン違反ダイアログ（表示モード対応） --- */
-    function showNGWarningModal() {
-      document.getElementById('ngWarningModal').style.display = 'flex';
-    }
-
-    /* --- 🏅 バッジ実績システム --- */
-    function computeUserBadges() {
-      const badges = [];
-      const uniquePrefs = new Set();
-      historyList.forEach(v => {
-        const info = storeInfoData[v.storeName];
-        if (info && info.pref) uniquePrefs.add(info.pref);
-      });
-      const uniqueStores = new Set(historyList.map(v => v.storeName).filter(Boolean)).size;
-      const totalRecords = historyList.length;
-      const myName = cloudLoggedInUserName || currentUserName;
-      const ownPostCount = communityPosts.filter(p => p.userName === myName).length;
-
-      if (uniquePrefs.size >= 10) badges.push({ id: 'explorer', emoji: '🗺️', label: '開拓王' });
-      else if (uniquePrefs.size >= 5) badges.push({ id: 'explorer_jr', emoji: '🧭', label: '開拓者' });
-
-      if (totalRecords >= 100) badges.push({ id: 'master', emoji: '👑', label: '極めし者' });
-      else if (totalRecords >= 30) badges.push({ id: 'veteran', emoji: '⚔️', label: '猛者' });
-
-      if (uniqueStores >= 20) badges.push({ id: 'store_master', emoji: '🏬', label: '店舗マスター' });
-
-      if (ownPostCount >= 10) badges.push({ id: 'reporter_gold', emoji: '📰', label: 'ゴールドレポーター' });
-      else if (ownPostCount >= 1) badges.push({ id: 'reporter', emoji: '📝', label: 'レポーター' });
-
-      return badges;
-    }
-
-    function renderProfileBadges() {
-      const el = document.getElementById('profileBadgeRow');
-      if (!el) return;
-      const badges = computeUserBadges();
-      el.innerHTML = badges.length === 0
-        ? '<span class="profile-badge-empty">まだバッジがありません。記録や投稿を続けて実績を解除しよう！</span>'
-        : badges.map(b => `<span class="profile-badge-chip">${b.emoji} ${escapeHTML(b.label)}</span>`).join('');
-    }
-
-    /* --- 🗂️ ホーム内サブタブ切り替え --- */
-    function switchHomeSubtab(tab) {
-      const tabs = { profile: 'Profile', timeline: 'Timeline', following: 'Following' };
-      Object.keys(tabs).forEach(t => {
-        const btn = document.getElementById('homeSubtab' + tabs[t]);
-        const view = document.getElementById('homeSubview' + tabs[t]);
-        if (btn) btn.classList.toggle('active', t === tab);
-        if (view) view.style.display = (t === tab) ? 'block' : 'none';
-      });
-      if (tab === 'profile') renderProfileBadges();
-      if (tab === 'timeline') renderTimeline();
-      if (tab === 'following') renderFollowingTimeline();
-    }
-
-    /* --- ✏️ 投稿の作成 --- */
-    function openPostComposerModal() {
-      document.getElementById('postArea').value = '';
-      document.getElementById('postCategory').value = 'デリヘル';
-      document.getElementById('postCastName').value = '';
-      document.getElementById('postStoreName').value = '';
-      document.getElementById('postProfileUrl').value = '';
-      document.getElementById('postNote').value = '';
-      document.getElementById('postComposerModal').style.display = 'flex';
-    }
-
-    function submitPost(e) {
-      e.preventDefault();
-      const area = document.getElementById('postArea').value.trim();
-      const category = document.getElementById('postCategory').value;
-      const castName = document.getElementById('postCastName').value.trim();
-      const storeName = document.getElementById('postStoreName').value.trim();
-      const profileUrl = document.getElementById('postProfileUrl').value.trim();
-      const note = document.getElementById('postNote').value.trim();
-
-      if (!area || !castName || !storeName || !note) {
-        alert('エリア・キャスト名・店舗名・メモは必須です。');
-        return;
-      }
-
-      const allText = [area, category, castName, storeName, note].join(' ');
-      if (containsNGWord(allText)) {
-        showNGWarningModal();
-        return;
-      }
-
-      const myName = cloudLoggedInUserName || currentUserName;
-      const post = {
-        id: 'post_' + Date.now(),
-        userName: myName,
-        badges: computeUserBadges(),
-        area, category,
-        scores: ratingEnabled ? { looks: 3, service: 3, style: 3, intimacy: 3, value: 3 } : null,
-        note,
-        castName, storeName, profileUrl,
-        createdAt: new Date().toISOString()
-      };
-
-      communityPosts.push(post);
-      localStorage.setItem('community_posts', JSON.stringify(communityPosts));
-      syncPostToCloud(post);
-
-      closeModal('postComposerModal');
-      showAppToast('投稿しました！');
-      renderTimeline();
-      renderProfileBadges();
-    }
-
-    /* --- 🌐 タイムライン描画 --- */
-    function renderTimeline() {
-      const container = document.getElementById('timelinePostsContainer');
-      if (!container) return;
-      const list = communityPosts.slice().reverse();
-      if (list.length === 0) {
-        container.innerHTML = '<div class="post-empty-note">まだ投稿がありません。最初の投稿をしてみましょう！</div>';
-        return;
-      }
-      container.innerHTML = list.map(p => buildPostCardHtml(p)).join('');
-      if (window.lucide) lucide.createIcons();
-    }
-
-    function renderFollowingTimeline() {
-      const container = document.getElementById('followingPostsContainer');
-      if (!container) return;
-      const list = communityPosts.filter(p => followingUsers.includes(p.userName)).slice().reverse();
-      if (list.length === 0) {
-        container.innerHTML = '<div class="post-empty-note">フォロー中のユーザーの投稿がまだありません。タイムラインで気になる人をフォローしてみましょう。</div>';
-        return;
-      }
-      container.innerHTML = list.map(p => buildPostCardHtml(p)).join('');
-      if (window.lucide) lucide.createIcons();
-    }
-
-    function buildPostCardHtml(p) {
-      const myName = cloudLoggedInUserName || currentUserName;
-      const isOwnPost = p.userName === myName;
-      const following = followingUsers.includes(p.userName);
-      const dateStr = new Date(p.createdAt).toLocaleDateString('ja-JP');
-      const badgesHtml = (p.badges || []).slice(0, 3).map(b => `<span class="post-badge-mini" title="${escapeHTML(b.label)}">${b.emoji}</span>`).join('');
-
-      const headerHtml = (isPremiumUser || isOwnPost)
-        ? `<div class="post-unlocked-header">
-             <div class="post-unlocked-name">🌸 ${escapeHTML(p.castName)}</div>
-             <div class="post-unlocked-store">🏬 ${escapeHTML(p.storeName)}</div>
-             <div class="post-import-row">
-               <button type="button" class="post-import-btn" onclick="importPostToMyZukan('${p.id}')">📖 マイ図鑑へ</button>
-               <button type="button" class="post-import-btn" onclick="importPostToKeep('${p.id}')">🌟 キープへ</button>
-             </div>
-           </div>`
-        : `<div class="post-masked-header">
-             <span class="post-masked-text">🔒 プレミアム限定データ（店舗・キャスト名）</span>
-             <button type="button" class="post-unlock-btn" onclick="unlockPremium()">✨ アンロック</button>
-           </div>`;
-
-      return `
-        <div class="post-card">
-          <div class="post-card-header">
-            <div class="post-avatar">🧑</div>
-            <div class="post-user-info">
-              <div class="post-user-name-row">
-                <span class="post-user-name">${escapeHTML(p.userName)}</span>
-                <span class="post-badges-inline">${badgesHtml}</span>
-              </div>
-              <div class="post-meta-line">${dateStr}</div>
-            </div>
-            ${isOwnPost ? '' : `<button type="button" class="post-follow-btn ${following ? 'following' : ''}" onclick="toggleFollow('${escapeHTML(p.userName).replace(/'/g,"\\'")}')">${following ? 'フォロー中' : 'フォロー'}</button>`}
-          </div>
-          <div class="post-tag-row">
-            <span class="post-tag post-tag-area">📍 ${escapeHTML(p.area)}</span>
-            <span class="post-tag post-tag-category">🏷️ ${escapeHTML(p.category)}</span>
-          </div>
-          ${headerHtml}
-          <div class="post-note-text">${escapeHTML(p.note)}</div>
-        </div>`;
-    }
-
-    /* --- ✨ 疑似プレミアムアンロック（課金未実装のため即時反映） --- */
-    function unlockPremium() {
-      isPremiumUser = true;
-      localStorage.setItem('app_is_premium', 'true');
-      showAppToast('unlocked');
-      renderTimeline();
-      renderFollowingTimeline();
-    }
-
-    /* --- 📖🌟 投稿からのデータ取り込み --- */
-    function importPostToMyZukan(postId) {
-      const p = communityPosts.find(x => x.id === postId);
-      if (!p) return;
-      closeModal('postComposerModal');
-      openAddModal();
-      document.getElementById('addName').value = p.castName || '';
-      document.getElementById('addStoreName').value = p.storeName || '';
-      if (p.profileUrl) document.getElementById('addLink').value = p.profileUrl;
-      showAppToast('マイ図鑑への追加フォームを開きました');
-    }
-
-    function importPostToKeep(postId) {
-      const p = communityPosts.find(x => x.id === postId);
-      if (!p) return;
-      openKeepAddModal({
-        castName: p.castName || '',
-        storeName: p.storeName || '',
-        link: p.profileUrl || '',
-        phone: '',
-        memo: p.note || ''
-      });
-      showAppToast('キープに取り込みました');
-    }
-
-    /* --- ⭐ フォロー機能 --- */
-    function toggleFollow(userName) {
-      const idx = followingUsers.indexOf(userName);
-      if (idx >= 0) followingUsers.splice(idx, 1);
-      else followingUsers.push(userName);
-      localStorage.setItem('following_users', JSON.stringify(followingUsers));
-      syncFollowToCloud(userName, idx < 0);
-      renderTimeline();
-      renderFollowingTimeline();
-    }
-
-    /* --- ☁️ Supabase連携（コミュニティ投稿・フォロー） --- */
-    async function syncPostToCloud(post) {
-      if (!cloudSyncEnabled || !supabaseClient) return;
-      try {
-        await supabaseClient.from('community_reports').insert({
-          user_name: post.userName,
-          area: post.area,
-          category: post.category,
-          visit_date: new Date().toISOString().slice(0, 10),
-          tags: [],
-          scores: post.scores || {},
-          note: post.note,
-          cast_name: post.castName,
-          store_name: post.storeName,
-          profile_url: post.profileUrl || null
-        });
-      } catch (err) {
-        console.log('コミュニティ投稿のクラウド同期に失敗しました:', err);
-      }
-    }
-
-    async function syncFollowToCloud(targetUserName, isNowFollowing) {
-      if (!cloudSyncEnabled || !supabaseClient) return;
-      try {
-        const myName = cloudLoggedInUserName;
-        if (!myName) return;
-        if (isNowFollowing) {
-          await supabaseClient.from('user_follows').insert({ follower_name: myName, following_name: targetUserName });
-        } else {
-          await supabaseClient.from('user_follows').delete().eq('follower_name', myName).eq('following_name', targetUserName);
-        }
-      } catch (err) {
-        console.log('フォロー情報のクラウド同期に失敗しました:', err);
-      }
-    }
-
-    async function fetchCommunityPostsFromCloud() {
-      if (!cloudSyncEnabled || !supabaseClient) return;
-      try {
-        const { data, error } = await supabaseClient
-          .from('community_reports')
-          .select('*')
-          .order('created_at', { ascending: true })
-          .limit(200);
-        if (error) throw error;
-        if (!data) return;
-        communityPosts = data.map(row => ({
-          id: row.id, userName: row.user_name, badges: [],
-          area: row.area, category: row.category, scores: row.scores,
-          note: row.note, castName: row.cast_name, storeName: row.store_name,
-          profileUrl: row.profile_url, createdAt: row.created_at
-        }));
-        localStorage.setItem('community_posts', JSON.stringify(communityPosts));
-        renderTimeline();
-        renderFollowingTimeline();
-      } catch (err) {
-        console.log('コミュニティ投稿の取得に失敗しました:', err);
-      }
     }
 
     function saveDateFormat(val) {
@@ -5390,8 +4898,14 @@
         const details = document.createElement('details');
         details.className = 'store-card-fold';
 
+        const webPreviewHtml = webUrl
+          ? `<img class="store-web-preview-img" data-web-url="${webUrl.replace(/"/g,'&quot;')}" style="display:none;" alt="">
+             <div class="store-preview-overlay"></div>`
+          : '';
+
         details.innerHTML = `
           <summary class="store-fold-summary">
+            ${webPreviewHtml}
             <div class="store-summary-head">
               <div class="store-summary-title">
                 <span class="arrow-icon">▼</span> 🏬 ${s.storeName}
@@ -5432,7 +4946,91 @@
       });
 
       target.appendChild(container);
+      loadStoreWebPreviews();
     }
+
+    /* 🌐 店舗サイトの画像を取得して背景に設置（og:image → 本文中の画像 → スクリーンショットの順に試行） */
+    function extractContentImage(doc, pageUrl) {
+      const imgs = Array.from(doc.querySelectorAll('img'));
+      const candidates = imgs.filter(img => {
+        const src = img.getAttribute('data-src') || img.getAttribute('data-original') || img.getAttribute('src') || '';
+        if (!src || src.startsWith('data:')) return false;
+        const lower = src.toLowerCase();
+        if (/logo|icon|favicon|spacer|blank|pixel|banner_ad|btn_/.test(lower)) return false;
+        if (lower.endsWith('.svg') || lower.endsWith('.gif')) return false;
+        const w = parseInt(img.getAttribute('width') || '0', 10);
+        const h = parseInt(img.getAttribute('height') || '0', 10);
+        if ((w && w < 100) || (h && h < 100)) return false;
+        return true;
+      });
+      if (candidates.length === 0) return null;
+      const src = candidates[0].getAttribute('data-src') || candidates[0].getAttribute('data-original') || candidates[0].getAttribute('src');
+      try { return new URL(src, pageUrl).href; } catch (e) { return null; }
+    }
+
+    async function fetchOgImage(pageUrl) {
+      const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(pageUrl);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
+      try {
+        const res = await fetch(proxyUrl, { signal: controller.signal });
+        clearTimeout(timeoutId);
+        if (!res.ok) return null;
+        const html = await res.text();
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+
+        const ogTag = doc.querySelector('meta[property="og:image"]')
+          || doc.querySelector('meta[property="og:image:url"]')
+          || doc.querySelector('meta[name="twitter:image"]');
+        const rawUrl = ogTag ? ogTag.getAttribute('content') : null;
+        if (rawUrl) {
+          try { return new URL(rawUrl, pageUrl).href; } catch (e) { /* フォールスルーして次を試す */ }
+        }
+
+        // og:image が無いサイト（アダルト系サイトに多い）向けに、本文中の画像を探す
+        const contentImage = extractContentImage(doc, pageUrl);
+        if (contentImage) return contentImage;
+
+        return null;
+      } catch (err) {
+        clearTimeout(timeoutId);
+        console.log('店舗サイトの画像取得に失敗しました:', pageUrl, err);
+        return null;
+      }
+    }
+
+    function loadStoreWebPreviews() {
+      document.querySelectorAll('.store-web-preview-img[data-web-url]').forEach(imgEl => {
+        if (imgEl.dataset.previewLoading) return;
+        imgEl.dataset.previewLoading = 'true';
+        const webUrl = imgEl.getAttribute('data-web-url');
+        const overlayEl = imgEl.nextElementSibling;
+
+        const showImage = (url) => {
+          imgEl.src = url;
+          imgEl.style.display = 'block';
+        };
+
+        const fallbackToScreenshot = () => {
+          // 最終手段：og:image も本文画像も見つからない場合は、ページ全体のスクリーンショットを表示
+          imgEl.onerror = () => {
+            imgEl.style.display = 'none';
+            if (overlayEl) overlayEl.style.background = '';
+          };
+          showImage('https://image.thum.io/get/width/500/noanimate/' + encodeURIComponent(webUrl));
+        };
+
+        fetchOgImage(webUrl).then(imageUrl => {
+          if (imageUrl) {
+            imgEl.onerror = fallbackToScreenshot;
+            showImage(imageUrl);
+          } else {
+            fallbackToScreenshot();
+          }
+        });
+      });
+    }
+
 
     /* 🏬 店舗情報ダイレクト編集モーダル制御 */
     function openEditStoreInfoModal(event, storeName) {
@@ -6709,7 +6307,7 @@
 
     function switchExcelSheet(n) {
       currentExcelSheet = n;
-      [1, 2, 3, 4, 5].forEach(i => {
+      [1, 2, 3, 4].forEach(i => {
         const tab = document.getElementById('xlSheetTab' + i);
         if (tab) tab.classList.toggle('active', i === n);
       });
@@ -6744,31 +6342,7 @@
       if (currentExcelSheet === 1) renderExcelSheet1(wrap);
       else if (currentExcelSheet === 2) renderExcelSheet2(wrap);
       else if (currentExcelSheet === 3) renderExcelSheet3(wrap);
-      else if (currentExcelSheet === 4) renderExcelSheet4(wrap);
-      else renderExcelSheet5(wrap);
-    }
-
-    function renderExcelSheet5(wrap) {
-      const cols = ['A', 'B', 'C', 'D', 'E'];
-      const headers = ['投稿者', 'エリア', '業種', '担当者/コード', '拠点'];
-      let html = `<table class="xl-table"><tr><th class="xl-corner-cell"></th>${cols.map(c => `<th class="xl-col-header">${c}</th>`).join('')}</tr>`;
-      html += `<tr><td class="xl-row-header">1</td>${headers.map(h => `<td class="xl-cell xl-header-row-cell">${h}</td>`).join('')}</tr>`;
-
-      communityPosts.forEach((p, idx) => {
-        const rowNum = idx + 2;
-        html += `<tr>
-          <td class="xl-row-header">${rowNum}</td>
-          <td class="xl-cell" onclick="selectExcelCell('A${rowNum}', this)">${p.userName || ''}</td>
-          <td class="xl-cell" onclick="selectExcelCell('B${rowNum}', this)">${p.area || ''}</td>
-          <td class="xl-cell" onclick="selectExcelCell('C${rowNum}', this)">${p.category || ''}</td>
-          <td class="xl-cell" onclick="selectExcelCell('D${rowNum}', this)">${p.castName || ''}</td>
-          <td class="xl-cell" onclick="selectExcelCell('E${rowNum}', this)">${p.storeName || ''}</td>
-        </tr>`;
-      });
-
-      html += '</table>';
-      wrap.innerHTML = html;
-      document.getElementById('xlStatusLeft').innerText = `共有ログ ${communityPosts.length} 件`;
+      else renderExcelSheet4(wrap);
     }
 
     function renderExcelSheet4(wrap) {
