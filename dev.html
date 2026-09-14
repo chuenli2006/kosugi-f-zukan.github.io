@@ -470,9 +470,7 @@
     .btn-toggle { flex: 1; padding: 5px 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); border-radius: 16px; font-size: 0.75rem; font-weight: bold; cursor: pointer; text-align: center; }
     .btn-toggle.active { background: var(--primary-pink); color: white; border-color: var(--primary-pink); }
 
-    .legend-details { margin-bottom: 12px; text-align: center; width: 100%; }
-    .legend-details summary { color: var(--primary-pink); font-size: 0.75rem; text-decoration: underline; cursor: pointer; list-style: none; }
-    .legend-box { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 4px; background: var(--card-bg); padding: 8px; border-radius: var(--radius); margin-top: 6px; font-size: 0.7rem; border: 1px solid var(--border-color); text-align: left; }
+
 
     .grid { display: flex; flex-direction: column; gap: 8px; width: 100%; }
 
@@ -667,7 +665,8 @@
     .store-btn-edit { background: var(--bg-color); color: var(--light-text); border: 1px solid var(--border-color); cursor: pointer; padding: 4px 10px; border-radius: 14px; font-size: 0.7rem; font-weight: bold; }
 
     .history-row-wrap { width: 100%; }
-    .history-row { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); border: 1px solid var(--border-color); padding: 5px 8px; border-radius: 6px; font-size: 0.8rem; width: 100%; }
+    .history-row { display: flex; flex-direction: column; gap: 4px; background: var(--card-bg); border: 1px solid var(--border-color); padding: 5px 8px; border-radius: 6px; font-size: 0.8rem; width: 100%; box-sizing: border-box; }
+    .history-row-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
     .report-badge { font-size: 0.65rem; color: var(--accent-pink); background: var(--soft-pink); border: 1px solid var(--primary-pink); padding: 1px 7px; border-radius: 10px; font-weight: bold; text-decoration: none; }
     .edit-icon-btn { background: none; border: none; cursor: pointer; padding: 2px 4px; color: var(--light-text); }
 
@@ -794,6 +793,12 @@
     .flag-picker { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 4px; }
     .flag-btn { font-size: 0.72rem; padding: 4px 8px; border-radius: 12px; border: 1.5px solid var(--border-color); background: var(--card-bg); color: var(--text-color); cursor: pointer; }
     .flag-btn-clear { background: rgba(150, 150, 150, 0.2); color: var(--light-text); }
+    .flag-btn-list { background: var(--soft-pink); color: var(--accent-pink); border-color: var(--primary-pink); font-weight: bold; }
+    .flag-full-list { display: none; flex-wrap: wrap; gap: 5px; margin: 2px 0 6px; padding: 8px; background: var(--bg-color); border: 1px dashed var(--border-color); border-radius: 10px; }
+    .flag-full-list .flag-btn { border: none; font-weight: bold; }
+
+    .history-flag-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+    .flag-tag { font-size: 0.65rem; font-weight: bold; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
 
     /* --- 🌸 女の子別設定タブ --- */
     .cs-lookup-bar {
@@ -1480,16 +1485,6 @@
             </div>
           </div>
         </div>
-
-        <details class="legend-details">
-          <summary>マークの意味（凡例）を表示／非表示</summary>
-          <div class="legend-box">
-            <div>🈠 デビュー/初出勤</div><div>🆂 当たり/オキニ</div><div>✈ 県外</div><div>⚔ 次ナシ</div>
-            <div>🈘 交配</div><div>🄽 生交配</div><div>㍁ ＡＦ</div><div>⑱ 18歳</div>
-            <div>㋑ イメージプレイ</div><div>㋗ クレーム</div><div>ｴ 風エステ</div><div>❀ 卒業</div>
-            <div>ｄ 出前</div><div>❖ ヘルス2万超</div><div>❑ 社交飲食店</div><div>ⓘ 詳細（金額・店舗）</div>
-          </div>
-        </details>
 
         <div id="mainContent"></div>
       </div>
@@ -2236,10 +2231,28 @@
         <div class="form-group"><label>マーク・フラグ</label>
           <div class="flag-picker">
             <button type="button" class="flag-btn" onclick="addFlagChar('🆂')">🆂 当たり</button>
-            <button type="button" class="flag-btn" onclick="addFlagChar('⚔')">⚔ 次ナシ</button>
+            <button type="button" class="flag-btn" onclick="addFlagChar('⚔')">⚔ ハズレ</button>
             <button type="button" class="flag-btn" onclick="addFlagChar('✈')">✈ 県外</button>
-            <button type="button" class="flag-btn" onclick="addFlagChar('❖')">❖ 2万超</button>
+            <button type="button" class="flag-btn" onclick="addFlagChar('❖')">❖ 高額</button>
+            <button type="button" class="flag-btn flag-btn-list" onclick="toggleFlagFullList('addFlagFullList')">📋 一覧</button>
             <button type="button" class="flag-btn flag-btn-clear" onclick="clearFlagsInput()">クリア</button>
+          </div>
+          <div class="flag-full-list" id="addFlagFullList">
+            <button type="button" class="flag-btn" style="background:#2f9e44; color:#fff;" onclick="addFlagChar('🈠')">🈠 初出勤</button>
+            <button type="button" class="flag-btn" style="background:linear-gradient(135deg, #ffd700, #ff8c00); color:#5c3d00;" onclick="addFlagChar('🆂')">🆂 当たり</button>
+            <button type="button" class="flag-btn" style="background:#1c7ed6; color:#fff;" onclick="addFlagChar('✈')">✈ 県外</button>
+            <button type="button" class="flag-btn" style="background:#e03131; color:#fff;" onclick="addFlagChar('⚔')">⚔ ハズレ</button>
+            <button type="button" class="flag-btn" style="background:#9c36b5; color:#fff;" onclick="addFlagChar('🈘')">🈘 ソープ</button>
+            <button type="button" class="flag-btn" style="background:#f06595; color:#fff;" onclick="addFlagChar('🄽')">🄽 NNソープ</button>
+            <button type="button" class="flag-btn" style="background:#9c36b5; color:#fff;" onclick="addFlagChar('㍁')">㍁ AF</button>
+            <button type="button" class="flag-btn" style="background:#2f9e44; color:#fff;" onclick="addFlagChar('⑱')">⑱ 18歳</button>
+            <button type="button" class="flag-btn" style="background:#ffd43b; color:#5c3d00;" onclick="addFlagChar('㋑')">㋑ コスプレ</button>
+            <button type="button" class="flag-btn" style="background:#e03131; color:#fff;" onclick="addFlagChar('㋗')">㋗ クレーム</button>
+            <button type="button" class="flag-btn" style="background:#2f9e44; color:#fff;" onclick="addFlagChar('ｴ')">ｴ エステ</button>
+            <button type="button" class="flag-btn" style="background:linear-gradient(135deg, #ff8fab, #ff6b9d); color:#fff;" onclick="addFlagChar('❀')">❀ 卒業の出勤</button>
+            <button type="button" class="flag-btn" style="background:#9c36b5; color:#fff;" onclick="addFlagChar('ｄ')">ｄ デリヘル</button>
+            <button type="button" class="flag-btn" style="background:linear-gradient(135deg, #ffd700, #ffb700); color:#5c3d00;" onclick="addFlagChar('❖')">❖ 高額</button>
+            <button type="button" class="flag-btn" style="background:#94d82d; color:#5c3d00;" onclick="addFlagChar('❑')">❑ ピンサロ</button>
           </div>
           <input type="text" id="addFlags" placeholder="マーク">
         </div>
@@ -2339,7 +2352,34 @@
           </div>
         </div>
 
-        <div class="form-group"><label>フラグ</label><input type="text" id="editFlags"></div>
+        <div class="form-group"><label>フラグ</label>
+          <div class="flag-picker">
+            <button type="button" class="flag-btn" onclick="appendFlagChar('editFlags','🆂')">🆂 当たり</button>
+            <button type="button" class="flag-btn" onclick="appendFlagChar('editFlags','⚔')">⚔ ハズレ</button>
+            <button type="button" class="flag-btn" onclick="appendFlagChar('editFlags','✈')">✈ 県外</button>
+            <button type="button" class="flag-btn" onclick="appendFlagChar('editFlags','❖')">❖ 高額</button>
+            <button type="button" class="flag-btn flag-btn-list" onclick="toggleFlagFullList('editFlagFullList')">📋 一覧</button>
+            <button type="button" class="flag-btn flag-btn-clear" onclick="document.getElementById('editFlags').value=''">クリア</button>
+          </div>
+          <div class="flag-full-list" id="editFlagFullList">
+            <button type="button" class="flag-btn" style="background:#2f9e44; color:#fff;" onclick="appendFlagChar('editFlags','🈠')">🈠 初出勤</button>
+            <button type="button" class="flag-btn" style="background:linear-gradient(135deg, #ffd700, #ff8c00); color:#5c3d00;" onclick="appendFlagChar('editFlags','🆂')">🆂 当たり</button>
+            <button type="button" class="flag-btn" style="background:#1c7ed6; color:#fff;" onclick="appendFlagChar('editFlags','✈')">✈ 県外</button>
+            <button type="button" class="flag-btn" style="background:#e03131; color:#fff;" onclick="appendFlagChar('editFlags','⚔')">⚔ ハズレ</button>
+            <button type="button" class="flag-btn" style="background:#9c36b5; color:#fff;" onclick="appendFlagChar('editFlags','🈘')">🈘 ソープ</button>
+            <button type="button" class="flag-btn" style="background:#f06595; color:#fff;" onclick="appendFlagChar('editFlags','🄽')">🄽 NNソープ</button>
+            <button type="button" class="flag-btn" style="background:#9c36b5; color:#fff;" onclick="appendFlagChar('editFlags','㍁')">㍁ AF</button>
+            <button type="button" class="flag-btn" style="background:#2f9e44; color:#fff;" onclick="appendFlagChar('editFlags','⑱')">⑱ 18歳</button>
+            <button type="button" class="flag-btn" style="background:#ffd43b; color:#5c3d00;" onclick="appendFlagChar('editFlags','㋑')">㋑ コスプレ</button>
+            <button type="button" class="flag-btn" style="background:#e03131; color:#fff;" onclick="appendFlagChar('editFlags','㋗')">㋗ クレーム</button>
+            <button type="button" class="flag-btn" style="background:#2f9e44; color:#fff;" onclick="appendFlagChar('editFlags','ｴ')">ｴ エステ</button>
+            <button type="button" class="flag-btn" style="background:linear-gradient(135deg, #ff8fab, #ff6b9d); color:#fff;" onclick="appendFlagChar('editFlags','❀')">❀ 卒業の出勤</button>
+            <button type="button" class="flag-btn" style="background:#9c36b5; color:#fff;" onclick="appendFlagChar('editFlags','ｄ')">ｄ デリヘル</button>
+            <button type="button" class="flag-btn" style="background:linear-gradient(135deg, #ffd700, #ffb700); color:#5c3d00;" onclick="appendFlagChar('editFlags','❖')">❖ 高額</button>
+            <button type="button" class="flag-btn" style="background:#94d82d; color:#5c3d00;" onclick="appendFlagChar('editFlags','❑')">❑ ピンサロ</button>
+          </div>
+          <input type="text" id="editFlags">
+        </div>
 
         <div class="form-group"><label>系統タグ（複数時はカンマ区切り）</label>
           <div class="flag-picker">
@@ -3737,7 +3777,18 @@
           const hd = parseInt(h.day, 10) || 1;
           return hy === year && hm === (month + 1) && hd === d;
         });
-        if (matchedHistory.length > 0) dotsHtml += `<div class="cal-dot dot-history"></div>`;
+        if (matchedHistory.length > 0) {
+          let dotStyle = '';
+          for (const flagChar of CALENDAR_PRIORITY_FLAGS) {
+            const hasFlag = matchedHistory.some(h => h.flags && h.flags.includes(flagChar));
+            if (hasFlag) {
+              const def = getFlagDef(flagChar);
+              dotStyle = ` style="background:${def.bg}; box-shadow:0 0 3px ${def.glow};"`;
+              break;
+            }
+          }
+          dotsHtml += `<div class="cal-dot dot-history"${dotStyle}></div>`;
+        }
         
         const matchedSchedules = scheduleList.filter(s => s.date === dateStr);
         matchedSchedules.forEach(sch => {
@@ -4680,12 +4731,15 @@
           rowsHtml += `
             <div class="history-row-wrap">
               <div class="history-row">
-                <span class="history-date">${dateStr}</span>
-                <div style="display:flex; align-items:center; gap:6px;">
-                  ${reportBtn} <span class="history-flags">${v.flags||''}</span>
-                  ${infoBtn}
-                  <button class="edit-icon-btn" onclick="openEditRecordModal(event, ${v.originalIndex})"><svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>
+                <div class="history-row-top">
+                  <span class="history-date">${dateStr}</span>
+                  <div style="display:flex; align-items:center; gap:6px;">
+                    ${reportBtn}
+                    ${infoBtn}
+                    <button class="edit-icon-btn" onclick="openEditRecordModal(event, ${v.originalIndex})"><svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>
+                  </div>
                 </div>
+                ${buildFlagTagsHtml(v.flags)}
               </div>
               ${infoPanel}
             </div>`;
@@ -6225,7 +6279,47 @@
       }
     }
 
-    function addFlagChar(c) { document.getElementById('addFlags').value += c; }
+    /* 🏷️ フラグ・マークの定義（一覧・カード表示・カレンダードットで共通利用） */
+    const FLAG_DEFS = [
+      { char: '🈠', label: '初出勤',     bg: '#2f9e44', glow: '#2f9e44', color: '#ffffff', tagBg: '#d3f9d8', tagColor: '#2b8a3e' },
+      { char: '🆂', label: '当たり',     bg: 'linear-gradient(135deg, #ffd700, #ff8c00)', glow: '#ffb700', color: '#5c3d00', tagBg: 'linear-gradient(135deg, #fff3bf, #ffe066)', tagColor: '#856404' },
+      { char: '✈',  label: '県外',       bg: '#1c7ed6', glow: '#1c7ed6', color: '#ffffff', tagBg: '#d0ebff', tagColor: '#1864ab' },
+      { char: '⚔',  label: 'ハズレ',     bg: '#e03131', glow: '#e03131', color: '#ffffff', tagBg: '#ffe3e3', tagColor: '#c92a2a' },
+      { char: '🈘', label: 'ソープ',     bg: '#9c36b5', glow: '#9c36b5', color: '#ffffff', tagBg: '#f3d9fa', tagColor: '#862e9c' },
+      { char: '🄽', label: 'NNソープ',   bg: '#f06595', glow: '#f06595', color: '#ffffff', tagBg: '#ffdeeb', tagColor: '#a61e4d' },
+      { char: '㍁', label: 'AF',         bg: '#9c36b5', glow: '#9c36b5', color: '#ffffff', tagBg: '#f3d9fa', tagColor: '#862e9c' },
+      { char: '⑱', label: '18歳',       bg: '#2f9e44', glow: '#2f9e44', color: '#ffffff', tagBg: '#d3f9d8', tagColor: '#2b8a3e' },
+      { char: '㋑', label: 'コスプレ',   bg: '#ffd43b', glow: '#ffd43b', color: '#5c3d00', tagBg: '#fff9db', tagColor: '#997404' },
+      { char: '㋗', label: 'クレーム',   bg: '#e03131', glow: '#e03131', color: '#ffffff', tagBg: '#ffe3e3', tagColor: '#c92a2a' },
+      { char: 'ｴ',  label: 'エステ',     bg: '#2f9e44', glow: '#2f9e44', color: '#ffffff', tagBg: '#d3f9d8', tagColor: '#2b8a3e' },
+      { char: '❀',  label: '卒業の出勤', bg: 'linear-gradient(135deg, #ff8fab, #ff6b9d)', glow: '#ff6b9d', color: '#ffffff', tagBg: 'linear-gradient(135deg, #ffe3ec, #ffd6e8)', tagColor: '#a61e4d' },
+      { char: 'ｄ',  label: 'デリヘル',   bg: '#9c36b5', glow: '#9c36b5', color: '#ffffff', tagBg: '#f3d9fa', tagColor: '#862e9c' },
+      { char: '❖',  label: '高額',       bg: 'linear-gradient(135deg, #ffd700, #ffb700)', glow: '#ffb700', color: '#5c3d00', tagBg: '#fff3bf', tagColor: '#997404' },
+      { char: '❑',  label: 'ピンサロ',   bg: '#94d82d', glow: '#94d82d', color: '#5c3d00', tagBg: '#e9fac8', tagColor: '#5c940d' }
+    ];
+    const CALENDAR_PRIORITY_FLAGS = ['🆂', '⚔', '✈', '🈘', 'ｴ', '❑'];
+
+    function getFlagDef(char) { return FLAG_DEFS.find(f => f.char === char); }
+
+    function buildFlagTagsHtml(flagsStr) {
+      if (!flagsStr) return '';
+      const matched = FLAG_DEFS.filter(f => flagsStr.includes(f.char));
+      if (matched.length === 0) return '';
+      return `<div class="history-flag-tags">${matched.map(f => `<span class="flag-tag" style="background:${f.tagBg}; color:${f.tagColor};">${f.label}</span>`).join('')}</div>`;
+    }
+
+    function appendFlagChar(targetId, c) {
+      const el = document.getElementById(targetId);
+      if (el) el.value += c;
+    }
+
+    function toggleFlagFullList(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.style.display = (el.style.display === 'flex') ? 'none' : 'flex';
+    }
+
+    function addFlagChar(c) { appendFlagChar('addFlags', c); }
     function clearFlagsInput() { document.getElementById('addFlags').value = ''; }
     
     function closeModal(id) { 
