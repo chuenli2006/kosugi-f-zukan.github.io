@@ -796,6 +796,13 @@
     .flag-btn-list { background: var(--soft-pink); color: var(--accent-pink); border-color: var(--primary-pink); font-weight: bold; }
     .flag-full-list { display: none; flex-wrap: wrap; gap: 5px; margin: 2px 0 6px; padding: 8px; background: var(--bg-color); border: 1px dashed var(--border-color); border-radius: 10px; }
     .flag-full-list .flag-btn { border: none; font-weight: bold; }
+    .flag-btn-add-custom { background: var(--bg-color); color: var(--accent-pink); border: 1.5px dashed var(--primary-pink) !important; font-weight: bold; }
+
+    /* 🎨 カスタムマーク追加モーダル */
+    .custom-flag-char-input { width: 100%; aspect-ratio: 1 / 1; text-align: center; font-size: 1.6rem; padding: 0; box-sizing: border-box; }
+    .custom-flag-color-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 4px; }
+    .custom-flag-color-dot { width: 34px; height: 34px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; margin: 0 auto; }
+    .custom-flag-color-dot.selected { border-color: var(--card-bg); box-shadow: 0 0 0 2px var(--accent-pink); }
 
     .history-flag-tags { display: flex; flex-wrap: wrap; gap: 4px; }
     .flag-tag { font-size: 0.65rem; font-weight: bold; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
@@ -1859,6 +1866,31 @@
     </div>
   </div>
 
+  <!-- 🎨 カスタムマーク追加モーダル -->
+  <div class="modal-overlay" id="customFlagModal" style="z-index:1500;">
+    <div class="modal-content">
+      <h3>🎨 カスタムマークを追加</h3>
+      <div style="display:flex; gap:10px; align-items:flex-start;">
+        <div class="form-group" style="flex:0 0 68px;">
+          <label>マーク</label>
+          <input type="text" id="customFlagChar" class="custom-flag-char-input" maxlength="2" placeholder="㊙">
+        </div>
+        <div class="form-group" style="flex:1;">
+          <label>表示名</label>
+          <input type="text" id="customFlagLabel" placeholder="例: お気に入り">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>カラー（20色から選択）</label>
+        <div class="custom-flag-color-grid" id="customFlagColorGrid"></div>
+      </div>
+      <div style="display:flex; gap:8px; margin-top:10px;">
+        <button type="button" class="close-btn" style="background:#888; flex:1;" onclick="closeModal('customFlagModal')">キャンセル</button>
+        <button type="button" class="close-btn" style="flex:2;" onclick="saveCustomFlag()">💾 追加する</button>
+      </div>
+    </div>
+  </div>
+
   <!-- 設定・ヘルプモーダル -->
   <div class="modal-overlay" id="settingsModal">
     <div class="modal-content">
@@ -2253,6 +2285,8 @@
             <button type="button" class="flag-btn" style="background:#9c36b5; color:#fff;" onclick="addFlagChar('ｄ')">ｄ デリヘル</button>
             <button type="button" class="flag-btn" style="background:linear-gradient(135deg, #ffd700, #ffb700); color:#5c3d00;" onclick="addFlagChar('❖')">❖ 高額</button>
             <button type="button" class="flag-btn" style="background:#94d82d; color:#5c3d00;" onclick="addFlagChar('❑')">❑ ピンサロ</button>
+            <span class="custom-flags-slot" id="addCustomFlagSlot" style="display:contents;"></span>
+            <button type="button" class="flag-btn flag-btn-add-custom" onclick="openCustomFlagModal()">+ 追加</button>
           </div>
           <input type="text" id="addFlags" placeholder="マーク">
         </div>
@@ -2377,6 +2411,8 @@
             <button type="button" class="flag-btn" style="background:#9c36b5; color:#fff;" onclick="appendFlagChar('editFlags','ｄ')">ｄ デリヘル</button>
             <button type="button" class="flag-btn" style="background:linear-gradient(135deg, #ffd700, #ffb700); color:#5c3d00;" onclick="appendFlagChar('editFlags','❖')">❖ 高額</button>
             <button type="button" class="flag-btn" style="background:#94d82d; color:#5c3d00;" onclick="appendFlagChar('editFlags','❑')">❑ ピンサロ</button>
+            <span class="custom-flags-slot" id="editCustomFlagSlot" style="display:contents;"></span>
+            <button type="button" class="flag-btn flag-btn-add-custom" onclick="openCustomFlagModal()">+ 追加</button>
           </div>
           <input type="text" id="editFlags">
         </div>
@@ -2609,6 +2645,7 @@
     let ratingEnabled = localStorage.getItem('app_rating_enabled') !== 'false';
     let historyList = [];
     let castData = {};
+    let customFlags = [];
     let storeInfoData = {}; // 🏬 店舗マスターデータ
     let sharedRecords = [];
     let scheduleList = [];
@@ -2644,6 +2681,11 @@
 
     function initAppLock() {
       initQuestionButton();
+      // 🔧 過去のバグで「アプリロックOFFなのに生体認証だけON」という不整合な状態になっているケースを自動修復
+      if (!appLockEnabled && appLockBiometric) {
+        appLockBiometric = false;
+        localStorage.setItem('app_lock_biometric', 'false');
+      }
       if (appLockEnabled) {
         showLockScreen(true);
       }
@@ -2758,6 +2800,12 @@
       }
       appLockEnabled = checked;
       localStorage.setItem('app_lock_enabled', checked ? 'true' : 'false');
+      if (!checked && appLockBiometric) {
+        appLockBiometric = false;
+        localStorage.setItem('app_lock_biometric', 'false');
+        const biometricToggle = document.getElementById('secBiometricToggle');
+        if (biometricToggle) biometricToggle.checked = false;
+      }
     }
 
     async function saveAppLockPin() {
@@ -2777,6 +2825,11 @@
       if (!checked) {
         appLockBiometric = false;
         localStorage.setItem('app_lock_biometric', 'false');
+        return;
+      }
+      if (!appLockEnabled) {
+        alert('先に「アプリロック機能」をONにしてください（生体認証はアプリロックの解除方法の一つです）。');
+        document.getElementById('secBiometricToggle').checked = false;
         return;
       }
       if (!isWebAuthnSupported()) {
@@ -2951,12 +3004,15 @@
       const savedStoreInfo = localStorage.getItem('user_store_info_' + currentUserName);
       const savedSchedules = localStorage.getItem('user_schedules_' + currentUserName);
       const savedKeeps = localStorage.getItem('user_keeps_' + currentUserName);
+      const savedCustomFlags = localStorage.getItem('user_custom_flags_' + currentUserName);
       
       historyList = savedHist ? JSON.parse(savedHist) : [];
       castData = savedCast ? JSON.parse(savedCast) : {};
       storeInfoData = savedStoreInfo ? JSON.parse(savedStoreInfo) : {};
       scheduleList = savedSchedules ? JSON.parse(savedSchedules) : [];
       keepsList = savedKeeps ? JSON.parse(savedKeeps) : [];
+      customFlags = savedCustomFlags ? JSON.parse(savedCustomFlags) : [];
+      renderFlagFullLists();
       
       const savedShared = localStorage.getItem('user_shared_list_' + currentUserName);
       sharedRecords = savedShared ? JSON.parse(savedShared) : [];
@@ -6303,7 +6359,7 @@
 
     function buildFlagTagsHtml(flagsStr) {
       if (!flagsStr) return '';
-      const matched = FLAG_DEFS.filter(f => flagsStr.includes(f.char));
+      const matched = FLAG_DEFS.concat(customFlags).filter(f => flagsStr.includes(f.char));
       if (matched.length === 0) return '';
       return `<div class="history-flag-tags">${matched.map(f => `<span class="flag-tag" style="background:${f.tagBg}; color:${f.tagColor};">${f.label}</span>`).join('')}</div>`;
     }
@@ -6318,6 +6374,69 @@
       if (!el) return;
       el.style.display = (el.style.display === 'flex') ? 'none' : 'flex';
     }
+
+    /* 🎨 カスタムマーク機能：20色パステルパレット */
+    const PASTEL_COLOR_PALETTE = [
+      { bg: '#ffe3e3', color: '#c92a2a' }, { bg: '#ffdeeb', color: '#a61e4d' },
+      { bg: '#ffd6e8', color: '#c2255c' }, { bg: '#f3d9fa', color: '#862e9c' },
+      { bg: '#e5dbff', color: '#5f3dc4' }, { bg: '#dbe4ff', color: '#3b5bdb' },
+      { bg: '#edf2ff', color: '#4263eb' }, { bg: '#d0ebff', color: '#1864ab' },
+      { bg: '#99e9f2', color: '#0c8599' }, { bg: '#c5f6fa', color: '#0b7285' },
+      { bg: '#c3fae8', color: '#087f5b' }, { bg: '#96f2d7', color: '#0ca678' },
+      { bg: '#d3f9d8', color: '#2b8a3e' }, { bg: '#e9fac8', color: '#5c940d' },
+      { bg: '#fff9db', color: '#997404' }, { bg: '#fff3bf', color: '#856404' },
+      { bg: '#ffe8cc', color: '#d9480f' }, { bg: '#ffd8a8', color: '#e8590c' },
+      { bg: '#eaddcf', color: '#7c5c3e' }, { bg: '#f1f3f5', color: '#495057' }
+    ];
+    let selectedCustomFlagColorIndex = null;
+
+    function renderFlagFullLists() {
+      const btnHtml = (onclickTarget) => customFlags.map(f =>
+        `<button type="button" class="flag-btn" style="background:${f.tagBg}; color:${f.tagColor};" onclick="${onclickTarget(f.char)}">${f.label}</button>`
+      ).join('');
+
+      const addSlot = document.getElementById('addCustomFlagSlot');
+      if (addSlot) addSlot.innerHTML = btnHtml(c => `addFlagChar('${c}')`);
+
+      const editSlot = document.getElementById('editCustomFlagSlot');
+      if (editSlot) editSlot.innerHTML = btnHtml(c => `appendFlagChar('editFlags','${c}')`);
+    }
+
+    function openCustomFlagModal() {
+      document.getElementById('customFlagChar').value = '';
+      document.getElementById('customFlagLabel').value = '';
+      selectedCustomFlagColorIndex = null;
+      const grid = document.getElementById('customFlagColorGrid');
+      grid.innerHTML = PASTEL_COLOR_PALETTE.map((c, i) =>
+        `<div class="custom-flag-color-dot" style="background:${c.bg};" onclick="selectCustomFlagColor(${i})" id="customFlagColorDot${i}"></div>`
+      ).join('');
+      document.getElementById('customFlagModal').style.display = 'flex';
+    }
+
+    function selectCustomFlagColor(i) {
+      selectedCustomFlagColorIndex = i;
+      PASTEL_COLOR_PALETTE.forEach((c, idx) => {
+        const dot = document.getElementById('customFlagColorDot' + idx);
+        if (dot) dot.classList.toggle('selected', idx === i);
+      });
+    }
+
+    function saveCustomFlag() {
+      const char = document.getElementById('customFlagChar').value.trim();
+      const label = document.getElementById('customFlagLabel').value.trim();
+      if (!char) { alert('マークを入力してください。'); return; }
+      if (!label) { alert('表示名を入力してください。'); return; }
+      if (selectedCustomFlagColorIndex === null) { alert('カラーを選択してください。'); return; }
+
+      const color = PASTEL_COLOR_PALETTE[selectedCustomFlagColorIndex];
+      customFlags.push({ char, label, tagBg: color.bg, tagColor: color.color, bg: color.bg, glow: color.color });
+      localStorage.setItem('user_custom_flags_' + currentUserName, JSON.stringify(customFlags));
+
+      renderFlagFullLists();
+      closeModal('customFlagModal');
+      alert('カスタムマークを追加しました！');
+    }
+
 
     function addFlagChar(c) { appendFlagChar('addFlags', c); }
     function clearFlagsInput() { document.getElementById('addFlags').value = ''; }
