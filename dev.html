@@ -854,6 +854,56 @@
     details.detail-fold summary::-webkit-details-marker { display: none; }
     details.detail-fold .fold-body { padding: 4px 10px 10px; display: flex; flex-direction: column; gap: 8px; }
 
+    /* ⚙️ 設定タブ（SNS風プロフィールカード） */
+    @keyframes settingsFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes settingsSectionSlide { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes avatarPop { from { transform: scale(0.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    .settings-profile-card {
+      display: flex; flex-direction: column; align-items: center; gap: 12px;
+      padding: 26px 16px; margin-bottom: 16px; width: 100%; box-sizing: border-box;
+      background: linear-gradient(135deg, var(--soft-pink), var(--card-bg));
+      border-radius: 20px; border: 1px solid var(--border-color); box-shadow: var(--shadow);
+      animation: settingsFadeIn 0.4s ease both;
+    }
+    .settings-avatar-btn {
+      position: relative; border: none; background: none; padding: 0; cursor: pointer;
+      animation: avatarPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+    .settings-avatar-circle {
+      width: 84px; height: 84px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      background: var(--card-bg); border: 3px solid var(--card-bg); box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+      font-size: 2.1rem; overflow: hidden; transition: transform 0.15s ease;
+    }
+    .settings-avatar-btn:active .settings-avatar-circle { transform: scale(0.93); }
+    .settings-avatar-default-icon { width: 40px; height: 40px; color: var(--light-text); }
+    .settings-avatar-edit-badge {
+      position: absolute; bottom: 0; right: 0; width: 26px; height: 26px; border-radius: 50%;
+      background: var(--accent-pink); color: #fff; display: flex; align-items: center; justify-content: center;
+      font-size: 0.72rem; border: 2px solid var(--card-bg);
+    }
+    .settings-username-form { display: flex; gap: 6px; width: 100%; max-width: 260px; }
+    .settings-username-input {
+      flex: 1; padding: 8px 12px; border-radius: 999px; border: 1.5px solid var(--border-color);
+      background: var(--card-bg); color: var(--text-color); font-size: 0.85rem; font-weight: bold; text-align: center;
+      outline: none;
+    }
+    .settings-username-save-btn {
+      padding: 8px 16px; border-radius: 999px; border: none;
+      background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink)); color: #fff;
+      font-weight: bold; font-size: 0.8rem; cursor: pointer; transition: transform 0.15s ease;
+    }
+    .settings-username-save-btn:active { transform: scale(0.94); }
+
+    .settings-sections { display: flex; flex-direction: column; gap: 0; width: 100%; }
+    .settings-sections .settings-acc-card { animation: settingsSectionSlide 0.4s ease both; }
+    .settings-sections .settings-acc-card:nth-of-type(1) { animation-delay: 0.04s; }
+    .settings-sections .settings-acc-card:nth-of-type(2) { animation-delay: 0.08s; }
+    .settings-sections .settings-acc-card:nth-of-type(3) { animation-delay: 0.12s; }
+    .settings-sections .settings-acc-card:nth-of-type(4) { animation-delay: 0.16s; }
+    .settings-sections .settings-acc-card:nth-of-type(5) { animation-delay: 0.2s; }
+    .settings-sections .settings-acc-card:nth-of-type(6) { animation-delay: 0.24s; }
+
     details.settings-acc-card { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 8px; text-align: left; overflow: hidden; width: 100%; }
     summary.settings-acc-summary { padding: 10px 12px; font-size: 0.85rem; font-weight: bold; color: var(--accent-pink); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; width: 100%; }
     summary.settings-acc-summary::-webkit-details-marker { display: none; }
@@ -1209,6 +1259,27 @@
     .cloud-status-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 0; }
     .cloud-status-badge { font-size: 0.72rem; font-weight: bold; padding: 3px 10px; border-radius: 999px; }
     .cloud-status-badge.online { background: #DCFCE7; color: #15803D; }
+
+    /* 🔔 クラウド同期ステータス通知（Nintendo Switch風・左上・小型） */
+    .cloud-sync-toast {
+      position: fixed; top: 14px; left: 14px; z-index: 9500;
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(20,20,20,0.88); color: #fff; font-size: 0.7rem; font-weight: bold;
+      padding: 8px 14px; border-radius: 10px; box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+      transform: translateX(-130%); transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      max-width: 78vw; pointer-events: none;
+    }
+    .cloud-sync-toast.show { transform: translateX(0); }
+    .cloud-sync-toast.success { background: rgba(21,128,61,0.92); }
+    .cloud-sync-toast.error { background: rgba(185,28,28,0.92); }
+    .cloud-sync-toast .sync-icon {
+      width: 14px; height: 14px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.75rem;
+    }
+    .cloud-sync-toast.syncing .sync-icon {
+      border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%;
+      animation: cloudSyncSpin 0.7s linear infinite;
+    }
+    @keyframes cloudSyncSpin { to { transform: rotate(360deg); } }
     .cloud-status-badge.offline { background: #F1F5F9; color: #64748B; }
     .cloud-logout-btn { background: #f1f1f1; color: #555; border: 1px solid var(--border-color); border-radius: 10px; padding: 6px 12px; font-size: 0.72rem; font-weight: bold; cursor: pointer; }
 
@@ -1375,7 +1446,7 @@
         <h1 id="headerTitle">童貞の風俗履歴図鑑</h1>
         <div class="header-sub">マイ キャスト ＆ プレイレコード</div>
         <div class="header-btn-row">
-          <button class="pill-btn" onclick="openSettingsModal()" title="ユーザー設定・テーマ変更">
+          <button class="pill-btn" onclick="switchMainTab('settings')" title="ユーザー設定・テーマ変更">
             <span class="icon-badge icon-cat-settings icon-badge-sm"><span class="emoji-icon">👤</span><i data-lucide="user" class="smart-icon"></i></span>
             <span>ユーザー: <span id="currentUserNameDisplay">童貞</span></span>
           </button>
@@ -1609,7 +1680,203 @@
           </div>
         </div>
       </div>
+
+      <!-- 7. 設定タブ（SNS風プロフィールカード＋設定セクション） -->
+      <div id="viewSettings" class="tab-content">
+        <div class="settings-profile-card">
+          <button type="button" class="settings-avatar-btn" id="settingsAvatarBtn" onclick="openAvatarPickerModal()">
+            <span class="settings-avatar-circle" id="settingsAvatarCircle">
+              <svg class="settings-avatar-default-icon" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6z"/></svg>
+            </span>
+            <span class="settings-avatar-edit-badge">✎</span>
+          </button>
+          <form class="settings-username-form" onsubmit="saveUserName(event)">
+            <input type="text" id="inputUserName" class="settings-username-input" placeholder="お名前を入力..." required>
+            <button type="submit" class="settings-username-save-btn">保存</button>
+          </form>
+        </div>
+
+        <div class="settings-sections">
+          <details class="settings-acc-card" open>
+            <summary class="settings-acc-summary">
+              <span class="settings-summary-label"><span class="icon-badge icon-cat-visibility icon-badge-sm"><span class="emoji-icon">👁️</span><i data-lucide="eye" class="smart-icon"></i></span>表示設定</span>
+              <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+            </summary>
+            <div class="settings-acc-body">
+              <label style="font-size:0.8rem; font-weight:bold; color:var(--light-text);">記録の日付表示</label>
+              <label style="font-size:0.8rem; display:flex; align-items:center; gap:8px; margin-top:6px;">
+                <input type="radio" name="dateFormat" value="ymd" onchange="saveDateFormat(this.value)" checked> 年月日まで表示
+              </label>
+              <label style="font-size:0.8rem; display:flex; align-items:center; gap:8px; margin-top:8px;">
+                <input type="radio" name="dateFormat" value="ym" onchange="saveDateFormat(this.value)"> 年月のみ表示
+              </label>
+
+              <hr class="sec-divider">
+
+              <label style="font-size:0.8rem; font-weight:bold; color:var(--light-text);">金額の表示</label>
+              <label style="font-size:0.8rem; display:flex; align-items:center; gap:8px; margin-top:6px;">
+                <input type="radio" name="amountHide" value="show" onchange="saveAmountHide(this.value)" checked> 金額を表示する
+              </label>
+              <label style="font-size:0.8rem; display:flex; align-items:center; gap:8px; margin-top:8px;">
+                <input type="radio" name="amountHide" value="hide" onchange="saveAmountHide(this.value)"> 金額を非表示にする (***)
+              </label>
+            </div>
+          </details>
+
+          <details class="settings-acc-card">
+            <summary class="settings-acc-summary">
+              <span class="settings-summary-label"><span class="icon-badge icon-cat-cast icon-badge-sm"><span class="emoji-icon">⭐</span><i data-lucide="star" class="smart-icon"></i></span>キャスト評価機能</span>
+              <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+            </summary>
+            <div class="settings-acc-body">
+              <div class="sec-toggle-row">
+                <span>キャスト評価（五角形レーダーチャート）
+                  <span class="sec-toggle-note">OFFにすると評価の入力欄・チャートを全画面で非表示にします</span>
+                </span>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="ratingEnabledToggle" onchange="toggleRatingEnabled(this.checked)">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+          </details>
+
+          <details class="settings-acc-card" open>
+            <summary class="settings-acc-summary">
+              <span class="settings-summary-label"><span class="icon-badge icon-cat-theme icon-badge-sm"><i data-lucide="palette" class="smart-icon"></i><span class="emoji-icon">🎨</span></span>カラーテーマの着せ替え</span>
+              <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+            </summary>
+            <div class="settings-acc-body">
+              <div class="form-group">
+                <label>UI表示モード</label>
+                <div class="ui-mode-toggle-row" id="uiModeToggleRow">
+                  <button type="button" class="ui-mode-btn" id="uiModeBtnOriginal" onclick="setUIMode('original')">🌸 オリジナル</button>
+                  <button type="button" class="ui-mode-btn" id="uiModeBtnSmart" onclick="setUIMode('smart')">🔘 スマート</button>
+                  <button type="button" class="ui-mode-btn" id="uiModeBtnExcel" onclick="setUIMode('excel')">📊 通勤中</button>
+                </div>
+                <div class="sec-status-note">スマートモードでは円形カラーバッジ＋フラットアイコン表示に、通勤中モードではExcel風の画面に擬態します（周囲の目を気にせず操作できます）。</div>
+              </div>
+
+              <div class="theme-grid" id="themeButtonsGrid">
+                <button class="theme-item-btn" onclick="setTheme('default')">🌸 ぴんく</button>
+                <button class="theme-item-btn" onclick="setTheme('midnight')">🌙 ミッドナイト</button>
+                <button class="theme-item-btn" onclick="setTheme('velvet')">🖤 ベルベット</button>
+                <button class="theme-item-btn" onclick="setTheme('berry')">🍇 ベリー</button>
+                <button class="theme-item-btn" onclick="setTheme('cyber')">🌃 サイバー</button>
+                <button class="theme-item-btn" onclick="setTheme('mocha')">☕️ モカ</button>
+                <button class="theme-item-btn" onclick="setTheme('emerald')">💎 エメラルド</button>
+                <button class="theme-item-btn" onclick="setTheme('champagne')">👑 ゴールド</button>
+                <button class="theme-item-btn" onclick="setTheme('violet')">💜 ヴァイオレット</button>
+                <button class="theme-item-btn" onclick="setTheme('peach')">🍑 ピーチ</button>
+                <button class="theme-item-btn" onclick="setTheme('jreast')">🚃 JR東日本風</button>
+                <button class="theme-item-btn" onclick="setTheme('sakina')"><span class="theme-swatch-dot" style="background:linear-gradient(135deg, #e08b97, #b85c6c);"></span>SAKINA</button>
+              </div>
+            </div>
+          </details>
+
+          <details class="settings-acc-card">
+            <summary class="settings-acc-summary">
+              <span class="settings-summary-label"><span class="icon-badge icon-cat-cloud icon-badge-sm"><span class="emoji-icon">☁️</span><i data-lucide="cloud" class="smart-icon"></i></span>クラウド同期（Supabase）</span>
+              <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+            </summary>
+            <div class="settings-acc-body">
+              <div class="cloud-status-row">
+                <span class="cloud-status-badge" id="cloudStatusBadge">未ログイン</span>
+                <span id="cloudStatusUserName" style="font-size:0.75rem; color:var(--light-text);"></span>
+              </div>
+              <button type="button" class="close-btn" style="width:100%; margin-top:6px;" id="cloudLoginPromptBtn" onclick="openAuthModal()">🔐 ログイン / 新規登録</button>
+              <button type="button" class="cloud-logout-btn" style="width:100%; margin-top:6px; display:none;" id="cloudLogoutBtn" onclick="logoutCloud()">ログアウト</button>
+              <div class="sec-status-note" style="margin-top:6px;">ログインすると、記録・予定・キープ等のデータが自動でクラウドに同期されます。</div>
+            </div>
+          </details>
+
+          <details class="settings-acc-card">
+            <summary class="settings-acc-summary">
+              <span class="settings-summary-label"><span class="icon-badge icon-cat-share icon-badge-sm"><span class="emoji-icon">📂</span><i data-lucide="folder-open" class="smart-icon"></i></span>バックアップ & データ管理</span>
+              <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+            </summary>
+            <div class="settings-acc-body">
+              <p style="font-size:0.7rem; color:var(--light-text); margin-bottom:6px;">全データをファイルとして保存・復元できます。</p>
+              <button class="close-btn" style="width:100%; margin-top:0; font-size:0.75rem; padding:6px; background:linear-gradient(135deg, #4dabf7, #339af0);" onclick="exportJSONFile()">💾 JSONダウンロード</button>
+              <button class="close-btn" style="width:100%; margin-top:6px; font-size:0.75rem; padding:6px; background:#20c997;" onclick="triggerJSONFileInput()">📂 JSONファイルを選択して復元</button>
+              <input type="file" id="jsonFileInput" accept=".json,application/json,text/plain" style="display:none;" onchange="importJSONFile(event)">
+            </div>
+          </details>
+
+          <details class="settings-acc-card">
+            <summary class="settings-acc-summary">
+              <span class="settings-summary-label"><span class="icon-badge icon-cat-security icon-badge-sm"><span class="emoji-icon">🔒</span><i data-lucide="lock" class="smart-icon"></i></span>セキュリティ・画面ロック</span>
+              <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+            </summary>
+            <div class="settings-acc-body">
+              <div class="sec-toggle-row">
+                <span>アプリロック機能
+                  <span class="sec-toggle-note">起動時・復帰時にロック画面を表示します</span>
+                </span>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="secLockEnabledToggle" onchange="toggleAppLockEnabled(this.checked)">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+
+              <hr class="sec-divider">
+
+              <div class="form-group">
+                <label>4桁パスコード（PIN）の設定・変更</label>
+                <div class="sec-pin-row">
+                  <input type="password" id="secPinInput" inputmode="numeric" maxlength="4" pattern="[0-9]*" placeholder="例: 1234">
+                  <button type="button" class="sec-save-pin-btn" onclick="saveAppLockPin()">保存</button>
+                </div>
+                <div class="sec-status-note" id="secPinStatusNote"></div>
+              </div>
+
+              <hr class="sec-divider">
+
+              <div class="sec-toggle-row">
+                <span>生体認証（Touch ID / Face ID）
+                  <span class="sec-toggle-note" id="secBiometricNote">対応端末のみ設定できます</span>
+                </span>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="secBiometricToggle" onchange="toggleBiometricLock(this.checked)">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+
+              <hr class="sec-divider">
+
+              <div class="form-group">
+                <label>❓ パスコードを忘れた場合</label>
+                <div class="sec-status-note">ロック画面の「？」ボタンから、直近に追加した記録のキャスト名、または一番最初に追加した記録のキャスト名を入力することでパスコードを再設定できます（別途の合言葉登録は不要です）。</div>
+              </div>
+            </div>
+          </details>
+        </div>
+      </div>
     </main>
+  </div>
+
+  <!-- 🎨 アイコン（アバター）変更モーダル -->
+  <div class="modal-overlay" id="avatarPickerModal">
+    <div class="modal-content">
+      <h3>🎨 アイコンを変更</h3>
+      <div class="form-group">
+        <label>アイコン（絵文字を入力、またはよく使うものから選択）</label>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <input type="text" id="avatarIconInput" class="custom-flag-char-input" style="width:56px; flex:none;" maxlength="4" placeholder="👤">
+          <button type="button" class="flag-btn" onclick="setAvatarIconQuick('⭐')" style="font-size:1rem;">⭐</button>
+          <button type="button" class="flag-btn" onclick="setAvatarIconQuick('❤️')" style="font-size:1rem;">❤️</button>
+          <button type="button" class="flag-btn flag-btn-clear" onclick="setAvatarIconQuick('')">リセット</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>背景カラー（20色から選択）</label>
+        <div class="custom-flag-color-grid" id="avatarColorGrid"></div>
+      </div>
+      <div style="display:flex; gap:8px; margin-top:10px;">
+        <button type="button" class="close-btn" style="background:#888; flex:1;" onclick="closeModal('avatarPickerModal')">キャンセル</button>
+        <button type="button" class="close-btn" style="flex:2;" onclick="saveAvatarSettings()">💾 保存する</button>
+      </div>
+    </div>
   </div>
 
   <!-- 📱 拡張メニュー：ボトムシート（ナビゲーションの5枠に入りきらない機能を格納） -->
@@ -1888,188 +2155,6 @@
         <button type="button" class="close-btn" style="background:#888; flex:1;" onclick="closeModal('customFlagModal')">キャンセル</button>
         <button type="button" class="close-btn" style="flex:2;" onclick="saveCustomFlag()">💾 追加する</button>
       </div>
-    </div>
-  </div>
-
-  <!-- 設定・ヘルプモーダル -->
-  <div class="modal-overlay" id="settingsModal">
-    <div class="modal-content">
-      <h3>⚙️ アプリ設定</h3>
-
-      <details class="settings-acc-card" open>
-        <summary class="settings-acc-summary">
-          <span class="settings-summary-label"><span class="icon-badge icon-cat-settings icon-badge-sm"><span class="emoji-icon">👤</span><i data-lucide="user" class="smart-icon"></i></span>ユーザー名の変更</span>
-          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
-        </summary>
-        <div class="settings-acc-body">
-          <form class="add-form" onsubmit="saveUserName(event)">
-            <div class="form-group">
-              <input type="text" id="inputUserName" placeholder="お名前を入力..." required>
-            </div>
-            <button type="submit" class="close-btn" style="margin-top:4px; padding:6px; font-size:0.8rem; width:100%;">保存する</button>
-          </form>
-        </div>
-      </details>
-
-      <details class="settings-acc-card" open>
-        <summary class="settings-acc-summary">
-          <span class="settings-summary-label"><span class="icon-badge icon-cat-calendar icon-badge-sm"><span class="emoji-icon">📅</span><i data-lucide="calendar" class="smart-icon"></i></span>記録の日付表示設定</span>
-          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
-        </summary>
-        <div class="settings-acc-body">
-          <label style="font-size:0.8rem; display:flex; align-items:center; gap:8px;">
-            <input type="radio" name="dateFormat" value="ymd" onchange="saveDateFormat(this.value)" checked> 年月日まで表示
-          </label>
-          <label style="font-size:0.8rem; display:flex; align-items:center; gap:8px; margin-top:8px;">
-            <input type="radio" name="dateFormat" value="ym" onchange="saveDateFormat(this.value)"> 年月のみ表示
-          </label>
-        </div>
-      </details>
-
-      <details class="settings-acc-card" open>
-        <summary class="settings-acc-summary">
-          <span class="settings-summary-label"><span class="icon-badge icon-cat-visibility icon-badge-sm"><span class="emoji-icon">👁️</span><i data-lucide="eye" class="smart-icon"></i></span>金額の表示設定</span>
-          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
-        </summary>
-        <div class="settings-acc-body">
-          <label style="font-size:0.8rem; display:flex; align-items:center; gap:8px;">
-            <input type="radio" name="amountHide" value="show" onchange="saveAmountHide(this.value)" checked> 金額を表示する
-          </label>
-          <label style="font-size:0.8rem; display:flex; align-items:center; gap:8px; margin-top:8px;">
-            <input type="radio" name="amountHide" value="hide" onchange="saveAmountHide(this.value)"> 金額を非表示にする (***)
-          </label>
-        </div>
-      </details>
-
-      <details class="settings-acc-card">
-        <summary class="settings-acc-summary">
-          <span class="settings-summary-label"><span class="icon-badge icon-cat-cast icon-badge-sm"><span class="emoji-icon">⭐</span><i data-lucide="star" class="smart-icon"></i></span>キャスト評価機能</span>
-          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
-        </summary>
-        <div class="settings-acc-body">
-          <div class="sec-toggle-row">
-            <span>キャスト評価（五角形レーダーチャート）
-              <span class="sec-toggle-note">OFFにすると評価の入力欄・チャートを全画面で非表示にします</span>
-            </span>
-            <label class="toggle-switch">
-              <input type="checkbox" id="ratingEnabledToggle" onchange="toggleRatingEnabled(this.checked)">
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-        </div>
-      </details>
-
-      <details class="settings-acc-card" open>
-        <summary class="settings-acc-summary">
-          <span class="settings-summary-label"><span class="icon-badge icon-cat-theme icon-badge-sm"><i data-lucide="palette" class="smart-icon"></i><span class="emoji-icon">🎨</span></span>カラーテーマの着せ替え</span>
-          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
-        </summary>
-        <div class="settings-acc-body">
-          <div class="form-group">
-            <label>UI表示モード</label>
-            <div class="ui-mode-toggle-row" id="uiModeToggleRow">
-              <button type="button" class="ui-mode-btn" id="uiModeBtnOriginal" onclick="setUIMode('original')">🌸 オリジナル</button>
-              <button type="button" class="ui-mode-btn" id="uiModeBtnSmart" onclick="setUIMode('smart')">🔘 スマート</button>
-              <button type="button" class="ui-mode-btn" id="uiModeBtnExcel" onclick="setUIMode('excel')">📊 通勤中</button>
-            </div>
-            <div class="sec-status-note">スマートモードでは円形カラーバッジ＋フラットアイコン表示に、通勤中モードではExcel風の画面に擬態します（周囲の目を気にせず操作できます）。</div>
-          </div>
-
-          <div class="theme-grid" id="themeButtonsGrid">
-            <button class="theme-item-btn" onclick="setTheme('default')">🌸 ぴんく</button>
-            <button class="theme-item-btn" onclick="setTheme('midnight')">🌙 ミッドナイト</button>
-            <button class="theme-item-btn" onclick="setTheme('velvet')">🖤 ベルベット</button>
-            <button class="theme-item-btn" onclick="setTheme('berry')">🍇 ベリー</button>
-            <button class="theme-item-btn" onclick="setTheme('cyber')">🌃 サイバー</button>
-            <button class="theme-item-btn" onclick="setTheme('mocha')">☕️ モカ</button>
-            <button class="theme-item-btn" onclick="setTheme('emerald')">💎 エメラルド</button>
-            <button class="theme-item-btn" onclick="setTheme('champagne')">👑 ゴールド</button>
-            <button class="theme-item-btn" onclick="setTheme('violet')">💜 ヴァイオレット</button>
-            <button class="theme-item-btn" onclick="setTheme('peach')">🍑 ピーチ</button>
-            <button class="theme-item-btn" onclick="setTheme('jreast')">🚃 JR東日本風</button>
-            <button class="theme-item-btn" onclick="setTheme('sakina')"><span class="theme-swatch-dot" style="background:linear-gradient(135deg, #e08b97, #b85c6c);"></span>SAKINA</button>
-          </div>
-        </div>
-      </details>
-
-      <details class="settings-acc-card">
-        <summary class="settings-acc-summary">
-          <span class="settings-summary-label"><span class="icon-badge icon-cat-cloud icon-badge-sm"><span class="emoji-icon">☁️</span><i data-lucide="cloud" class="smart-icon"></i></span>クラウド同期（Supabase）</span>
-          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
-        </summary>
-        <div class="settings-acc-body">
-          <div class="cloud-status-row">
-            <span class="cloud-status-badge" id="cloudStatusBadge">未ログイン</span>
-            <span id="cloudStatusUserName" style="font-size:0.75rem; color:var(--light-text);"></span>
-          </div>
-          <button type="button" class="close-btn" style="width:100%; margin-top:6px;" id="cloudLoginPromptBtn" onclick="openAuthModal()">🔐 ログイン / 新規登録</button>
-          <button type="button" class="cloud-logout-btn" style="width:100%; margin-top:6px; display:none;" id="cloudLogoutBtn" onclick="logoutCloud()">ログアウト</button>
-          <div class="sec-status-note" style="margin-top:6px;">ログインすると、記録・予定・キープ等のデータが自動でクラウドに同期されます。</div>
-        </div>
-      </details>
-
-      <details class="settings-acc-card">
-        <summary class="settings-acc-summary">
-          <span class="settings-summary-label"><span class="icon-badge icon-cat-share icon-badge-sm"><span class="emoji-icon">📂</span><i data-lucide="folder-open" class="smart-icon"></i></span>バックアップ & データ管理</span>
-          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
-        </summary>
-        <div class="settings-acc-body">
-          <p style="font-size:0.7rem; color:var(--light-text); margin-bottom:6px;">全データをファイルとして保存・復元できます。</p>
-          <button class="close-btn" style="width:100%; margin-top:0; font-size:0.75rem; padding:6px; background:linear-gradient(135deg, #4dabf7, #339af0);" onclick="exportJSONFile()">💾 JSONダウンロード</button>
-          <button class="close-btn" style="width:100%; margin-top:6px; font-size:0.75rem; padding:6px; background:#20c997;" onclick="triggerJSONFileInput()">📂 JSONファイルを選択して復元</button>
-          <input type="file" id="jsonFileInput" accept=".json,application/json,text/plain" style="display:none;" onchange="importJSONFile(event)">
-        </div>
-      </details>
-
-      <details class="settings-acc-card">
-        <summary class="settings-acc-summary">
-          <span class="settings-summary-label"><span class="icon-badge icon-cat-security icon-badge-sm"><span class="emoji-icon">🔒</span><i data-lucide="lock" class="smart-icon"></i></span>セキュリティ・画面ロック</span>
-          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
-        </summary>
-        <div class="settings-acc-body">
-          <div class="sec-toggle-row">
-            <span>アプリロック機能
-              <span class="sec-toggle-note">起動時・復帰時にロック画面を表示します</span>
-            </span>
-            <label class="toggle-switch">
-              <input type="checkbox" id="secLockEnabledToggle" onchange="toggleAppLockEnabled(this.checked)">
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-
-          <hr class="sec-divider">
-
-          <div class="form-group">
-            <label>4桁パスコード（PIN）の設定・変更</label>
-            <div class="sec-pin-row">
-              <input type="password" id="secPinInput" inputmode="numeric" maxlength="4" pattern="[0-9]*" placeholder="例: 1234">
-              <button type="button" class="sec-save-pin-btn" onclick="saveAppLockPin()">保存</button>
-            </div>
-            <div class="sec-status-note" id="secPinStatusNote"></div>
-          </div>
-
-          <hr class="sec-divider">
-
-          <div class="sec-toggle-row">
-            <span>生体認証（Touch ID / Face ID）
-              <span class="sec-toggle-note" id="secBiometricNote">対応端末のみ設定できます</span>
-            </span>
-            <label class="toggle-switch">
-              <input type="checkbox" id="secBiometricToggle" onchange="toggleBiometricLock(this.checked)">
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-
-          <hr class="sec-divider">
-
-          <div class="form-group">
-            <label>❓ パスコードを忘れた場合</label>
-            <div class="sec-status-note">ロック画面の「？」ボタンから、直近に追加した記録のキャスト名、または一番最初に追加した記録のキャスト名を入力することでパスコードを再設定できます（別途の合言葉登録は不要です）。</div>
-          </div>
-        </div>
-      </details>
-
-      <button class="close-btn" onclick="closeModal('settingsModal')" style="width:100%; margin-top:10px;">閉じる</button>
     </div>
   </div>
 
@@ -3201,19 +3286,64 @@
       }
     }
 
-    function syncDataToCloud() {
+    function syncDataToCloud(immediate) {
       if (!cloudSyncEnabled || !supabaseClient || !cloudLoggedInUserName) return;
       clearTimeout(cloudSyncTimer);
-      cloudSyncTimer = setTimeout(async () => {
+
+      const doSync = async () => {
+        showSyncStatusToast('syncing');
         try {
-          await supabaseClient
+          const { error } = await supabaseClient
             .from('user_backups')
             .update({ data: collectAllAppData(), updated_at: new Date().toISOString() })
             .eq('user_name', cloudLoggedInUserName);
+          if (error) throw error;
+          showSyncStatusToast('success');
         } catch (err) {
           console.log('クラウド同期に失敗しました:', err);
+          const code = (err && (err.code || err.status || err.statusCode)) || 'UNKNOWN';
+          showSyncStatusToast('error', code);
         }
-      }, 800);
+      };
+
+      if (immediate) doSync();
+      else cloudSyncTimer = setTimeout(doSync, 800);
+    }
+
+    /* 🔔 Nintendo Switch風のクラウド同期ステータス通知（左上・小型） */
+    let cloudSyncToastHideTimer = null;
+    function ensureCloudSyncToastEl() {
+      let el = document.getElementById('cloudSyncToast');
+      if (!el) {
+        el = document.createElement('div');
+        el.id = 'cloudSyncToast';
+        el.className = 'cloud-sync-toast';
+        el.innerHTML = '<span class="sync-icon"></span><span class="sync-toast-text"></span>';
+        document.body.appendChild(el);
+      }
+      return el;
+    }
+    function showSyncStatusToast(state, detail) {
+      const el = ensureCloudSyncToastEl();
+      el.classList.remove('syncing', 'success', 'error');
+      el.classList.add(state);
+      const textEl = el.querySelector('.sync-toast-text');
+      const iconEl = el.querySelector('.sync-icon');
+      if (state === 'syncing') {
+        textEl.textContent = 'クラウド同期中…';
+        iconEl.textContent = '';
+      } else if (state === 'success') {
+        textEl.textContent = 'クラウド同期成功しました';
+        iconEl.textContent = '✓';
+      } else {
+        textEl.textContent = `クラウド同期エラー(${detail || 'UNKNOWN'})`;
+        iconEl.textContent = '!';
+      }
+      requestAnimationFrame(() => el.classList.add('show'));
+      clearTimeout(cloudSyncToastHideTimer);
+      if (state !== 'syncing') {
+        cloudSyncToastHideTimer = setTimeout(() => el.classList.remove('show'), 2200);
+      }
     }
 
     function saveData() {
@@ -3745,6 +3875,7 @@
       const sharedView = document.getElementById('viewShared');
       const dashView = document.getElementById('viewDashboard');
       const castSettingsView = document.getElementById('viewCastSettings');
+      const settingsView = document.getElementById('viewSettings');
       const headerTitle = document.getElementById('headerTitle');
       const fabContainer = document.getElementById('fabContainer');
 
@@ -3763,6 +3894,7 @@
         sharedView.style.display = 'none';
         dashView.style.display = 'none';
         castSettingsView.style.display = 'none';
+        settingsView.style.display = 'none';
         startHomeAnimations();
       } else {
         homeView.classList.remove('active');
@@ -3774,12 +3906,14 @@
         sharedView.style.display = 'none';
         dashView.style.display = 'none';
         castSettingsView.style.display = 'none';
+        settingsView.style.display = 'none';
 
         if(type === 'my') myView.style.display = 'block';
         else if (type === 'calendar') { calendarView.style.display = 'block'; renderCalendar(); }
         else if (type === 'shared') { sharedView.style.display = 'block'; renderSharedArea(); }
         else if (type === 'dashboard') { dashView.style.display = 'block'; renderDashboard(); }
         else if (type === 'castSettings') { castSettingsView.style.display = 'block'; resetCastSettingsForm(); updateCastDatalist(); }
+        else if (type === 'settings') { settingsView.style.display = 'block'; initSettingsView(); }
 
         setTimeout(() => {
           const area = document.getElementById('homeFloatingArea');
@@ -6262,7 +6396,7 @@
         keepsList = keepsList.filter(k => k.id !== pendingKeepPromotionId);
         pendingKeepPromotionId = null;
       }
-      saveData(); closeModal('addModal'); render(); renderDashboard(); alert('保存しました！');
+      saveData(); syncDataToCloud(true); closeModal('addModal'); render(); renderDashboard(); alert('保存しました！');
     }
 
     function openEditRecordModal(event, index) {
@@ -6331,7 +6465,7 @@
         rec.style = parseInt(document.getElementById('editScoreStyle').value, 10) || 3;
         rec.intimacy = parseInt(document.getElementById('editScoreIntimacy').value, 10) || 3;
         rec.value = parseInt(document.getElementById('editScoreValue').value, 10) || 3;
-        saveData(); render(); renderDashboard(); closeModal('editRecordModal');
+        saveData(); syncDataToCloud(true); render(); renderDashboard(); closeModal('editRecordModal');
       }
     }
 
@@ -6389,6 +6523,65 @@
       { bg: '#eaddcf', color: '#7c5c3e' }, { bg: '#f1f3f5', color: '#495057' }
     ];
     let selectedCustomFlagColorIndex = null;
+
+    /* 👤 プロフィールアイコン（アバター）のカスタマイズ */
+    let pendingAvatarColorIndex = null;
+
+    function escapeHTML(str) {
+      if (str === null || str === undefined) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    function getSavedAvatarSettings() {
+      try {
+        return JSON.parse(localStorage.getItem('user_avatar_' + currentUserName) || 'null') || { icon: '', colorIndex: null };
+      } catch (e) {
+        return { icon: '', colorIndex: null };
+      }
+    }
+
+    function renderAvatarPreview() {
+      const circle = document.getElementById('settingsAvatarCircle');
+      if (!circle) return;
+      const avatar = getSavedAvatarSettings();
+      circle.innerHTML = avatar.icon
+        ? escapeHTML(avatar.icon)
+        : '<svg class="settings-avatar-default-icon" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6z"/></svg>';
+      const hasColor = avatar.colorIndex !== null && avatar.colorIndex !== undefined && PASTEL_COLOR_PALETTE[avatar.colorIndex];
+      circle.style.background = hasColor ? PASTEL_COLOR_PALETTE[avatar.colorIndex].bg : 'var(--card-bg)';
+    }
+
+    function openAvatarPickerModal() {
+      const avatar = getSavedAvatarSettings();
+      pendingAvatarColorIndex = (avatar.colorIndex !== undefined) ? avatar.colorIndex : null;
+      document.getElementById('avatarIconInput').value = avatar.icon || '';
+
+      const grid = document.getElementById('avatarColorGrid');
+      grid.innerHTML = PASTEL_COLOR_PALETTE.map((c, i) =>
+        `<div class="custom-flag-color-dot${i === pendingAvatarColorIndex ? ' selected' : ''}" style="background:${c.bg};" onclick="selectAvatarColor(${i})" id="avatarColorDot${i}"></div>`
+      ).join('');
+
+      document.getElementById('avatarPickerModal').style.display = 'flex';
+    }
+
+    function setAvatarIconQuick(icon) {
+      document.getElementById('avatarIconInput').value = icon;
+    }
+
+    function selectAvatarColor(i) {
+      pendingAvatarColorIndex = i;
+      PASTEL_COLOR_PALETTE.forEach((c, idx) => {
+        const dot = document.getElementById('avatarColorDot' + idx);
+        if (dot) dot.classList.toggle('selected', idx === i);
+      });
+    }
+
+    function saveAvatarSettings() {
+      const icon = document.getElementById('avatarIconInput').value.trim();
+      localStorage.setItem('user_avatar_' + currentUserName, JSON.stringify({ icon, colorIndex: pendingAvatarColorIndex }));
+      renderAvatarPreview();
+      closeModal('avatarPickerModal');
+    }
 
     function renderFlagFullLists() {
       const btnHtml = (onclickTarget) => customFlags.map(f =>
@@ -6452,7 +6645,14 @@
       }
     }
     
-    function openSettingsModal() { document.getElementById('inputUserName').value = currentUserName; document.getElementById('settingsModal').style.display = 'flex'; updateSecuritySettingsUI(); document.getElementById('ratingEnabledToggle').checked = ratingEnabled; updateCloudStatusUI(); }
+    function initSettingsView() {
+      document.getElementById('inputUserName').value = currentUserName;
+      document.getElementById('ratingEnabledToggle').checked = ratingEnabled;
+      updateSecuritySettingsUI();
+      updateCloudStatusUI();
+      renderAvatarPreview();
+    }
+    function openSettingsModal() { switchMainTab('settings'); }
     function openHelpModal() { document.getElementById('helpModal').style.display = 'flex'; }
     
     function applyTheme(t) {
@@ -6757,7 +6957,6 @@
       currentUserName = document.getElementById('inputUserName').value.trim() || '童貞';
       updateUIHeader();
       saveData();
-      closeModal('settingsModal');
       renderHomeMetrics();
     }
 
@@ -6779,7 +6978,7 @@
             historyList = imp.historyList; castData = imp.castData; currentUserName = imp.userName || '童貞';
             if(imp.storeInfoData) storeInfoData = imp.storeInfoData;
             if(imp.scheduleList) scheduleList = imp.scheduleList;
-            saveData(); initUserData(); closeModal('settingsModal'); alert("復元完了しました！");
+            saveData(); initUserData(); alert("復元完了しました！");
           }
         } catch(err) { alert("読込エラー"); }
       };
