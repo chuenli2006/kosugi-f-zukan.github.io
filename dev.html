@@ -882,16 +882,16 @@
       background: var(--accent-pink); color: #fff; display: flex; align-items: center; justify-content: center;
       font-size: 0.72rem; border: 2px solid var(--card-bg);
     }
-    .settings-username-form { display: flex; gap: 6px; width: 100%; max-width: 260px; }
+    .settings-username-form { display: flex; gap: 6px; width: 100%; max-width: 260px; box-sizing: border-box; }
     .settings-username-input {
-      flex: 1; padding: 8px 12px; border-radius: 999px; border: 1.5px solid var(--border-color);
+      flex: 1 1 auto; min-width: 0; padding: 8px 12px; border-radius: 999px; border: 1.5px solid var(--border-color);
       background: var(--card-bg); color: var(--text-color); font-size: 0.85rem; font-weight: bold; text-align: center;
-      outline: none;
+      outline: none; box-sizing: border-box;
     }
     .settings-username-save-btn {
-      padding: 8px 16px; border-radius: 999px; border: none;
+      flex-shrink: 0; padding: 8px 16px; border-radius: 999px; border: none;
       background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink)); color: #fff;
-      font-weight: bold; font-size: 0.8rem; cursor: pointer; transition: transform 0.15s ease;
+      font-weight: bold; font-size: 0.8rem; cursor: pointer; transition: transform 0.15s ease; white-space: nowrap;
     }
     .settings-username-save-btn:active { transform: scale(0.94); }
 
