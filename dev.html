@@ -6883,17 +6883,35 @@
         if (info && info.category) lowScoreCategoryCount[info.category] = (lowScoreCategoryCount[info.category] || 0) + 1;
       });
 
+      // 🕰️ 振り返り用データ：キャスト別・店舗別・時期別の集計
+      const castCount = {};
+      const storeCount = {};
+      const yearMonthCount = {};
+      const yearCount = {};
       let totalAmount = 0, amountCount = 0;
       const dateList = [];
+
       historyList.forEach(v => {
+        if (v.name) castCount[v.name] = (castCount[v.name] || 0) + 1;
+        if (v.storeName) storeCount[v.storeName] = (storeCount[v.storeName] || 0) + 1;
         const amt = parseInt(String(v.amount || '').replace(/[^0-9]/g, ''), 10);
         if (amt) { totalAmount += amt; amountCount++; }
-        if (v.year && v.month) dateList.push(v.year + '-' + String(v.month).padStart(2, '0'));
+        if (v.year && v.month) {
+          const ym = v.year + '-' + String(v.month).padStart(2, '0');
+          yearMonthCount[ym] = (yearMonthCount[ym] || 0) + 1;
+          yearCount[v.year] = (yearCount[v.year] || 0) + 1;
+          dateList.push(ym);
+        }
       });
       dateList.sort();
       const spanMonths = dateList.length > 1 ?
         Math.max(1, (parseInt(dateList[dateList.length - 1].slice(0, 4), 10) - parseInt(dateList[0].slice(0, 4), 10)) * 12 +
           (parseInt(dateList[dateList.length - 1].slice(5, 7), 10) - parseInt(dateList[0].slice(5, 7), 10)) + 1) : 1;
+
+      const topCastEntries = Object.entries(castCount).sort((a, b) => b[1] - a[1]).slice(0, 5);
+      const topStoreEntries = Object.entries(storeCount).sort((a, b) => b[1] - a[1]).slice(0, 5);
+      const peakMonthEntry = Object.entries(yearMonthCount).sort((a, b) => b[1] - a[1])[0] || null;
+      const peakYearEntry = Object.entries(yearCount).sort((a, b) => b[1] - a[1])[0] || null;
 
       return {
         total,
@@ -6902,6 +6920,11 @@
         hazureCount: hazureList.length,
         hazureRate: total > 0 ? ((hazureList.length / total) * 100).toFixed(1) : '0.0',
         lowScoreCount: lowScoreList.length,
+        uniqueCastCount: Object.keys(castCount).length,
+        uniqueStoreCount: Object.keys(storeCount).length,
+        topCastEntries, topStoreEntries, peakMonthEntry, peakYearEntry,
+        firstDate: dateList[0] || null,
+        lastDate: dateList[dateList.length - 1] || null,
         lowScoreTypeTagCount, lowScoreCategoryCount,
         avgAmount: amountCount > 0 ? Math.round(totalAmount / amountCount) : 0,
         visitsPerMonth: (total / spanMonths).toFixed(1)
@@ -6936,10 +6959,24 @@
     }
 
     function buildComprehensivePrompt(data) {
-      return `あなたは風俗業界に詳しい、客観的で丁寧な口調のアドバイザーAIです。以下はある利用者本人の全利用記録の集計データです。この人自身の今後の満足度・コスパを高めるためのフィードバックをしてください。
+      const topCastText = data.topCastEntries.length
+        ? data.topCastEntries.map(([name, cnt]) => `${name}(${cnt}回)`).join('、')
+        : 'データなし';
+      const topStoreText = data.topStoreEntries.length
+        ? data.topStoreEntries.map(([name, cnt]) => `${name}(${cnt}回)`).join('、')
+        : 'データなし';
+      const peakMonthText = data.peakMonthEntry ? `${data.peakMonthEntry[0]}（${data.peakMonthEntry[1]}回）` : 'データなし';
+      const peakYearText = data.peakYearEntry ? `${data.peakYearEntry[0]}年（${data.peakYearEntry[1]}回）` : 'データなし';
+
+      return `あなたは利用者本人と一緒に思い出を振り返る、親しみやすく丁寧な口調のパートナーAIです。以下はある利用者本人の全利用記録の集計データです。データを元に「自分はこれまでこんな感じで遊んでいたんだな」と懐かしく振り返れるような、温かみのある総合分析をしてください。単なる説教くさいアドバイスにはせず、まずは振り返り・思い出語りをメインにしてください。
 
 【集計データ】
-・総利用回数: ${data.total}回
+・総利用回数: ${data.total}回（記録期間: ${data.firstDate || '?'} 〜 ${data.lastDate || '?'}）
+・利用したキャスト数: ${data.uniqueCastCount}人 / 利用した店舗数: ${data.uniqueStoreCount}店舗
+・最も多く指名したキャストTOP5: ${topCastText}
+・最もよく通った店舗TOP5: ${topStoreText}
+・最も利用回数が多かった月: ${peakMonthText}
+・最も利用回数が多かった年: ${peakYearText}
 ・アタリ（🆂当たり／オキニ）率: ${data.atariRate}%（${data.atariCount}件）
 ・ハズレ（⚔）率: ${data.hazureRate}%（${data.hazureCount}件）
 ・低評価（1〜2点）が付いた記録: ${data.lowScoreCount}件
@@ -6948,15 +6985,15 @@
 ・平均利用金額: ${data.avgAmount ? data.avgAmount.toLocaleString() + '円' : 'データ不足'}
 ・月あたりの利用ペース: 約${data.visitsPerMonth}回／月
 
-【出力形式】必ず以下の3つの見出しで、客観的かつ丁寧な口調で日本語で回答してください。
+【出力形式】必ず以下の3つの見出しで、日本語で回答してください。
+【あなたの遊び方 振り返り】
+（一番よく指名したキャスト、一番通った店舗、一番利用が多かった時期などに触れながら、「こんな時期はこんな遊び方をしていたんだな」と思い出せるような、親しみやすい語り口の振り返り文章。数字を並べるだけでなく、ストーリーとして語ってください）
+
 【勝率・満足度インサイト】
-（アタリ率の評価と、利用傾向についての客観的なフィードバック）
+（アタリ率の評価と、利用傾向についての客観的なフィードバック。低評価パターンがあれば軽く触れる）
 
-【失敗（ハズレ）パターンの傾向分析】
-（満足度が下がった際に共通するパターンを指摘。データが少ない場合はその旨も述べる）
-
-【総評＆AIアドバイス】
-（失敗を減らし、満足度とコスパを最大化するための具体的なアドバイス）`;
+【総評＆これからのアドバイス】
+（これまでの振り返りを踏まえて、今後さらに満足度とコスパを高めるための、押しつけがましくない軽いアドバイス）`;
     }
 
     async function callGeminiAPI(promptText) {
