@@ -1023,6 +1023,7 @@
     /* 指定のなかったカテゴリの補完分 */
     .icon-cat-theme     { --icon-bg: #FDF2F8; --icon-color: #BE185D; }
     .icon-cat-devlock   { --icon-bg: #F5F5F4; --icon-color: #78716C; }
+    .icon-cat-ai        { --icon-bg: #EDE9FE; --icon-color: #7C3AED; }
     .icon-cat-visibility{ --icon-bg: #F0F9FF; --icon-color: #0369A1; }
     .icon-cat-cloud     { --icon-bg: #DBEAFE; --icon-color: #1D4ED8; }
 
@@ -1092,6 +1093,100 @@
       background: var(--bg-color); color: var(--light-text); font-size: 0.72rem; font-weight: bold; cursor: pointer;
     }
     .map-heatmap-tab.active { background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink)); color: #fff; border-color: transparent; }
+
+    /* ==================================================================
+       🤖 AI好み診断・総合分析（オーロラグロー＆グラスモーフィズム）
+       ================================================================== */
+    .ai-fullscreen-modal .modal-content.ai-fullscreen-content {
+      width: 100%; max-width: 720px; height: 92vh; max-height: 92vh;
+      display: flex; flex-direction: column; padding: 0; overflow: hidden;
+      background: #0a0e17; border-radius: var(--radius); position: relative;
+    }
+    .ai-aurora-bg { position: absolute; inset: 0; overflow: hidden; z-index: 0; }
+    .ai-aurora-blob { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.5; }
+    .ai-aurora-blob-1 { width: 300px; height: 300px; background: #7928CA; top: -70px; left: -60px; animation: aiAuroraFloat1 15s ease-in-out infinite; }
+    .ai-aurora-blob-2 { width: 260px; height: 260px; background: #0070F3; bottom: -70px; right: -50px; animation: aiAuroraFloat2 19s ease-in-out infinite; }
+    .ai-aurora-blob-3 { width: 240px; height: 240px; background: #00DFD8; top: 45%; left: 50%; animation: aiAuroraFloat3 17s ease-in-out infinite; }
+    @keyframes aiAuroraFloat1 { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(50px, 60px) scale(1.25); } }
+    @keyframes aiAuroraFloat2 { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-40px, -50px) scale(1.2); } }
+    @keyframes aiAuroraFloat3 { 0%, 100% { transform: translate(-50%,-50%) rotate(0deg) scale(1); } 50% { transform: translate(-50%,-50%) rotate(180deg) scale(1.3); } }
+
+    .ai-modal-header { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; padding: 16px 16px 10px; flex-shrink: 0; }
+    .ai-modal-header h3 { margin: 0; font-size: 1.02rem; background: linear-gradient(135deg, #ffffff, #a78bfa, #00DFD8); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .ai-modal-header .map-modal-close-x { color: #cbd5e1; }
+
+    .ai-tab-row { position: relative; z-index: 2; display: flex; gap: 8px; padding: 0 16px 12px; flex-shrink: 0; }
+    .ai-tab-btn {
+      flex: 1; padding: 10px 4px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05); color: #cbd5e1; font-size: 0.8rem; font-weight: bold; cursor: pointer;
+      transition: all 0.25s ease;
+    }
+    .ai-tab-btn.active { background: linear-gradient(135deg, rgba(121,40,202,0.65), rgba(0,112,243,0.65)); color: #fff; border-color: rgba(255,255,255,0.35); box-shadow: 0 0 18px rgba(121,40,202,0.45); }
+
+    .ai-scroll-body { position: relative; z-index: 2; flex: 1; overflow-y: auto; padding: 0 16px 24px; }
+    .ai-tab-view { animation: aiCardFadeIn 0.35s ease both; }
+
+    .ai-glass-card {
+      background: rgba(15, 20, 32, 0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; padding: 16px; margin-bottom: 14px;
+      animation: aiCardFadeIn 0.4s ease both;
+    }
+    @keyframes aiCardFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .ai-api-key-details { margin-bottom: 10px; }
+    .ai-api-key-details summary { color: #9ca3af; font-size: 0.76rem; cursor: pointer; padding: 6px 2px; list-style: none; }
+    .ai-api-key-note { font-size: 0.66rem; color: #6b7280; margin: 8px 0; line-height: 1.5; }
+    .ai-save-key-btn {
+      padding: 7px 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.08); color: #fff; font-size: 0.75rem; cursor: pointer;
+    }
+    #geminiApiKeyInput {
+      width: 100%; box-sizing: border-box; padding: 9px 10px; border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.06); color: #fff; font-size: 0.8rem;
+    }
+
+    .ai-run-btn {
+      margin-top: 12px; width: 100%; padding: 12px; border-radius: 12px; border: none;
+      background: linear-gradient(135deg, #7928CA, #0070F3); color: #fff; font-weight: bold; font-size: 0.86rem; cursor: pointer;
+      box-shadow: 0 4px 18px rgba(121,40,202,0.45); transition: transform 0.15s ease, box-shadow 0.2s ease;
+    }
+    .ai-run-btn:hover, .ai-run-btn:active { box-shadow: 0 4px 24px rgba(0,223,216,0.5); transform: scale(0.98); }
+    .ai-run-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    .ai-loading-card { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 30px 16px; }
+    .ai-loading-wave { display: flex; gap: 6px; align-items: flex-end; height: 26px; }
+    .ai-loading-wave span {
+      width: 7px; height: 100%; border-radius: 4px;
+      background: linear-gradient(180deg, #7928CA, #00DFD8);
+      animation: aiWavePulse 0.85s ease-in-out infinite;
+    }
+    .ai-loading-wave span:nth-child(2) { animation-delay: 0.1s; }
+    .ai-loading-wave span:nth-child(3) { animation-delay: 0.2s; }
+    .ai-loading-wave span:nth-child(4) { animation-delay: 0.3s; }
+    .ai-loading-wave span:nth-child(5) { animation-delay: 0.4s; }
+    @keyframes aiWavePulse { 0%, 100% { transform: scaleY(0.35); opacity: 0.55; } 50% { transform: scaleY(1); opacity: 1; } }
+    .ai-loading-text { color: #cbd5e1; font-size: 0.8rem; font-weight: bold; letter-spacing: 0.5px; animation: aiTextPulse 1.3s ease-in-out infinite; }
+    @keyframes aiTextPulse { 0%, 100% { opacity: 0.45; } 50% { opacity: 1; } }
+    .ai-loading-card.fast .ai-loading-wave span { animation-duration: 0.5s; }
+
+    .ai-result-section-title { color: #a78bfa; font-size: 0.85rem; font-weight: bold; margin: 14px 0 6px; }
+    .ai-result-text { color: #e2e8f0; font-size: 0.82rem; line-height: 1.75; white-space: pre-wrap; }
+    .ai-search-link-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .ai-search-link-btn {
+      flex: 1; min-width: 140px; text-align: center; padding: 10px; border-radius: 10px; text-decoration: none;
+      background: linear-gradient(135deg, rgba(121,40,202,0.55), rgba(0,223,216,0.35)); color: #fff; font-size: 0.76rem; font-weight: bold;
+      border: 1px solid rgba(255,255,255,0.18); transition: transform 0.15s ease;
+    }
+    .ai-search-link-btn:active { transform: scale(0.96); }
+    .ai-error-text { color: #fca5a5; font-size: 0.8rem; line-height: 1.6; }
+
+    .ai-trigger-btn {
+      padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(124,58,237,0.35);
+      background: linear-gradient(135deg, #EDE9FE, #DBEAFE); color: #6D28D9; font-size: 0.7rem; font-weight: bold; cursor: pointer;
+      transition: box-shadow 0.2s ease, transform 0.15s ease;
+    }
+    .ai-trigger-btn:hover, .ai-trigger-btn:active { box-shadow: 0 0 12px rgba(124,58,237,0.45); transform: scale(0.97); }
+    .ai-trigger-btn-sm { font-size: 0.68rem; padding: 5px 10px; }
 
     .map-scroll-body { flex: 1; overflow-y: auto; min-height: 0; }
     .map-legend-line { font-size: 0.72rem; color: var(--light-text); text-align: center; margin-bottom: 4px; }
@@ -1594,7 +1689,10 @@
       <!-- 4. 統計タブ -->
       <div id="viewDashboard" class="tab-content">
         <div class="dashboard" id="dashboardOverview" style="margin-bottom:14px;">
-          <div style="font-size:0.8rem; font-weight:bold; color:var(--accent-pink); margin-bottom:8px;">📊 全体利用統計</div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <div style="font-size:0.8rem; font-weight:bold; color:var(--accent-pink);">📊 全体利用統計</div>
+            <button type="button" class="ai-trigger-btn ai-trigger-btn-sm" onclick="openAiAnalysisModal()">🤖 AI好み診断</button>
+          </div>
           <div class="dash-grid">
             <div class="dash-item"><div class="dash-val" id="stTotalVisits">0</div><div class="dash-lbl">総利用回数</div></div>
             <div class="dash-item"><div class="dash-val" id="stTotalCasts">0</div><div class="dash-lbl">経験人数</div></div>
@@ -1901,6 +1999,10 @@
         <span class="nav-icon icon-badge icon-cat-keep icon-badge-sm"><span class="emoji-icon">🌟</span><i data-lucide="bookmark" class="smart-icon"></i></span><span>キープ (<span id="keepsCount">0</span>)</span>
       </button>
 
+      <button class="sheet-nav-item sheet-ai-btn" id="nav-aiAnalysis" onclick="openAiAnalysisModal(); closeMoreMenu();">
+        <span class="nav-icon icon-badge icon-cat-ai icon-badge-sm"><span class="emoji-icon">🤖</span><i data-lucide="sparkles" class="smart-icon"></i></span><span>AI好み診断</span>
+      </button>
+
       <div class="sheet-ad-carousel" id="sheetAdCarousel" onscroll="handleSheetAdScroll()">
         <div class="sheet-ad-card">
           <span class="ad-icon">🎀</span>
@@ -1926,9 +2028,6 @@
 
       <div class="sheet-dev-item">
         <span class="nav-icon icon-badge icon-cat-devlock icon-badge-sm"><span class="emoji-icon">🔒</span><i data-lucide="lock" class="smart-icon"></i></span><span>開発中の機能 ①</span>
-      </div>
-      <div class="sheet-dev-item">
-        <span class="nav-icon icon-badge icon-cat-devlock icon-badge-sm"><span class="emoji-icon">🔒</span><i data-lucide="lock" class="smart-icon"></i></span><span>開発中の機能 ②</span>
       </div>
     </div>
   </div>
@@ -2097,6 +2196,57 @@
       <img id="mapLightboxImg" class="map-lightbox-img" src="" alt="思い出画像">
       <div id="mapLightboxText" style="font-size:0.8rem; color:var(--text-color); margin-top:8px;"></div>
       <button class="close-btn" onclick="closeModal('mapImageLightbox')" style="margin-top:12px;">閉じる</button>
+    </div>
+  </div>
+
+  <!-- 🤖 AI好み診断・総合分析モーダル -->
+  <div class="modal-overlay ai-fullscreen-modal" id="aiAnalysisModal">
+    <div class="modal-content ai-fullscreen-content">
+      <div class="ai-aurora-bg">
+        <div class="ai-aurora-blob ai-aurora-blob-1"></div>
+        <div class="ai-aurora-blob ai-aurora-blob-2"></div>
+        <div class="ai-aurora-blob ai-aurora-blob-3"></div>
+      </div>
+
+      <div class="ai-modal-header">
+        <h3>🤖 AI好み診断</h3>
+        <button type="button" class="map-modal-close-x" onclick="closeModal('aiAnalysisModal')">✕</button>
+      </div>
+
+      <div class="ai-tab-row">
+        <button type="button" class="ai-tab-btn active" id="aiTabPreference" onclick="switchAiTab('preference')">🎯 好み分析</button>
+        <button type="button" class="ai-tab-btn" id="aiTabComprehensive" onclick="switchAiTab('comprehensive')">📊 総合分析</button>
+      </div>
+
+      <div class="ai-scroll-body">
+        <details class="ai-api-key-details">
+          <summary>🔑 Gemini APIキー設定</summary>
+          <div class="ai-glass-card" style="margin-top:8px;">
+            <div class="form-group">
+              <label style="color:#e2e8f0;">APIキー</label>
+              <input type="password" id="geminiApiKeyInput" placeholder="AIzaSy...">
+            </div>
+            <div class="ai-api-key-note">APIキーはこの端末の localStorage にのみ保存され、Google以外のどこにも送信されません。お持ちでない場合は Google AI Studio で無料発行できます。</div>
+            <button type="button" class="ai-save-key-btn" onclick="saveGeminiApiKey()">💾 保存</button>
+          </div>
+        </details>
+
+        <div id="aiPreferenceView" class="ai-tab-view">
+          <div class="ai-glass-card">
+            <p style="color:#cbd5e1; font-size:0.82rem; margin:0; line-height:1.6;">🆂当たり・オキニのフラグが付いた記録や、評価スコアが4以上の記録から、あなたの好みの傾向をAIが分析します。</p>
+            <button type="button" class="ai-run-btn" id="aiPreferenceRunBtn" onclick="runPreferenceAnalysis()">✨ 好み分析を実行</button>
+          </div>
+          <div id="aiPreferenceResult"></div>
+        </div>
+
+        <div id="aiComprehensiveView" class="ai-tab-view" style="display:none;">
+          <div class="ai-glass-card">
+            <p style="color:#cbd5e1; font-size:0.82rem; margin:0; line-height:1.6;">全記録のアタリ率・ハズレ率・低評価の傾向・利用ペースなどを総合的にAIが分析します。</p>
+            <button type="button" class="ai-run-btn" id="aiComprehensiveRunBtn" onclick="runComprehensiveAnalysis()">✨ 総合分析を実行</button>
+          </div>
+          <div id="aiComprehensiveResult"></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -6654,6 +6804,271 @@
     }
     function openSettingsModal() { switchMainTab('settings'); }
     function openHelpModal() { document.getElementById('helpModal').style.display = 'flex'; }
+
+    /* ==================================================================
+       🤖 AI好み診断・総合分析機能
+       ================================================================== */
+    function getGeminiApiKey() {
+      return localStorage.getItem('gemini_api_key_' + currentUserName) || '';
+    }
+
+    function saveGeminiApiKey() {
+      const key = document.getElementById('geminiApiKeyInput').value.trim();
+      if (!key) { alert('APIキーを入力してください。'); return; }
+      localStorage.setItem('gemini_api_key_' + currentUserName, key);
+      alert('APIキーを保存しました。');
+    }
+
+    function openAiAnalysisModal() {
+      document.getElementById('geminiApiKeyInput').value = getGeminiApiKey();
+      document.getElementById('aiAnalysisModal').style.display = 'flex';
+    }
+
+    function switchAiTab(tab) {
+      document.getElementById('aiTabPreference').classList.toggle('active', tab === 'preference');
+      document.getElementById('aiTabComprehensive').classList.toggle('active', tab === 'comprehensive');
+      document.getElementById('aiPreferenceView').style.display = tab === 'preference' ? 'block' : 'none';
+      document.getElementById('aiComprehensiveView').style.display = tab === 'comprehensive' ? 'block' : 'none';
+    }
+
+    function extractPreferenceData() {
+      const matched = historyList.filter(v =>
+        (v.flags && v.flags.includes('🆂')) ||
+        [v.looks, v.service, v.style, v.intimacy, v.value].some(s => (parseInt(s, 10) || 0) >= 4)
+      );
+
+      const typeTagCount = {};
+      const categoryCount = {};
+      const styleList = [];
+      let sumLooks = 0, sumService = 0, sumStyleScore = 0, sumIntimacy = 0, sumValue = 0, n = 0;
+
+      matched.forEach(v => {
+        if (v.typeTag) typeTagCount[v.typeTag] = (typeTagCount[v.typeTag] || 0) + 1;
+        const info = storeInfoData[v.storeName];
+        if (info && info.category) categoryCount[info.category] = (categoryCount[info.category] || 0) + 1;
+        const cd = castData[v.name];
+        if (cd && cd.style) styleList.push(cd.style);
+        sumLooks += parseInt(v.looks, 10) || 0;
+        sumService += parseInt(v.service, 10) || 0;
+        sumStyleScore += parseInt(v.style, 10) || 0;
+        sumIntimacy += parseInt(v.intimacy, 10) || 0;
+        sumValue += parseInt(v.value, 10) || 0;
+        n++;
+      });
+
+      return {
+        count: matched.length,
+        totalCount: historyList.length,
+        typeTagCount, categoryCount, styleList,
+        avgScores: n > 0 ? {
+          looks: (sumLooks / n).toFixed(1), service: (sumService / n).toFixed(1),
+          style: (sumStyleScore / n).toFixed(1), intimacy: (sumIntimacy / n).toFixed(1), value: (sumValue / n).toFixed(1)
+        } : null
+      };
+    }
+
+    function extractComprehensiveData() {
+      const total = historyList.length;
+      const atariList = historyList.filter(v => v.flags && v.flags.includes('🆂'));
+      const hazureList = historyList.filter(v => v.flags && v.flags.includes('⚔'));
+      const lowScoreList = historyList.filter(v => [v.looks, v.service, v.style, v.intimacy, v.value].some(s => {
+        const num = parseInt(s, 10); return num >= 1 && num <= 2;
+      }));
+
+      const lowScoreTypeTagCount = {};
+      const lowScoreCategoryCount = {};
+      lowScoreList.forEach(v => {
+        if (v.typeTag) lowScoreTypeTagCount[v.typeTag] = (lowScoreTypeTagCount[v.typeTag] || 0) + 1;
+        const info = storeInfoData[v.storeName];
+        if (info && info.category) lowScoreCategoryCount[info.category] = (lowScoreCategoryCount[info.category] || 0) + 1;
+      });
+
+      let totalAmount = 0, amountCount = 0;
+      const dateList = [];
+      historyList.forEach(v => {
+        const amt = parseInt(String(v.amount || '').replace(/[^0-9]/g, ''), 10);
+        if (amt) { totalAmount += amt; amountCount++; }
+        if (v.year && v.month) dateList.push(v.year + '-' + String(v.month).padStart(2, '0'));
+      });
+      dateList.sort();
+      const spanMonths = dateList.length > 1 ?
+        Math.max(1, (parseInt(dateList[dateList.length - 1].slice(0, 4), 10) - parseInt(dateList[0].slice(0, 4), 10)) * 12 +
+          (parseInt(dateList[dateList.length - 1].slice(5, 7), 10) - parseInt(dateList[0].slice(5, 7), 10)) + 1) : 1;
+
+      return {
+        total,
+        atariCount: atariList.length,
+        atariRate: total > 0 ? ((atariList.length / total) * 100).toFixed(1) : '0.0',
+        hazureCount: hazureList.length,
+        hazureRate: total > 0 ? ((hazureList.length / total) * 100).toFixed(1) : '0.0',
+        lowScoreCount: lowScoreList.length,
+        lowScoreTypeTagCount, lowScoreCategoryCount,
+        avgAmount: amountCount > 0 ? Math.round(totalAmount / amountCount) : 0,
+        visitsPerMonth: (total / spanMonths).toFixed(1)
+      };
+    }
+
+    function topEntriesText(obj, limit) {
+      const entries = Object.entries(obj).sort((a, b) => b[1] - a[1]).slice(0, limit).map(([k, v]) => `${k}(${v}件)`);
+      return entries.length ? entries.join('、') : 'データなし';
+    }
+
+    function buildPreferencePrompt(data) {
+      const avg = data.avgScores;
+      return `あなたは風俗業界に詳しいプロのコンシェルジュAIです。以下はある利用者本人が記録した「当たり／高評価だった体験」のデータです。この人の好みの傾向を分析してください。
+
+【分析対象データ】
+・高評価だった記録数: ${data.count}件（全${data.totalCount}件中）
+・よく出てくる系統タグ: ${topEntriesText(data.typeTagCount, 8)}
+・よく利用する業種: ${topEntriesText(data.categoryCount, 5)}
+・体型データのサンプル: ${data.styleList.slice(0, 10).join(' / ') || 'データなし'}
+・平均評価（5点満点）: ルックス${avg ? avg.looks : '-'} / 接客${avg ? avg.service : '-'} / スタイル${avg ? avg.style : '-'} / イチャ度${avg ? avg.intimacy : '-'} / コスパ${avg ? avg.value : '-'}
+
+【出力形式】必ず以下の3つの見出しで、日本語で分かりやすく回答してください。
+【好み傾向の分析結果】
+（データから読み取れる好みの傾向を、文章で分かりやすく要約）
+
+【おすすめ検索タグ・キーワード】
+（検索でそのまま使えそうな系統・キーワードを箇条書きで5〜8個）
+
+【最適化検索条件まとめ】
+（エリア・年齢層・体型・ジャンルなど、検索条件として指定すると良い値を簡潔にまとめる）`;
+    }
+
+    function buildComprehensivePrompt(data) {
+      return `あなたは風俗業界に詳しい、客観的で丁寧な口調のアドバイザーAIです。以下はある利用者本人の全利用記録の集計データです。この人自身の今後の満足度・コスパを高めるためのフィードバックをしてください。
+
+【集計データ】
+・総利用回数: ${data.total}回
+・アタリ（🆂当たり／オキニ）率: ${data.atariRate}%（${data.atariCount}件）
+・ハズレ（⚔）率: ${data.hazureRate}%（${data.hazureCount}件）
+・低評価（1〜2点）が付いた記録: ${data.lowScoreCount}件
+・低評価でよく出てくる系統タグ: ${topEntriesText(data.lowScoreTypeTagCount, 5)}
+・低評価でよく出てくる業種: ${topEntriesText(data.lowScoreCategoryCount, 5)}
+・平均利用金額: ${data.avgAmount ? data.avgAmount.toLocaleString() + '円' : 'データ不足'}
+・月あたりの利用ペース: 約${data.visitsPerMonth}回／月
+
+【出力形式】必ず以下の3つの見出しで、客観的かつ丁寧な口調で日本語で回答してください。
+【勝率・満足度インサイト】
+（アタリ率の評価と、利用傾向についての客観的なフィードバック）
+
+【失敗（ハズレ）パターンの傾向分析】
+（満足度が下がった際に共通するパターンを指摘。データが少ない場合はその旨も述べる）
+
+【総評＆AIアドバイス】
+（失敗を減らし、満足度とコスパを最大化するための具体的なアドバイス）`;
+    }
+
+    async function callGeminiAPI(promptText) {
+      const apiKey = getGeminiApiKey();
+      if (!apiKey) {
+        throw new Error('APIキーが設定されていません。上の「🔑 Gemini APIキー設定」からご自身のAPIキーを入力・保存してください。');
+      }
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        const msg = (data && data.error && data.error.message) ? data.error.message : ('HTTPエラー ' + res.status);
+        throw new Error(msg);
+      }
+      const text = (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts || [])
+        .map(p => p.text).join('');
+      if (!text) throw new Error('AIから有効な応答が得られませんでした。');
+      return text;
+    }
+
+    function parseAiSections(text) {
+      const regex = /【([^】]+)】/g;
+      const indices = [];
+      let match;
+      while ((match = regex.exec(text)) !== null) {
+        indices.push({ title: match[1], headerEnd: regex.lastIndex, start: match.index });
+      }
+      const sections = [];
+      for (let i = 0; i < indices.length; i++) {
+        const cur = indices[i];
+        const next = indices[i + 1];
+        const body = text.slice(cur.headerEnd, next ? next.start : text.length).trim();
+        sections.push({ title: cur.title, body });
+      }
+      if (sections.length === 0) sections.push({ title: '', body: text.trim() });
+      return sections;
+    }
+
+    function buildSearchLinksHtml(keywordText) {
+      const cleaned = keywordText.replace(/[\-・*#]/g, ' ').replace(/\s+/g, ' ').trim();
+      const keywords = cleaned.split(' ').filter(Boolean).slice(0, 6).join(' ');
+      if (!keywords) return '';
+      return `<div class="ai-search-link-row">
+        <a class="ai-search-link-btn" href="https://www.google.com/search?q=${encodeURIComponent('シティヘブン ' + keywords)}" target="_blank" rel="noopener noreferrer">🔍 シティヘブンで検索</a>
+        <a class="ai-search-link-btn" href="https://www.google.com/search?q=${encodeURIComponent('風俗じゃぱん ' + keywords)}" target="_blank" rel="noopener noreferrer">🔍 ふうぞくじゃぱんで検索</a>
+      </div>`;
+    }
+
+    function renderAiResultHtml(text, isPreference) {
+      const sections = parseAiSections(text);
+      let html = '<div class="ai-glass-card">';
+      sections.forEach(sec => {
+        if (sec.title) html += `<div class="ai-result-section-title">【${escapeHTML(sec.title)}】</div>`;
+        html += `<div class="ai-result-text">${escapeHTML(sec.body)}</div>`;
+        if (isPreference && sec.title.includes('検索タグ')) html += buildSearchLinksHtml(sec.body);
+      });
+      html += '</div>';
+      return html;
+    }
+
+    async function runPreferenceAnalysis() {
+      const btn = document.getElementById('aiPreferenceRunBtn');
+      const resultEl = document.getElementById('aiPreferenceResult');
+      if (!getGeminiApiKey()) {
+        resultEl.innerHTML = '<div class="ai-glass-card"><div class="ai-error-text">先に🔑 Gemini APIキー設定からご自身のAPIキーを入力・保存してください。</div></div>';
+        return;
+      }
+      btn.disabled = true;
+      resultEl.innerHTML = '<div class="ai-glass-card"><div class="ai-loading-card"><div class="ai-loading-wave"><span></span><span></span><span></span><span></span><span></span></div><div class="ai-loading-text">AI分析中…</div></div></div>';
+      try {
+        const data = extractPreferenceData();
+        if (data.count === 0) {
+          resultEl.innerHTML = '<div class="ai-glass-card"><div class="ai-error-text">分析できる「当たり」または高評価（4点以上）の記録がまだありません。記録を増やしてから試してください。</div></div>';
+          return;
+        }
+        const text = await callGeminiAPI(buildPreferencePrompt(data));
+        resultEl.innerHTML = renderAiResultHtml(text, true);
+      } catch (err) {
+        resultEl.innerHTML = `<div class="ai-glass-card"><div class="ai-error-text">⚠️ エラーが発生しました: ${escapeHTML(err.message || String(err))}</div></div>`;
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    async function runComprehensiveAnalysis() {
+      const btn = document.getElementById('aiComprehensiveRunBtn');
+      const resultEl = document.getElementById('aiComprehensiveResult');
+      if (!getGeminiApiKey()) {
+        resultEl.innerHTML = '<div class="ai-glass-card"><div class="ai-error-text">先に🔑 Gemini APIキー設定からご自身のAPIキーを入力・保存してください。</div></div>';
+        return;
+      }
+      btn.disabled = true;
+      resultEl.innerHTML = '<div class="ai-glass-card"><div class="ai-loading-card fast"><div class="ai-loading-wave"><span></span><span></span><span></span><span></span><span></span></div><div class="ai-loading-text">AI分析中…</div></div></div>';
+      try {
+        const data = extractComprehensiveData();
+        if (data.total === 0) {
+          resultEl.innerHTML = '<div class="ai-glass-card"><div class="ai-error-text">分析できる記録がまだありません。</div></div>';
+          return;
+        }
+        const text = await callGeminiAPI(buildComprehensivePrompt(data));
+        resultEl.innerHTML = renderAiResultHtml(text, false);
+      } catch (err) {
+        resultEl.innerHTML = `<div class="ai-glass-card"><div class="ai-error-text">⚠️ エラーが発生しました: ${escapeHTML(err.message || String(err))}</div></div>`;
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
     
     function applyTheme(t) {
       currentTheme = t;
