@@ -1188,6 +1188,23 @@
     .ai-trigger-btn:hover, .ai-trigger-btn:active { box-shadow: 0 0 12px rgba(124,58,237,0.45); transform: scale(0.97); }
     .ai-trigger-btn-sm { font-size: 0.68rem; padding: 5px 10px; }
 
+    /* 🕰️ あのとき（期間別振り返り）UI */
+    .ai-era-quick-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+    .ai-era-quick-btn {
+      padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.06); color: #cbd5e1; font-size: 0.72rem; font-weight: bold; cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .ai-era-quick-btn.active { background: linear-gradient(135deg, rgba(121,40,202,0.7), rgba(0,223,216,0.5)); color: #fff; border-color: rgba(255,255,255,0.35); box-shadow: 0 0 14px rgba(121,40,202,0.4); }
+    .ai-era-custom-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .ai-era-month-input {
+      flex: 1; min-width: 0; box-sizing: border-box; padding: 8px 10px; border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.06); color: #fff; font-size: 0.78rem;
+      color-scheme: dark;
+    }
+    .ai-era-range-sep { color: #6b7280; font-size: 0.8rem; flex-shrink: 0; }
+    .ai-era-selected-label { font-size: 0.72rem; color: #9ca3af; margin-bottom: 4px; }
+
     .map-scroll-body { flex: 1; overflow-y: auto; min-height: 0; }
     .map-legend-line { font-size: 0.72rem; color: var(--light-text); text-align: center; margin-bottom: 4px; }
     .map-svg-wrap { width: 100%; max-width: 480px; margin: 0 auto; text-align: center; position: relative; }
@@ -2216,6 +2233,7 @@
       <div class="ai-tab-row">
         <button type="button" class="ai-tab-btn active" id="aiTabPreference" onclick="switchAiTab('preference')">🎯 好み分析</button>
         <button type="button" class="ai-tab-btn" id="aiTabComprehensive" onclick="switchAiTab('comprehensive')">📊 総合分析</button>
+        <button type="button" class="ai-tab-btn" id="aiTabEra" onclick="switchAiTab('era')">🕰️ あのとき</button>
       </div>
 
       <div class="ai-scroll-body">
@@ -2245,6 +2263,30 @@
             <button type="button" class="ai-run-btn" id="aiComprehensiveRunBtn" onclick="runComprehensiveAnalysis()">✨ 総合分析を実行</button>
           </div>
           <div id="aiComprehensiveResult"></div>
+        </div>
+
+        <div id="aiEraView" class="ai-tab-view" style="display:none;">
+          <div class="ai-glass-card">
+            <p style="color:#cbd5e1; font-size:0.82rem; margin:0 0 12px; line-height:1.6;">気になる期間を選ぶと、その頃の遊び方をAIが振り返ります。</p>
+
+            <div class="ai-era-quick-row">
+              <button type="button" class="ai-era-quick-btn" onclick="selectEraQuickRange('recent3', this)">直近3ヶ月</button>
+              <button type="button" class="ai-era-quick-btn" onclick="selectEraQuickRange('half', this)">半年前</button>
+              <button type="button" class="ai-era-quick-btn" onclick="selectEraQuickRange('year', this)">1年前</button>
+              <button type="button" class="ai-era-quick-btn" onclick="selectEraQuickRange('thisYear', this)">今年</button>
+              <button type="button" class="ai-era-quick-btn" onclick="selectEraQuickRange('lastYear', this)">去年</button>
+            </div>
+
+            <div class="ai-era-custom-row">
+              <input type="month" id="aiEraStartInput" class="ai-era-month-input" onchange="clearEraQuickActive(); updateEraSelectedLabel();">
+              <span class="ai-era-range-sep">〜</span>
+              <input type="month" id="aiEraEndInput" class="ai-era-month-input" onchange="clearEraQuickActive(); updateEraSelectedLabel();">
+            </div>
+            <div class="ai-era-selected-label" id="aiEraSelectedLabel">期間を選択してください</div>
+
+            <button type="button" class="ai-run-btn" id="aiEraRunBtn" onclick="runEraAnalysis()">✨ この時期を振り返る</button>
+          </div>
+          <div id="aiEraResult"></div>
         </div>
       </div>
     </div>
@@ -6827,8 +6869,10 @@
     function switchAiTab(tab) {
       document.getElementById('aiTabPreference').classList.toggle('active', tab === 'preference');
       document.getElementById('aiTabComprehensive').classList.toggle('active', tab === 'comprehensive');
+      document.getElementById('aiTabEra').classList.toggle('active', tab === 'era');
       document.getElementById('aiPreferenceView').style.display = tab === 'preference' ? 'block' : 'none';
       document.getElementById('aiComprehensiveView').style.display = tab === 'comprehensive' ? 'block' : 'none';
+      document.getElementById('aiEraView').style.display = tab === 'era' ? 'block' : 'none';
     }
 
     function extractPreferenceData() {
@@ -7098,6 +7142,176 @@
           return;
         }
         const text = await callGeminiAPI(buildComprehensivePrompt(data));
+        resultEl.innerHTML = renderAiResultHtml(text, false);
+      } catch (err) {
+        resultEl.innerHTML = `<div class="ai-glass-card"><div class="ai-error-text">⚠️ エラーが発生しました: ${escapeHTML(err.message || String(err))}</div></div>`;
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    /* ==================================================================
+       🕰️ あのとき分析（期間別振り返り）
+       ================================================================== */
+    let selectedEraStartYM = null;
+    let selectedEraEndYM = null;
+
+    function shiftYearMonth(year, month, delta) {
+      let total = (parseInt(year, 10) * 12 + (parseInt(month, 10) - 1)) + delta;
+      const y = Math.floor(total / 12);
+      const m = (total % 12) + 1;
+      return { year: y, month: m };
+    }
+
+    function ymToStr(year, month) { return year + '-' + String(month).padStart(2, '0'); }
+
+    function selectEraQuickRange(type, btnEl) {
+      const now = new Date();
+      const curY = now.getFullYear(), curM = now.getMonth() + 1;
+      let startY, startM, endY, endM;
+
+      if (type === 'recent3') {
+        const s = shiftYearMonth(curY, curM, -2);
+        startY = s.year; startM = s.month; endY = curY; endM = curM;
+      } else if (type === 'half') {
+        const s = shiftYearMonth(curY, curM, -7);
+        const e = shiftYearMonth(curY, curM, -5);
+        startY = s.year; startM = s.month; endY = e.year; endM = e.month;
+      } else if (type === 'year') {
+        const s = shiftYearMonth(curY, curM, -13);
+        const e = shiftYearMonth(curY, curM, -11);
+        startY = s.year; startM = s.month; endY = e.year; endM = e.month;
+      } else if (type === 'thisYear') {
+        startY = curY; startM = 1; endY = curY; endM = curM;
+      } else if (type === 'lastYear') {
+        startY = curY - 1; startM = 1; endY = curY - 1; endM = 12;
+      }
+
+      selectedEraStartYM = ymToStr(startY, startM);
+      selectedEraEndYM = ymToStr(endY, endM);
+      document.getElementById('aiEraStartInput').value = selectedEraStartYM;
+      document.getElementById('aiEraEndInput').value = selectedEraEndYM;
+
+      document.querySelectorAll('.ai-era-quick-btn').forEach(btn => btn.classList.remove('active'));
+      if (btnEl) btnEl.classList.add('active');
+      updateEraSelectedLabel();
+    }
+
+    function clearEraQuickActive() {
+      document.querySelectorAll('.ai-era-quick-btn').forEach(btn => btn.classList.remove('active'));
+    }
+
+    function updateEraSelectedLabel() {
+      const startVal = document.getElementById('aiEraStartInput').value;
+      const endVal = document.getElementById('aiEraEndInput').value;
+      selectedEraStartYM = startVal || null;
+      selectedEraEndYM = endVal || null;
+      const label = document.getElementById('aiEraSelectedLabel');
+      if (selectedEraStartYM && selectedEraEndYM) {
+        label.textContent = `選択中の期間: ${selectedEraStartYM} 〜 ${selectedEraEndYM}`;
+      } else {
+        label.textContent = '期間を選択してください';
+      }
+    }
+
+    function extractEraData(startYM, endYM) {
+      const inRange = v => {
+        if (!v.year || !v.month) return false;
+        const ym = ymToStr(v.year, String(v.month).padStart(2, '0'));
+        return ym >= startYM && ym <= endYM;
+      };
+      const eraList = historyList.filter(inRange);
+      const total = eraList.length;
+
+      const castCount = {};
+      const storeCount = {};
+      let totalAmount = 0, amountCount = 0;
+      const atariList = [];
+      const highlightFlags = ['🈠', '❖', '❀', '🆂'];
+      const highlightRecords = [];
+
+      eraList.forEach(v => {
+        if (v.name) castCount[v.name] = (castCount[v.name] || 0) + 1;
+        if (v.storeName) storeCount[v.storeName] = (storeCount[v.storeName] || 0) + 1;
+        const amt = parseInt(String(v.amount || '').replace(/[^0-9]/g, ''), 10);
+        if (amt) { totalAmount += amt; amountCount++; }
+        if (v.flags && v.flags.includes('🆂')) atariList.push(v);
+        if (v.flags && highlightFlags.some(f => v.flags.includes(f))) {
+          highlightRecords.push(`${v.year}/${v.month} ${v.name || ''}（${v.storeName || ''}）flags:${v.flags}`);
+        }
+      });
+
+      const topCastEntries = Object.entries(castCount).sort((a, b) => b[1] - a[1]).slice(0, 3);
+      const topStoreEntries = Object.entries(storeCount).sort((a, b) => b[1] - a[1]).slice(0, 3);
+
+      return {
+        total,
+        topCastEntries, topStoreEntries,
+        atariCount: atariList.length,
+        atariRate: total > 0 ? ((atariList.length / total) * 100).toFixed(1) : '0.0',
+        avgAmount: amountCount > 0 ? Math.round(totalAmount / amountCount) : 0,
+        highlightRecords: highlightRecords.slice(0, 6)
+      };
+    }
+
+    function buildEraPrompt(startYM, endYM, eraData, overallData) {
+      const topCastText = eraData.topCastEntries.length
+        ? eraData.topCastEntries.map(([name, cnt]) => `${name}(${cnt}回)`).join('、') : 'データなし';
+      const topStoreText = eraData.topStoreEntries.length
+        ? eraData.topStoreEntries.map(([name, cnt]) => `${name}(${cnt}回)`).join('、') : 'データなし';
+      const highlightText = eraData.highlightRecords.length
+        ? eraData.highlightRecords.join(' / ') : '特筆すべき記録なし';
+
+      return `あなたは利用者本人と一緒に古い日記や写真アルバムを読み返すような、温かく懐かしいトーンのパートナーAIです。以下は「${startYM} 〜 ${endYM}」という特定の期間だけに絞った利用記録データと、全期間の平均データです。この特定の時期にフォーカスして、「あの頃はこんな感じだったな」と思い出に浸れるような振り返りをしてください。
+
+【${startYM} 〜 ${endYM} の期間データ】
+・この期間の利用回数: ${eraData.total}回
+・この期間によく指名したキャスト: ${topCastText}
+・この期間によく通った店舗: ${topStoreText}
+・この期間のアタリ率: ${eraData.atariRate}%（${eraData.atariCount}件）
+・この期間の平均利用金額: ${eraData.avgAmount ? eraData.avgAmount.toLocaleString() + '円' : 'データ不足'}
+・印象的な記録（初出勤・高額・卒業・当たり等のフラグ付き）: ${highlightText}
+
+【参考：全期間の平均データ】
+・総利用回数: ${overallData.total}回（月あたり約${overallData.visitsPerMonth}回）
+・全期間のアタリ率: ${overallData.atariRate}%
+・全期間の平均利用金額: ${overallData.avgAmount ? overallData.avgAmount.toLocaleString() + '円' : 'データ不足'}
+
+【出力形式】必ず以下の3つの見出しで、日本語で回答してください。
+【この時期のタイトル】
+（この期間を一言で表す、思い出アルバムの表紙のような短いフレーズ。1行のみ）
+
+【あの頃の振り返り】
+（メインの振り返り文章。日記を読み返すような文体で、具体的なキャスト名・店舗名・印象的な記録に触れながら物語調に。全期間平均と比べて多かった/少なかった等のコントラストも軽く交える。この期間の記録が少ない場合はその旨を踏まえて短くまとめる）
+
+【この時期のハイライト】
+（箇条書きで3〜5個。印象的だった記録や特徴を挙げる）`;
+    }
+
+    async function runEraAnalysis() {
+      const btn = document.getElementById('aiEraRunBtn');
+      const resultEl = document.getElementById('aiEraResult');
+      if (!getGeminiApiKey()) {
+        resultEl.innerHTML = '<div class="ai-glass-card"><div class="ai-error-text">先に🔑 Gemini APIキー設定からご自身のAPIキーを入力・保存してください。</div></div>';
+        return;
+      }
+      if (!selectedEraStartYM || !selectedEraEndYM) {
+        resultEl.innerHTML = '<div class="ai-glass-card"><div class="ai-error-text">期間を選択してください。</div></div>';
+        return;
+      }
+      const startYM = selectedEraStartYM <= selectedEraEndYM ? selectedEraStartYM : selectedEraEndYM;
+      const endYM = selectedEraStartYM <= selectedEraEndYM ? selectedEraEndYM : selectedEraStartYM;
+
+      btn.disabled = true;
+      resultEl.innerHTML = '<div class="ai-glass-card"><div class="ai-loading-card"><div class="ai-loading-wave"><span></span><span></span><span></span><span></span><span></span></div><div class="ai-loading-text">AI分析中…</div></div></div>';
+      try {
+        const eraData = extractEraData(startYM, endYM);
+        if (eraData.total === 0) {
+          resultEl.innerHTML = '<div class="ai-glass-card"><div class="ai-error-text">この期間の記録はまだありません。別の期間を選んでみてください。</div></div>';
+          return;
+        }
+        const overallData = extractComprehensiveData();
+        const text = await callGeminiAPI(buildEraPrompt(startYM, endYM, eraData, overallData));
         resultEl.innerHTML = renderAiResultHtml(text, false);
       } catch (err) {
         resultEl.innerHTML = `<div class="ai-glass-card"><div class="ai-error-text">⚠️ エラーが発生しました: ${escapeHTML(err.message || String(err))}</div></div>`;
