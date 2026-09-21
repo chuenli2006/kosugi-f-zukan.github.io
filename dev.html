@@ -1024,6 +1024,7 @@
     .icon-cat-theme     { --icon-bg: #FDF2F8; --icon-color: #BE185D; }
     .icon-cat-devlock   { --icon-bg: #F5F5F4; --icon-color: #78716C; }
     .icon-cat-ai        { --icon-bg: #EDE9FE; --icon-color: #7C3AED; }
+    .icon-cat-aichat    { --icon-bg: #DBEAFE; --icon-color: #2563EB; }
     .icon-cat-visibility{ --icon-bg: #F0F9FF; --icon-color: #0369A1; }
     .icon-cat-cloud     { --icon-bg: #DBEAFE; --icon-color: #1D4ED8; }
 
@@ -1204,6 +1205,39 @@
     }
     .ai-era-range-sep { color: #6b7280; font-size: 0.8rem; flex-shrink: 0; }
     .ai-era-selected-label { font-size: 0.72rem; color: #9ca3af; margin-bottom: 4px; }
+
+    /* ==================================================================
+       🔍 AIスマート図鑑（チャット・通常テーマに追従）
+       ================================================================== */
+    .ai-chat-modal .modal-content.ai-chat-content {
+      width: 100%; max-width: 480px; height: 88vh; max-height: 88vh;
+      display: flex; flex-direction: column; padding: 0; overflow: hidden;
+      background: var(--bg-color); border-radius: var(--radius);
+    }
+    .ai-chat-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
+    .ai-chat-header h3 { margin: 0; font-size: 0.95rem; color: var(--accent-pink); }
+    .ai-chat-clear-btn { background: none; border: none; font-size: 1rem; cursor: pointer; color: var(--light-text); padding: 0; }
+
+    .ai-chat-chip-row { display: flex; gap: 6px; padding: 10px 12px; overflow-x: auto; flex-shrink: 0; border-bottom: 1px solid var(--border-color); }
+    .ai-chat-chip { flex-shrink: 0; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-color); font-size: 0.72rem; font-weight: bold; cursor: pointer; white-space: nowrap; }
+    .ai-chat-chip:active { background: var(--soft-pink); }
+
+    .ai-chat-messages { flex: 1; overflow-y: auto; padding: 14px 12px; display: flex; flex-direction: column; gap: 8px; }
+    .ai-chat-bubble { max-width: 78%; padding: 9px 13px; border-radius: 16px; font-size: 0.82rem; line-height: 1.6; animation: chatBubbleIn 0.25s ease both; white-space: pre-wrap; word-break: break-word; }
+    @keyframes chatBubbleIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .ai-chat-bubble-user { align-self: flex-end; background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink)); color: #fff; border-bottom-right-radius: 4px; }
+    .ai-chat-bubble-ai { align-self: flex-start; background: var(--card-bg); color: var(--text-color); border: 1px solid var(--border-color); border-bottom-left-radius: 4px; }
+
+    .ai-chat-typing { display: flex; gap: 4px; align-items: center; padding: 12px 14px; }
+    .ai-chat-typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--light-text); animation: chatTypingBounce 1s ease-in-out infinite; display: inline-block; }
+    .ai-chat-typing span:nth-child(2) { animation-delay: 0.15s; }
+    .ai-chat-typing span:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes chatTypingBounce { 0%, 60%, 100% { transform: translateY(0); opacity: 0.5; } 30% { transform: translateY(-4px); opacity: 1; } }
+
+    .ai-chat-input-row { display: flex; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--border-color); flex-shrink: 0; }
+    .ai-chat-input-row input { flex: 1; min-width: 0; padding: 10px 14px; border-radius: 999px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-color); font-size: 0.82rem; box-sizing: border-box; }
+    .ai-chat-send-btn { flex-shrink: 0; width: 38px; height: 38px; border-radius: 50%; border: none; background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink)); color: #fff; font-size: 1rem; cursor: pointer; }
+    .ai-chat-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
     .map-scroll-body { flex: 1; overflow-y: auto; min-height: 0; }
     .map-legend-line { font-size: 0.72rem; color: var(--light-text); text-align: center; margin-bottom: 4px; }
@@ -2020,6 +2054,10 @@
         <span class="nav-icon icon-badge icon-cat-ai icon-badge-sm"><span class="emoji-icon">🤖</span><i data-lucide="sparkles" class="smart-icon"></i></span><span>AI好み診断</span>
       </button>
 
+      <button class="sheet-nav-item" id="nav-aiChat" onclick="openAiChatModal(); closeMoreMenu();">
+        <span class="nav-icon icon-badge icon-cat-aichat icon-badge-sm"><span class="emoji-icon">🔍</span><i data-lucide="search" class="smart-icon"></i></span><span>AIスマート図鑑</span>
+      </button>
+
       <div class="sheet-ad-carousel" id="sheetAdCarousel" onscroll="handleSheetAdScroll()">
         <div class="sheet-ad-card">
           <span class="ad-icon">🎀</span>
@@ -2041,10 +2079,6 @@
         <span class="sheet-ad-dot active"></span>
         <span class="sheet-ad-dot"></span>
         <span class="sheet-ad-dot"></span>
-      </div>
-
-      <div class="sheet-dev-item">
-        <span class="nav-icon icon-badge icon-cat-devlock icon-badge-sm"><span class="emoji-icon">🔒</span><i data-lucide="lock" class="smart-icon"></i></span><span>開発中の機能 ①</span>
       </div>
     </div>
   </div>
@@ -2289,6 +2323,33 @@
           <div id="aiEraResult"></div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- 🔍 AIスマート図鑑（チャット） -->
+  <div class="modal-overlay ai-chat-modal" id="aiChatModal">
+    <div class="modal-content ai-chat-content">
+      <div class="ai-chat-header">
+        <h3>🔍 AIスマート図鑑</h3>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <button type="button" class="ai-chat-clear-btn" onclick="clearChatHistory()" title="会話をクリア">🗑️</button>
+          <button type="button" class="map-modal-close-x" onclick="closeModal('aiChatModal')">✕</button>
+        </div>
+      </div>
+
+      <div class="ai-chat-chip-row">
+        <button type="button" class="ai-chat-chip" onclick="sendChatQuickQuestion('当たりが多いお店はどこ？')">当たりが多い店は？</button>
+        <button type="button" class="ai-chat-chip" onclick="sendChatQuickQuestion('先月は何回利用した？')">先月何回？</button>
+        <button type="button" class="ai-chat-chip" onclick="sendChatQuickQuestion('ハズレが多い系統は？')">ハズレが多い系統は？</button>
+        <button type="button" class="ai-chat-chip" onclick="sendChatQuickQuestion('一番お金を使った月はいつ？')">一番使った月は？</button>
+      </div>
+
+      <div class="ai-chat-messages" id="aiChatMessages"></div>
+
+      <form class="ai-chat-input-row" onsubmit="event.preventDefault(); sendChatMessage();">
+        <input type="text" id="aiChatInput" placeholder="質問を入力...">
+        <button type="submit" class="ai-chat-send-btn" id="aiChatSendBtn">➤</button>
+      </form>
     </div>
   </div>
 
@@ -7318,6 +7379,116 @@
       } finally {
         btn.disabled = false;
       }
+    }
+
+    /* ==================================================================
+       🔍 AIスマート図鑑（データについて自由に質問できるチャット）
+       ================================================================== */
+    let chatHistory = [];
+
+    function loadChatHistory() {
+      try {
+        chatHistory = JSON.parse(localStorage.getItem('ai_chat_history_' + currentUserName) || '[]');
+      } catch (e) {
+        chatHistory = [];
+      }
+    }
+
+    function saveChatHistory() {
+      localStorage.setItem('ai_chat_history_' + currentUserName, JSON.stringify(chatHistory.slice(-100)));
+    }
+
+    function openAiChatModal() {
+      loadChatHistory();
+      renderChatMessages();
+      document.getElementById('aiChatModal').style.display = 'flex';
+    }
+
+    function renderChatMessages() {
+      const container = document.getElementById('aiChatMessages');
+      if (chatHistory.length === 0) {
+        container.innerHTML = '<div class="ai-chat-bubble ai-chat-bubble-ai">こんにちは！記録について何でも聞いてください 🙂\n例:「当たりが多い店は？」「先月は何回行った？」</div>';
+      } else {
+        container.innerHTML = chatHistory.map(m => `<div class="ai-chat-bubble ai-chat-bubble-${m.role}">${escapeHTML(m.text)}</div>`).join('');
+      }
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function sendChatQuickQuestion(text) {
+      document.getElementById('aiChatInput').value = text;
+      sendChatMessage();
+    }
+
+    function buildChatContextBlock() {
+      const overall = extractComprehensiveData();
+      const capped = historyList.slice(-300);
+      const lines = capped.map(v => {
+        const info = storeInfoData[v.storeName] || {};
+        return `${v.year}/${v.month}/${v.day || ''} 系統:${v.typeTag || '-'} 店舗:${v.storeName || '-'}(${info.category || '-'}) キャスト:${v.name || '-'} flags:${v.flags || '-'} 評価(ルックス/接客/スタイル/イチャ/コスパ):${v.looks || '-'}/${v.service || '-'}/${v.style || '-'}/${v.intimacy || '-'}/${v.value || '-'} 金額:${v.amount || '-'}`;
+      }).join('\n');
+
+      return `【集計サマリー】
+総利用回数: ${overall.total}回 / アタリ率: ${overall.atariRate}% / ハズレ率: ${overall.hazureRate}% / 平均金額: ${overall.avgAmount ? overall.avgAmount.toLocaleString() + '円' : '-'}
+
+【全記録データ（最新${capped.length}件、これより古い記録は含まれません）】
+${lines || 'データなし'}`;
+    }
+
+    function buildChatPrompt(question) {
+      const context = buildChatContextBlock();
+      const recentTurns = chatHistory.slice(-8).map(m => `${m.role === 'user' ? 'ユーザー' : 'AI'}: ${m.text}`).join('\n');
+      return `あなたは利用者本人の風俗利用記録アプリに組み込まれた、親しみやすいスマートアシスタントです。以下のデータを参照しながら、ユーザーの質問に簡潔かつ具体的に日本語で答えてください。データに基づかない推測はせず、データから分からないことは正直にそう答えてください。
+
+${context}
+
+【直近の会話】
+${recentTurns || '(会話はまだありません)'}
+
+【新しい質問】
+${question}`;
+    }
+
+    async function sendChatMessage() {
+      const input = document.getElementById('aiChatInput');
+      const question = input.value.trim();
+      if (!question) return;
+      if (!getGeminiApiKey()) {
+        alert('先に🤖 AI好み診断の「🔑 Gemini APIキー設定」からAPIキーを保存してください（AIスマート図鑑も同じキーを使います）。');
+        return;
+      }
+
+      input.value = '';
+      chatHistory.push({ role: 'user', text: question });
+      saveChatHistory();
+      renderChatMessages();
+
+      const container = document.getElementById('aiChatMessages');
+      const typingEl = document.createElement('div');
+      typingEl.className = 'ai-chat-bubble ai-chat-bubble-ai ai-chat-typing';
+      typingEl.innerHTML = '<span></span><span></span><span></span>';
+      container.appendChild(typingEl);
+      container.scrollTop = container.scrollHeight;
+
+      const sendBtn = document.getElementById('aiChatSendBtn');
+      sendBtn.disabled = true;
+
+      try {
+        const answer = await callGeminiAPI(buildChatPrompt(question));
+        chatHistory.push({ role: 'ai', text: answer });
+      } catch (err) {
+        chatHistory.push({ role: 'ai', text: '⚠️ エラーが発生しました: ' + (err.message || String(err)) });
+      } finally {
+        saveChatHistory();
+        renderChatMessages();
+        sendBtn.disabled = false;
+      }
+    }
+
+    function clearChatHistory() {
+      if (!confirm('会話履歴を削除しますか？')) return;
+      chatHistory = [];
+      saveChatHistory();
+      renderChatMessages();
     }
 
     
