@@ -536,6 +536,19 @@
     .card-body { padding: 10px 14px 12px; border-top: 1px dashed var(--border-color); background-color: var(--card-bg); display: flex; flex-direction: column; gap: 8px; width: 100%; }
     
     .style-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 2px; }
+    .style-row-with-ai { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; margin-bottom: 2px; }
+    .style-row-with-ai .style-row { flex: 1; margin-bottom: 0; }
+    .cast-ai-report-btn {
+      flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; border: none;
+      background: linear-gradient(135deg, #7928CA, #0070F3); color: #fff; font-size: 0.85rem; cursor: pointer;
+      box-shadow: 0 2px 8px rgba(121,40,202,0.35); display: flex; align-items: center; justify-content: center;
+      transition: transform 0.15s ease;
+    }
+    .cast-ai-report-btn:active { transform: scale(0.9); }
+    #castReportModal .modal-content.cast-report-content {
+      width: 100%; max-width: 480px; padding: 0; background: transparent; border: none;
+      box-shadow: none; max-height: 88vh; text-align: left;
+    }
     .style-pill { display: inline-flex; align-items: center; border-radius: 8px; overflow: hidden; font-size: 0.7rem; font-weight: bold; border: 1px solid rgba(0,0,0,0.08); }
     .style-pill-label { padding: 2px 7px; color: #fff; }
     .style-pill-val { padding: 2px 8px; }
@@ -2385,6 +2398,32 @@
       <img id="mapLightboxImg" class="map-lightbox-img" src="" alt="思い出画像">
       <div id="mapLightboxText" style="font-size:0.8rem; color:var(--text-color); margin-top:8px;"></div>
       <button class="close-btn" onclick="closeModal('mapImageLightbox')" style="margin-top:12px;">閉じる</button>
+    </div>
+  </div>
+
+  <!-- 🤖 キャスト別AIレポート -->
+  <div class="modal-overlay" id="castReportModal">
+    <div class="modal-content cast-report-content">
+      <div class="ai-analysis-tab-body" style="height:78vh; max-height:640px;">
+        <div class="ai-aurora-bg">
+          <div class="ai-aurora-blob ai-aurora-blob-1"></div>
+          <div class="ai-aurora-blob ai-aurora-blob-2"></div>
+          <div class="ai-aurora-blob ai-aurora-blob-3"></div>
+        </div>
+
+        <div class="ai-modal-header">
+          <h3 id="castReportTitle">🤖 AIレポート</h3>
+          <button type="button" class="map-modal-close-x" onclick="closeModal('castReportModal')">✕</button>
+        </div>
+
+        <div class="ai-scroll-body">
+          <div class="ai-glass-card">
+            <p style="color:#cbd5e1; font-size:0.82rem; margin:0; line-height:1.6;" id="castReportIntro"></p>
+            <button type="button" class="ai-run-btn" id="castReportRunBtn" onclick="runCastReportAnalysis()">✨ このコのレポートを見る</button>
+          </div>
+          <div id="castReportResult"></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -5243,7 +5282,10 @@
             ${badgeCountHtml}
           </summary>
           <div class="anim-wrapper"><div class="anim-inner"><div class="card-body">
-            ${renderStyleTags(info.style)}
+            <div class="style-row-with-ai">
+              ${renderStyleTags(info.style)}
+              <button type="button" class="cast-ai-report-btn" onclick="openCastReportModal(event, '${c.name}')" title="AIレポート">🤖</button>
+            </div>
             ${tagsRowHtml}
             <div class="card-middle-row">
               <div class="notes-box">${info.notes || 'メモなし'}</div>
@@ -7186,6 +7228,75 @@
       return text;
     }
 
+    /* 🛠️ Function Calling対応版：KENJAが「記録追加フォームの下書き」を作れるようにする。
+       KENJAはあくまで既存の入力フォームを事前入力するだけで、保存は必ず本人が行う。 */
+    const FILL_ADD_RECORD_FUNCTION_DECLARATION = {
+      name: 'fill_add_record_form',
+      description: 'ユーザーの発言から新しい利用記録の内容を抽出し、記録追加フォームに自動入力する。キャスト名と店舗名の両方が発言から分かっている場合のみ呼び出すこと。どちらかが不明な場合は、この関数を呼ばずにテキストで聞き返すこと。',
+      parameters: {
+        type: 'OBJECT',
+        properties: {
+          year: { type: 'STRING', description: '西暦年（例: 2025）。発言に無ければ省略してよい（今日の日付が使われる）' },
+          month: { type: 'STRING', description: '月（1〜12の数字）。発言に無ければ省略してよい（今日の日付が使われる）' },
+          day: { type: 'STRING', description: '日（1〜31の数字）。発言に無ければ省略してよい（今日の日付が使われる）' },
+          castName: { type: 'STRING', description: 'キャスト（女の子）の名前。必須' },
+          storeName: { type: 'STRING', description: '店舗名。必須' },
+          amount: { type: 'STRING', description: '金額（数字のみ、例: 20000）。発言に無ければ省略' },
+          typeTag: { type: 'STRING', description: '系統タグ（例: 清楚系、ギャル系など）。発言に無ければ省略' },
+          note: { type: 'STRING', description: '感想・メモ。発言に無ければ省略' }
+        },
+        required: ['castName', 'storeName']
+      }
+    };
+
+    async function callGeminiAPIWithTools(promptText, functionDeclarations) {
+      const apiKey = getGeminiApiKey();
+      if (!apiKey) {
+        throw new Error('APIキーが設定されていません。上の「🔑 Gemini APIキー設定」からご自身のAPIキーを入力・保存してください。');
+      }
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
+      const body = { contents: [{ parts: [{ text: promptText }] }] };
+      if (functionDeclarations && functionDeclarations.length) {
+        body.tools = [{ functionDeclarations }];
+      }
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        const msg = (data && data.error && data.error.message) ? data.error.message : ('HTTPエラー ' + res.status);
+        throw new Error(msg);
+      }
+      const parts = (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) || [];
+      const fnPart = parts.find(p => p.functionCall);
+      if (fnPart) {
+        return { type: 'functionCall', name: fnPart.functionCall.name, args: fnPart.functionCall.args || {} };
+      }
+      const text = parts.map(p => p.text || '').join('');
+      if (!text) throw new Error('AIから有効な応答が得られませんでした。');
+      return { type: 'text', text };
+    }
+
+    function prefillAddRecordFromChat(args) {
+      openAddModal();
+      const today = new Date();
+      const yearVal = args.year || today.getFullYear();
+      const monthVal = args.month ? (String(args.month).replace('月', '') + '月') : ((today.getMonth() + 1) + '月');
+      const dayVal = args.day || today.getDate();
+
+      const setVal = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined && val !== null && val !== '') el.value = val; };
+      setVal('addYear', yearVal);
+      setVal('addMonth', monthVal);
+      setVal('addDay', dayVal);
+      setVal('addName', args.castName);
+      setVal('addStoreName', args.storeName);
+      setVal('addAmount', args.amount);
+      setVal('addTypeTag', args.typeTag);
+      setVal('addVisitNote', args.note);
+    }
+
     function parseAiSections(text) {
       const regex = /【([^】]+)】/g;
       const indices = [];
@@ -7273,6 +7384,133 @@
         btn.disabled = false;
       }
     }
+
+    /* ==================================================================
+       🤖 キャスト別AIレポート
+       ================================================================== */
+    let currentCastReportName = null;
+
+    function openCastReportModal(event, name) {
+      if (event) { event.preventDefault(); event.stopPropagation(); }
+      currentCastReportName = name;
+      document.getElementById('castReportTitle').innerText = `🤖 ${name} さんのAIレポート`;
+      document.getElementById('castReportIntro').innerText = `${name}さんとの記録を元に、これまでの歩みや傾向をAIが振り返ります。`;
+      document.getElementById('castReportResult').innerHTML = '';
+      document.getElementById('castReportModal').style.display = 'flex';
+    }
+
+    function extractCastReportData(name) {
+      const visits = historyList.filter(v => v.name === name).slice();
+      visits.sort((a, b) => {
+        const da = `${a.year}-${String(a.month).padStart(2,'0')}-${String(a.day || 1).padStart(2,'0')}`;
+        const db = `${b.year}-${String(b.month).padStart(2,'0')}-${String(b.day || 1).padStart(2,'0')}`;
+        return da < db ? -1 : da > db ? 1 : 0;
+      });
+
+      const total = visits.length;
+      let sumLooks = 0, sumService = 0, sumStyleScore = 0, sumIntimacy = 0, sumValue = 0;
+      let totalAmount = 0, amountCount = 0;
+      const atariCount = visits.filter(v => v.flags && v.flags.includes('🆂')).length;
+      const hazureCount = visits.filter(v => v.flags && v.flags.includes('⚔')).length;
+      const highlightRecords = [];
+
+      visits.forEach(v => {
+        sumLooks += parseInt(v.looks, 10) || 0;
+        sumService += parseInt(v.service, 10) || 0;
+        sumStyleScore += parseInt(v.style, 10) || 0;
+        sumIntimacy += parseInt(v.intimacy, 10) || 0;
+        sumValue += parseInt(v.value, 10) || 0;
+        const amt = parseInt(String(v.amount || '').replace(/[^0-9]/g, ''), 10);
+        if (amt) { totalAmount += amt; amountCount++; }
+        if (v.flags && /[🈠❀🆂]/.test(v.flags)) highlightRecords.push(`${v.year}/${v.month} flags:${v.flags} 店舗:${v.storeName || '-'}`);
+      });
+
+      // 直近の利用間隔 vs 全体平均の利用間隔（間隔が空いてきているかの目安）
+      const toDays = v => new Date(`${v.year}-${String(v.month).padStart(2,'0')}-${String(v.day || 1).padStart(2,'0')}`).getTime();
+      const intervals = [];
+      for (let i = 1; i < visits.length; i++) {
+        const diff = (toDays(visits[i]) - toDays(visits[i-1])) / 86400000;
+        if (!isNaN(diff) && diff >= 0) intervals.push(diff);
+      }
+      const avgInterval = intervals.length ? Math.round(intervals.reduce((a,b)=>a+b,0) / intervals.length) : null;
+      const recentIntervals = intervals.slice(-3);
+      const recentAvgInterval = recentIntervals.length ? Math.round(recentIntervals.reduce((a,b)=>a+b,0) / recentIntervals.length) : null;
+
+      return {
+        name, total,
+        firstDate: visits[0] ? `${visits[0].year}/${visits[0].month}/${visits[0].day || ''}` : null,
+        lastDate: visits[visits.length-1] ? `${visits[visits.length-1].year}/${visits[visits.length-1].month}/${visits[visits.length-1].day || ''}` : null,
+        avgLooks: (sumLooks / (total || 1)).toFixed(1),
+        avgService: (sumService / (total || 1)).toFixed(1),
+        avgStyle: (sumStyleScore / (total || 1)).toFixed(1),
+        avgIntimacy: (sumIntimacy / (total || 1)).toFixed(1),
+        avgValue: (sumValue / (total || 1)).toFixed(1),
+        atariCount, hazureCount,
+        avgAmount: amountCount > 0 ? Math.round(totalAmount / amountCount) : 0,
+        totalAmount,
+        avgInterval, recentAvgInterval,
+        highlightRecords: highlightRecords.slice(0, 5),
+        isActive: !(castData[name] && castData[name].retired)
+      };
+    }
+
+    function buildCastReportPrompt(castData_, overallData) {
+      const intervalText = castData_.avgInterval !== null
+        ? `平均利用間隔: 約${castData_.avgInterval}日おき（直近は約${castData_.recentAvgInterval}日おき）`
+        : '利用間隔を計算するには記録が不足しています';
+
+      return `あなたは利用者本人と一緒に思い出を振り返る、温かく親しみやすいトーンのパートナーAIです。以下は「${castData_.name}」さんという特定のキャスト1人に絞った利用記録データと、利用者全体の平均データです。このキャストとの関係性にフォーカスして振り返ってください。
+
+【${castData_.name}さんとの記録データ】
+・総指名回数: ${castData_.total}回（${castData_.firstDate || '?'} 〜 ${castData_.lastDate || '?'}）
+・${intervalText}
+・平均評価（5点満点）: ルックス${castData_.avgLooks} / 接客${castData_.avgService} / スタイル${castData_.avgStyle} / イチャ度${castData_.avgIntimacy} / コスパ${castData_.avgValue}
+・当たり(🆂)フラグ: ${castData_.atariCount}回 / ハズレ(⚔)フラグ: ${castData_.hazureCount}回
+・平均利用金額: ${castData_.avgAmount ? castData_.avgAmount.toLocaleString() + '円' : 'データ不足'}（累計 ${castData_.totalAmount.toLocaleString()}円）
+・印象的な記録（初出勤・卒業・当たり等）: ${castData_.highlightRecords.length ? castData_.highlightRecords.join(' / ') : '特筆すべき記録なし'}
+
+【参考：利用者全体の平均データ】
+・全体の平均評価（5点満点、参考値）: ルックス/接客/スタイル/イチャ度/コスパの全体平均
+・全体のアタリ率: ${overallData.atariRate}% / 全体の平均利用金額: ${overallData.avgAmount ? overallData.avgAmount.toLocaleString() + '円' : 'データ不足'}
+・全体の総利用回数: ${overallData.total}回
+
+【出力形式】必ず以下の3つの見出しで、日本語で回答してください。
+【このコとの歩み】
+（出会いから今までの流れを、日記を読み返すような文体で振り返る。利用頻度の変化（間隔が空いてきている/安定している等）にも軽く触れる）
+
+【傾向分析】
+（評価・金額・頻度が、利用者全体の平均と比べて高いか低いか、客観的に分析する）
+
+【今後についてのヒント】
+（利用間隔が空いてきている場合は「そろそろ卒業しているかもしれません」等やんわり伝える。安定して良い関係の場合はその旨を伝える。押しつけがましくないトーンで）`;
+    }
+
+    async function runCastReportAnalysis() {
+      const btn = document.getElementById('castReportRunBtn');
+      const resultEl = document.getElementById('castReportResult');
+      if (!currentCastReportName) return;
+      if (!getGeminiApiKey()) {
+        resultEl.innerHTML = '<div class="ai-glass-card"><div class="ai-error-text">先に🤖 AI好み診断の「🔑 Gemini APIキー設定」からAPIキーを保存してください。</div></div>';
+        return;
+      }
+      btn.disabled = true;
+      resultEl.innerHTML = '<div class="ai-glass-card"><div class="ai-loading-card"><div class="ai-loading-wave"><span></span><span></span><span></span><span></span><span></span></div><div class="ai-loading-text">AI分析中…</div></div></div>';
+      try {
+        const castData_ = extractCastReportData(currentCastReportName);
+        if (castData_.total === 0) {
+          resultEl.innerHTML = '<div class="ai-glass-card"><div class="ai-error-text">このコの記録がまだありません。</div></div>';
+          return;
+        }
+        const overallData = extractComprehensiveData();
+        const text = await callGeminiAPI(buildCastReportPrompt(castData_, overallData));
+        resultEl.innerHTML = renderAiResultHtml(text, false);
+      } catch (err) {
+        resultEl.innerHTML = `<div class="ai-glass-card"><div class="ai-error-text">⚠️ エラーが発生しました: ${escapeHTML(err.message || String(err))}</div></div>`;
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
 
     /* ==================================================================
        🕰️ あのとき分析（期間別振り返り）
@@ -7536,6 +7774,13 @@ ${lines || 'データなし'}`;
       const recentTurns = chatHistory.slice(-8).map(m => `${m.role === 'user' ? 'ユーザー' : 'AI'}: ${m.text}`).join('\n');
       return `あなたの名前は「KENJA」です。利用者本人の風俗利用記録アプリに組み込まれた、親しみやすいスマートアシスタントです。以下のアプリガイドとデータを参照しながら、ユーザーの質問に簡潔かつ具体的に日本語で答えてください。データに基づかない推測はせず、分からないことは正直にそう答えてください。
 
+【記録追加について（重要）】
+ユーザーが「今日◯◯ちゃんと△△店で遊んだ」のように新しい利用の報告をしてきた場合:
+・キャスト名と店舗名の両方が発言から明確に分かる場合のみ、fill_add_record_form関数を呼び出してください。
+・キャスト名か店舗名のどちらかが不明・曖昧な場合は、関数を呼ばずに「店舗名を教えてください」のようにテキストで聞き返してください。憶測で補完しないでください。
+・あなたはこの関数を呼んでもデータを直接保存しません。呼び出すと、ユーザー本人が確認・修正して保存するための入力フォームが自動的に開くだけです。実際の保存は必ずユーザー自身が行います。
+・記録の編集や削除の依頼には、現時点では対応できません。その場合は「今のところ記録の追加のみお手伝いできます。編集・削除はご自身でお願いします」と案内してください。
+
 ${APP_USAGE_GUIDE}
 
 ${context}
@@ -7572,13 +7817,26 @@ ${question}`;
       sendBtn.disabled = true;
 
       try {
-        const answer = await callGeminiAPI(buildChatPrompt(question));
-        chatHistory.push({ role: 'ai', text: answer });
+        const result = await callGeminiAPIWithTools(buildChatPrompt(question), [FILL_ADD_RECORD_FUNCTION_DECLARATION]);
+        if (result.type === 'functionCall' && result.name === 'fill_add_record_form') {
+          const args = result.args || {};
+          chatHistory.push({
+            role: 'ai',
+            text: `「${args.castName || '?'}」さん（${args.storeName || '?'}）の記録の下書きを作りました🦉\n記録追加フォームを開くので、内容を確認して保存ボタンを押してください（保存はご自身の操作が必要です）。`
+          });
+          saveChatHistory();
+          renderChatMessages();
+          prefillAddRecordFromChat(args);
+        } else {
+          chatHistory.push({ role: 'ai', text: result.text });
+          saveChatHistory();
+          renderChatMessages();
+        }
       } catch (err) {
         chatHistory.push({ role: 'ai', text: '⚠️ エラーが発生しました: ' + (err.message || String(err)) });
-      } finally {
         saveChatHistory();
         renderChatMessages();
+      } finally {
         sendBtn.disabled = false;
       }
     }
