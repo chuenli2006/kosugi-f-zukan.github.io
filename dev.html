@@ -1098,10 +1098,11 @@
     /* ==================================================================
        🤖 AI好み診断・総合分析（オーロラグロー＆グラスモーフィズム）
        ================================================================== */
-    .ai-fullscreen-modal .modal-content.ai-fullscreen-content {
-      width: 100%; max-width: 720px; height: 92vh; max-height: 92vh;
+    .ai-analysis-tab-body {
+      width: 100%; height: 75vh; max-height: 700px; min-height: 480px;
       display: flex; flex-direction: column; padding: 0; overflow: hidden;
       background: #0a0e17; border-radius: var(--radius); position: relative;
+      animation: settingsFadeIn 0.4s ease both;
     }
     .ai-aurora-bg { position: absolute; inset: 0; overflow: hidden; z-index: 0; }
     .ai-aurora-blob { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.5; }
@@ -1141,6 +1142,17 @@
       padding: 7px 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15);
       background: rgba(255,255,255,0.08); color: #fff; font-size: 0.75rem; cursor: pointer;
     }
+    .ai-api-key-btn-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .ai-get-key-btn {
+      padding: 7px 16px; border-radius: 8px; border: 1px solid rgba(124,58,237,0.4);
+      background: rgba(124,58,237,0.15); color: #c4b5fd; font-size: 0.75rem; font-weight: bold;
+      text-decoration: none; display: inline-block; cursor: pointer;
+    }
+    /* 設定タブ内のAI機能セクション（ライトテーマ側）用の配色 */
+    .settings-acc-card .ai-api-key-btn-row { margin-top: 4px; }
+    .settings-acc-card .ai-get-key-btn { background: var(--soft-pink); color: var(--accent-pink); border: 1px solid var(--primary-pink); }
+    .settings-acc-card .ai-save-key-btn { background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink)); color: #fff; border: none; }
+    .settings-acc-card .ai-api-key-note { color: var(--light-text); }
     #geminiApiKeyInput {
       width: 100%; box-sizing: border-box; padding: 9px 10px; border-radius: 8px;
       border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.06); color: #fff; font-size: 0.8rem;
@@ -1207,12 +1219,13 @@
     .ai-era-selected-label { font-size: 0.72rem; color: #9ca3af; margin-bottom: 4px; }
 
     /* ==================================================================
-       🔍 AIスマート図鑑（チャット・通常テーマに追従）
+       🦉 KENJA（チャット・通常テーマに追従）
        ================================================================== */
-    .ai-chat-modal .modal-content.ai-chat-content {
-      width: 100%; max-width: 480px; height: 88vh; max-height: 88vh;
+    .ai-chat-tab-body {
+      width: 100%; height: 75vh; max-height: 700px; min-height: 420px;
       display: flex; flex-direction: column; padding: 0; overflow: hidden;
-      background: var(--bg-color); border-radius: var(--radius);
+      background: var(--bg-color); border-radius: var(--radius); border: 1px solid var(--border-color);
+      animation: settingsFadeIn 0.4s ease both;
     }
     .ai-chat-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
     .ai-chat-header h3 { margin: 0; font-size: 0.95rem; color: var(--accent-pink); }
@@ -1596,9 +1609,9 @@
             <span class="icon-badge icon-cat-settings icon-badge-sm"><span class="emoji-icon">👤</span><i data-lucide="user" class="smart-icon"></i></span>
             <span>ユーザー: <span id="currentUserNameDisplay">童貞</span></span>
           </button>
-          <button class="pill-btn" onclick="openHelpModal()" title="使い方・ヘルプ">
-            <span class="icon-badge icon-cat-help icon-badge-sm"><span class="emoji-icon">❓</span><i data-lucide="circle-help" class="smart-icon"></i></span>
-            <span>使い方</span>
+          <button class="pill-btn" onclick="openAiChatModal()" title="KENJAに聞く">
+            <span class="icon-badge icon-cat-aichat icon-badge-sm"><span class="emoji-icon">🦉</span><i data-lucide="sparkles" class="smart-icon"></i></span>
+            <span>KENJA</span>
           </button>
         </div>
       </header>
@@ -1941,6 +1954,25 @@
 
           <details class="settings-acc-card">
             <summary class="settings-acc-summary">
+              <span class="settings-summary-label"><span class="icon-badge icon-cat-ai icon-badge-sm"><span class="emoji-icon">🤖</span><i data-lucide="sparkles" class="smart-icon"></i></span>AI機能</span>
+              <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+            </summary>
+            <div class="settings-acc-body">
+              <p style="font-size:0.7rem; color:var(--light-text); margin-bottom:8px;">AI好み診断・KENJAで使用するGemini APIキーを設定します。</p>
+              <div class="form-group">
+                <label>APIキー</label>
+                <input type="password" id="geminiApiKeyInputSettings" placeholder="AIzaSy...">
+              </div>
+              <div class="ai-api-key-note">APIキーはこの端末の localStorage にのみ保存され、Google以外のどこにも送信されません。</div>
+              <div class="ai-api-key-btn-row">
+                <button type="button" class="ai-save-key-btn" onclick="saveGeminiApiKey('geminiApiKeyInputSettings')">💾 保存</button>
+                <a href="https://aistudio.google.com/api-keys?hl=ja" target="_blank" rel="noopener noreferrer" class="ai-get-key-btn gemini-get-key-btn">🔗 取得</a>
+              </div>
+            </div>
+          </details>
+
+          <details class="settings-acc-card">
+            <summary class="settings-acc-summary">
               <span class="settings-summary-label"><span class="icon-badge icon-cat-share icon-badge-sm"><span class="emoji-icon">📂</span><i data-lucide="folder-open" class="smart-icon"></i></span>バックアップ & データ管理</span>
               <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
             </summary>
@@ -2001,6 +2033,112 @@
           </details>
         </div>
       </div>
+
+      <!-- 7. AI好み診断タブ -->
+      <div id="viewAiAnalysis" class="tab-content">
+        <div class="ai-analysis-tab-body">
+          <div class="ai-aurora-bg">
+            <div class="ai-aurora-blob ai-aurora-blob-1"></div>
+            <div class="ai-aurora-blob ai-aurora-blob-2"></div>
+            <div class="ai-aurora-blob ai-aurora-blob-3"></div>
+          </div>
+
+          <div class="ai-modal-header">
+            <h3>🤖 AI好み診断</h3>
+            <button type="button" class="map-modal-close-x" onclick="switchMainTab('home')">✕</button>
+          </div>
+
+          <div class="ai-tab-row">
+            <button type="button" class="ai-tab-btn active" id="aiTabPreference" onclick="switchAiTab('preference')">🎯 好み分析</button>
+            <button type="button" class="ai-tab-btn" id="aiTabComprehensive" onclick="switchAiTab('comprehensive')">📊 総合分析</button>
+            <button type="button" class="ai-tab-btn" id="aiTabEra" onclick="switchAiTab('era')">🕰️ あのとき</button>
+          </div>
+
+          <div class="ai-scroll-body">
+            <details class="ai-api-key-details">
+              <summary>🔑 Gemini APIキー設定</summary>
+              <div class="ai-glass-card" style="margin-top:8px;">
+                <div class="form-group">
+                  <label style="color:#e2e8f0;">APIキー</label>
+                  <input type="password" id="geminiApiKeyInput" placeholder="AIzaSy...">
+                </div>
+                <div class="ai-api-key-note">APIキーはこの端末の localStorage にのみ保存され、Google以外のどこにも送信されません。</div>
+                <div class="ai-api-key-btn-row">
+                  <button type="button" class="ai-save-key-btn" onclick="saveGeminiApiKey('geminiApiKeyInput')">💾 保存</button>
+                  <a href="https://aistudio.google.com/api-keys?hl=ja" target="_blank" rel="noopener noreferrer" class="ai-get-key-btn gemini-get-key-btn">🔗 取得</a>
+                </div>
+              </div>
+            </details>
+
+            <div id="aiPreferenceView" class="ai-tab-view">
+              <div class="ai-glass-card">
+                <p style="color:#cbd5e1; font-size:0.82rem; margin:0; line-height:1.6;">🆂当たり・オキニのフラグが付いた記録や、評価スコアが4以上の記録から、あなたの好みの傾向をAIが分析します。</p>
+                <button type="button" class="ai-run-btn" id="aiPreferenceRunBtn" onclick="runPreferenceAnalysis()">✨ 好み分析を実行</button>
+              </div>
+              <div id="aiPreferenceResult"></div>
+            </div>
+
+            <div id="aiComprehensiveView" class="ai-tab-view" style="display:none;">
+              <div class="ai-glass-card">
+                <p style="color:#cbd5e1; font-size:0.82rem; margin:0; line-height:1.6;">全記録のアタリ率・ハズレ率・低評価の傾向・利用ペースなどを総合的にAIが分析します。</p>
+                <button type="button" class="ai-run-btn" id="aiComprehensiveRunBtn" onclick="runComprehensiveAnalysis()">✨ 総合分析を実行</button>
+              </div>
+              <div id="aiComprehensiveResult"></div>
+            </div>
+
+            <div id="aiEraView" class="ai-tab-view" style="display:none;">
+              <div class="ai-glass-card">
+                <p style="color:#cbd5e1; font-size:0.82rem; margin:0 0 12px; line-height:1.6;">気になる期間を選ぶと、その頃の遊び方をAIが振り返ります。</p>
+
+                <div class="ai-era-quick-row">
+                  <button type="button" class="ai-era-quick-btn" onclick="selectEraQuickRange('recent3', this)">直近3ヶ月</button>
+                  <button type="button" class="ai-era-quick-btn" onclick="selectEraQuickRange('half', this)">半年前</button>
+                  <button type="button" class="ai-era-quick-btn" onclick="selectEraQuickRange('year', this)">1年前</button>
+                  <button type="button" class="ai-era-quick-btn" onclick="selectEraQuickRange('thisYear', this)">今年</button>
+                  <button type="button" class="ai-era-quick-btn" onclick="selectEraQuickRange('lastYear', this)">去年</button>
+                </div>
+
+                <div class="ai-era-custom-row">
+                  <input type="month" id="aiEraStartInput" class="ai-era-month-input" onchange="clearEraQuickActive(); updateEraSelectedLabel();">
+                  <span class="ai-era-range-sep">〜</span>
+                  <input type="month" id="aiEraEndInput" class="ai-era-month-input" onchange="clearEraQuickActive(); updateEraSelectedLabel();">
+                </div>
+                <div class="ai-era-selected-label" id="aiEraSelectedLabel">期間を選択してください</div>
+
+                <button type="button" class="ai-run-btn" id="aiEraRunBtn" onclick="runEraAnalysis()">✨ この時期を振り返る</button>
+              </div>
+              <div id="aiEraResult"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8. KENJAタブ -->
+      <div id="viewAiChat" class="tab-content">
+        <div class="ai-chat-tab-body">
+          <div class="ai-chat-header">
+            <h3>🦉 KENJA</h3>
+            <div style="display:flex; gap:10px; align-items:center;">
+              <button type="button" class="ai-chat-clear-btn" onclick="clearChatHistory()" title="会話をクリア">🗑️</button>
+              <button type="button" class="map-modal-close-x" onclick="switchMainTab('home')">✕</button>
+            </div>
+          </div>
+
+          <div class="ai-chat-chip-row">
+            <button type="button" class="ai-chat-chip" onclick="sendChatQuickQuestion('当たりが多いお店はどこ？')">当たりが多い店は？</button>
+            <button type="button" class="ai-chat-chip" onclick="sendChatQuickQuestion('先月は何回利用した？')">先月何回？</button>
+            <button type="button" class="ai-chat-chip" onclick="sendChatQuickQuestion('ハズレが多い系統は？')">ハズレが多い系統は？</button>
+            <button type="button" class="ai-chat-chip" onclick="sendChatQuickQuestion('一番お金を使った月はいつ？')">一番使った月は？</button>
+          </div>
+
+          <div class="ai-chat-messages" id="aiChatMessages"></div>
+
+          <form class="ai-chat-input-row" onsubmit="event.preventDefault(); sendChatMessage();">
+            <input type="text" id="aiChatInput" placeholder="質問を入力...">
+            <button type="submit" class="ai-chat-send-btn" id="aiChatSendBtn">➤</button>
+          </form>
+        </div>
+      </div>
     </main>
   </div>
 
@@ -2055,7 +2193,7 @@
       </button>
 
       <button class="sheet-nav-item" id="nav-aiChat" onclick="openAiChatModal(); closeMoreMenu();">
-        <span class="nav-icon icon-badge icon-cat-aichat icon-badge-sm"><span class="emoji-icon">🔍</span><i data-lucide="search" class="smart-icon"></i></span><span>AIスマート図鑑</span>
+        <span class="nav-icon icon-badge icon-cat-aichat icon-badge-sm"><span class="emoji-icon">🦉</span><i data-lucide="sparkles" class="smart-icon"></i></span><span>KENJA</span>
       </button>
 
       <div class="sheet-ad-carousel" id="sheetAdCarousel" onscroll="handleSheetAdScroll()">
@@ -2247,109 +2385,6 @@
       <img id="mapLightboxImg" class="map-lightbox-img" src="" alt="思い出画像">
       <div id="mapLightboxText" style="font-size:0.8rem; color:var(--text-color); margin-top:8px;"></div>
       <button class="close-btn" onclick="closeModal('mapImageLightbox')" style="margin-top:12px;">閉じる</button>
-    </div>
-  </div>
-
-  <!-- 🤖 AI好み診断・総合分析モーダル -->
-  <div class="modal-overlay ai-fullscreen-modal" id="aiAnalysisModal">
-    <div class="modal-content ai-fullscreen-content">
-      <div class="ai-aurora-bg">
-        <div class="ai-aurora-blob ai-aurora-blob-1"></div>
-        <div class="ai-aurora-blob ai-aurora-blob-2"></div>
-        <div class="ai-aurora-blob ai-aurora-blob-3"></div>
-      </div>
-
-      <div class="ai-modal-header">
-        <h3>🤖 AI好み診断</h3>
-        <button type="button" class="map-modal-close-x" onclick="closeModal('aiAnalysisModal')">✕</button>
-      </div>
-
-      <div class="ai-tab-row">
-        <button type="button" class="ai-tab-btn active" id="aiTabPreference" onclick="switchAiTab('preference')">🎯 好み分析</button>
-        <button type="button" class="ai-tab-btn" id="aiTabComprehensive" onclick="switchAiTab('comprehensive')">📊 総合分析</button>
-        <button type="button" class="ai-tab-btn" id="aiTabEra" onclick="switchAiTab('era')">🕰️ あのとき</button>
-      </div>
-
-      <div class="ai-scroll-body">
-        <details class="ai-api-key-details">
-          <summary>🔑 Gemini APIキー設定</summary>
-          <div class="ai-glass-card" style="margin-top:8px;">
-            <div class="form-group">
-              <label style="color:#e2e8f0;">APIキー</label>
-              <input type="password" id="geminiApiKeyInput" placeholder="AIzaSy...">
-            </div>
-            <div class="ai-api-key-note">APIキーはこの端末の localStorage にのみ保存され、Google以外のどこにも送信されません。お持ちでない場合は Google AI Studio で無料発行できます。</div>
-            <button type="button" class="ai-save-key-btn" onclick="saveGeminiApiKey()">💾 保存</button>
-          </div>
-        </details>
-
-        <div id="aiPreferenceView" class="ai-tab-view">
-          <div class="ai-glass-card">
-            <p style="color:#cbd5e1; font-size:0.82rem; margin:0; line-height:1.6;">🆂当たり・オキニのフラグが付いた記録や、評価スコアが4以上の記録から、あなたの好みの傾向をAIが分析します。</p>
-            <button type="button" class="ai-run-btn" id="aiPreferenceRunBtn" onclick="runPreferenceAnalysis()">✨ 好み分析を実行</button>
-          </div>
-          <div id="aiPreferenceResult"></div>
-        </div>
-
-        <div id="aiComprehensiveView" class="ai-tab-view" style="display:none;">
-          <div class="ai-glass-card">
-            <p style="color:#cbd5e1; font-size:0.82rem; margin:0; line-height:1.6;">全記録のアタリ率・ハズレ率・低評価の傾向・利用ペースなどを総合的にAIが分析します。</p>
-            <button type="button" class="ai-run-btn" id="aiComprehensiveRunBtn" onclick="runComprehensiveAnalysis()">✨ 総合分析を実行</button>
-          </div>
-          <div id="aiComprehensiveResult"></div>
-        </div>
-
-        <div id="aiEraView" class="ai-tab-view" style="display:none;">
-          <div class="ai-glass-card">
-            <p style="color:#cbd5e1; font-size:0.82rem; margin:0 0 12px; line-height:1.6;">気になる期間を選ぶと、その頃の遊び方をAIが振り返ります。</p>
-
-            <div class="ai-era-quick-row">
-              <button type="button" class="ai-era-quick-btn" onclick="selectEraQuickRange('recent3', this)">直近3ヶ月</button>
-              <button type="button" class="ai-era-quick-btn" onclick="selectEraQuickRange('half', this)">半年前</button>
-              <button type="button" class="ai-era-quick-btn" onclick="selectEraQuickRange('year', this)">1年前</button>
-              <button type="button" class="ai-era-quick-btn" onclick="selectEraQuickRange('thisYear', this)">今年</button>
-              <button type="button" class="ai-era-quick-btn" onclick="selectEraQuickRange('lastYear', this)">去年</button>
-            </div>
-
-            <div class="ai-era-custom-row">
-              <input type="month" id="aiEraStartInput" class="ai-era-month-input" onchange="clearEraQuickActive(); updateEraSelectedLabel();">
-              <span class="ai-era-range-sep">〜</span>
-              <input type="month" id="aiEraEndInput" class="ai-era-month-input" onchange="clearEraQuickActive(); updateEraSelectedLabel();">
-            </div>
-            <div class="ai-era-selected-label" id="aiEraSelectedLabel">期間を選択してください</div>
-
-            <button type="button" class="ai-run-btn" id="aiEraRunBtn" onclick="runEraAnalysis()">✨ この時期を振り返る</button>
-          </div>
-          <div id="aiEraResult"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 🔍 AIスマート図鑑（チャット） -->
-  <div class="modal-overlay ai-chat-modal" id="aiChatModal">
-    <div class="modal-content ai-chat-content">
-      <div class="ai-chat-header">
-        <h3>🔍 AIスマート図鑑</h3>
-        <div style="display:flex; gap:10px; align-items:center;">
-          <button type="button" class="ai-chat-clear-btn" onclick="clearChatHistory()" title="会話をクリア">🗑️</button>
-          <button type="button" class="map-modal-close-x" onclick="closeModal('aiChatModal')">✕</button>
-        </div>
-      </div>
-
-      <div class="ai-chat-chip-row">
-        <button type="button" class="ai-chat-chip" onclick="sendChatQuickQuestion('当たりが多いお店はどこ？')">当たりが多い店は？</button>
-        <button type="button" class="ai-chat-chip" onclick="sendChatQuickQuestion('先月は何回利用した？')">先月何回？</button>
-        <button type="button" class="ai-chat-chip" onclick="sendChatQuickQuestion('ハズレが多い系統は？')">ハズレが多い系統は？</button>
-        <button type="button" class="ai-chat-chip" onclick="sendChatQuickQuestion('一番お金を使った月はいつ？')">一番使った月は？</button>
-      </div>
-
-      <div class="ai-chat-messages" id="aiChatMessages"></div>
-
-      <form class="ai-chat-input-row" onsubmit="event.preventDefault(); sendChatMessage();">
-        <input type="text" id="aiChatInput" placeholder="質問を入力...">
-        <button type="submit" class="ai-chat-send-btn" id="aiChatSendBtn">➤</button>
-      </form>
     </div>
   </div>
 
@@ -4129,6 +4164,8 @@
       const dashView = document.getElementById('viewDashboard');
       const castSettingsView = document.getElementById('viewCastSettings');
       const settingsView = document.getElementById('viewSettings');
+      const aiAnalysisView = document.getElementById('viewAiAnalysis');
+      const aiChatView = document.getElementById('viewAiChat');
       const headerTitle = document.getElementById('headerTitle');
       const fabContainer = document.getElementById('fabContainer');
 
@@ -4148,6 +4185,8 @@
         dashView.style.display = 'none';
         castSettingsView.style.display = 'none';
         settingsView.style.display = 'none';
+        aiAnalysisView.style.display = 'none';
+        aiChatView.style.display = 'none';
         startHomeAnimations();
       } else {
         homeView.classList.remove('active');
@@ -4160,6 +4199,8 @@
         dashView.style.display = 'none';
         castSettingsView.style.display = 'none';
         settingsView.style.display = 'none';
+        aiAnalysisView.style.display = 'none';
+        aiChatView.style.display = 'none';
 
         if(type === 'my') myView.style.display = 'block';
         else if (type === 'calendar') { calendarView.style.display = 'block'; renderCalendar(); }
@@ -4167,6 +4208,8 @@
         else if (type === 'dashboard') { dashView.style.display = 'block'; renderDashboard(); }
         else if (type === 'castSettings') { castSettingsView.style.display = 'block'; resetCastSettingsForm(); updateCastDatalist(); }
         else if (type === 'settings') { settingsView.style.display = 'block'; initSettingsView(); }
+        else if (type === 'aiAnalysis') { aiAnalysisView.style.display = 'block'; initAiAnalysisView(); }
+        else if (type === 'aiChat') { aiChatView.style.display = 'block'; loadChatHistory(); renderChatMessages(); }
 
         setTimeout(() => {
           const area = document.getElementById('homeFloatingArea');
@@ -6904,9 +6947,18 @@
       updateSecuritySettingsUI();
       updateCloudStatusUI();
       renderAvatarPreview();
+      const settingsKeyInput = document.getElementById('geminiApiKeyInputSettings');
+      if (settingsKeyInput) settingsKeyInput.value = getGeminiApiKey();
+      updateGeminiKeyUI();
     }
     function openSettingsModal() { switchMainTab('settings'); }
     function openHelpModal() { document.getElementById('helpModal').style.display = 'flex'; }
+
+    function initAiAnalysisView() {
+      const keyInput = document.getElementById('geminiApiKeyInput');
+      if (keyInput) keyInput.value = getGeminiApiKey();
+      updateGeminiKeyUI();
+    }
 
     /* ==================================================================
        🤖 AI好み診断・総合分析機能
@@ -6915,16 +6967,27 @@
       return localStorage.getItem('gemini_api_key_' + currentUserName) || '';
     }
 
-    function saveGeminiApiKey() {
-      const key = document.getElementById('geminiApiKeyInput').value.trim();
+    function updateGeminiKeyUI() {
+      const hasKey = !!getGeminiApiKey();
+      document.querySelectorAll('.gemini-get-key-btn').forEach(btn => { btn.style.display = hasKey ? 'none' : 'inline-block'; });
+    }
+
+    function saveGeminiApiKey(inputId) {
+      const id = inputId || 'geminiApiKeyInput';
+      const el = document.getElementById(id);
+      const key = el ? el.value.trim() : '';
       if (!key) { alert('APIキーを入力してください。'); return; }
       localStorage.setItem('gemini_api_key_' + currentUserName, key);
+      ['geminiApiKeyInput', 'geminiApiKeyInputSettings'].forEach(otherId => {
+        const otherEl = document.getElementById(otherId);
+        if (otherEl) otherEl.value = key;
+      });
+      updateGeminiKeyUI();
       alert('APIキーを保存しました。');
     }
 
     function openAiAnalysisModal() {
-      document.getElementById('geminiApiKeyInput').value = getGeminiApiKey();
-      document.getElementById('aiAnalysisModal').style.display = 'flex';
+      switchMainTab('aiAnalysis');
     }
 
     function switchAiTab(tab) {
@@ -7382,7 +7445,7 @@
     }
 
     /* ==================================================================
-       🔍 AIスマート図鑑（データについて自由に質問できるチャット）
+       🦉 KENJA（データについて自由に質問できるチャット）
        ================================================================== */
     let chatHistory = [];
 
@@ -7399,15 +7462,13 @@
     }
 
     function openAiChatModal() {
-      loadChatHistory();
-      renderChatMessages();
-      document.getElementById('aiChatModal').style.display = 'flex';
+      switchMainTab('aiChat');
     }
 
     function renderChatMessages() {
       const container = document.getElementById('aiChatMessages');
       if (chatHistory.length === 0) {
-        container.innerHTML = '<div class="ai-chat-bubble ai-chat-bubble-ai">こんにちは！記録について何でも聞いてください 🙂\n例:「当たりが多い店は？」「先月は何回行った？」</div>';
+        container.innerHTML = '<div class="ai-chat-bubble ai-chat-bubble-ai">こんにちは、KENJAです🦉\n記録のことでも、アプリの使い方でも、何でも聞いてください。\n例:「当たりが多い店は？」「フラグって何？」</div>';
       } else {
         container.innerHTML = chatHistory.map(m => `<div class="ai-chat-bubble ai-chat-bubble-${m.role}">${escapeHTML(m.text)}</div>`).join('');
       }
@@ -7434,10 +7495,48 @@
 ${lines || 'データなし'}`;
     }
 
+    const APP_USAGE_GUIDE = `【このアプリの構成・使い方ガイド】
+このアプリは、個人の風俗利用履歴を記録・管理するための単一ユーザー向けアプリです。主な機能は以下の通りです。
+
+■ マイ図鑑タブ
+・「キャスト別」「店舗別」「月別」の3つの表示に切り替えられます
+・右下の＋ボタン（FAB）から新しい記録を追加できます
+・記録には、系統タグ・5軸評価（ルックス/接客/スタイル/イチャ度/コスパ）・フラグ（当たり/ハズレ/県外など標準15種類に加え、パステルカラーから選べるカスタムマークも自作可能）・金額・メモなどを登録できます
+
+■ カレンダータブ
+・予定や予約開始日を登録し、リマインダー通知を受け取れます
+・当たり/ハズレ等の主要フラグに応じて日付のドットの色が変わります
+
+■ 統計タブ（ダッシュボード）
+・全体の利用統計、月別グラフ、47都道府県の訪問状況マップが見られます
+
+■ 設定タブ
+・プロフィール（アイコン・ユーザー名）の変更
+・表示設定（日付・金額の表示/非表示）
+・キャスト評価機能のON/OFF
+・カラーテーマとUI表示モード（オリジナル/スマート/通勤中）の切り替え
+・クラウド同期（Supabaseへログインしてデータをバックアップ・同期）
+・AI機能（Gemini APIキーの設定。AI好み診断とKENJAで共通利用）
+・バックアップ（JSONファイルでのエクスポート/インポート）
+・セキュリティ（PINロック・生体認証）
+
+■ その他の機能（ボトムシートメニューから）
+・🌟 キープ：まだ記録していない気になる子を保存しておける機能
+・🗾 日本地図：都道府県別のヒートマップ表示
+・🤖 AI好み診断：好み分析／総合分析／あのとき分析（期間別振り返り）の3タブ
+
+■ あなた（KENJA）について
+・あなたの名前は「KENJA」です。このアプリに組み込まれた案内役兼データ分析アシスタントです
+・使い方を聞かれたら上記の情報をもとに分かりやすく案内してください
+・利用記録について聞かれたら、渡されたデータをもとに具体的に答えてください
+・現時点では、記録の追加・編集などの実際の操作をあなたが代行することはできません。操作方法の案内にとどめてください`;
+
     function buildChatPrompt(question) {
       const context = buildChatContextBlock();
       const recentTurns = chatHistory.slice(-8).map(m => `${m.role === 'user' ? 'ユーザー' : 'AI'}: ${m.text}`).join('\n');
-      return `あなたは利用者本人の風俗利用記録アプリに組み込まれた、親しみやすいスマートアシスタントです。以下のデータを参照しながら、ユーザーの質問に簡潔かつ具体的に日本語で答えてください。データに基づかない推測はせず、データから分からないことは正直にそう答えてください。
+      return `あなたの名前は「KENJA」です。利用者本人の風俗利用記録アプリに組み込まれた、親しみやすいスマートアシスタントです。以下のアプリガイドとデータを参照しながら、ユーザーの質問に簡潔かつ具体的に日本語で答えてください。データに基づかない推測はせず、分からないことは正直にそう答えてください。
+
+${APP_USAGE_GUIDE}
 
 ${context}
 
@@ -7453,7 +7552,7 @@ ${question}`;
       const question = input.value.trim();
       if (!question) return;
       if (!getGeminiApiKey()) {
-        alert('先に🤖 AI好み診断の「🔑 Gemini APIキー設定」からAPIキーを保存してください（AIスマート図鑑も同じキーを使います）。');
+        alert('先に🤖 AI好み診断の「🔑 Gemini APIキー設定」からAPIキーを保存してください（KENJAも同じキーを使います）。');
         return;
       }
 
