@@ -7115,7 +7115,7 @@
         const amt = parseInt(String(v.amount || '').replace(/[^0-9]/g, ''), 10);
         if (amt) { totalAmount += amt; amountCount++; }
         if (v.year && v.month) {
-          const ym = v.year + '-' + String(v.month).padStart(2, '0');
+          const ym = v.year + '-' + String(parseMonthNum(v.month)).padStart(2, '0');
           yearMonthCount[ym] = (yearMonthCount[ym] || 0) + 1;
           yearCount[v.year] = (yearCount[v.year] || 0) + 1;
           dateList.push(ym);
@@ -7434,7 +7434,7 @@
       });
 
       // 直近の利用間隔 vs 全体平均の利用間隔（間隔が空いてきているかの目安）
-      const toDays = v => new Date(`${v.year}-${String(v.month).padStart(2,'0')}-${String(v.day || 1).padStart(2,'0')}`).getTime();
+      const toDays = v => new Date(`${v.year}-${String(parseMonthNum(v.month)).padStart(2,'0')}-${String(v.day || 1).padStart(2,'0')}`).getTime();
       const intervals = [];
       for (let i = 1; i < visits.length; i++) {
         const diff = (toDays(visits[i]) - toDays(visits[i-1])) / 86400000;
@@ -7535,6 +7535,13 @@
 
     function ymToStr(year, month) { return year + '-' + String(month).padStart(2, '0'); }
 
+    /* 🔧 v.month は "9" のような数字だけでなく "9月" のように漢字付きで保存されている場合があるため、
+       日付文字列を組み立てる箇所では必ずこれで数値だけを取り出してから使うこと */
+    function parseMonthNum(monthVal) {
+      const m = parseInt(String(monthVal || '').replace(/[^0-9]/g, ''), 10);
+      return isNaN(m) ? 1 : m;
+    }
+
     function selectEraQuickRange(type, btnEl) {
       const now = new Date();
       const curY = now.getFullYear(), curM = now.getMonth() + 1;
@@ -7587,7 +7594,7 @@
     function extractEraData(startYM, endYM) {
       const inRange = v => {
         if (!v.year || !v.month) return false;
-        const ym = ymToStr(v.year, String(v.month).padStart(2, '0'));
+        const ym = ymToStr(v.year, parseMonthNum(v.month));
         return ym >= startYM && ym <= endYM;
       };
       const eraList = historyList.filter(inRange);
