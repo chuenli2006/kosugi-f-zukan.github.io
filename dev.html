@@ -545,6 +545,7 @@
       transition: transform 0.15s ease;
     }
     .cast-ai-report-btn:active { transform: scale(0.9); }
+    .cast-ai-report-icon { width: 15px; height: 15px; stroke: #fff; }
     #castReportModal .modal-content.cast-report-content {
       width: 100%; max-width: 480px; padding: 0; background: transparent; border: none;
       box-shadow: none; max-height: 88vh; text-align: left;
@@ -1253,6 +1254,10 @@
     @keyframes chatBubbleIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
     .ai-chat-bubble-user { align-self: flex-end; background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink)); color: #fff; border-bottom-right-radius: 4px; }
     .ai-chat-bubble-ai { align-self: flex-start; background: var(--card-bg); color: var(--text-color); border: 1px solid var(--border-color); border-bottom-left-radius: 4px; }
+    .kenja-heading { font-weight: bold; font-size: 0.88rem; margin: 6px 0 3px; color: var(--accent-pink); }
+    .ai-chat-bubble-ai .kenja-heading:first-child { margin-top: 0; }
+    .kenja-bullet { margin: 2px 0; padding-left: 2px; }
+    .kenja-blank-line { height: 6px; }
 
     .ai-chat-typing { display: flex; gap: 4px; align-items: center; padding: 12px 14px; }
     .ai-chat-typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--light-text); animation: chatTypingBounce 1s ease-in-out infinite; display: inline-block; }
@@ -5284,7 +5289,9 @@
           <div class="anim-wrapper"><div class="anim-inner"><div class="card-body">
             <div class="style-row-with-ai">
               ${renderStyleTags(info.style)}
-              <button type="button" class="cast-ai-report-btn" onclick="openCastReportModal(event, '${c.name}')" title="AIレポート">🤖</button>
+              <button type="button" class="cast-ai-report-btn" onclick="openCastReportModal(event, '${c.name}')" title="AIレポート">
+                <i data-lucide="sparkles" class="cast-ai-report-icon"></i>
+              </button>
             </div>
             ${tagsRowHtml}
             <div class="card-middle-row">
@@ -5301,6 +5308,7 @@
         grid.appendChild(details);
       });
       target.appendChild(grid);
+      if (window.lucide) lucide.createIcons();
     }
 
     function renderTimelineView(target, keyword) {
@@ -7703,12 +7711,38 @@
       switchMainTab('aiChat');
     }
 
+    /* 📝 KENJAのメッセージ内の軽量マークダウン（##見出し / **太字** / ・箇条書き）を整形表示する */
+    function formatInlineBold(escapedLine) {
+      return escapedLine.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    }
+
+    function formatKenjaMarkdown(rawText) {
+      const escaped = escapeHTML(rawText);
+      const lines = escaped.split('\n');
+      return lines.map(line => {
+        const headingMatch = line.match(/^#{1,6}\s+(.*)$/);
+        if (headingMatch) {
+          return `<div class="kenja-heading">${formatInlineBold(headingMatch[1])}</div>`;
+        }
+        const bulletMatch = line.match(/^[*\-]\s+(.*)$/);
+        if (bulletMatch) {
+          return `<div class="kenja-bullet">・${formatInlineBold(bulletMatch[1])}</div>`;
+        }
+        if (line.trim() === '') {
+          return '<div class="kenja-blank-line"></div>';
+        }
+        return `<div>${formatInlineBold(line)}</div>`;
+      }).join('');
+    }
+
     function renderChatMessages() {
       const container = document.getElementById('aiChatMessages');
       if (chatHistory.length === 0) {
         container.innerHTML = '<div class="ai-chat-bubble ai-chat-bubble-ai">こんにちは、KENJAです🦉\n記録のことでも、アプリの使い方でも、何でも聞いてください。\n例:「当たりが多い店は？」「フラグって何？」</div>';
       } else {
-        container.innerHTML = chatHistory.map(m => `<div class="ai-chat-bubble ai-chat-bubble-${m.role}">${escapeHTML(m.text)}</div>`).join('');
+        container.innerHTML = chatHistory.map(m =>
+          `<div class="ai-chat-bubble ai-chat-bubble-${m.role}">${m.role === 'ai' ? formatKenjaMarkdown(m.text) : escapeHTML(m.text)}</div>`
+        ).join('');
       }
       container.scrollTop = container.scrollHeight;
     }
