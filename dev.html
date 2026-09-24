@@ -171,6 +171,64 @@
       border: 1.5px solid var(--gold-border);
       background: linear-gradient(135deg, var(--gold-bg-start), rgba(255,255,255,0.5));
     }
+    /* 💭 メモリアル（あの頃の思い出）専用 — 通知パネル用ゴールドガラス */
+    .notify-card.memorial {
+      position: relative;
+      overflow: hidden;
+      border: 1.5px solid rgba(243, 198, 66, 0.55);
+      background:
+        linear-gradient(145deg, rgba(255, 249, 230, 0.78) 0%, rgba(255, 255, 255, 0.48) 55%, rgba(255, 240, 194, 0.58) 100%);
+      box-shadow: 0 4px 18px rgba(243, 198, 66, 0.18);
+    }
+    [data-theme="midnight"] .notify-card.memorial,
+    [data-theme="velvet"] .notify-card.memorial,
+    [data-theme="berry"] .notify-card.memorial,
+    [data-theme="cyber"] .notify-card.memorial,
+    [data-theme="mocha"] .notify-card.memorial {
+      background: linear-gradient(145deg, rgba(46, 38, 18, 0.88), rgba(30, 28, 40, 0.72));
+      border-color: rgba(212, 175, 55, 0.45);
+    }
+    .notify-card.memorial::before {
+      content: '';
+      position: absolute; top: -30%; right: -18%;
+      width: 120px; height: 120px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(243, 198, 66, 0.25), transparent 70%);
+      pointer-events: none;
+    }
+    .notify-memorial-header {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 8px;
+      position: relative; z-index: 1;
+    }
+    .notify-memorial-ago {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 0.7rem; font-weight: bold; white-space: nowrap;
+      color: var(--gold-text);
+      background: rgba(243, 198, 66, 0.2);
+      border: 1px solid rgba(243, 198, 66, 0.45);
+      padding: 3px 9px; border-radius: 999px; flex-shrink: 0;
+    }
+    .notify-memorial-cast {
+      font-size: 0.95rem; font-weight: bold; color: var(--text-color);
+      margin: 6px 0 2px; position: relative; z-index: 1;
+    }
+    .notify-memorial-store {
+      font-size: 0.75rem; color: var(--accent-pink); font-weight: bold;
+      margin-bottom: 8px; position: relative; z-index: 1;
+    }
+    .notify-memorial-note {
+      font-size: 0.76rem; color: var(--text-color); line-height: 1.55;
+      background: rgba(255,255,255,0.4);
+      border: 1px dashed rgba(243, 198, 66, 0.4);
+      border-radius: 10px; padding: 8px 10px;
+      position: relative; z-index: 1;
+    }
+    [data-theme="midnight"] .notify-memorial-note,
+    [data-theme="velvet"] .notify-memorial-note,
+    [data-theme="berry"] .notify-memorial-note,
+    [data-theme="cyber"] .notify-memorial-note,
+    [data-theme="mocha"] .notify-memorial-note {
+      background: rgba(0,0,0,0.28);
+    }
     .notify-card-title {
       font-size: 0.85rem; font-weight: bold; color: var(--accent-pink);
       display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
@@ -4916,60 +4974,38 @@
     }
 
     function getMemorialNotifications() {
-      /* ホーム画面には出さず通知パネル専用。年単位・月単位の「○前の今日」を対象 */
-      const items = [];
-      const now = new Date();
-      const curY = now.getFullYear();
-      const curM = now.getMonth() + 1;
-      const curD = now.getDate();
-      let yearBest = null;
-      let monthBest = null;
+      /* ホーム非表示・通知パネル専用。
+         マッチ条件は旧 getTimeCapsuleMatch と同じ：
+         「同じ日（日付）」の過去記録。月は問わない → 「11ヶ月前の今日」が正しく出る */
+      const capsule = getTimeCapsuleMatch();
+      if (!capsule || !capsule.record) return [];
 
-      historyList.forEach(v => {
-        const y = parseInt(v.year, 10);
-        const m = parseMonthNum(v.month);
-        const d = parseInt(v.day, 10) || 1;
-        if (!y || m !== curM || d !== curD) return;
-        const diffMonths = (curY - y) * 12 + (curM - m);
-        if (diffMonths <= 0) return;
+      const v = capsule.record;
+      const y = parseInt(v.year, 10);
+      const m = parseMonthNum(v.month);
+      const d = parseInt(v.day, 10);
+      const storeText = (v.storeName && v.storeName.trim()) ? v.storeName.trim() : '某店';
+      const noteText = (v.visitNote && v.visitNote.trim()) ? v.visitNote.trim() : '（当時のメモは残っていません）';
+      const isYear = !!capsule.years;
+      const agoLabel = isYear ? `${capsule.years}年前` : `${capsule.diffMonths}ヶ月前`;
+      const id = isYear
+        ? ('memorial_y_' + y + '_' + (v.name || '') + '_' + storeText)
+        : ('memorial_m_' + y + '_' + m + '_' + (v.name || '') + '_' + storeText);
 
-        const noteHtml = (v.visitNote && v.visitNote.trim())
-          ? `<br>当時の感想：『${escapeHTML(v.visitNote.trim())}』`
-          : `<br>当時の感想：『（当時のメモは残っていません）』`;
-        const storeText = (v.storeName && v.storeName.trim()) ? v.storeName.trim() : '某店';
-
-        if (diffMonths % 12 === 0) {
-          const years = diffMonths / 12;
-          const item = {
-            id: 'memorial_y_' + y + '_' + (v.name || '') + '_' + storeText,
-            type: 'memorial',
-            pinned: true,
-            title: `💭 ${years}年前の今日`,
-            body: `${years}年前の今日、あなたは<strong>${escapeHTML(storeText)}</strong>で<strong>${escapeHTML(v.name || '')}</strong>ちゃんと遊んでいました。${noteHtml}`,
-            meta: `${y}/${m}/${d}`,
-            sortKey: 0,
-            diffMonths
-          };
-          if (!yearBest || diffMonths > yearBest.diffMonths) yearBest = item;
-        } else {
-          const item = {
-            id: 'memorial_m_' + y + '_' + m + '_' + (v.name || '') + '_' + storeText,
-            type: 'memorial',
-            pinned: true,
-            title: `💭 ${diffMonths}ヶ月前の今日`,
-            body: `${diffMonths}ヶ月前の今日、あなたは<strong>${escapeHTML(storeText)}</strong>で<strong>${escapeHTML(v.name || '')}</strong>ちゃんと遊んでいました。${noteHtml}`,
-            meta: `${y}/${m}/${d}`,
-            sortKey: 1,
-            diffMonths
-          };
-          if (!monthBest || diffMonths > monthBest.diffMonths) monthBest = item;
-        }
-      });
-
-      // 年記念を優先、なければ月記念（旧 getTimeCapsuleMatch と同じ優先度）
-      if (yearBest) items.push(yearBest);
-      else if (monthBest) items.push(monthBest);
-      return items;
+      return [{
+        id,
+        type: 'memorial',
+        pinned: true,
+        title: `💭 あの頃の思い出`,
+        agoLabel,
+        castName: v.name || '',
+        storeName: storeText,
+        noteText,
+        body: '', // 専用レイアウトで描画
+        meta: `${y}/${String(m).padStart(2,'0')}/${String(d).padStart(2,'0')}`,
+        sortKey: isYear ? 0 : 1,
+        diffMonths: capsule.diffMonths
+      }];
     }
 
     function buildNotificationItems() {
@@ -5101,7 +5137,22 @@
             <a class="notify-action-btn notify-btn-phone" href="tel:${escapeHTML(it.phone)}" style="text-decoration:none;">📞 店舗へ電話</a>
           </div>`;
         }
-        actionsHtml += `<div class="notify-card-actions"><button type="button" class="notify-action-btn notify-btn-dismiss" onclick="dismissNotify('${it.id}')">非表示</button></div>`;
+        actionsHtml += `<div class="notify-card-actions"><button type="button" class="notify-action-btn notify-btn-dismiss" onclick="dismissNotify('${escapeHTML(it.id)}')">非表示</button></div>`;
+
+        // 💭 メモリアル専用レイアウト（通知パネルに馴染むガラス＋ゴールド）
+        if (it.type === 'memorial') {
+          return `<div class="notify-card memorial pinned">
+            <div class="notify-memorial-header">
+              <div class="notify-card-title" style="color:var(--gold-text);">💭 あの頃の思い出</div>
+              <span class="notify-memorial-ago">${escapeHTML(it.agoLabel || '')}の今日</span>
+            </div>
+            <div class="notify-memorial-cast">${escapeHTML(it.castName || '')}</div>
+            <div class="notify-memorial-store">🏬 ${escapeHTML(it.storeName || '某店')}</div>
+            <div class="notify-memorial-note">当時の感想：『${escapeHTML(it.noteText || '')}』</div>
+            ${it.meta ? `<div class="notify-card-meta" style="margin-top:6px;">📅 ${escapeHTML(it.meta)}</div>` : ''}
+            ${actionsHtml}
+          </div>`;
+        }
 
         return `<div class="notify-card${it.pinned ? ' pinned' : ''}">
           <div class="notify-card-title">${it.pinned ? '<span class="notify-pin-badge">PIN</span>' : ''}${it.title}</div>
@@ -5611,6 +5662,7 @@
 
     /* 💭 タイムカプセル機能：ちょうど○年前 / ○ヶ月前の今日の記録を探す */
     function getTimeCapsuleMatch() {
+      /* 「同じ日付（日）」の過去記録を探す。月は問わないので「11ヶ月前の今日」も拾える */
       const now = new Date();
       const curYear = now.getFullYear();
       const curMonth = now.getMonth() + 1;
@@ -5621,7 +5673,7 @@
 
       historyList.forEach(v => {
         const y = parseInt(v.year, 10);
-        const m = parseInt(v.month, 10);
+        const m = parseMonthNum(v.month);
         const d = parseInt(v.day, 10);
         if (!y || !m || !d) return;
         if (d !== curDay) return;
