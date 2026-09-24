@@ -80,6 +80,180 @@
     }
     .pill-btn:active { transform: scale(0.95); }
 
+    /* 🔔 通知ボタン & Liquid Glass スライドパネル */
+    .header-notify-btn {
+      position: relative; display: inline-flex; align-items: center; justify-content: center;
+      width: 38px; height: 38px; border-radius: 50%; border: 1.5px solid var(--primary-pink);
+      background: var(--soft-pink); color: var(--accent-pink); cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s; flex-shrink: 0;
+    }
+    .header-notify-btn:active { transform: scale(0.92); }
+    .header-notify-btn .notify-icon { width: 18px; height: 18px; }
+    .header-notify-badge {
+      position: absolute; top: -2px; right: -2px; min-width: 16px; height: 16px;
+      padding: 0 4px; border-radius: 999px; background: var(--accent-pink); color: #fff;
+      font-size: 0.62rem; font-weight: bold; display: none; align-items: center; justify-content: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.25); line-height: 1;
+    }
+    .header-notify-badge.show { display: inline-flex; }
+    .header-notify-dot {
+      position: absolute; top: 4px; right: 4px; width: 8px; height: 8px; border-radius: 50%;
+      background: var(--accent-pink); border: 1.5px solid var(--card-bg); display: none;
+    }
+    .header-notify-dot.show { display: block; }
+
+    .notify-panel-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 1200;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+    }
+    .notify-panel-overlay.open { opacity: 1; pointer-events: auto; }
+
+    .notify-panel {
+      position: fixed; top: 0; right: 0; height: 100%; width: 80%; max-width: 420px;
+      z-index: 1210; display: flex; flex-direction: column;
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%);
+      border-left: 1px solid rgba(255, 255, 255, 0.28);
+      box-shadow: -8px 0 32px rgba(0,0,0,0.18);
+      transform: translateX(100%);
+      transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+      overflow: hidden;
+    }
+    [data-theme="midnight"] .notify-panel,
+    [data-theme="velvet"] .notify-panel,
+    [data-theme="berry"] .notify-panel,
+    [data-theme="cyber"] .notify-panel,
+    [data-theme="mocha"] .notify-panel {
+      background: rgba(20, 20, 28, 0.78);
+      border-left: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .notify-panel.open { transform: translateX(0); }
+
+    .notify-panel-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 16px 12px; border-bottom: 1px solid rgba(255,255,255,0.2);
+      flex-shrink: 0;
+    }
+    .notify-panel-title {
+      font-size: 1.05rem; font-weight: bold; color: var(--accent-pink);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .notify-panel-close {
+      background: var(--soft-pink); color: var(--accent-pink); border: none;
+      width: 28px; height: 28px; border-radius: 50%; font-size: 0.85rem; font-weight: bold;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+    .notify-panel-body {
+      flex: 1; overflow-y: auto; padding: 12px 14px 24px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .notify-empty {
+      text-align: center; color: var(--light-text); font-size: 0.82rem;
+      padding: 40px 16px; line-height: 1.6;
+    }
+    .notify-card {
+      background: rgba(255, 255, 255, 0.55);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 14px; padding: 12px 14px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    [data-theme="midnight"] .notify-card,
+    [data-theme="velvet"] .notify-card,
+    [data-theme="berry"] .notify-card,
+    [data-theme="cyber"] .notify-card,
+    [data-theme="mocha"] .notify-card {
+      background: rgba(40, 40, 55, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .notify-card.pinned {
+      border: 1.5px solid var(--gold-border);
+      background: linear-gradient(135deg, var(--gold-bg-start), rgba(255,255,255,0.5));
+    }
+    .notify-card-title {
+      font-size: 0.85rem; font-weight: bold; color: var(--accent-pink);
+      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    }
+    .notify-card-body { font-size: 0.78rem; color: var(--text-color); line-height: 1.55; }
+    .notify-card-meta { font-size: 0.68rem; color: var(--light-text); }
+    .notify-card-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+    .notify-action-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 7px 12px; border-radius: 999px; border: none;
+      font-size: 0.75rem; font-weight: bold; cursor: pointer;
+      transition: transform 0.12s;
+    }
+    .notify-action-btn:active { transform: scale(0.96); }
+    .notify-btn-checkin {
+      background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink));
+      color: #fff;
+    }
+    .notify-btn-cancel {
+      background: #e9ecef; color: #495057; border: 1px solid #ced4da;
+    }
+    .notify-btn-complete {
+      background: linear-gradient(135deg, #20c997, #12b886); color: #fff;
+    }
+    .notify-btn-phone {
+      background: #339af0; color: #fff;
+    }
+    .notify-btn-dismiss {
+      background: transparent; color: var(--light-text); border: 1px dashed var(--border-color);
+      font-size: 0.7rem; padding: 5px 10px;
+    }
+    .notify-pin-badge {
+      font-size: 0.62rem; background: var(--gold-border); color: #fff;
+      padding: 1px 6px; border-radius: 8px; font-weight: bold;
+    }
+
+    /* 入店済みバッジ */
+    .checked-in-badge {
+      font-size: 0.65rem; font-weight: bold; padding: 2px 7px; border-radius: 8px;
+      background: #d3f9d8; color: #2b8a3e; border: 1px solid #20c997;
+      white-space: nowrap;
+    }
+    .edit-icon-btn:disabled, .edit-icon-btn.locked {
+      opacity: 0.35; cursor: not-allowed; pointer-events: none;
+    }
+
+    /* キャスト名サジェスト・ピル */
+    .cast-suggest-row {
+      display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; max-height: 72px; overflow-y: auto;
+    }
+    .cast-suggest-pill {
+      font-size: 0.72rem; font-weight: bold; padding: 4px 10px; border-radius: 999px;
+      border: 1px solid var(--primary-pink); background: var(--soft-pink); color: var(--accent-pink);
+      cursor: pointer; white-space: nowrap;
+    }
+    .cast-suggest-pill:active { transform: scale(0.96); }
+
+    /* 初回リピート意向ボタン */
+    .first-intent-row {
+      display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px;
+    }
+    .first-intent-btn {
+      flex: 1 1 calc(33% - 6px); min-width: 80px; padding: 10px 6px; border-radius: 12px;
+      border: 1.5px solid var(--border-color); background: var(--bg-color); color: var(--text-color);
+      font-size: 0.78rem; font-weight: bold; cursor: pointer; text-align: center;
+      transition: all 0.15s;
+    }
+    .first-intent-btn.selected-ari { background: #74c0fc; color: #fff; border-color: #339af0; }
+    .first-intent-btn.selected-maybe { background: #8ce99a; color: #2b8a3e; border-color: #51cf66; }
+    .first-intent-btn.selected-consider { background: var(--accent-pink); color: #fff; border-color: var(--accent-pink); }
+    .first-intent-btn.selected-none { background: #ffa8a8; color: #c92a2a; border-color: #ff6b6b; }
+    .first-intent-btn.selected-worst { background: #212529; color: #fff; border-color: #000; }
+
+    /* キャンセル理由モーダル */
+    .cancel-reason-btn {
+      width: 100%; padding: 14px 12px; border-radius: 14px; border: 1.5px solid var(--border-color);
+      background: var(--bg-color); color: var(--text-color); font-size: 0.88rem; font-weight: bold;
+      cursor: pointer; text-align: left; margin-bottom: 8px; transition: transform 0.1s;
+    }
+    .cancel-reason-btn:active { transform: scale(0.98); }
+    .cancel-reason-btn.cast-side { border-color: #ffa94d; background: #fff4e6; }
+    .cancel-reason-btn.customer-side { border-color: #adb5bd; background: #f1f3f5; }
+
     .floating-nav {
       position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
       background: var(--card-bg); border: 1px solid var(--border-color);
@@ -1631,8 +1805,28 @@
             <span class="icon-badge icon-cat-aichat icon-badge-sm"><span class="emoji-icon">🦉</span><i data-lucide="sparkles" class="smart-icon"></i></span>
             <span>KENJA</span>
           </button>
+          <button type="button" class="header-notify-btn" id="headerNotifyBtn" onclick="toggleNotifyPanel()" title="通知">
+            <i data-lucide="bell" class="notify-icon" id="headerNotifyIcon"></i>
+            <span class="header-notify-badge" id="headerNotifyBadge">0</span>
+            <span class="header-notify-dot" id="headerNotifyDot"></span>
+          </button>
         </div>
       </header>
+
+      <!-- 🔔 Liquid Glass 通知スライドパネル -->
+      <div class="notify-panel-overlay" id="notifyPanelOverlay" onclick="closeNotifyPanel()"></div>
+      <div class="notify-panel" id="notifyPanel" role="dialog" aria-label="通知パネル">
+        <div class="notify-panel-header">
+          <div class="notify-panel-title">
+            <i data-lucide="bell" style="width:18px;height:18px;"></i>
+            <span>通知</span>
+          </div>
+          <button type="button" class="notify-panel-close" onclick="closeNotifyPanel()" aria-label="閉じる">✕</button>
+        </div>
+        <div class="notify-panel-body" id="notifyPanelBody">
+          <div class="notify-empty">現在お知らせはありません</div>
+        </div>
+      </div>
 
       <nav class="floating-nav">
         <button class="nav-item active" id="nav-home" onclick="switchMainTab('home')">
@@ -2735,6 +2929,18 @@
           <input type="url" id="addLetterImg" placeholder="https://i.imgur.com/...">
         </div>
 
+        <div class="form-group" id="addFirstIntentGroup" style="display:none;">
+          <label>いかがでしたか…？（初回来店時のリピート意向・内部データ）</label>
+          <input type="hidden" id="addFirstVisitIntent" value="">
+          <div class="first-intent-row">
+            <button type="button" class="first-intent-btn" data-intent="ari" onclick="selectFirstIntent('add', 'ari', this)">あり</button>
+            <button type="button" class="first-intent-btn" data-intent="maybe" onclick="selectFirstIntent('add', 'maybe', this)">機会があれば</button>
+            <button type="button" class="first-intent-btn" data-intent="consider" onclick="selectFirstIntent('add', 'consider', this)">要検討</button>
+            <button type="button" class="first-intent-btn" data-intent="none" onclick="selectFirstIntent('add', 'none', this)">なし</button>
+            <button type="button" class="first-intent-btn" data-intent="worst" onclick="selectFirstIntent('add', 'worst', this)">最悪</button>
+          </div>
+        </div>
+
         <div style="display:flex; gap:8px;"><button type="submit" class="close-btn" style="flex:1;">保存</button><button type="button" class="close-btn" onclick="closeModal('addModal')" style="background:#888; flex:1;">取消</button></div>
       </form>
     </div>
@@ -2882,7 +3088,8 @@
         <div style="display:flex; gap:6px;">
           <div class="form-group" style="flex:1;">
             <label>女の子の名前 (任意)</label>
-            <input type="text" id="schCastName" list="castDatalist" placeholder="例: ゆあ">
+            <input type="text" id="schCastName" list="castDatalist" placeholder="例: ゆあ" oninput="onScheduleCastInput(this.value, 'sch')">
+            <div class="cast-suggest-row" id="schCastSuggest"></div>
           </div>
           <div class="form-group" style="flex:1;">
             <label>店舗名 (任意)</label>
@@ -3045,6 +3252,94 @@
     </div>
   </div>
 
+  <!-- 📝 退店後補完モーダル -->
+  <div class="modal-overlay" id="completeVisitModal">
+    <div class="modal-content" style="max-width:440px; text-align:left;">
+      <h3 id="completeVisitTitle">📝 記録を補完する</h3>
+      <form class="add-form" onsubmit="saveCompleteVisit(event)">
+        <input type="hidden" id="completeHistoryIndex" value="">
+        <input type="hidden" id="completeScheduleId" value="">
+        <div class="form-group">
+          <label>キャスト名</label>
+          <input type="text" id="completeCastName" readonly style="opacity:0.85;">
+        </div>
+        <div class="form-group">
+          <label>店舗名</label>
+          <input type="text" id="completeStoreName" list="storeDatalist">
+        </div>
+        <div class="form-group" id="completeScoreGroup">
+          <label>⭐ 満足度スコア（1〜5）</label>
+          <div class="score-slider-grid">
+            <div class="score-slider-row"><span class="score-slider-label">ルックス</span><input type="range" id="completeScoreLooks" min="1" max="5" value="3" oninput="document.getElementById('completeScoreLooksVal').innerText=this.value"><span class="score-slider-val" id="completeScoreLooksVal">3</span></div>
+            <div class="score-slider-row"><span class="score-slider-label">接客</span><input type="range" id="completeScoreService" min="1" max="5" value="3" oninput="document.getElementById('completeScoreServiceVal').innerText=this.value"><span class="score-slider-val" id="completeScoreServiceVal">3</span></div>
+            <div class="score-slider-row"><span class="score-slider-label">スタイル</span><input type="range" id="completeScoreStyle" min="1" max="5" value="3" oninput="document.getElementById('completeScoreStyleVal').innerText=this.value"><span class="score-slider-val" id="completeScoreStyleVal">3</span></div>
+            <div class="score-slider-row"><span class="score-slider-label">イチャ度</span><input type="range" id="completeScoreIntimacy" min="1" max="5" value="3" oninput="document.getElementById('completeScoreIntimacyVal').innerText=this.value"><span class="score-slider-val" id="completeScoreIntimacyVal">3</span></div>
+            <div class="score-slider-row"><span class="score-slider-label">コスパ</span><input type="range" id="completeScoreValue" min="1" max="5" value="3" oninput="document.getElementById('completeScoreValueVal').innerText=this.value"><span class="score-slider-val" id="completeScoreValueVal">3</span></div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>系統タグ</label>
+          <input type="text" id="completeTypeTag" placeholder="例: 清楚系">
+        </div>
+        <div class="form-group">
+          <label>スリーサイズ（未設定時）</label>
+          <div class="style-grid-compact">
+            <input type="text" id="completeStyleT" placeholder="T">
+            <input type="text" id="completeStyleB" placeholder="B">
+            <input type="text" id="completeStyleW" placeholder="W">
+            <input type="text" id="completeStyleH" placeholder="H">
+          </div>
+        </div>
+        <div style="display:flex; gap:6px;">
+          <div class="form-group" style="flex:1;"><label>実際の総額（円）</label><input type="number" id="completeAmount" min="0" placeholder="例: 18000"></div>
+          <div class="form-group" style="flex:1;"><label>コース時間（分）</label><input type="number" id="completeCourseTime" min="0" placeholder="例: 60"></div>
+        </div>
+        <div class="form-group"><label>メモ・感想</label><textarea id="completeVisitNote" rows="2" placeholder="感想など"></textarea></div>
+        <div class="form-group">
+          <label>手紙・カード画像 URL</label>
+          <div style="display:flex; gap:6px; align-items:center; margin-bottom:4px;">
+            <input type="file" accept="image/*" style="font-size:0.75rem; padding:4px; flex:1;" onchange="uploadImageToImgur(this, 'completeLetterImg', 'completeUploadStatus')">
+            <span id="completeUploadStatus" style="font-size:0.7rem; color:var(--light-text);">未選択</span>
+          </div>
+          <input type="url" id="completeLetterImg" placeholder="https://i.imgur.com/...">
+        </div>
+        <div class="form-group" id="completeFirstIntentGroup" style="display:none;">
+          <label>いかがでしたか…？（初回来店時のリピート意向）</label>
+          <input type="hidden" id="completeFirstVisitIntent" value="">
+          <div class="first-intent-row">
+            <button type="button" class="first-intent-btn" data-intent="ari" onclick="selectFirstIntent('complete', 'ari', this)">あり</button>
+            <button type="button" class="first-intent-btn" data-intent="maybe" onclick="selectFirstIntent('complete', 'maybe', this)">機会があれば</button>
+            <button type="button" class="first-intent-btn" data-intent="consider" onclick="selectFirstIntent('complete', 'consider', this)">要検討</button>
+            <button type="button" class="first-intent-btn" data-intent="none" onclick="selectFirstIntent('complete', 'none', this)">なし</button>
+            <button type="button" class="first-intent-btn" data-intent="worst" onclick="selectFirstIntent('complete', 'worst', this)">最悪</button>
+          </div>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button type="submit" class="close-btn" style="flex:1;">補完して保存</button>
+          <button type="button" class="close-btn" onclick="closeModal('completeVisitModal')" style="background:#888; flex:1;">後で</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 🚫 予定キャンセル理由モーダル -->
+  <div class="modal-overlay" id="cancelScheduleModal">
+    <div class="modal-content" style="max-width:380px;">
+      <h3>予定をキャンセル</h3>
+      <p style="font-size:0.8rem; color:var(--light-text); margin-bottom:12px;" id="cancelScheduleLabel"></p>
+      <input type="hidden" id="cancelScheduleId" value="">
+      <button type="button" class="cancel-reason-btn cast-side" onclick="confirmCancelSchedule('cast')">
+        キャスト都合（当日欠勤など）
+        <div style="font-size:0.68rem; font-weight:normal; color:var(--light-text); margin-top:4px;">訪問履歴には残さず、当欠データとして蓄積します</div>
+      </button>
+      <button type="button" class="cancel-reason-btn customer-side" onclick="confirmCancelSchedule('customer')">
+        お客様都合
+        <div style="font-size:0.68rem; font-weight:normal; color:var(--light-text); margin-top:4px;">予定のみ削除・キャンセル済みにします</div>
+      </button>
+      <button type="button" class="close-btn" onclick="closeModal('cancelScheduleModal')" style="background:#888; width:100%; margin-top:8px;">戻る</button>
+    </div>
+  </div>
+
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -3068,6 +3363,9 @@
     let scheduleList = [];
     let keepsList = []; // 🌟 キープ（未訪問の気になるキャスト）
     let pendingKeepPromotionId = null;
+    /* 🔔 通知パネル・チェックイン・当欠 */
+    let dismissedNotifyIds = [];
+    const FIRST_INTENT_LABELS = { ari: 'あり', maybe: '機会があれば', consider: '要検討', none: 'なし', worst: '最悪' };
     let bubbleInterval;
     let dashPeriodType = 'month';
     let targetExportCastName = '';
@@ -3455,7 +3753,10 @@
       
       setInterval(checkNotifications, 30000);
       checkNotifications();
+      loadDismissedNotifyIds();
+      refreshNotifyBadgeOnly();
       checkShareTargetParams();
+      if (window.lucide) lucide.createIcons();
     }
 
     function updateUIHeader() {
@@ -3922,6 +4223,15 @@
 
     function onCastNameInput(nameVal) {
       const name = nameVal.trim();
+      const intentGroup = document.getElementById('addFirstIntentGroup');
+      if (intentGroup) {
+        const show = name && isFirstVisitForCast(name);
+        intentGroup.style.display = show ? 'flex' : 'none';
+        if (!show) {
+          const hidden = document.getElementById('addFirstVisitIntent');
+          if (hidden) hidden.value = '';
+        }
+      }
       if (!name) return;
       
       let foundStyle = '';
@@ -4573,12 +4883,543 @@
       }
     }
 
+    /* ==================================================================
+       🔔 通知パネル（Liquid Glass）＆ クイックチェックイン / 当欠
+       ================================================================== */
+    function loadDismissedNotifyIds() {
+      try {
+        dismissedNotifyIds = JSON.parse(localStorage.getItem('dismissed_notify_ids_' + currentUserName) || '[]');
+      } catch (e) { dismissedNotifyIds = []; }
+    }
+    function persistDismissedNotifyIds() {
+      localStorage.setItem('dismissed_notify_ids_' + currentUserName, JSON.stringify(dismissedNotifyIds.slice(-200)));
+    }
+
+    function toggleNotifyPanel() {
+      const panel = document.getElementById('notifyPanel');
+      const overlay = document.getElementById('notifyPanelOverlay');
+      if (!panel) return;
+      if (panel.classList.contains('open')) {
+        closeNotifyPanel();
+      } else {
+        renderNotifyPanel();
+        panel.classList.add('open');
+        if (overlay) overlay.classList.add('open');
+        if (window.lucide) lucide.createIcons();
+      }
+    }
+    function closeNotifyPanel() {
+      const panel = document.getElementById('notifyPanel');
+      const overlay = document.getElementById('notifyPanelOverlay');
+      if (panel) panel.classList.remove('open');
+      if (overlay) overlay.classList.remove('open');
+    }
+
+    function getMemorialNotifications() {
+      /* ホーム画面には出さず通知パネル専用。年単位・月単位の「○前の今日」を対象 */
+      const items = [];
+      const now = new Date();
+      const curY = now.getFullYear();
+      const curM = now.getMonth() + 1;
+      const curD = now.getDate();
+      let yearBest = null;
+      let monthBest = null;
+
+      historyList.forEach(v => {
+        const y = parseInt(v.year, 10);
+        const m = parseMonthNum(v.month);
+        const d = parseInt(v.day, 10) || 1;
+        if (!y || m !== curM || d !== curD) return;
+        const diffMonths = (curY - y) * 12 + (curM - m);
+        if (diffMonths <= 0) return;
+
+        const noteHtml = (v.visitNote && v.visitNote.trim())
+          ? `<br>当時の感想：『${escapeHTML(v.visitNote.trim())}』`
+          : `<br>当時の感想：『（当時のメモは残っていません）』`;
+        const storeText = (v.storeName && v.storeName.trim()) ? v.storeName.trim() : '某店';
+
+        if (diffMonths % 12 === 0) {
+          const years = diffMonths / 12;
+          const item = {
+            id: 'memorial_y_' + y + '_' + (v.name || '') + '_' + storeText,
+            type: 'memorial',
+            pinned: true,
+            title: `💭 ${years}年前の今日`,
+            body: `${years}年前の今日、あなたは<strong>${escapeHTML(storeText)}</strong>で<strong>${escapeHTML(v.name || '')}</strong>ちゃんと遊んでいました。${noteHtml}`,
+            meta: `${y}/${m}/${d}`,
+            sortKey: 0,
+            diffMonths
+          };
+          if (!yearBest || diffMonths > yearBest.diffMonths) yearBest = item;
+        } else {
+          const item = {
+            id: 'memorial_m_' + y + '_' + m + '_' + (v.name || '') + '_' + storeText,
+            type: 'memorial',
+            pinned: true,
+            title: `💭 ${diffMonths}ヶ月前の今日`,
+            body: `${diffMonths}ヶ月前の今日、あなたは<strong>${escapeHTML(storeText)}</strong>で<strong>${escapeHTML(v.name || '')}</strong>ちゃんと遊んでいました。${noteHtml}`,
+            meta: `${y}/${m}/${d}`,
+            sortKey: 1,
+            diffMonths
+          };
+          if (!monthBest || diffMonths > monthBest.diffMonths) monthBest = item;
+        }
+      });
+
+      // 年記念を優先、なければ月記念（旧 getTimeCapsuleMatch と同じ優先度）
+      if (yearBest) items.push(yearBest);
+      else if (monthBest) items.push(monthBest);
+      return items;
+    }
+
+    function buildNotificationItems() {
+      const now = new Date();
+      const items = [];
+      // 1) メモリアル（ピン留め・最上部）
+      getMemorialNotifications().forEach(m => {
+        if (!dismissedNotifyIds.includes(m.id)) items.push(m);
+      });
+
+      // 2) 予定関連
+      scheduleList.forEach(sch => {
+        if (sch.status === 'cancelled' || sch.status === 'completed') return;
+        const dateStr = sch.date || '';
+        const timeStr = sch.time || '00:00';
+        const schDt = new Date(`${dateStr}T${timeStr}:00`);
+        if (isNaN(schDt.getTime())) return;
+        const diffMs = schDt.getTime() - now.getTime();
+        const courseMin = parseInt(sch.courseTime, 10) || 60;
+        const endDt = new Date(schDt.getTime() + courseMin * 60000);
+
+        // チェックイン待ち（予定時刻±2時間内、未チェックイン）
+        if (sch.status !== 'checked_in' && diffMs <= 2 * 3600000 && diffMs >= -30 * 60000) {
+          const nid = 'checkin_' + sch.id;
+          if (!dismissedNotifyIds.includes(nid)) {
+            items.push({
+              id: nid,
+              type: 'checkin',
+              schId: sch.id,
+              title: `📍 チェックイン待ち`,
+              body: `<strong>${escapeHTML(sch.title || '')}</strong><br>${escapeHTML(sch.castName || '（キャスト未指定）')} ／ ${escapeHTML(sch.storeName || '')}`,
+              meta: `${dateStr} ${timeStr}`,
+              sortKey: 10 + Math.abs(diffMs) / 1000000,
+              actions: 'checkin'
+            });
+          }
+        }
+
+        // 電話確認リマインド
+        if (sch.phoneConfirmMinutes > 0 && !sch.phoneNotified && diffMs > 0 && diffMs <= sch.phoneConfirmMinutes * 60000) {
+          const nid = 'phone_' + sch.id;
+          if (!dismissedNotifyIds.includes(nid)) {
+            items.push({
+              id: nid,
+              type: 'phone',
+              schId: sch.id,
+              title: `📞 電話確認の時間です`,
+              body: `<strong>${escapeHTML(sch.title || '')}</strong>`,
+              meta: `${dateStr} ${timeStr}`,
+              sortKey: 5,
+              actions: 'phone',
+              phone: sch.phoneNumber || ''
+            });
+          }
+        }
+
+        // 通常リマインダー
+        if (sch.notifyMinutes > 0 && !sch.notified && diffMs > 0 && diffMs <= sch.notifyMinutes * 60000) {
+          const nid = 'remind_' + sch.id;
+          if (!dismissedNotifyIds.includes(nid)) {
+            items.push({
+              id: nid,
+              type: 'remind',
+              schId: sch.id,
+              title: `⚠️ 予定が近づいています`,
+              body: `<strong>${escapeHTML(sch.title || '')}</strong>（${sch.notifyMinutes}分前）`,
+              meta: `${dateStr} ${timeStr}`,
+              sortKey: 8
+            });
+          }
+        }
+
+        // 退店後補完（チェックイン済み＆コース終了後）
+        if (sch.status === 'checked_in' && sch.linkedHistoryIndex != null) {
+          const rec = historyList[sch.linkedHistoryIndex];
+          if (rec && rec.provisional && now >= endDt) {
+            const nid = 'complete_' + sch.id;
+            if (!dismissedNotifyIds.includes(nid)) {
+              const cName = sch.castName || rec.name || '〇〇';
+              items.push({
+                id: nid,
+                type: 'complete',
+                schId: sch.id,
+                histIdx: sch.linkedHistoryIndex,
+                title: `📝 ${escapeHTML(cName)}さんの記録を補完する`,
+                body: `コース終了の目安を過ぎました。満足度・金額・メモなどを補完しましょう。`,
+                meta: `${dateStr} ${timeStr}`,
+                sortKey: 3,
+                actions: 'complete'
+              });
+            }
+          }
+        }
+      });
+
+      // ピン留め優先、その後 sortKey
+      items.sort((a, b) => {
+        if (a.pinned && !b.pinned) return -1;
+        if (!a.pinned && b.pinned) return 1;
+        return (a.sortKey || 99) - (b.sortKey || 99);
+      });
+      return items;
+    }
+
+    function renderNotifyPanel() {
+      const body = document.getElementById('notifyPanelBody');
+      if (!body) return;
+      const items = buildNotificationItems();
+      updateNotifyBadge(items.length);
+
+      if (items.length === 0) {
+        body.innerHTML = '<div class="notify-empty">現在お知らせはありません<br><span style="font-size:0.72rem;">予定のチェックインや、1年前の今日の思い出などがここに表示されます</span></div>';
+        return;
+      }
+
+      body.innerHTML = items.map(it => {
+        let actionsHtml = '';
+        if (it.actions === 'checkin') {
+          actionsHtml = `<div class="notify-card-actions">
+            <button type="button" class="notify-action-btn notify-btn-checkin" onclick="quickCheckIn('${it.schId}')">📍 チェックイン（入店）</button>
+            <button type="button" class="notify-action-btn notify-btn-cancel" onclick="openCancelScheduleModal('${it.schId}')">予定キャンセル</button>
+          </div>`;
+        } else if (it.actions === 'complete') {
+          actionsHtml = `<div class="notify-card-actions">
+            <button type="button" class="notify-action-btn notify-btn-complete" onclick="openCompleteVisitModal(${it.histIdx}, '${it.schId}')">📝 記録を補完する</button>
+          </div>`;
+        } else if (it.actions === 'phone' && it.phone) {
+          actionsHtml = `<div class="notify-card-actions">
+            <a class="notify-action-btn notify-btn-phone" href="tel:${escapeHTML(it.phone)}" style="text-decoration:none;">📞 店舗へ電話</a>
+          </div>`;
+        }
+        actionsHtml += `<div class="notify-card-actions"><button type="button" class="notify-action-btn notify-btn-dismiss" onclick="dismissNotify('${it.id}')">非表示</button></div>`;
+
+        return `<div class="notify-card${it.pinned ? ' pinned' : ''}">
+          <div class="notify-card-title">${it.pinned ? '<span class="notify-pin-badge">PIN</span>' : ''}${it.title}</div>
+          <div class="notify-card-body">${it.body}</div>
+          ${it.meta ? `<div class="notify-card-meta">${escapeHTML(it.meta)}</div>` : ''}
+          ${actionsHtml}
+        </div>`;
+      }).join('');
+    }
+
+    function updateNotifyBadge(count) {
+      const badge = document.getElementById('headerNotifyBadge');
+      const dot = document.getElementById('headerNotifyDot');
+      const icon = document.getElementById('headerNotifyIcon');
+      if (count > 0) {
+        if (badge) { badge.textContent = count > 9 ? '9+' : String(count); badge.classList.add('show'); }
+        if (dot) { dot.classList.remove('show'); }
+        if (icon) { icon.setAttribute('data-lucide', 'bell-ring'); }
+      } else {
+        if (badge) badge.classList.remove('show');
+        if (dot) dot.classList.remove('show');
+        if (icon) icon.setAttribute('data-lucide', 'bell');
+      }
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function dismissNotify(id) {
+      if (!dismissedNotifyIds.includes(id)) dismissedNotifyIds.push(id);
+      persistDismissedNotifyIds();
+      renderNotifyPanel();
+    }
+
+    function refreshNotifyBadgeOnly() {
+      const items = buildNotificationItems();
+      updateNotifyBadge(items.length);
+    }
+
+    /* キャスト名サジェスト（予定作成） */
+    function getKnownCastNames() {
+      const set = new Set();
+      Object.keys(castData).forEach(n => set.add(n));
+      historyList.forEach(h => { if (h.name) set.add(h.name); });
+      return Array.from(set).sort((a, b) => a.localeCompare(b, 'ja'));
+    }
+    function onScheduleCastInput(val, prefix) {
+      const row = document.getElementById(prefix === 'edit' ? 'editSchCastSuggest' : 'schCastSuggest');
+      if (!row) return;
+      const q = (val || '').trim().toLowerCase();
+      const names = getKnownCastNames().filter(n => !q || n.toLowerCase().includes(q)).slice(0, 12);
+      if (!names.length) { row.innerHTML = ''; return; }
+      row.innerHTML = names.map(n =>
+        `<button type="button" class="cast-suggest-pill" onclick="pickScheduleCast('${prefix}', '${n.replace(/'/g, "\\'")}')">${escapeHTML(n)}</button>`
+      ).join('');
+    }
+    function pickScheduleCast(prefix, name) {
+      const inputId = prefix === 'edit' ? 'editSchCastName' : 'schCastName';
+      const el = document.getElementById(inputId);
+      if (el) el.value = name;
+      const row = document.getElementById(prefix === 'edit' ? 'editSchCastSuggest' : 'schCastSuggest');
+      if (row) row.innerHTML = '';
+      // 既存キャストのメタを紐付け用に保持（保存時に利用）
+    }
+
+    function selectFirstIntent(scope, intent, btn) {
+      const hiddenId = scope === 'complete' ? 'completeFirstVisitIntent' : 'addFirstVisitIntent';
+      const hidden = document.getElementById(hiddenId);
+      if (hidden) hidden.value = intent;
+      const group = btn.closest('.first-intent-row');
+      if (group) {
+        group.querySelectorAll('.first-intent-btn').forEach(b => {
+          b.classList.remove('selected-ari', 'selected-maybe', 'selected-consider', 'selected-none', 'selected-worst');
+        });
+      }
+      const clsMap = { ari: 'selected-ari', maybe: 'selected-maybe', consider: 'selected-consider', none: 'selected-none', worst: 'selected-worst' };
+      if (btn && clsMap[intent]) btn.classList.add(clsMap[intent]);
+    }
+
+    function isFirstVisitForCast(name) {
+      if (!name) return true;
+      const completed = historyList.filter(h => h.name === name && !h.provisional);
+      return completed.length === 0;
+    }
+
+    function ensureCastMeta(name) {
+      if (!name) return;
+      if (!castData[name]) castData[name] = { link: '', notes: '', oldName: '', style: '', letters: [], cancellations: [], firstVisitIntents: [] };
+      if (!castData[name].cancellations) castData[name].cancellations = [];
+      if (!castData[name].firstVisitIntents) castData[name].firstVisitIntents = [];
+    }
+
+    function getCastCancellationRate(name) {
+      ensureCastMeta(name);
+      const cancels = (castData[name].cancellations || []).filter(c => c.reason === 'cast').length;
+      const visits = historyList.filter(h => h.name === name && !h.provisional).length;
+      const denom = visits + cancels;
+      if (denom === 0) return null;
+      return Math.round((cancels / denom) * 1000) / 10;
+    }
+
+    /* 📍 クイックチェックイン → 仮履歴 */
+    function quickCheckIn(schId) {
+      const sch = scheduleList.find(s => s.id === schId);
+      if (!sch) return;
+      if (sch.status === 'checked_in') { alert('すでにチェックイン済みです。'); return; }
+
+      const now = new Date();
+      const castName = (sch.castName || '').trim() || '（未設定）';
+      const storeName = (sch.storeName || '').trim();
+      const y = String(now.getFullYear());
+      const m = (now.getMonth() + 1) + '月';
+      const d = String(now.getDate());
+
+      ensureCastMeta(castName);
+
+      const rec = {
+        year: y,
+        month: m,
+        day: d,
+        name: castName,
+        flags: '',
+        visitNote: '',
+        amount: '',
+        courseTime: sch.courseTime || '',
+        storeName: storeName,
+        reportUrl: '',
+        chekiImg: '',
+        typeTag: '',
+        looks: 3, service: 3, style: 3, intimacy: 3, value: 3,
+        provisional: true,
+        checkedInAt: now.toISOString(),
+        scheduleId: schId,
+        editLockedUntil: null
+      };
+      // コース終了予定時刻まで編集ロック
+      const courseMin = parseInt(sch.courseTime, 10) || 60;
+      let startDt = sch.date && sch.time ? new Date(`${sch.date}T${sch.time}:00`) : now;
+      if (isNaN(startDt.getTime())) startDt = now;
+      rec.editLockedUntil = new Date(startDt.getTime() + courseMin * 60000).toISOString();
+
+      historyList.push(rec);
+      const histIdx = historyList.length - 1;
+      sch.status = 'checked_in';
+      sch.linkedHistoryIndex = histIdx;
+      sch.checkedInAt = now.toISOString();
+
+      saveData();
+      render();
+      renderCalendar();
+      renderHomeMetrics();
+      refreshNotifyBadgeOnly();
+      if (document.getElementById('notifyPanel')?.classList.contains('open')) renderNotifyPanel();
+      alert(`📍 「${castName}」さんにチェックインしました（仮履歴）。コース終了後に記録を補完できます。`);
+    }
+
+    function isRecordEditLocked(rec) {
+      if (!rec || !rec.provisional) return false;
+      if (!rec.editLockedUntil) return true;
+      return new Date() < new Date(rec.editLockedUntil);
+    }
+
+    function openCancelScheduleModal(schId) {
+      const sch = scheduleList.find(s => s.id === schId);
+      if (!sch) return;
+      document.getElementById('cancelScheduleId').value = schId;
+      document.getElementById('cancelScheduleLabel').textContent = `「${sch.title || sch.castName || '予定'}」をキャンセルします。理由を選んでください。`;
+      document.getElementById('cancelScheduleModal').style.display = 'flex';
+    }
+
+    function confirmCancelSchedule(reasonType) {
+      const schId = document.getElementById('cancelScheduleId').value;
+      const sch = scheduleList.find(s => s.id === schId);
+      if (!sch) { closeModal('cancelScheduleModal'); return; }
+
+      if (reasonType === 'cast') {
+        const name = (sch.castName || '').trim();
+        if (name) {
+          ensureCastMeta(name);
+          castData[name].cancellations.push({
+            date: sch.date || new Date().toISOString().slice(0, 10),
+            time: sch.time || '',
+            reason: 'cast',
+            storeName: sch.storeName || '',
+            title: sch.title || '',
+            recordedAt: new Date().toISOString()
+          });
+        }
+        sch.status = 'cancelled';
+        sch.cancelReason = 'cast';
+      } else {
+        sch.status = 'cancelled';
+        sch.cancelReason = 'customer';
+      }
+
+      // 予定リストから外す（キャンセル済みは通知対象外）
+      scheduleList = scheduleList.filter(s => s.id !== schId);
+      saveData();
+      closeModal('cancelScheduleModal');
+      renderCalendar();
+      renderHomeMetrics();
+      refreshNotifyBadgeOnly();
+      if (document.getElementById('notifyPanel')?.classList.contains('open')) renderNotifyPanel();
+      alert(reasonType === 'cast'
+        ? 'キャスト都合のキャンセルとして記録しました（当欠データに追加）。'
+        : 'お客様都合のため予定を削除しました。');
+    }
+
+    function openCompleteVisitModal(histIdx, schId) {
+      const rec = historyList[histIdx];
+      if (!rec) return;
+      document.getElementById('completeHistoryIndex').value = histIdx;
+      document.getElementById('completeScheduleId').value = schId || '';
+      document.getElementById('completeVisitTitle').textContent = `📝 ${rec.name || ''}さんの記録を補完する`;
+      document.getElementById('completeCastName').value = rec.name || '';
+      document.getElementById('completeStoreName').value = rec.storeName || '';
+      document.getElementById('completeTypeTag').value = rec.typeTag || '';
+      document.getElementById('completeAmount').value = rec.amount || '';
+      document.getElementById('completeCourseTime').value = rec.courseTime || '';
+      document.getElementById('completeVisitNote').value = rec.visitNote || '';
+      document.getElementById('completeLetterImg').value = rec.chekiImg || '';
+      ['Looks','Service','Style','Intimacy','Value'].forEach(k => {
+        const prop = k.toLowerCase();
+        const v = rec[prop] || 3;
+        document.getElementById('completeScore' + k).value = v;
+        document.getElementById('completeScore' + k + 'Val').innerText = v;
+      });
+      const info = castData[rec.name] || {};
+      const styleParts = (info.style || '').split(/\s+/);
+      document.getElementById('completeStyleT').value = (styleParts.find(p => p.toLowerCase().startsWith('t')) || '').replace(/^t:?/i, '');
+      document.getElementById('completeStyleB').value = (styleParts.find(p => p.toLowerCase().startsWith('b')) || '').replace(/^b:?/i, '');
+      document.getElementById('completeStyleW').value = (styleParts.find(p => p.toLowerCase().startsWith('w')) || '').replace(/^w:?/i, '');
+      document.getElementById('completeStyleH').value = (styleParts.find(p => p.toLowerCase().startsWith('h')) || '').replace(/^h:?/i, '');
+
+      const isFirst = isFirstVisitForCast(rec.name);
+      // 仮履歴自身を除くと初回かどうか — provisional以外が0件なら初回
+      const otherCompleted = historyList.filter((h, i) => i !== histIdx && h.name === rec.name && !h.provisional);
+      const showIntent = otherCompleted.length === 0;
+      document.getElementById('completeFirstIntentGroup').style.display = showIntent ? 'flex' : 'none';
+      document.getElementById('completeFirstVisitIntent').value = '';
+      document.querySelectorAll('#completeFirstIntentGroup .first-intent-btn').forEach(b => {
+        b.classList.remove('selected-ari', 'selected-maybe', 'selected-consider', 'selected-none', 'selected-worst');
+      });
+      document.getElementById('completeScoreGroup').style.display = ratingEnabled ? 'flex' : 'none';
+      document.getElementById('completeVisitModal').style.display = 'flex';
+    }
+
+    function saveCompleteVisit(e) {
+      e.preventDefault();
+      const idx = parseInt(document.getElementById('completeHistoryIndex').value, 10);
+      const rec = historyList[idx];
+      if (!rec) return;
+
+      rec.storeName = document.getElementById('completeStoreName').value.trim();
+      rec.typeTag = document.getElementById('completeTypeTag').value.trim();
+      rec.amount = document.getElementById('completeAmount').value || '';
+      rec.courseTime = document.getElementById('completeCourseTime').value || '';
+      rec.visitNote = document.getElementById('completeVisitNote').value || '';
+      rec.chekiImg = document.getElementById('completeLetterImg').value || '';
+      rec.looks = parseInt(document.getElementById('completeScoreLooks').value, 10) || 3;
+      rec.service = parseInt(document.getElementById('completeScoreService').value, 10) || 3;
+      rec.style = parseInt(document.getElementById('completeScoreStyle').value, 10) || 3;
+      rec.intimacy = parseInt(document.getElementById('completeScoreIntimacy').value, 10) || 3;
+      rec.value = parseInt(document.getElementById('completeScoreValue').value, 10) || 3;
+      rec.provisional = false;
+      rec.editLockedUntil = null;
+      rec.completedAt = new Date().toISOString();
+
+      const name = rec.name;
+      ensureCastMeta(name);
+      let rawT = document.getElementById('completeStyleT').value.trim();
+      let rawB = document.getElementById('completeStyleB').value.trim();
+      let rawW = document.getElementById('completeStyleW').value.trim();
+      let rawH = document.getElementById('completeStyleH').value.trim();
+      const parts = [];
+      if (rawT) parts.push(rawT.toLowerCase().startsWith('t') ? rawT : 'T:' + rawT + (rawT.includes('cm') ? '' : 'cm'));
+      if (rawB) parts.push(rawB.toLowerCase().startsWith('b') ? rawB : 'B:' + rawB);
+      if (rawW) parts.push(rawW.toLowerCase().startsWith('w') ? rawW : 'W:' + rawW);
+      if (rawH) parts.push(rawH.toLowerCase().startsWith('h') ? rawH : 'H:' + rawH);
+      if (parts.length) castData[name].style = parts.join(' ');
+
+      const intent = document.getElementById('completeFirstVisitIntent').value;
+      if (intent) {
+        rec.firstVisitIntent = intent; // 履歴にも内部保持（画面非表示）
+        castData[name].firstVisitIntents.push({
+          intent,
+          date: `${rec.year}-${parseMonthNum(rec.month)}-${rec.day || 1}`,
+          recordedAt: new Date().toISOString()
+        });
+      }
+
+      if (rec.chekiImg) {
+        if (!castData[name].letters) castData[name].letters = [];
+        castData[name].letters.push({ date: rec.year + rec.month, imageUrl: rec.chekiImg, text: rec.visitNote });
+      }
+
+      const schId = document.getElementById('completeScheduleId').value;
+      if (schId) {
+        const sch = scheduleList.find(s => s.id === schId);
+        if (sch) { sch.status = 'completed'; }
+      }
+
+      saveData();
+      if (typeof syncDataToCloud === 'function') syncDataToCloud(true);
+      closeModal('completeVisitModal');
+      render();
+      renderDashboard();
+      renderHomeMetrics();
+      refreshNotifyBadgeOnly();
+      if (document.getElementById('notifyPanel')?.classList.contains('open')) renderNotifyPanel();
+      alert('✨ 記録を補完しました！');
+    }
+
     function checkNotifications() {
       const now = new Date();
       let modified = false;
 
       scheduleList.forEach(sch => {
         if (!sch.time) return;
+        if (sch.status === 'cancelled' || sch.status === 'completed') return;
         const schDateTime = new Date(`${sch.date}T${sch.time}:00`);
         const diffMs = schDateTime.getTime() - now.getTime();
         
@@ -4627,13 +5468,16 @@
 
       if(modified) saveData();
       renderHomeMetrics();
+      refreshNotifyBadgeOnly();
     }
 
     function startHomeAnimations() {
       renderHomeMetrics();
       startFloatingCards();
-      renderTimeCapsuleCard();
+      // あの頃の思い出はホームではなく通知パネルへ（renderTimeCapsuleCard は無効化済み）
       checkAnniversary();
+      loadDismissedNotifyIds();
+      refreshNotifyBadgeOnly();
     }
 
     function renderHomeMetrics() {
@@ -4800,27 +5644,8 @@
     }
 
     function renderTimeCapsuleCard() {
-      const actionContainer = document.getElementById('homeActionCardsContainer');
-      if (!actionContainer) return;
-
-      const capsule = getTimeCapsuleMatch();
-      if (!capsule) return;
-
-      const v = capsule.record;
-      const agoLabel = capsule.years ? `${capsule.years}年前` : `${capsule.diffMonths}ヶ月前`;
-      const storeText = (v.storeName && v.storeName.trim()) ? v.storeName.trim() : '某店';
-      const noteText = (v.visitNote && v.visitNote.trim()) ? v.visitNote.trim() : '（当時のメモは残っていません）';
-
-      actionContainer.innerHTML += `
-        <div class="home-action-card time-capsule-card">
-          <div class="home-action-title" style="color:#8a5a00;">💭 あの頃の思い出（${agoLabel}の今日）</div>
-          <div style="font-size:0.8rem; color:var(--text-color); text-align:left; line-height:1.6;">
-            ${agoLabel}の今日、あなたは<strong>${storeText}</strong>で<strong>${v.name}</strong>ちゃんと遊んでいました。<br>
-            当時の感想：『${noteText}』
-          </div>
-        </div>
-      `;
-      actionContainer.style.display = 'flex';
+      /* 💭「あの頃の思い出」はホーム画面には出さない。通知パネル（getMemorialNotifications）専用 */
+      return;
     }
 
     /* 🎉 デビュー○周年アニバーサリー通知 */
@@ -5258,6 +6083,11 @@
             ? `${v.year.slice(2)}年 ${v.month}${v.day ? ' ' + v.day + '日' : ''}`
             : `${v.year.slice(2)}年 ${v.month}`;
             
+          const locked = isRecordEditLocked(v);
+          const checkedInLabel = v.provisional ? `<span class="checked-in-badge">入店済み</span>` : '';
+          const editBtn = locked
+            ? `<span class="checked-in-badge">入店済み</span><button class="edit-icon-btn locked" disabled title="コース終了まで編集できません"><svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>`
+            : `${checkedInLabel}<button class="edit-icon-btn" onclick="openEditRecordModal(event, ${v.originalIndex})"><svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>`;
           rowsHtml += `
             <div class="history-row-wrap">
               <div class="history-row">
@@ -5266,7 +6096,7 @@
                   <div style="display:flex; align-items:center; gap:6px;">
                     ${reportBtn}
                     ${infoBtn}
-                    <button class="edit-icon-btn" onclick="openEditRecordModal(event, ${v.originalIndex})"><svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>
+                    ${editBtn}
                   </div>
                 </div>
                 ${buildFlagTagsHtml(v.flags)}
@@ -6666,6 +7496,10 @@
         document.getElementById(id + 'Val').innerText = 3;
       });
       document.getElementById('addScoreGroup').style.display = ratingEnabled ? 'flex' : 'none';
+      const intentGroup = document.getElementById('addFirstIntentGroup');
+      if (intentGroup) intentGroup.style.display = 'none';
+      const intentHidden = document.getElementById('addFirstVisitIntent');
+      if (intentHidden) intentHidden.value = '';
       updateStoreDatalist();
       updateCastDatalist();
       document.getElementById('addModal').style.display = 'flex';
@@ -6738,6 +7572,25 @@
         castData[name].letters.push({ date: rec.year + rec.month, imageUrl: rec.chekiImg, text: rec.visitNote });
       }
 
+      // 初回来店時のリピート意向（隠しメタデータ）
+      const firstIntentEl = document.getElementById('addFirstVisitIntent');
+      const firstIntent = firstIntentEl ? firstIntentEl.value : '';
+      if (firstIntent) {
+        const others = historyList.filter((h, i) => i !== historyList.length - 1 && h.name === name && !h.provisional);
+        if (others.length === 0) {
+          rec.firstVisitIntent = firstIntent;
+          ensureCastMeta(name);
+          castData[name].firstVisitIntents.push({
+            intent: firstIntent,
+            date: `${rec.year}-${parseMonthNum(rec.month)}-${rec.day || 1}`,
+            recordedAt: new Date().toISOString()
+          });
+        }
+      }
+      if (firstIntentEl) firstIntentEl.value = '';
+      const intentGroupEl = document.getElementById('addFirstIntentGroup');
+      if (intentGroupEl) intentGroupEl.style.display = 'none';
+
       if (pendingKeepPromotionId) {
         keepsList = keepsList.filter(k => k.id !== pendingKeepPromotionId);
         pendingKeepPromotionId = null;
@@ -6748,6 +7601,10 @@
     function openEditRecordModal(event, index) {
       event.preventDefault(); event.stopPropagation();
       const rec = historyList[index]; if(!rec) return;
+      if (isRecordEditLocked(rec)) {
+        alert('入店済みの仮履歴は、コース終了の目安時刻まで編集できません。通知パネルから「記録を補完する」をご利用ください。');
+        return;
+      }
       document.getElementById('editRecordIndex').value = index;
       document.getElementById('editRecordHeader').innerText = `${rec.year}年 ${rec.month} - ${rec.name}`;
       document.getElementById('editYear').value = rec.year || '';
@@ -7131,6 +7988,20 @@
       const peakMonthEntry = Object.entries(yearMonthCount).sort((a, b) => b[1] - a[1])[0] || null;
       const peakYearEntry = Object.entries(yearCount).sort((a, b) => b[1] - a[1])[0] || null;
 
+      // 当欠・初回意向の全体集計
+      let totalCastCancels = 0;
+      const highCancelCasts = [];
+      const intentStats = { ari: 0, maybe: 0, consider: 0, none: 0, worst: 0 };
+      Object.keys(castData).forEach(cname => {
+        const cancels = (castData[cname].cancellations || []).filter(c => c.reason === 'cast').length;
+        totalCastCancels += cancels;
+        const rate = getCastCancellationRate(cname);
+        if (rate != null && rate >= 20 && cancels >= 1) highCancelCasts.push(`${cname}(${rate}%)`);
+        (castData[cname].firstVisitIntents || []).forEach(fi => {
+          if (intentStats[fi.intent] != null) intentStats[fi.intent]++;
+        });
+      });
+
       return {
         total,
         atariCount: atariList.length,
@@ -7145,7 +8016,10 @@
         lastDate: dateList[dateList.length - 1] || null,
         lowScoreTypeTagCount, lowScoreCategoryCount,
         avgAmount: amountCount > 0 ? Math.round(totalAmount / amountCount) : 0,
-        visitsPerMonth: (total / spanMonths).toFixed(1)
+        visitsPerMonth: (total / spanMonths).toFixed(1),
+        totalCastCancels,
+        highCancelCasts: highCancelCasts.slice(0, 5),
+        intentStats
       };
     }
 
@@ -7202,16 +8076,19 @@
 ・低評価でよく出てくる業種: ${topEntriesText(data.lowScoreCategoryCount, 5)}
 ・平均利用金額: ${data.avgAmount ? data.avgAmount.toLocaleString() + '円' : 'データ不足'}
 ・月あたりの利用ペース: 約${data.visitsPerMonth}回／月
+・キャスト都合の当欠（当日キャンセル）累計: ${data.totalCastCancels || 0}件
+・当欠率が高めのキャスト: ${(data.highCancelCasts && data.highCancelCasts.length) ? data.highCancelCasts.join('、') : '特になし'}
+・初回リピート意向の内訳: あり${(data.intentStats&&data.intentStats.ari)||0} / 機会があれば${(data.intentStats&&data.intentStats.maybe)||0} / 要検討${(data.intentStats&&data.intentStats.consider)||0} / なし${(data.intentStats&&data.intentStats.none)||0} / 最悪${(data.intentStats&&data.intentStats.worst)||0}
 
 【出力形式】必ず以下の3つの見出しで、日本語で回答してください。
 【あなたの遊び方 振り返り】
 （一番よく指名したキャスト、一番通った店舗、一番利用が多かった時期などに触れながら、「こんな時期はこんな遊び方をしていたんだな」と思い出せるような、親しみやすい語り口の振り返り文章。数字を並べるだけでなく、ストーリーとして語ってください）
 
 【勝率・満足度インサイト】
-（アタリ率の評価と、利用傾向についての客観的なフィードバック。低評価パターンがあれば軽く触れる）
+（アタリ率の評価と、利用傾向についての客観的なフィードバック。低評価パターンや当欠傾向、初回印象とリピートの関係があれば軽く触れる）
 
 【総評＆これからのアドバイス】
-（これまでの振り返りを踏まえて、今後さらに満足度とコスパを高めるための、押しつけがましくない軽いアドバイス）`;
+（これまでの振り返りを踏まえて、今後さらに満足度とコスパを高めるための、押しつけがましくない軽いアドバイス。当欠率の高い店舗・キャストがある場合は予備案の提案など）`;
     }
 
     async function callGeminiAPI(promptText) {
@@ -7458,7 +8335,32 @@
         totalAmount,
         avgInterval, recentAvgInterval,
         highlightRecords: highlightRecords.slice(0, 5),
-        isActive: !(castData[name] && castData[name].retired)
+        isActive: !(castData[name] && castData[name].retired),
+        styleData: (castData[name] && castData[name].style) ? castData[name].style : '',
+        typeTags: (() => {
+          const tags = {};
+          visits.forEach(v => { if (v.typeTag) tags[v.typeTag] = (tags[v.typeTag] || 0) + 1; });
+          const sorted = Object.entries(tags).sort((a,b) => b[1]-a[1]).slice(0,5).map(([k,v]) => `${k}(${v})`);
+          return sorted.length ? sorted.join('、') : '';
+        })(),
+        cancelRate: getCastCancellationRate(name),
+        cancelCount: ((castData[name] && castData[name].cancellations) || []).filter(c => c.reason === 'cast').length,
+        cancelDenom: (() => {
+          const cancels = ((castData[name] && castData[name].cancellations) || []).filter(c => c.reason === 'cast').length;
+          const vis = visits.filter(v => !v.provisional).length;
+          return vis + cancels;
+        })(),
+        firstIntent: (() => {
+          const intents = (castData[name] && castData[name].firstVisitIntents) || [];
+          if (intents.length) return intents[0].intent;
+          const fromRec = visits.find(v => v.firstVisitIntent);
+          return fromRec ? fromRec.firstVisitIntent : null;
+        })(),
+        avgCourseTime: (() => {
+          let sum = 0, n = 0;
+          visits.forEach(v => { const t = parseInt(v.courseTime, 10); if (t) { sum += t; n++; } });
+          return n ? Math.round(sum / n) : null;
+        })()
       };
     }
 
@@ -7467,30 +8369,45 @@
         ? `平均利用間隔: 約${castData_.avgInterval}日おき（直近は約${castData_.recentAvgInterval}日おき）`
         : '利用間隔を計算するには記録が不足しています';
 
+      const cancelRateText = castData_.cancelRate != null
+        ? `当欠率（キャスト都合キャンセル）: ${castData_.cancelRate}%（キャンセル${castData_.cancelCount}件 / 訪問+キャンセル ${castData_.cancelDenom}件）`
+        : '当欠データ: なし';
+      const styleText = castData_.styleData || '未登録';
+      const typeTagsText = castData_.typeTags || 'データなし';
+      const intentText = castData_.firstIntent
+        ? `初回リピート意向: 「${FIRST_INTENT_LABELS[castData_.firstIntent] || castData_.firstIntent}」`
+        : '初回リピート意向: 未記録';
+      const costText = castData_.avgCourseTime
+        ? `平均コース時間: 約${castData_.avgCourseTime}分 / 平均金額: ${castData_.avgAmount ? castData_.avgAmount.toLocaleString() + '円' : 'データ不足'}`
+        : `平均利用金額: ${castData_.avgAmount ? castData_.avgAmount.toLocaleString() + '円' : 'データ不足'}`;
+
       return `あなたは利用者本人と一緒に思い出を振り返る、温かく親しみやすいトーンのパートナーAIです。以下は「${castData_.name}」さんという特定のキャスト1人に絞った利用記録データと、利用者全体の平均データです。このキャストとの関係性にフォーカスして振り返ってください。
 
 【${castData_.name}さんとの記録データ】
 ・総指名回数: ${castData_.total}回（${castData_.firstDate || '?'} 〜 ${castData_.lastDate || '?'}）
 ・${intervalText}
+・スタイルデータ: ${styleText}
+・よく付いた系統タグ: ${typeTagsText}
 ・平均評価（5点満点）: ルックス${castData_.avgLooks} / 接客${castData_.avgService} / スタイル${castData_.avgStyle} / イチャ度${castData_.avgIntimacy} / コスパ${castData_.avgValue}
 ・当たり(🆂)フラグ: ${castData_.atariCount}回 / ハズレ(⚔)フラグ: ${castData_.hazureCount}回
-・平均利用金額: ${castData_.avgAmount ? castData_.avgAmount.toLocaleString() + '円' : 'データ不足'}（累計 ${castData_.totalAmount.toLocaleString()}円）
+・${costText}（累計 ${castData_.totalAmount.toLocaleString()}円）
+・${cancelRateText}
+・${intentText}
 ・印象的な記録（初出勤・卒業・当たり等）: ${castData_.highlightRecords.length ? castData_.highlightRecords.join(' / ') : '特筆すべき記録なし'}
 
 【参考：利用者全体の平均データ】
-・全体の平均評価（5点満点、参考値）: ルックス/接客/スタイル/イチャ度/コスパの全体平均
 ・全体のアタリ率: ${overallData.atariRate}% / 全体の平均利用金額: ${overallData.avgAmount ? overallData.avgAmount.toLocaleString() + '円' : 'データ不足'}
 ・全体の総利用回数: ${overallData.total}回
 
 【出力形式】必ず以下の3つの見出しで、日本語で回答してください。
 【このコとの歩み】
-（出会いから今までの流れを、日記を読み返すような文体で振り返る。利用頻度の変化（間隔が空いてきている/安定している等）にも軽く触れる）
+（出会いから今までの流れを、日記を読み返すような文体で振り返る。利用頻度の変化にも軽く触れる）
 
 【傾向分析】
-（評価・金額・頻度が、利用者全体の平均と比べて高いか低いか、客観的に分析する）
+（評価・金額・頻度が全体平均と比べてどうか。スタイル・系統の特徴、当欠率が高い場合は「予備案を考えておくと安心」など客観的に触れる。初回リピート意向と2回目以降の訪問頻度・評価に乖離があれば、直感と実際の満足度の差として深掘りする）
 
 【今後についてのヒント】
-（利用間隔が空いてきている場合は「そろそろ卒業しているかもしれません」等やんわり伝える。安定して良い関係の場合はその旨を伝える。押しつけがましくないトーンで）`;
+（利用間隔・当欠率・初回印象を踏まえ、押しつけがましくないトーンで軽くアドバイス）`;
     }
 
     async function runCastReportAnalysis() {
