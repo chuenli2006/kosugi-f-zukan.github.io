@@ -1336,6 +1336,36 @@
     .kenja-bullet { margin: 2px 0; padding-left: 2px; }
     .kenja-blank-line { height: 6px; }
 
+    /* 💬 トーク一覧・キャラ切替 */
+    .ai-talklist-body { width: 100%; min-height: 320px; background: var(--bg-color); border-radius: var(--radius); border: 1px solid var(--border-color); overflow: hidden; animation: settingsFadeIn 0.4s ease both; }
+    .ai-talklist { display: flex; flex-direction: column; }
+    .ai-talk-row {
+      display: flex; align-items: center; gap: 12px; padding: 14px 16px; width: 100%; text-align: left;
+      background: transparent; border: none; border-bottom: 1px solid var(--border-color);
+      color: var(--text-color); font-family: inherit; cursor: pointer;
+    }
+    .ai-talk-row:active { background: var(--soft-pink); }
+    .ai-talk-avatar { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
+    .ai-talk-avatar.kenja { background: linear-gradient(135deg, #EDE9FE, #DBEAFE); }
+    .ai-talk-avatar.kosugi { background: linear-gradient(135deg, #ffe8cc, #ffd8d8); }
+    .ai-talk-main { flex: 1; min-width: 0; }
+    .ai-talk-name { font-weight: bold; font-size: 0.9rem; }
+    .ai-talk-preview { font-size: 0.76rem; color: var(--light-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ai-talk-time { font-size: 0.68rem; color: var(--light-text); flex-shrink: 0; align-self: flex-start; }
+    .ai-chat-back-btn { background: none; border: none; font-size: 1.7rem; line-height: 1; color: var(--accent-pink); cursor: pointer; padding: 0 4px; }
+    .ai-persona-switch { display: flex; gap: 6px; padding: 8px 12px; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
+    .ai-persona-btn { flex: 1; padding: 8px 4px; border-radius: 999px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--light-text); font-size: 0.76rem; font-weight: bold; cursor: pointer; transition: all 0.2s ease; }
+    .ai-persona-btn.active { color: #fff; border-color: transparent; }
+    #aiPersonaBtn_kenja.active { background: linear-gradient(135deg, #7928CA, #0070F3); }
+    #aiPersonaBtn_kosugi.active { background: linear-gradient(135deg, #ff9a56, #ff6b6b); }
+    .ai-chat-tab-body[data-persona="kosugi"] .ai-chat-header h3 { color: #f76707; }
+    .ai-chat-tab-body[data-persona="kosugi"] .ai-chat-bubble { border-radius: 20px; }
+    .ai-chat-tab-body[data-persona="kosugi"] .ai-chat-bubble-user { background: linear-gradient(135deg, #ffa94d, #ff6b6b); border-bottom-right-radius: 6px; }
+    .ai-chat-tab-body[data-persona="kosugi"] .ai-chat-bubble-ai { border-color: #ffc078; border-bottom-left-radius: 6px; }
+    .ai-chat-tab-body[data-persona="kosugi"] .ai-chat-chip { border-color: #ffd8a8; }
+    .ai-chat-tab-body[data-persona="kosugi"] .ai-chat-send-btn { background: linear-gradient(135deg, #ffa94d, #ff6b6b); }
+    .ai-chat-typing-text { font-size: 0.75rem; color: var(--light-text); padding: 10px 14px; animation: aiTextPulse 1.3s ease-in-out infinite; }
+
     .ai-chat-typing { display: flex; gap: 4px; align-items: center; padding: 12px 14px; }
     .ai-chat-typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--light-text); animation: chatTypingBounce 1s ease-in-out infinite; display: inline-block; }
     .ai-chat-typing span:nth-child(2) { animation-delay: 0.15s; }
@@ -1704,9 +1734,9 @@
             <span class="icon-badge icon-cat-settings icon-badge-sm"><span class="emoji-icon">👤</span><i data-lucide="user" class="smart-icon"></i></span>
             <span>ユーザー: <span id="currentUserNameDisplay">童貞</span></span>
           </button>
-          <button class="pill-btn" onclick="openAiChatModal()" title="KENJAに聞く">
-            <span class="icon-badge icon-cat-aichat icon-badge-sm"><span class="emoji-icon">🦉</span><i data-lucide="sparkles" class="smart-icon"></i></span>
-            <span>KENJA</span>
+          <button class="pill-btn" onclick="openAiChatModal()" title="AIとトーク">
+            <span class="icon-badge icon-cat-aichat icon-badge-sm"><span class="emoji-icon">💬</span><i data-lucide="messages-square" class="smart-icon"></i></span>
+            <span>トーク</span>
           </button>
           <button class="notif-bell-btn" onclick="openNotificationPanel()" title="通知">
             <i data-lucide="bell" class="notif-bell-icon"></i>
@@ -2212,23 +2242,37 @@
         </div>
       </div>
 
-      <!-- 8. KENJAタブ -->
-      <div id="viewAiChat" class="tab-content">
-        <div class="ai-chat-tab-body">
+      <!-- 8. AIトーク一覧タブ -->
+      <div id="viewAiTalkList" class="tab-content">
+        <div class="ai-talklist-body">
           <div class="ai-chat-header">
-            <h3>🦉 KENJA</h3>
+            <h3>💬 トーク</h3>
+            <button type="button" class="map-modal-close-x" onclick="switchMainTab('home')">✕</button>
+          </div>
+          <div class="ai-talklist" id="aiTalkList"></div>
+        </div>
+      </div>
+
+      <!-- 9. AIチャットタブ（KENJA / AIこすぎ） -->
+      <div id="viewAiChat" class="tab-content">
+        <div class="ai-chat-tab-body" id="aiChatTabBody" data-persona="kenja">
+          <div class="ai-chat-header">
+            <div style="display:flex; align-items:center; gap:6px;">
+              <button type="button" class="ai-chat-back-btn" onclick="switchMainTab('aiTalkList')" title="トーク一覧へ">‹</button>
+              <h3 id="aiChatTitle">🦉 KENJA</h3>
+            </div>
             <div style="display:flex; gap:10px; align-items:center;">
               <button type="button" class="ai-chat-clear-btn" onclick="clearChatHistory()" title="会話をクリア">🗑️</button>
               <button type="button" class="map-modal-close-x" onclick="switchMainTab('home')">✕</button>
             </div>
           </div>
 
-          <div class="ai-chat-chip-row">
-            <button type="button" class="ai-chat-chip" onclick="sendChatQuickQuestion('当たりが多いお店はどこ？')">当たりが多い店は？</button>
-            <button type="button" class="ai-chat-chip" onclick="sendChatQuickQuestion('先月は何回利用した？')">先月何回？</button>
-            <button type="button" class="ai-chat-chip" onclick="sendChatQuickQuestion('ハズレが多い系統は？')">ハズレが多い系統は？</button>
-            <button type="button" class="ai-chat-chip" onclick="sendChatQuickQuestion('一番お金を使った月はいつ？')">一番使った月は？</button>
+          <div class="ai-persona-switch">
+            <button type="button" class="ai-persona-btn active" id="aiPersonaBtn_kenja" onclick="switchChatPersona('kenja')">🦉 KENJA</button>
+            <button type="button" class="ai-persona-btn" id="aiPersonaBtn_kosugi" onclick="switchChatPersona('kosugi')">🍻 AIこすぎ</button>
           </div>
+
+          <div class="ai-chat-chip-row" id="aiChatChipRow"></div>
 
           <div class="ai-chat-messages" id="aiChatMessages"></div>
 
@@ -2292,7 +2336,7 @@
       </button>
 
       <button class="sheet-nav-item" id="nav-aiChat" onclick="openAiChatModal(); closeMoreMenu();">
-        <span class="nav-icon icon-badge icon-cat-aichat icon-badge-sm"><span class="emoji-icon">🦉</span><i data-lucide="sparkles" class="smart-icon"></i></span><span>KENJA</span>
+        <span class="nav-icon icon-badge icon-cat-aichat icon-badge-sm"><span class="emoji-icon">💬</span><i data-lucide="messages-square" class="smart-icon"></i></span><span>AIトーク</span>
       </button>
 
       <div class="sheet-ad-carousel" id="sheetAdCarousel" onscroll="handleSheetAdScroll()">
@@ -4395,6 +4439,7 @@
       const settingsView = document.getElementById('viewSettings');
       const aiAnalysisView = document.getElementById('viewAiAnalysis');
       const aiChatView = document.getElementById('viewAiChat');
+      const aiTalkListView = document.getElementById('viewAiTalkList');
       const headerTitle = document.getElementById('headerTitle');
       const fabContainer = document.getElementById('fabContainer');
 
@@ -4416,6 +4461,7 @@
         settingsView.style.display = 'none';
         aiAnalysisView.style.display = 'none';
         aiChatView.style.display = 'none';
+        aiTalkListView.style.display = 'none';
         startHomeAnimations();
       } else {
         homeView.classList.remove('active');
@@ -4430,6 +4476,7 @@
         settingsView.style.display = 'none';
         aiAnalysisView.style.display = 'none';
         aiChatView.style.display = 'none';
+        aiTalkListView.style.display = 'none';
 
         if(type === 'my') myView.style.display = 'block';
         else if (type === 'calendar') { calendarView.style.display = 'block'; renderCalendar(); }
@@ -4438,7 +4485,8 @@
         else if (type === 'castSettings') { castSettingsView.style.display = 'block'; resetCastSettingsForm(); updateCastDatalist(); }
         else if (type === 'settings') { settingsView.style.display = 'block'; initSettingsView(); }
         else if (type === 'aiAnalysis') { aiAnalysisView.style.display = 'block'; initAiAnalysisView(); }
-        else if (type === 'aiChat') { aiChatView.style.display = 'block'; loadChatHistory(); renderChatMessages(); }
+        else if (type === 'aiChat') { aiChatView.style.display = 'block'; initAiChatView(); }
+        else if (type === 'aiTalkList') { aiTalkListView.style.display = 'block'; renderTalkList(); }
 
         setTimeout(() => {
           const area = document.getElementById('homeFloatingArea');
@@ -8123,21 +8171,133 @@
        🦉 KENJA（データについて自由に質問できるチャット）
        ================================================================== */
     let chatHistory = [];
+    let currentChatPersona = 'kenja';
+
+    const AI_PERSONAS = {
+      kenja: {
+        id: 'kenja', name: 'KENJA', emoji: '🦉', tagline: '分析・使い方・記録の下書き',
+        placeholder: '質問を入力...',
+        greeting: 'こんにちは、KENJAです🦉\n記録のことでも、アプリの使い方でも、何でも聞いてください。\n例:「当たりが多い店は？」「フラグって何？」',
+        chips: [
+          ['当たりが多い店は？', '当たりが多いお店はどこ？'],
+          ['先月何回？', '先月は何回利用した？'],
+          ['ハズレが多い系統は？', 'ハズレが多い系統は？'],
+          ['一番使った月は？', '一番お金を使った月はいつ？']
+        ]
+      },
+      kosugi: {
+        id: 'kosugi', name: 'AIこすぎ', emoji: '🍻', tagline: '気楽に話せる友だち',
+        placeholder: 'なんか話そ...',
+        greeting: 'おっす、AIこすぎだよ🍻\n最近どうよ？なんでも話してや',
+        chips: [
+          ['最近どうよ？', '最近どうよ？'],
+          ['今日どこ行こ', '今日どこ行くか迷ってる'],
+          ['あの子の話しよ', 'よく行く子の話しよ'],
+          ['最近の当たり外れ', '最近の当たり外れってどんな感じ？']
+        ]
+      }
+    };
+
+    function chatHistoryKey(pid) {
+      return pid === 'kosugi' ? 'ai_chat_history_kosugi_' + currentUserName : 'ai_chat_history_' + currentUserName;
+    }
+
+    function readChatHistory(pid) {
+      try { return JSON.parse(localStorage.getItem(chatHistoryKey(pid)) || '[]'); } catch (e) { return []; }
+    }
 
     function loadChatHistory() {
-      try {
-        chatHistory = JSON.parse(localStorage.getItem('ai_chat_history_' + currentUserName) || '[]');
-      } catch (e) {
-        chatHistory = [];
-      }
+      chatHistory = readChatHistory(currentChatPersona);
     }
 
     function saveChatHistory() {
-      localStorage.setItem('ai_chat_history_' + currentUserName, JSON.stringify(chatHistory.slice(-100)));
+      localStorage.setItem(chatHistoryKey(currentChatPersona), JSON.stringify(chatHistory.slice(-100)));
+    }
+
+    /* 指定キャラの履歴にメッセージを追加（返信待ち中にキャラを切り替えても正しい履歴に入るように） */
+    function pushChatMessage(pid, msg) {
+      msg.ts = Date.now();
+      if (pid === currentChatPersona) {
+        chatHistory.push(msg);
+        saveChatHistory();
+      } else {
+        const h = readChatHistory(pid);
+        h.push(msg);
+        localStorage.setItem(chatHistoryKey(pid), JSON.stringify(h.slice(-100)));
+      }
     }
 
     function openAiChatModal() {
+      switchMainTab('aiTalkList');
+    }
+
+    function openAiChatWith(pid) {
+      currentChatPersona = AI_PERSONAS[pid] ? pid : 'kenja';
       switchMainTab('aiChat');
+    }
+
+    function switchChatPersona(pid) {
+      if (!AI_PERSONAS[pid] || pid === currentChatPersona) return;
+      currentChatPersona = pid;
+      initAiChatView();
+    }
+
+    function applyChatPersonaUI() {
+      const p = AI_PERSONAS[currentChatPersona];
+      const body = document.getElementById('aiChatTabBody');
+      if (body) body.setAttribute('data-persona', p.id);
+      const title = document.getElementById('aiChatTitle');
+      if (title) title.textContent = p.emoji + ' ' + p.name;
+      Object.keys(AI_PERSONAS).forEach(id => {
+        const btn = document.getElementById('aiPersonaBtn_' + id);
+        if (btn) btn.classList.toggle('active', id === p.id);
+      });
+      const input = document.getElementById('aiChatInput');
+      if (input) input.placeholder = p.placeholder;
+      const chipRow = document.getElementById('aiChatChipRow');
+      if (chipRow) {
+        chipRow.innerHTML = p.chips.map((c, i) =>
+          `<button type="button" class="ai-chat-chip" onclick="sendPersonaChip(${i})">${escapeHTML(c[0])}</button>`
+        ).join('');
+      }
+    }
+
+    function initAiChatView() {
+      loadChatHistory();
+      applyChatPersonaUI();
+      renderChatMessages();
+    }
+
+    function sendPersonaChip(i) {
+      const chip = AI_PERSONAS[currentChatPersona].chips[i];
+      if (chip) sendChatQuickQuestion(chip[1]);
+    }
+
+    function formatTalkTime(ts) {
+      if (!ts) return '';
+      const d = new Date(ts), now = new Date();
+      if (d.toDateString() === now.toDateString()) {
+        return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+      }
+      return (d.getMonth() + 1) + '/' + d.getDate();
+    }
+
+    function renderTalkList() {
+      const list = document.getElementById('aiTalkList');
+      if (!list) return;
+      list.innerHTML = Object.values(AI_PERSONAS).map(p => {
+        const hist = readChatHistory(p.id);
+        const last = hist[hist.length - 1];
+        const preview = last ? String(last.text).replace(/\s+/g, ' ').replace(/[#*]/g, '').slice(0, 40) : p.tagline;
+        return `<button type="button" class="ai-talk-row" onclick="openAiChatWith('${p.id}')">
+          <span class="ai-talk-avatar ${p.id}">${p.emoji}</span>
+          <span class="ai-talk-main">
+            <div class="ai-talk-name">${escapeHTML(p.name)}</div>
+            <div class="ai-talk-preview">${escapeHTML(preview)}</div>
+          </span>
+          <span class="ai-talk-time">${last ? formatTalkTime(last.ts) : ''}</span>
+        </button>`;
+      }).join('');
     }
 
     /* 📝 KENJAのメッセージ内の軽量マークダウン（##見出し / **太字** / ・箇条書き）を整形表示する */
@@ -8167,7 +8327,7 @@
     function renderChatMessages() {
       const container = document.getElementById('aiChatMessages');
       if (chatHistory.length === 0) {
-        container.innerHTML = '<div class="ai-chat-bubble ai-chat-bubble-ai">こんにちは、KENJAです🦉\n記録のことでも、アプリの使い方でも、何でも聞いてください。\n例:「当たりが多い店は？」「フラグって何？」</div>';
+        container.innerHTML = `<div class="ai-chat-bubble ai-chat-bubble-ai">${escapeHTML(AI_PERSONAS[currentChatPersona].greeting)}</div>`;
       } else {
         container.innerHTML = chatHistory.map(m =>
           `<div class="ai-chat-bubble ai-chat-bubble-${m.role}">${m.role === 'ai' ? formatKenjaMarkdown(m.text) : escapeHTML(m.text)}</div>`
@@ -8276,24 +8436,119 @@ ${recentTurns || '(会話はまだありません)'}
 ${question}`;
     }
 
+    const KOSUGI_SYSTEM_PROMPT = `あなたは「AIこすぎ」。利用者本人の風俗利用記録アプリにいる、気の置けない友だち兼相談相手です。
+AIアシスタントやコンシェルジュ、分析官としては振る舞わないでください。
+
+【あなたの人物像】
+- 風俗通いの空気感をよく知っている、センスのいい友だち
+- 上から教えない。一緒に振り返り、たまに鋭い一言をくれる
+- 説教・道徳・依存を戒める話はしない（聞かれたときだけ、短く現実的に）
+- 冗談は軽くOK。下品に煽ったり、品のない決めつけはしない
+- 最終判断は必ず相手に任せる。「こうした方がいい」は提案までに留める
+
+【話し方】
+- 基本は短く（目安：2〜5文）。レポート調・見出し・箇条書きは使わない
+- ですます調でもいいが、堅くしすぎない。友だち感のある自然な日本語
+- 「分析しました」「データによると」「以下にまとめます」「おすすめは次の通りです」は禁止
+- 数字はそのまま読み上げず、会話に溶かす
+  例：×「アタリ率は33%です」 → ○「3回に1回くらい当たり引けてる感じ」
+  例：×「月間6回利用」 → ○「今月わりと通ってるね」OR「今月そんなイッてないだものね」
+- 相手が「詳しく」「もっと」「分析して」「振り返って」と言ったときだけ、やや長めに話す
+- わからないことは推測で埋めず、「記録からはそこまで分からない」と正直に言う
+
+【データの使い方】
+- 渡される利用記録・集計・当欠・初回意向などは「会話の材料」であり、発表用の成績表ではない
+- キャスト名・店名・時期・当たり外れ・金額感に触れるときは、思い出話のように自然に
+- 当欠率が高い場合は脅しにせず、「予備考えといた方が安心かも」程度
+- 初回の印象と後のリピートに差があれば、「初見とあとで印象変わった系かもな」と軽く触れる
+- 記録にない店・子・事実は作らない
+
+【記録追加について】
+- 相手が新しい利用の話をしたとき、キャスト名と店舗名の両方が明確なら、記録フォームの下書き用に function calling してよい
+- どちらか不明なら、憶測で埋めず聞き返す
+- あなたは保存そのものはしない。保存は相手の操作が必要であることを、必要なら短く伝える
+- 編集・削除の代行はできない。方法の案内までに留める
+
+【会話の進め方】
+1. まず相手の言葉に反応する（共感・一言ツッコミ・確認）
+2. 記録に触れるなら、関係する部分だけを自然に織り込む
+3. 必要なら、次の話のきっかけを一つだけ出す（「あの子の話する？」「店の話にする？」）
+4. 一度に質問をたくさんしない
+
+【やってはいけないこと】
+- 長い箇条書き・【見出し】付きレポート
+- 過度な褒め殺し、過度な否定
+- 「プロとして」「最適解は」などの専門家ぶった言い方
+- 相手のプライバシーを軽く扱う冗談
+- 存在しない記録の捏造
+
+【話し方の手本（ユーザー本人の口調に寄せる）】
+- タメ口中心。短く。一文が長い説明文にしない
+- よく使う語: おけ、まじか、アッツ！、あつすんぎ、やばすんぎ、やばい、あつい、えぐい、めっちゃ、とりあえず、いったん、〜わ、〜な、〜やん
+- 感情は隠さない。ただし毎回絵文字だらけにはしない（要所で🥹🤣😍など）
+- 風俗の話は隠さず、でも品のない煽りやマウントはしない
+- 評価や傾向を言うときは「3回に1回当たり」「連続だとコスパ落ちる感じ」など口語で
+- 相手の予定・好みを聞いてから寄せる。決めつけない
+- AIらしい前置き（「承知しました」「以下に整理します」）は禁止
+
+【応答のトーン例（参考）】
+ユーザー：「最近当たり少ない気がする」
+AIこすぎ：「それなー、記録見てもやっぱ最近少ないよね。なんだろ新規開拓しないで前可愛かった子でもイッたら？」
+
+ユーザー：「ゆあちゃんどう思う？」
+AIこすぎ：「ええやん、スタイルみても［ユーザーネーム］が好きそうなタイプなんだぜ」
+
+ユーザー：「今日〇〇店で△△ちゃんと遊んだ」
+AIこすぎ：「お疲れーどうだった？よかったら記録残したらー？」
+
+【その他】
+- アプリの操作方法や機能の細かい使い方を聞かれたら、「そこはKENJAに聞いたほうが早いわ」と軽く促す
+
+【出力】
+- 基本は日本語
+- 友だちとして自然に話すこと。説明書や報告書にしないこと`;
+
+    function buildKosugiPrompt(question) {
+      const context = buildChatContextBlock();
+      const recentTurns = chatHistory.slice(-10).map(m => `${m.role === 'user' ? '相手' : 'あなた(AIこすぎ)'}: ${m.text}`).join('\n');
+      const persona = KOSUGI_SYSTEM_PROMPT.replace(/［ユーザーネーム］|\[ユーザーネーム\]/g, currentUserName);
+      return `${persona}
+
+相手の呼び名: ${currentUserName}
+
+【会話の材料：記録データ（成績表として読み上げず、思い出話に溶かすこと）】
+${context}
+
+【直近の会話】
+${recentTurns || '(まだ話していない)'}
+
+【相手の新しい発言】
+${question}`;
+    }
+
     async function sendChatMessage() {
       const input = document.getElementById('aiChatInput');
       const question = input.value.trim();
       if (!question) return;
+      const persona = currentChatPersona;
       if (!getGeminiApiKey()) {
-        alert('先に🤖 AI好み診断の「🔑 Gemini APIキー設定」からAPIキーを保存してください（KENJAも同じキーを使います）。');
+        alert('先に🤖 AI好み診断の「🔑 Gemini APIキー設定」（または設定タブのAI機能）からAPIキーを保存してください（' + AI_PERSONAS[persona].name + 'も同じキーを使います）。');
         return;
       }
 
       input.value = '';
-      chatHistory.push({ role: 'user', text: question });
-      saveChatHistory();
+      pushChatMessage(persona, { role: 'user', text: question });
       renderChatMessages();
 
       const container = document.getElementById('aiChatMessages');
       const typingEl = document.createElement('div');
-      typingEl.className = 'ai-chat-bubble ai-chat-bubble-ai ai-chat-typing';
-      typingEl.innerHTML = '<span></span><span></span><span></span>';
+      if (persona === 'kosugi') {
+        typingEl.className = 'ai-chat-bubble ai-chat-bubble-ai ai-chat-typing-text';
+        typingEl.textContent = '入力中…';
+      } else {
+        typingEl.className = 'ai-chat-bubble ai-chat-bubble-ai ai-chat-typing';
+        typingEl.innerHTML = '<span></span><span></span><span></span>';
+      }
       container.appendChild(typingEl);
       container.scrollTop = container.scrollHeight;
 
@@ -8301,25 +8556,24 @@ ${question}`;
       sendBtn.disabled = true;
 
       try {
-        const result = await callGeminiAPIWithTools(buildChatPrompt(question), [FILL_ADD_RECORD_FUNCTION_DECLARATION]);
+        const prompt = persona === 'kosugi' ? buildKosugiPrompt(question) : buildChatPrompt(question);
+        const result = await callGeminiAPIWithTools(prompt, [FILL_ADD_RECORD_FUNCTION_DECLARATION]);
         if (result.type === 'functionCall' && result.name === 'fill_add_record_form') {
           const args = result.args || {};
-          chatHistory.push({
-            role: 'ai',
-            text: `「${args.castName || '?'}」さん（${args.storeName || '?'}）の記録の下書きを作りました🦉\n記録追加フォームを開くので、内容を確認して保存ボタンを押してください（保存はご自身の操作が必要です）。`
-          });
-          saveChatHistory();
-          renderChatMessages();
+          const who = `「${args.castName || '?'}」さん（${args.storeName || '?'}）`;
+          const text = persona === 'kosugi'
+            ? `おけ、${who}の下書き作っといた🙌\n記録フォーム開くから、中身見て保存ボタン押してな。`
+            : `${who}の記録の下書きを作りました🦉\n記録追加フォームを開くので、内容を確認して保存ボタンを押してください（保存はご自身の操作が必要です）。`;
+          pushChatMessage(persona, { role: 'ai', text });
+          if (persona === currentChatPersona) renderChatMessages();
           prefillAddRecordFromChat(args);
         } else {
-          chatHistory.push({ role: 'ai', text: result.text });
-          saveChatHistory();
-          renderChatMessages();
+          pushChatMessage(persona, { role: 'ai', text: result.text });
+          if (persona === currentChatPersona) renderChatMessages();
         }
       } catch (err) {
-        chatHistory.push({ role: 'ai', text: '⚠️ エラーが発生しました: ' + (err.message || String(err)) });
-        saveChatHistory();
-        renderChatMessages();
+        pushChatMessage(persona, { role: 'ai', text: '⚠️ エラーが発生しました: ' + (err.message || String(err)) });
+        if (persona === currentChatPersona) renderChatMessages();
       } finally {
         sendBtn.disabled = false;
       }
