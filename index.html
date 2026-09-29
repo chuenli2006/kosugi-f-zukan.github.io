@@ -28,6 +28,11 @@
       --gold-bg-start: #fff9e6; --gold-bg-end: #fff0c2; --gold-border: #f3c642; --gold-text: #8a6200;
       --rank-c1: #ff85a2; --rank-c2: #ffb347; --rank-c3: #63c7b2; --rank-c4: #a389d4; --rank-c5: #6fb1fc;
       --map-unvisited: #e0e0e0; --map-stroke: #ffffff;
+      --glass-tint-rgb: 255,255,255; --glass-overlay-rgb: 0,0,0;
+    }
+
+    [data-theme="midnight"], [data-theme="velvet"], [data-theme="cyber"], [data-theme="berry"], [data-theme="mocha"] {
+      --glass-tint-rgb: 20,20,30; --glass-overlay-rgb: 0,0,0;
     }
 
     [data-theme="midnight"] { --bg-color: #121218; --card-bg: #1a1a24; --primary-pink: #ff6b8b; --soft-pink: #2a1f2d; --accent-pink: #ff4081; --text-color: #e2e2e8; --light-text: #9a9aab; --border-color: #2e2e3d; --shadow: 0 4px 15px rgba(0, 0, 0, 0.5); --badge-bg: #3a2233; --badge-color: #ff6b8b; --gold-bg-start: #2e2612; --gold-bg-end: #1f190a; --gold-border: #d4af37; --gold-text: #ffd700; --map-unvisited: #2a2a36; --map-stroke: #121218; }
@@ -470,9 +475,7 @@
     .btn-toggle { flex: 1; padding: 5px 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); border-radius: 16px; font-size: 0.75rem; font-weight: bold; cursor: pointer; text-align: center; }
     .btn-toggle.active { background: var(--primary-pink); color: white; border-color: var(--primary-pink); }
 
-    .legend-details { margin-bottom: 12px; text-align: center; width: 100%; }
-    .legend-details summary { color: var(--primary-pink); font-size: 0.75rem; text-decoration: underline; cursor: pointer; list-style: none; }
-    .legend-box { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 4px; background: var(--card-bg); padding: 8px; border-radius: var(--radius); margin-top: 6px; font-size: 0.7rem; border: 1px solid var(--border-color); text-align: left; }
+
 
     .grid { display: flex; flex-direction: column; gap: 8px; width: 100%; }
 
@@ -538,6 +541,92 @@
     .card-body { padding: 10px 14px 12px; border-top: 1px dashed var(--border-color); background-color: var(--card-bg); display: flex; flex-direction: column; gap: 8px; width: 100%; }
     
     .style-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 2px; }
+    .style-row-with-ai { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; margin-bottom: 2px; }
+    .style-row-with-ai .style-row { flex: 1; margin-bottom: 0; }
+    .cast-ai-report-btn {
+      flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; border: none;
+      background: linear-gradient(135deg, #7928CA, #0070F3); color: #fff; font-size: 0.85rem; cursor: pointer;
+      box-shadow: 0 2px 8px rgba(121,40,202,0.35); display: flex; align-items: center; justify-content: center;
+      transition: transform 0.15s ease;
+    }
+    .cast-ai-report-btn:active { transform: scale(0.9); }
+    .cast-ai-report-icon { width: 15px; height: 15px; stroke: #fff; }
+
+    /* ==================================================================
+       🔔 通知ベルボタン & スライドパネル（Liquid Glass）
+       ================================================================== */
+    .notif-bell-btn {
+      position: relative; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--border-color);
+      background: var(--card-bg); color: var(--text-color); cursor: pointer;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .notif-bell-icon { width: 18px; height: 18px; stroke: currentColor; }
+    .notif-badge-dot {
+      position: absolute; top: 5px; right: 6px; width: 9px; height: 9px; border-radius: 50%;
+      background: #fa5252; border: 1.5px solid var(--card-bg);
+    }
+
+    .notif-panel-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.32); z-index: 8500;
+      opacity: 0; transition: opacity 0.3s ease;
+    }
+    .notif-panel-overlay.open { display: block; opacity: 1; }
+    .notif-slide-panel {
+      position: fixed; top: 0; right: 0; height: 100%; width: 80%; max-width: 420px;
+      background: rgba(var(--glass-tint-rgb), 0.55);
+      backdrop-filter: blur(18px) saturate(180%); -webkit-backdrop-filter: blur(18px) saturate(180%);
+      border-left: 1px solid rgba(var(--glass-tint-rgb), 0.4);
+      box-shadow: -10px 0 30px rgba(0,0,0,0.18);
+      z-index: 8501; transform: translateX(100%); transition: transform 0.35s cubic-bezier(0.25,1,0.5,1);
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .notif-slide-panel.open { transform: translateX(0); }
+    [data-theme="jreast"] .notif-slide-panel, .notif-slide-panel { color: var(--text-color); }
+    .notif-panel-header {
+      display: flex; justify-content: space-between; align-items: center; padding: 16px;
+      flex-shrink: 0; border-bottom: 1px solid rgba(var(--glass-tint-rgb), 0.4);
+    }
+    .notif-panel-header h3 { margin: 0; font-size: 1rem; color: var(--accent-pink); }
+    .notif-panel-body { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+    .notif-empty-note { text-align: center; color: var(--light-text); font-size: 0.82rem; padding: 40px 10px; }
+
+    .notif-glass-card {
+      background: rgba(var(--glass-tint-rgb), 0.45); backdrop-filter: blur(6px);
+      border: 1px solid rgba(var(--glass-tint-rgb), 0.5); border-radius: 14px; padding: 12px 14px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+      animation: aiCardFadeIn 0.3s ease both;
+    }
+    .notif-glass-card.pinned { border: 1px solid var(--gold-border); background: linear-gradient(135deg, var(--gold-bg-start), var(--gold-bg-end)); }
+    .notif-glass-card.pinned .notif-card-title { color: var(--gold-text); }
+    .notif-card-title { font-size: 0.82rem; font-weight: bold; color: var(--text-color); margin-bottom: 4px; }
+    .notif-card-sub { font-size: 0.76rem; color: var(--text-color); opacity: 0.85; margin-bottom: 8px; }
+    .notif-card-btn-row { display: flex; gap: 6px; flex-wrap: wrap; }
+    .notif-card-btn {
+      flex: 1; min-width: 100px; text-align: center; padding: 8px 10px; border-radius: 10px; border: none;
+      font-size: 0.74rem; font-weight: bold; cursor: pointer; text-decoration: none; color: #fff;
+    }
+    .notif-btn-checkin { background: linear-gradient(135deg, #20c997, #12b886); }
+    .notif-btn-cancel { background: #868e96; }
+    .notif-btn-complete { background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink)); }
+    .notif-btn-default { background: var(--accent-pink); }
+
+    .checkin-badge { font-size: 0.68rem; font-weight: bold; color: #12b886; background: rgba(18,184,134,0.12); padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+
+    /* 🙋 初回リピート意向 5択ボタン */
+    .first-visit-intent-row { display: flex; gap: 5px; flex-wrap: wrap; }
+    .fv-intent-btn {
+      flex: 1; min-width: 60px; padding: 8px 4px; border-radius: 10px; border: 1.5px solid var(--border-color);
+      background: var(--card-bg); color: var(--text-color); font-size: 0.72rem; font-weight: bold; cursor: pointer;
+    }
+    .fv-intent-btn.selected.fv-intent-yes { background: linear-gradient(135deg, #74c0fc, #4dabf7); color: #fff; border-color: transparent; }
+    .fv-intent-btn.selected.fv-intent-maybe { background: #d3f9d8; color: #2b8a3e; border-color: transparent; }
+    .fv-intent-btn.selected.fv-intent-consider { background: var(--accent-pink); color: #fff; border-color: transparent; }
+    .fv-intent-btn.selected.fv-intent-no { background: #ffe3e3; color: #c92a2a; border-color: transparent; }
+    .fv-intent-btn.selected.fv-intent-worst { background: #1a1a1a; color: #fff; border-color: transparent; }
+    #castReportModal .modal-content.cast-report-content {
+      width: 100%; max-width: 480px; padding: 0; background: transparent; border: none;
+      box-shadow: none; max-height: 88vh; text-align: left;
+    }
     .style-pill { display: inline-flex; align-items: center; border-radius: 8px; overflow: hidden; font-size: 0.7rem; font-weight: bold; border: 1px solid rgba(0,0,0,0.08); }
     .style-pill-label { padding: 2px 7px; color: #fff; }
     .style-pill-val { padding: 2px 8px; }
@@ -576,6 +665,20 @@
       flex-direction: column;
       gap: 6px;
       background: linear-gradient(135deg, var(--soft-pink), var(--card-bg));
+      position: relative;
+      overflow: hidden;
+    }
+    summary.store-fold-summary .store-web-preview-img {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; object-position: center; z-index: 0;
+    }
+    summary.store-fold-summary .store-preview-overlay {
+      position: absolute; inset: 0; z-index: 1;
+      background: linear-gradient(135deg, var(--soft-pink) 0%, var(--soft-pink) 32%, rgba(255,255,255,0.55) 58%, rgba(255,255,255,0.3) 100%);
+    }
+    summary.store-fold-summary > .store-summary-head,
+    summary.store-fold-summary > .store-summary-meta {
+      position: relative; z-index: 2;
     }
     summary.store-fold-summary::-webkit-details-marker { display: none; }
     
@@ -653,7 +756,8 @@
     .store-btn-edit { background: var(--bg-color); color: var(--light-text); border: 1px solid var(--border-color); cursor: pointer; padding: 4px 10px; border-radius: 14px; font-size: 0.7rem; font-weight: bold; }
 
     .history-row-wrap { width: 100%; }
-    .history-row { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); border: 1px solid var(--border-color); padding: 5px 8px; border-radius: 6px; font-size: 0.8rem; width: 100%; }
+    .history-row { display: flex; flex-direction: column; gap: 4px; background: var(--card-bg); border: 1px solid var(--border-color); padding: 5px 8px; border-radius: 6px; font-size: 0.8rem; width: 100%; box-sizing: border-box; }
+    .history-row-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
     .report-badge { font-size: 0.65rem; color: var(--accent-pink); background: var(--soft-pink); border: 1px solid var(--primary-pink); padding: 1px 7px; border-radius: 10px; font-weight: bold; text-decoration: none; }
     .edit-icon-btn { background: none; border: none; cursor: pointer; padding: 2px 4px; color: var(--light-text); }
 
@@ -780,6 +884,19 @@
     .flag-picker { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 4px; }
     .flag-btn { font-size: 0.72rem; padding: 4px 8px; border-radius: 12px; border: 1.5px solid var(--border-color); background: var(--card-bg); color: var(--text-color); cursor: pointer; }
     .flag-btn-clear { background: rgba(150, 150, 150, 0.2); color: var(--light-text); }
+    .flag-btn-list { background: var(--soft-pink); color: var(--accent-pink); border-color: var(--primary-pink); font-weight: bold; }
+    .flag-full-list { display: none; flex-wrap: wrap; gap: 5px; margin: 2px 0 6px; padding: 8px; background: var(--bg-color); border: 1px dashed var(--border-color); border-radius: 10px; }
+    .flag-full-list .flag-btn { border: none; font-weight: bold; }
+    .flag-btn-add-custom { background: var(--bg-color); color: var(--accent-pink); border: 1.5px dashed var(--primary-pink) !important; font-weight: bold; }
+
+    /* 🎨 カスタムマーク追加モーダル */
+    .custom-flag-char-input { width: 100%; aspect-ratio: 1 / 1; text-align: center; font-size: 1.6rem; padding: 0; box-sizing: border-box; }
+    .custom-flag-color-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 4px; }
+    .custom-flag-color-dot { width: 34px; height: 34px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; margin: 0 auto; }
+    .custom-flag-color-dot.selected { border-color: var(--card-bg); box-shadow: 0 0 0 2px var(--accent-pink); }
+
+    .history-flag-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+    .flag-tag { font-size: 0.65rem; font-weight: bold; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
 
     /* --- 🌸 女の子別設定タブ --- */
     .cs-lookup-bar {
@@ -827,6 +944,56 @@
     details.detail-fold summary { padding: 8px 10px; font-size: 0.78rem; font-weight: bold; color: var(--accent-pink); cursor: pointer; list-style: none; display: flex; align-items: center; gap: 4px; }
     details.detail-fold summary::-webkit-details-marker { display: none; }
     details.detail-fold .fold-body { padding: 4px 10px 10px; display: flex; flex-direction: column; gap: 8px; }
+
+    /* ⚙️ 設定タブ（SNS風プロフィールカード） */
+    @keyframes settingsFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes settingsSectionSlide { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes avatarPop { from { transform: scale(0.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    .settings-profile-card {
+      display: flex; flex-direction: column; align-items: center; gap: 12px;
+      padding: 26px 16px; margin-bottom: 16px; width: 100%; box-sizing: border-box;
+      background: linear-gradient(135deg, var(--soft-pink), var(--card-bg));
+      border-radius: 20px; border: 1px solid var(--border-color); box-shadow: var(--shadow);
+      animation: settingsFadeIn 0.4s ease both;
+    }
+    .settings-avatar-btn {
+      position: relative; border: none; background: none; padding: 0; cursor: pointer;
+      animation: avatarPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+    .settings-avatar-circle {
+      width: 84px; height: 84px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      background: var(--card-bg); border: 3px solid var(--card-bg); box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+      font-size: 2.1rem; overflow: hidden; transition: transform 0.15s ease;
+    }
+    .settings-avatar-btn:active .settings-avatar-circle { transform: scale(0.93); }
+    .settings-avatar-default-icon { width: 40px; height: 40px; color: var(--light-text); }
+    .settings-avatar-edit-badge {
+      position: absolute; bottom: 0; right: 0; width: 26px; height: 26px; border-radius: 50%;
+      background: var(--accent-pink); color: #fff; display: flex; align-items: center; justify-content: center;
+      font-size: 0.72rem; border: 2px solid var(--card-bg);
+    }
+    .settings-username-form { display: flex; gap: 6px; width: 100%; max-width: 260px; box-sizing: border-box; }
+    .settings-username-input {
+      flex: 1 1 auto; min-width: 0; padding: 8px 12px; border-radius: 999px; border: 1.5px solid var(--border-color);
+      background: var(--card-bg); color: var(--text-color); font-size: 0.85rem; font-weight: bold; text-align: center;
+      outline: none; box-sizing: border-box;
+    }
+    .settings-username-save-btn {
+      flex-shrink: 0; padding: 8px 16px; border-radius: 999px; border: none;
+      background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink)); color: #fff;
+      font-weight: bold; font-size: 0.8rem; cursor: pointer; transition: transform 0.15s ease; white-space: nowrap;
+    }
+    .settings-username-save-btn:active { transform: scale(0.94); }
+
+    .settings-sections { display: flex; flex-direction: column; gap: 0; width: 100%; }
+    .settings-sections .settings-acc-card { animation: settingsSectionSlide 0.4s ease both; }
+    .settings-sections .settings-acc-card:nth-of-type(1) { animation-delay: 0.04s; }
+    .settings-sections .settings-acc-card:nth-of-type(2) { animation-delay: 0.08s; }
+    .settings-sections .settings-acc-card:nth-of-type(3) { animation-delay: 0.12s; }
+    .settings-sections .settings-acc-card:nth-of-type(4) { animation-delay: 0.16s; }
+    .settings-sections .settings-acc-card:nth-of-type(5) { animation-delay: 0.2s; }
+    .settings-sections .settings-acc-card:nth-of-type(6) { animation-delay: 0.24s; }
 
     details.settings-acc-card { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 8px; text-align: left; overflow: hidden; width: 100%; }
     summary.settings-acc-summary { padding: 10px 12px; font-size: 0.85rem; font-weight: bold; color: var(--accent-pink); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; width: 100%; }
@@ -947,6 +1114,8 @@
     /* 指定のなかったカテゴリの補完分 */
     .icon-cat-theme     { --icon-bg: #FDF2F8; --icon-color: #BE185D; }
     .icon-cat-devlock   { --icon-bg: #F5F5F4; --icon-color: #78716C; }
+    .icon-cat-ai        { --icon-bg: #EDE9FE; --icon-color: #7C3AED; }
+    .icon-cat-aichat    { --icon-bg: #DBEAFE; --icon-color: #2563EB; }
     .icon-cat-visibility{ --icon-bg: #F0F9FF; --icon-color: #0369A1; }
     .icon-cat-cloud     { --icon-bg: #DBEAFE; --icon-color: #1D4ED8; }
 
@@ -1016,6 +1185,194 @@
       background: var(--bg-color); color: var(--light-text); font-size: 0.72rem; font-weight: bold; cursor: pointer;
     }
     .map-heatmap-tab.active { background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink)); color: #fff; border-color: transparent; }
+
+    /* ==================================================================
+       🤖 AI好み診断・総合分析（オーロラグロー＆グラスモーフィズム）
+       ================================================================== */
+    .ai-analysis-tab-body {
+      width: 100%; height: 75vh; max-height: 700px; min-height: 480px;
+      display: flex; flex-direction: column; padding: 0; overflow: hidden;
+      background: #0a0e17; border-radius: var(--radius); position: relative;
+      animation: settingsFadeIn 0.4s ease both;
+    }
+    .ai-aurora-bg { position: absolute; inset: 0; overflow: hidden; z-index: 0; }
+    .ai-aurora-blob { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.5; }
+    .ai-aurora-blob-1 { width: 300px; height: 300px; background: #7928CA; top: -70px; left: -60px; animation: aiAuroraFloat1 15s ease-in-out infinite; }
+    .ai-aurora-blob-2 { width: 260px; height: 260px; background: #0070F3; bottom: -70px; right: -50px; animation: aiAuroraFloat2 19s ease-in-out infinite; }
+    .ai-aurora-blob-3 { width: 240px; height: 240px; background: #00DFD8; top: 45%; left: 50%; animation: aiAuroraFloat3 17s ease-in-out infinite; }
+    @keyframes aiAuroraFloat1 { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(50px, 60px) scale(1.25); } }
+    @keyframes aiAuroraFloat2 { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-40px, -50px) scale(1.2); } }
+    @keyframes aiAuroraFloat3 { 0%, 100% { transform: translate(-50%,-50%) rotate(0deg) scale(1); } 50% { transform: translate(-50%,-50%) rotate(180deg) scale(1.3); } }
+
+    .ai-modal-header { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; padding: 16px 16px 10px; flex-shrink: 0; }
+    .ai-modal-header h3 { margin: 0; font-size: 1.02rem; background: linear-gradient(135deg, #ffffff, #a78bfa, #00DFD8); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .ai-modal-header .map-modal-close-x { color: #cbd5e1; }
+
+    .ai-tab-row { position: relative; z-index: 2; display: flex; gap: 8px; padding: 0 16px 12px; flex-shrink: 0; }
+    .ai-tab-btn {
+      flex: 1; padding: 10px 4px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05); color: #cbd5e1; font-size: 0.8rem; font-weight: bold; cursor: pointer;
+      transition: all 0.25s ease;
+    }
+    .ai-tab-btn.active { background: linear-gradient(135deg, rgba(121,40,202,0.65), rgba(0,112,243,0.65)); color: #fff; border-color: rgba(255,255,255,0.35); box-shadow: 0 0 18px rgba(121,40,202,0.45); }
+
+    .ai-scroll-body { position: relative; z-index: 2; flex: 1; overflow-y: auto; padding: 0 16px 24px; }
+    .ai-tab-view { animation: aiCardFadeIn 0.35s ease both; }
+
+    .ai-glass-card {
+      background: rgba(15, 20, 32, 0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; padding: 16px; margin-bottom: 14px;
+      animation: aiCardFadeIn 0.4s ease both;
+    }
+    @keyframes aiCardFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .ai-api-key-details { margin-bottom: 10px; }
+    .ai-api-key-details summary { color: #9ca3af; font-size: 0.76rem; cursor: pointer; padding: 6px 2px; list-style: none; }
+    .ai-api-key-note { font-size: 0.66rem; color: #6b7280; margin: 8px 0; line-height: 1.5; }
+    .ai-save-key-btn {
+      padding: 7px 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.08); color: #fff; font-size: 0.75rem; cursor: pointer;
+    }
+    .ai-api-key-btn-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .ai-get-key-btn {
+      padding: 7px 16px; border-radius: 8px; border: 1px solid rgba(124,58,237,0.4);
+      background: rgba(124,58,237,0.15); color: #c4b5fd; font-size: 0.75rem; font-weight: bold;
+      text-decoration: none; display: inline-block; cursor: pointer;
+    }
+    /* 設定タブ内のAI機能セクション（ライトテーマ側）用の配色 */
+    .settings-acc-card .ai-api-key-btn-row { margin-top: 4px; }
+    .settings-acc-card .ai-get-key-btn { background: var(--soft-pink); color: var(--accent-pink); border: 1px solid var(--primary-pink); }
+    .settings-acc-card .ai-save-key-btn { background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink)); color: #fff; border: none; }
+    .settings-acc-card .ai-api-key-note { color: var(--light-text); }
+    #geminiApiKeyInput {
+      width: 100%; box-sizing: border-box; padding: 9px 10px; border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.06); color: #fff; font-size: 0.8rem;
+    }
+
+    .ai-run-btn {
+      margin-top: 12px; width: 100%; padding: 12px; border-radius: 12px; border: none;
+      background: linear-gradient(135deg, #7928CA, #0070F3); color: #fff; font-weight: bold; font-size: 0.86rem; cursor: pointer;
+      box-shadow: 0 4px 18px rgba(121,40,202,0.45); transition: transform 0.15s ease, box-shadow 0.2s ease;
+    }
+    .ai-run-btn:hover, .ai-run-btn:active { box-shadow: 0 4px 24px rgba(0,223,216,0.5); transform: scale(0.98); }
+    .ai-run-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    .ai-loading-card { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 30px 16px; }
+    .ai-loading-wave { display: flex; gap: 6px; align-items: flex-end; height: 26px; }
+    .ai-loading-wave span {
+      width: 7px; height: 100%; border-radius: 4px;
+      background: linear-gradient(180deg, #7928CA, #00DFD8);
+      animation: aiWavePulse 0.85s ease-in-out infinite;
+    }
+    .ai-loading-wave span:nth-child(2) { animation-delay: 0.1s; }
+    .ai-loading-wave span:nth-child(3) { animation-delay: 0.2s; }
+    .ai-loading-wave span:nth-child(4) { animation-delay: 0.3s; }
+    .ai-loading-wave span:nth-child(5) { animation-delay: 0.4s; }
+    @keyframes aiWavePulse { 0%, 100% { transform: scaleY(0.35); opacity: 0.55; } 50% { transform: scaleY(1); opacity: 1; } }
+    .ai-loading-text { color: #cbd5e1; font-size: 0.8rem; font-weight: bold; letter-spacing: 0.5px; animation: aiTextPulse 1.3s ease-in-out infinite; }
+    @keyframes aiTextPulse { 0%, 100% { opacity: 0.45; } 50% { opacity: 1; } }
+    .ai-loading-card.fast .ai-loading-wave span { animation-duration: 0.5s; }
+
+    .ai-result-section-title { color: #a78bfa; font-size: 0.85rem; font-weight: bold; margin: 14px 0 6px; }
+    .ai-result-text { color: #e2e8f0; font-size: 0.82rem; line-height: 1.75; white-space: pre-wrap; }
+    .ai-search-link-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .ai-search-link-btn {
+      flex: 1; min-width: 140px; text-align: center; padding: 10px; border-radius: 10px; text-decoration: none;
+      background: linear-gradient(135deg, rgba(121,40,202,0.55), rgba(0,223,216,0.35)); color: #fff; font-size: 0.76rem; font-weight: bold;
+      border: 1px solid rgba(255,255,255,0.18); transition: transform 0.15s ease;
+    }
+    .ai-search-link-btn:active { transform: scale(0.96); }
+    .ai-error-text { color: #fca5a5; font-size: 0.8rem; line-height: 1.6; }
+
+    .ai-trigger-btn {
+      padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(124,58,237,0.35);
+      background: linear-gradient(135deg, #EDE9FE, #DBEAFE); color: #6D28D9; font-size: 0.7rem; font-weight: bold; cursor: pointer;
+      transition: box-shadow 0.2s ease, transform 0.15s ease;
+    }
+    .ai-trigger-btn:hover, .ai-trigger-btn:active { box-shadow: 0 0 12px rgba(124,58,237,0.45); transform: scale(0.97); }
+    .ai-trigger-btn-sm { font-size: 0.68rem; padding: 5px 10px; }
+
+    /* 🕰️ あのとき（期間別振り返り）UI */
+    .ai-era-quick-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+    .ai-era-quick-btn {
+      padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.06); color: #cbd5e1; font-size: 0.72rem; font-weight: bold; cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .ai-era-quick-btn.active { background: linear-gradient(135deg, rgba(121,40,202,0.7), rgba(0,223,216,0.5)); color: #fff; border-color: rgba(255,255,255,0.35); box-shadow: 0 0 14px rgba(121,40,202,0.4); }
+    .ai-era-custom-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .ai-era-month-input {
+      flex: 1; min-width: 0; box-sizing: border-box; padding: 8px 10px; border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.06); color: #fff; font-size: 0.78rem;
+      color-scheme: dark;
+    }
+    .ai-era-range-sep { color: #6b7280; font-size: 0.8rem; flex-shrink: 0; }
+    .ai-era-selected-label { font-size: 0.72rem; color: #9ca3af; margin-bottom: 4px; }
+
+    /* ==================================================================
+       🦉 KENJA（チャット・通常テーマに追従）
+       ================================================================== */
+    .ai-chat-tab-body {
+      width: 100%; height: 75vh; max-height: 700px; min-height: 420px;
+      display: flex; flex-direction: column; padding: 0; overflow: hidden;
+      background: var(--bg-color); border-radius: var(--radius); border: 1px solid var(--border-color);
+      animation: settingsFadeIn 0.4s ease both;
+    }
+    .ai-chat-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
+    .ai-chat-header h3 { margin: 0; font-size: 0.95rem; color: var(--accent-pink); }
+    .ai-chat-clear-btn { background: none; border: none; font-size: 1rem; cursor: pointer; color: var(--light-text); padding: 0; }
+
+    .ai-chat-chip-row { display: flex; gap: 6px; padding: 10px 12px; overflow-x: auto; flex-shrink: 0; border-bottom: 1px solid var(--border-color); }
+    .ai-chat-chip { flex-shrink: 0; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-color); font-size: 0.72rem; font-weight: bold; cursor: pointer; white-space: nowrap; }
+    .ai-chat-chip:active { background: var(--soft-pink); }
+
+    .ai-chat-messages { flex: 1; overflow-y: auto; padding: 14px 12px; display: flex; flex-direction: column; gap: 8px; }
+    .ai-chat-bubble { max-width: 78%; padding: 9px 13px; border-radius: 16px; font-size: 0.82rem; line-height: 1.6; animation: chatBubbleIn 0.25s ease both; white-space: pre-wrap; word-break: break-word; }
+    @keyframes chatBubbleIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .ai-chat-bubble-user { align-self: flex-end; background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink)); color: #fff; border-bottom-right-radius: 4px; }
+    .ai-chat-bubble-ai { align-self: flex-start; background: var(--card-bg); color: var(--text-color); border: 1px solid var(--border-color); border-bottom-left-radius: 4px; }
+    .kenja-heading { font-weight: bold; font-size: 0.88rem; margin: 6px 0 3px; color: var(--accent-pink); }
+    .ai-chat-bubble-ai .kenja-heading:first-child { margin-top: 0; }
+    .kenja-bullet { margin: 2px 0; padding-left: 2px; }
+    .kenja-blank-line { height: 6px; }
+
+    /* 💬 トーク一覧・キャラ切替 */
+    .ai-talklist-body { width: 100%; min-height: 320px; background: var(--bg-color); border-radius: var(--radius); border: 1px solid var(--border-color); overflow: hidden; animation: settingsFadeIn 0.4s ease both; }
+    .ai-talklist { display: flex; flex-direction: column; }
+    .ai-talk-row {
+      display: flex; align-items: center; gap: 12px; padding: 14px 16px; width: 100%; text-align: left;
+      background: transparent; border: none; border-bottom: 1px solid var(--border-color);
+      color: var(--text-color); font-family: inherit; cursor: pointer;
+    }
+    .ai-talk-row:active { background: var(--soft-pink); }
+    .ai-talk-avatar { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
+    .ai-talk-avatar.kenja { background: linear-gradient(135deg, #EDE9FE, #DBEAFE); }
+    .ai-talk-avatar.kosugi { background: linear-gradient(135deg, #ffe8cc, #ffd8d8); }
+    .ai-talk-main { flex: 1; min-width: 0; }
+    .ai-talk-name { font-weight: bold; font-size: 0.9rem; }
+    .ai-talk-preview { font-size: 0.76rem; color: var(--light-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ai-talk-time { font-size: 0.68rem; color: var(--light-text); flex-shrink: 0; align-self: flex-start; }
+    .ai-chat-back-btn { background: none; border: none; font-size: 1.7rem; line-height: 1; color: var(--accent-pink); cursor: pointer; padding: 0 4px; }
+    #aiPersonaBtn_kenja.active { background: linear-gradient(135deg, #7928CA, #0070F3); }
+    #aiPersonaBtn_kosugi.active { background: linear-gradient(135deg, #ff9a56, #ff6b6b); }
+    .ai-chat-tab-body[data-persona="kosugi"] .ai-chat-header h3 { color: #f76707; }
+    .ai-chat-tab-body[data-persona="kosugi"] .ai-chat-bubble { border-radius: 20px; }
+    .ai-chat-tab-body[data-persona="kosugi"] .ai-chat-bubble-user { background: linear-gradient(135deg, #ffa94d, #ff6b6b); border-bottom-right-radius: 6px; }
+    .ai-chat-tab-body[data-persona="kosugi"] .ai-chat-bubble-ai { border-color: #ffc078; border-bottom-left-radius: 6px; }
+    .ai-chat-tab-body[data-persona="kosugi"] .ai-chat-chip { border-color: #ffd8a8; }
+    .ai-chat-tab-body[data-persona="kosugi"] .ai-chat-send-btn { background: linear-gradient(135deg, #ffa94d, #ff6b6b); }
+    .ai-chat-typing-text { font-size: 0.75rem; color: var(--light-text); padding: 10px 14px; animation: aiTextPulse 1.3s ease-in-out infinite; }
+
+    .ai-chat-typing { display: flex; gap: 4px; align-items: center; padding: 12px 14px; }
+    .ai-chat-typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--light-text); animation: chatTypingBounce 1s ease-in-out infinite; display: inline-block; }
+    .ai-chat-typing span:nth-child(2) { animation-delay: 0.15s; }
+    .ai-chat-typing span:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes chatTypingBounce { 0%, 60%, 100% { transform: translateY(0); opacity: 0.5; } 30% { transform: translateY(-4px); opacity: 1; } }
+
+    .ai-chat-input-row { display: flex; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--border-color); flex-shrink: 0; }
+    .ai-chat-input-row input { flex: 1; min-width: 0; padding: 10px 14px; border-radius: 999px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-color); font-size: 0.82rem; box-sizing: border-box; }
+    .ai-chat-send-btn { flex-shrink: 0; width: 38px; height: 38px; border-radius: 50%; border: none; background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink)); color: #fff; font-size: 1rem; cursor: pointer; }
+    .ai-chat-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
     .map-scroll-body { flex: 1; overflow-y: auto; min-height: 0; }
     .map-legend-line { font-size: 0.72rem; color: var(--light-text); text-align: center; margin-bottom: 4px; }
@@ -1183,6 +1540,27 @@
     .cloud-status-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 0; }
     .cloud-status-badge { font-size: 0.72rem; font-weight: bold; padding: 3px 10px; border-radius: 999px; }
     .cloud-status-badge.online { background: #DCFCE7; color: #15803D; }
+
+    /* 🔔 クラウド同期ステータス通知（Nintendo Switch風・左上・小型） */
+    .cloud-sync-toast {
+      position: fixed; top: 14px; left: 14px; z-index: 9500;
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(20,20,20,0.88); color: #fff; font-size: 0.7rem; font-weight: bold;
+      padding: 8px 14px; border-radius: 10px; box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+      transform: translateX(-130%); transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      max-width: 78vw; pointer-events: none;
+    }
+    .cloud-sync-toast.show { transform: translateX(0); }
+    .cloud-sync-toast.success { background: rgba(21,128,61,0.92); }
+    .cloud-sync-toast.error { background: rgba(185,28,28,0.92); }
+    .cloud-sync-toast .sync-icon {
+      width: 14px; height: 14px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.75rem;
+    }
+    .cloud-sync-toast.syncing .sync-icon {
+      border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%;
+      animation: cloudSyncSpin 0.7s linear infinite;
+    }
+    @keyframes cloudSyncSpin { to { transform: rotate(360deg); } }
     .cloud-status-badge.offline { background: #F1F5F9; color: #64748B; }
     .cloud-logout-btn { background: #f1f1f1; color: #555; border: 1px solid var(--border-color); border-radius: 10px; padding: 6px 12px; font-size: 0.72rem; font-weight: bold; cursor: pointer; }
 
@@ -1349,13 +1727,17 @@
         <h1 id="headerTitle">童貞の風俗履歴図鑑</h1>
         <div class="header-sub">マイ キャスト ＆ プレイレコード</div>
         <div class="header-btn-row">
-          <button class="pill-btn" onclick="openSettingsModal()" title="ユーザー設定・テーマ変更">
+          <button class="pill-btn" onclick="switchMainTab('settings')" title="ユーザー設定・テーマ変更">
             <span class="icon-badge icon-cat-settings icon-badge-sm"><span class="emoji-icon">👤</span><i data-lucide="user" class="smart-icon"></i></span>
             <span>ユーザー: <span id="currentUserNameDisplay">童貞</span></span>
           </button>
-          <button class="pill-btn" onclick="openHelpModal()" title="使い方・ヘルプ">
-            <span class="icon-badge icon-cat-help icon-badge-sm"><span class="emoji-icon">❓</span><i data-lucide="circle-help" class="smart-icon"></i></span>
-            <span>使い方</span>
+          <button class="pill-btn" onclick="openAiChatModal()" title="AIとトーク">
+            <span class="icon-badge icon-cat-aichat icon-badge-sm"><span class="emoji-icon">💬</span><i data-lucide="messages-square" class="smart-icon"></i></span>
+            <span>トーク</span>
+          </button>
+          <button class="notif-bell-btn" onclick="openNotificationPanel()" title="通知">
+            <i data-lucide="bell" class="notif-bell-icon"></i>
+            <span class="notif-badge-dot" id="notifBadgeDot" style="display:none;"></span>
           </button>
         </div>
       </header>
@@ -1467,16 +1849,6 @@
           </div>
         </div>
 
-        <details class="legend-details">
-          <summary>マークの意味（凡例）を表示／非表示</summary>
-          <div class="legend-box">
-            <div>🈠 デビュー/初出勤</div><div>🆂 当たり/オキニ</div><div>✈ 県外</div><div>⚔ 次ナシ</div>
-            <div>🈘 交配</div><div>🄽 生交配</div><div>㍁ ＡＦ</div><div>⑱ 18歳</div>
-            <div>㋑ イメージプレイ</div><div>㋗ クレーム</div><div>ｴ 風エステ</div><div>❀ 卒業</div>
-            <div>ｄ 出前</div><div>❖ ヘルス2万超</div><div>❑ 社交飲食店</div><div>ⓘ 詳細（金額・店舗）</div>
-          </div>
-        </details>
-
         <div id="mainContent"></div>
       </div>
 
@@ -1507,7 +1879,10 @@
       <!-- 4. 統計タブ -->
       <div id="viewDashboard" class="tab-content">
         <div class="dashboard" id="dashboardOverview" style="margin-bottom:14px;">
-          <div style="font-size:0.8rem; font-weight:bold; color:var(--accent-pink); margin-bottom:8px;">📊 全体利用統計</div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <div style="font-size:0.8rem; font-weight:bold; color:var(--accent-pink);">📊 全体利用統計</div>
+            <button type="button" class="ai-trigger-btn ai-trigger-btn-sm" onclick="openAiAnalysisModal()">🤖 AI好み診断</button>
+          </div>
           <div class="dash-grid">
             <div class="dash-item"><div class="dash-val" id="stTotalVisits">0</div><div class="dash-lbl">総利用回数</div></div>
             <div class="dash-item"><div class="dash-val" id="stTotalCasts">0</div><div class="dash-lbl">経験人数</div></div>
@@ -1593,7 +1968,337 @@
           </div>
         </div>
       </div>
+
+      <!-- 7. 設定タブ（SNS風プロフィールカード＋設定セクション） -->
+      <div id="viewSettings" class="tab-content">
+        <div class="settings-profile-card">
+          <button type="button" class="settings-avatar-btn" id="settingsAvatarBtn" onclick="openAvatarPickerModal()">
+            <span class="settings-avatar-circle" id="settingsAvatarCircle">
+              <svg class="settings-avatar-default-icon" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6z"/></svg>
+            </span>
+            <span class="settings-avatar-edit-badge">✎</span>
+          </button>
+          <form class="settings-username-form" onsubmit="saveUserName(event)">
+            <input type="text" id="inputUserName" class="settings-username-input" placeholder="お名前を入力..." required>
+            <button type="submit" class="settings-username-save-btn">保存</button>
+          </form>
+        </div>
+
+        <div class="settings-sections">
+          <details class="settings-acc-card" open>
+            <summary class="settings-acc-summary">
+              <span class="settings-summary-label"><span class="icon-badge icon-cat-visibility icon-badge-sm"><span class="emoji-icon">👁️</span><i data-lucide="eye" class="smart-icon"></i></span>表示設定</span>
+              <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+            </summary>
+            <div class="settings-acc-body">
+              <label style="font-size:0.8rem; font-weight:bold; color:var(--light-text);">記録の日付表示</label>
+              <label style="font-size:0.8rem; display:flex; align-items:center; gap:8px; margin-top:6px;">
+                <input type="radio" name="dateFormat" value="ymd" onchange="saveDateFormat(this.value)" checked> 年月日まで表示
+              </label>
+              <label style="font-size:0.8rem; display:flex; align-items:center; gap:8px; margin-top:8px;">
+                <input type="radio" name="dateFormat" value="ym" onchange="saveDateFormat(this.value)"> 年月のみ表示
+              </label>
+
+              <hr class="sec-divider">
+
+              <label style="font-size:0.8rem; font-weight:bold; color:var(--light-text);">金額の表示</label>
+              <label style="font-size:0.8rem; display:flex; align-items:center; gap:8px; margin-top:6px;">
+                <input type="radio" name="amountHide" value="show" onchange="saveAmountHide(this.value)" checked> 金額を表示する
+              </label>
+              <label style="font-size:0.8rem; display:flex; align-items:center; gap:8px; margin-top:8px;">
+                <input type="radio" name="amountHide" value="hide" onchange="saveAmountHide(this.value)"> 金額を非表示にする (***)
+              </label>
+            </div>
+          </details>
+
+          <details class="settings-acc-card">
+            <summary class="settings-acc-summary">
+              <span class="settings-summary-label"><span class="icon-badge icon-cat-cast icon-badge-sm"><span class="emoji-icon">⭐</span><i data-lucide="star" class="smart-icon"></i></span>キャスト評価機能</span>
+              <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+            </summary>
+            <div class="settings-acc-body">
+              <div class="sec-toggle-row">
+                <span>キャスト評価（五角形レーダーチャート）
+                  <span class="sec-toggle-note">OFFにすると評価の入力欄・チャートを全画面で非表示にします</span>
+                </span>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="ratingEnabledToggle" onchange="toggleRatingEnabled(this.checked)">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+          </details>
+
+          <details class="settings-acc-card" open>
+            <summary class="settings-acc-summary">
+              <span class="settings-summary-label"><span class="icon-badge icon-cat-theme icon-badge-sm"><i data-lucide="palette" class="smart-icon"></i><span class="emoji-icon">🎨</span></span>カラーテーマの着せ替え</span>
+              <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+            </summary>
+            <div class="settings-acc-body">
+              <div class="form-group">
+                <label>UI表示モード</label>
+                <div class="ui-mode-toggle-row" id="uiModeToggleRow">
+                  <button type="button" class="ui-mode-btn" id="uiModeBtnOriginal" onclick="setUIMode('original')">🌸 オリジナル</button>
+                  <button type="button" class="ui-mode-btn" id="uiModeBtnSmart" onclick="setUIMode('smart')">🔘 スマート</button>
+                  <button type="button" class="ui-mode-btn" id="uiModeBtnExcel" onclick="setUIMode('excel')">📊 通勤中</button>
+                </div>
+                <div class="sec-status-note">スマートモードでは円形カラーバッジ＋フラットアイコン表示に、通勤中モードではExcel風の画面に擬態します（周囲の目を気にせず操作できます）。</div>
+              </div>
+
+              <div class="theme-grid" id="themeButtonsGrid">
+                <button class="theme-item-btn" onclick="setTheme('default')">🌸 ぴんく</button>
+                <button class="theme-item-btn" onclick="setTheme('midnight')">🌙 ミッドナイト</button>
+                <button class="theme-item-btn" onclick="setTheme('velvet')">🖤 ベルベット</button>
+                <button class="theme-item-btn" onclick="setTheme('berry')">🍇 ベリー</button>
+                <button class="theme-item-btn" onclick="setTheme('cyber')">🌃 サイバー</button>
+                <button class="theme-item-btn" onclick="setTheme('mocha')">☕️ モカ</button>
+                <button class="theme-item-btn" onclick="setTheme('emerald')">💎 エメラルド</button>
+                <button class="theme-item-btn" onclick="setTheme('champagne')">👑 ゴールド</button>
+                <button class="theme-item-btn" onclick="setTheme('violet')">💜 ヴァイオレット</button>
+                <button class="theme-item-btn" onclick="setTheme('peach')">🍑 ピーチ</button>
+                <button class="theme-item-btn" onclick="setTheme('jreast')">🚃 JR東日本風</button>
+                <button class="theme-item-btn" onclick="setTheme('sakina')"><span class="theme-swatch-dot" style="background:linear-gradient(135deg, #e08b97, #b85c6c);"></span>SAKINA</button>
+              </div>
+            </div>
+          </details>
+
+          <details class="settings-acc-card">
+            <summary class="settings-acc-summary">
+              <span class="settings-summary-label"><span class="icon-badge icon-cat-cloud icon-badge-sm"><span class="emoji-icon">☁️</span><i data-lucide="cloud" class="smart-icon"></i></span>クラウド同期（Supabase）</span>
+              <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+            </summary>
+            <div class="settings-acc-body">
+              <div class="cloud-status-row">
+                <span class="cloud-status-badge" id="cloudStatusBadge">未ログイン</span>
+                <span id="cloudStatusUserName" style="font-size:0.75rem; color:var(--light-text);"></span>
+              </div>
+              <button type="button" class="close-btn" style="width:100%; margin-top:6px;" id="cloudLoginPromptBtn" onclick="openAuthModal()">🔐 ログイン / 新規登録</button>
+              <button type="button" class="cloud-logout-btn" style="width:100%; margin-top:6px; display:none;" id="cloudLogoutBtn" onclick="logoutCloud()">ログアウト</button>
+              <div class="sec-status-note" style="margin-top:6px;">ログインすると、記録・予定・キープ等のデータが自動でクラウドに同期されます。</div>
+            </div>
+          </details>
+
+          <details class="settings-acc-card">
+            <summary class="settings-acc-summary">
+              <span class="settings-summary-label"><span class="icon-badge icon-cat-ai icon-badge-sm"><span class="emoji-icon">🤖</span><i data-lucide="sparkles" class="smart-icon"></i></span>AI機能</span>
+              <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+            </summary>
+            <div class="settings-acc-body">
+              <p style="font-size:0.7rem; color:var(--light-text); margin-bottom:8px;">AI好み診断・KENJAで使用するGemini APIキーを設定します。</p>
+              <div class="form-group">
+                <label>APIキー</label>
+                <input type="password" id="geminiApiKeyInputSettings" placeholder="AIzaSy...">
+              </div>
+              <div class="ai-api-key-note">APIキーはこの端末の localStorage にのみ保存され、Google以外のどこにも送信されません。</div>
+              <div class="ai-api-key-btn-row">
+                <button type="button" class="ai-save-key-btn" onclick="saveGeminiApiKey('geminiApiKeyInputSettings')">💾 保存</button>
+                <a href="https://aistudio.google.com/api-keys?hl=ja" target="_blank" rel="noopener noreferrer" class="ai-get-key-btn gemini-get-key-btn">🔗 取得</a>
+              </div>
+            </div>
+          </details>
+
+          <details class="settings-acc-card">
+            <summary class="settings-acc-summary">
+              <span class="settings-summary-label"><span class="icon-badge icon-cat-share icon-badge-sm"><span class="emoji-icon">📂</span><i data-lucide="folder-open" class="smart-icon"></i></span>バックアップ & データ管理</span>
+              <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+            </summary>
+            <div class="settings-acc-body">
+              <p style="font-size:0.7rem; color:var(--light-text); margin-bottom:6px;">全データをファイルとして保存・復元できます。</p>
+              <button class="close-btn" style="width:100%; margin-top:0; font-size:0.75rem; padding:6px; background:linear-gradient(135deg, #4dabf7, #339af0);" onclick="exportJSONFile()">💾 JSONダウンロード</button>
+              <button class="close-btn" style="width:100%; margin-top:6px; font-size:0.75rem; padding:6px; background:#20c997;" onclick="triggerJSONFileInput()">📂 JSONファイルを選択して復元</button>
+              <input type="file" id="jsonFileInput" accept=".json,application/json,text/plain" style="display:none;" onchange="importJSONFile(event)">
+            </div>
+          </details>
+
+          <details class="settings-acc-card">
+            <summary class="settings-acc-summary">
+              <span class="settings-summary-label"><span class="icon-badge icon-cat-security icon-badge-sm"><span class="emoji-icon">🔒</span><i data-lucide="lock" class="smart-icon"></i></span>セキュリティ・画面ロック</span>
+              <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
+            </summary>
+            <div class="settings-acc-body">
+              <div class="sec-toggle-row">
+                <span>アプリロック機能
+                  <span class="sec-toggle-note">起動時・復帰時にロック画面を表示します</span>
+                </span>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="secLockEnabledToggle" onchange="toggleAppLockEnabled(this.checked)">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+
+              <hr class="sec-divider">
+
+              <div class="form-group">
+                <label>4桁パスコード（PIN）の設定・変更</label>
+                <div class="sec-pin-row">
+                  <input type="password" id="secPinInput" inputmode="numeric" maxlength="4" pattern="[0-9]*" placeholder="例: 1234">
+                  <button type="button" class="sec-save-pin-btn" onclick="saveAppLockPin()">保存</button>
+                </div>
+                <div class="sec-status-note" id="secPinStatusNote"></div>
+              </div>
+
+              <hr class="sec-divider">
+
+              <div class="sec-toggle-row">
+                <span>生体認証（Touch ID / Face ID）
+                  <span class="sec-toggle-note" id="secBiometricNote">対応端末のみ設定できます</span>
+                </span>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="secBiometricToggle" onchange="toggleBiometricLock(this.checked)">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+
+              <hr class="sec-divider">
+
+              <div class="form-group">
+                <label>❓ パスコードを忘れた場合</label>
+                <div class="sec-status-note">ロック画面の「？」ボタンから、直近に追加した記録のキャスト名、または一番最初に追加した記録のキャスト名を入力することでパスコードを再設定できます（別途の合言葉登録は不要です）。</div>
+              </div>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- 7. AI好み診断タブ -->
+      <div id="viewAiAnalysis" class="tab-content">
+        <div class="ai-analysis-tab-body">
+          <div class="ai-aurora-bg">
+            <div class="ai-aurora-blob ai-aurora-blob-1"></div>
+            <div class="ai-aurora-blob ai-aurora-blob-2"></div>
+            <div class="ai-aurora-blob ai-aurora-blob-3"></div>
+          </div>
+
+          <div class="ai-modal-header">
+            <h3>🤖 AI好み診断</h3>
+            <button type="button" class="map-modal-close-x" onclick="switchMainTab('home')">✕</button>
+          </div>
+
+          <div class="ai-tab-row">
+            <button type="button" class="ai-tab-btn active" id="aiTabPreference" onclick="switchAiTab('preference')">🎯 好み分析</button>
+            <button type="button" class="ai-tab-btn" id="aiTabComprehensive" onclick="switchAiTab('comprehensive')">📊 総合分析</button>
+            <button type="button" class="ai-tab-btn" id="aiTabEra" onclick="switchAiTab('era')">🕰️ あのとき</button>
+          </div>
+
+          <div class="ai-scroll-body">
+            <details class="ai-api-key-details">
+              <summary>🔑 Gemini APIキー設定</summary>
+              <div class="ai-glass-card" style="margin-top:8px;">
+                <div class="form-group">
+                  <label style="color:#e2e8f0;">APIキー</label>
+                  <input type="password" id="geminiApiKeyInput" placeholder="AIzaSy...">
+                </div>
+                <div class="ai-api-key-note">APIキーはこの端末の localStorage にのみ保存され、Google以外のどこにも送信されません。</div>
+                <div class="ai-api-key-btn-row">
+                  <button type="button" class="ai-save-key-btn" onclick="saveGeminiApiKey('geminiApiKeyInput')">💾 保存</button>
+                  <a href="https://aistudio.google.com/api-keys?hl=ja" target="_blank" rel="noopener noreferrer" class="ai-get-key-btn gemini-get-key-btn">🔗 取得</a>
+                </div>
+              </div>
+            </details>
+
+            <div id="aiPreferenceView" class="ai-tab-view">
+              <div class="ai-glass-card">
+                <p style="color:#cbd5e1; font-size:0.82rem; margin:0; line-height:1.6;">🆂当たり・オキニのフラグが付いた記録や、評価スコアが4以上の記録から、あなたの好みの傾向をAIが分析します。</p>
+                <button type="button" class="ai-run-btn" id="aiPreferenceRunBtn" onclick="runPreferenceAnalysis()">✨ 好み分析を実行</button>
+              </div>
+              <div id="aiPreferenceResult"></div>
+            </div>
+
+            <div id="aiComprehensiveView" class="ai-tab-view" style="display:none;">
+              <div class="ai-glass-card">
+                <p style="color:#cbd5e1; font-size:0.82rem; margin:0; line-height:1.6;">全記録のアタリ率・ハズレ率・低評価の傾向・利用ペースなどを総合的にAIが分析します。</p>
+                <button type="button" class="ai-run-btn" id="aiComprehensiveRunBtn" onclick="runComprehensiveAnalysis()">✨ 総合分析を実行</button>
+              </div>
+              <div id="aiComprehensiveResult"></div>
+            </div>
+
+            <div id="aiEraView" class="ai-tab-view" style="display:none;">
+              <div class="ai-glass-card">
+                <p style="color:#cbd5e1; font-size:0.82rem; margin:0 0 12px; line-height:1.6;">気になる期間を選ぶと、その頃の遊び方をAIが振り返ります。</p>
+
+                <div class="ai-era-quick-row">
+                  <button type="button" class="ai-era-quick-btn" onclick="selectEraQuickRange('recent3', this)">直近3ヶ月</button>
+                  <button type="button" class="ai-era-quick-btn" onclick="selectEraQuickRange('half', this)">半年前</button>
+                  <button type="button" class="ai-era-quick-btn" onclick="selectEraQuickRange('year', this)">1年前</button>
+                  <button type="button" class="ai-era-quick-btn" onclick="selectEraQuickRange('thisYear', this)">今年</button>
+                  <button type="button" class="ai-era-quick-btn" onclick="selectEraQuickRange('lastYear', this)">去年</button>
+                </div>
+
+                <div class="ai-era-custom-row">
+                  <input type="month" id="aiEraStartInput" class="ai-era-month-input" onchange="clearEraQuickActive(); updateEraSelectedLabel();">
+                  <span class="ai-era-range-sep">〜</span>
+                  <input type="month" id="aiEraEndInput" class="ai-era-month-input" onchange="clearEraQuickActive(); updateEraSelectedLabel();">
+                </div>
+                <div class="ai-era-selected-label" id="aiEraSelectedLabel">期間を選択してください</div>
+
+                <button type="button" class="ai-run-btn" id="aiEraRunBtn" onclick="runEraAnalysis()">✨ この時期を振り返る</button>
+              </div>
+              <div id="aiEraResult"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8. AIトーク一覧タブ -->
+      <div id="viewAiTalkList" class="tab-content">
+        <div class="ai-talklist-body">
+          <div class="ai-chat-header">
+            <h3>💬 トーク</h3>
+            <button type="button" class="map-modal-close-x" onclick="switchMainTab('home')">✕</button>
+          </div>
+          <div class="ai-talklist" id="aiTalkList"></div>
+        </div>
+      </div>
+
+      <!-- 9. AIチャットタブ（KENJA / AIこすぎ） -->
+      <div id="viewAiChat" class="tab-content">
+        <div class="ai-chat-tab-body" id="aiChatTabBody" data-persona="kenja">
+          <div class="ai-chat-header">
+            <div style="display:flex; align-items:center; gap:6px;">
+              <button type="button" class="ai-chat-back-btn" onclick="switchMainTab('aiTalkList')" title="トーク一覧へ">‹</button>
+              <h3 id="aiChatTitle">🦉 KENJA</h3>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center;">
+              <button type="button" class="ai-chat-clear-btn" onclick="clearChatHistory()" title="会話をクリア">🗑️</button>
+              <button type="button" class="map-modal-close-x" onclick="switchMainTab('home')">✕</button>
+            </div>
+          </div>
+
+          <div class="ai-chat-chip-row" id="aiChatChipRow"></div>
+
+          <div class="ai-chat-messages" id="aiChatMessages"></div>
+
+          <form class="ai-chat-input-row" onsubmit="event.preventDefault(); sendChatMessage();">
+            <input type="text" id="aiChatInput" placeholder="質問を入力...">
+            <button type="submit" class="ai-chat-send-btn" id="aiChatSendBtn">➤</button>
+          </form>
+        </div>
+      </div>
     </main>
+  </div>
+
+  <!-- 🎨 アイコン（アバター）変更モーダル -->
+  <div class="modal-overlay" id="avatarPickerModal">
+    <div class="modal-content">
+      <h3>🎨 アイコンを変更</h3>
+      <div class="form-group">
+        <label>アイコン（絵文字を入力、またはよく使うものから選択）</label>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <input type="text" id="avatarIconInput" class="custom-flag-char-input" style="width:56px; flex:none;" maxlength="4" placeholder="👤">
+          <button type="button" class="flag-btn" onclick="setAvatarIconQuick('⭐')" style="font-size:1rem;">⭐</button>
+          <button type="button" class="flag-btn" onclick="setAvatarIconQuick('❤️')" style="font-size:1rem;">❤️</button>
+          <button type="button" class="flag-btn flag-btn-clear" onclick="setAvatarIconQuick('')">リセット</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>背景カラー（20色から選択）</label>
+        <div class="custom-flag-color-grid" id="avatarColorGrid"></div>
+      </div>
+      <div style="display:flex; gap:8px; margin-top:10px;">
+        <button type="button" class="close-btn" style="background:#888; flex:1;" onclick="closeModal('avatarPickerModal')">キャンセル</button>
+        <button type="button" class="close-btn" style="flex:2;" onclick="saveAvatarSettings()">💾 保存する</button>
+      </div>
+    </div>
   </div>
 
   <!-- 📱 拡張メニュー：ボトムシート（ナビゲーションの5枠に入りきらない機能を格納） -->
@@ -1618,6 +2323,14 @@
         <span class="nav-icon icon-badge icon-cat-keep icon-badge-sm"><span class="emoji-icon">🌟</span><i data-lucide="bookmark" class="smart-icon"></i></span><span>キープ (<span id="keepsCount">0</span>)</span>
       </button>
 
+      <button class="sheet-nav-item sheet-ai-btn" id="nav-aiAnalysis" onclick="openAiAnalysisModal(); closeMoreMenu();">
+        <span class="nav-icon icon-badge icon-cat-ai icon-badge-sm"><span class="emoji-icon">🤖</span><i data-lucide="sparkles" class="smart-icon"></i></span><span>AI好み診断</span>
+      </button>
+
+      <button class="sheet-nav-item" id="nav-aiChat" onclick="openAiChatModal(); closeMoreMenu();">
+        <span class="nav-icon icon-badge icon-cat-aichat icon-badge-sm"><span class="emoji-icon">💬</span><i data-lucide="messages-square" class="smart-icon"></i></span><span>AIトーク</span>
+      </button>
+
       <div class="sheet-ad-carousel" id="sheetAdCarousel" onscroll="handleSheetAdScroll()">
         <div class="sheet-ad-card">
           <span class="ad-icon">🎀</span>
@@ -1639,13 +2352,6 @@
         <span class="sheet-ad-dot active"></span>
         <span class="sheet-ad-dot"></span>
         <span class="sheet-ad-dot"></span>
-      </div>
-
-      <div class="sheet-dev-item">
-        <span class="nav-icon icon-badge icon-cat-devlock icon-badge-sm"><span class="emoji-icon">🔒</span><i data-lucide="lock" class="smart-icon"></i></span><span>開発中の機能 ①</span>
-      </div>
-      <div class="sheet-dev-item">
-        <span class="nav-icon icon-badge icon-cat-devlock icon-badge-sm"><span class="emoji-icon">🔒</span><i data-lucide="lock" class="smart-icon"></i></span><span>開発中の機能 ②</span>
       </div>
     </div>
   </div>
@@ -1817,6 +2523,107 @@
     </div>
   </div>
 
+  <!-- 🤖 キャスト別AIレポート -->
+  <!-- 🔔 通知スライドパネル（Liquid Glass） -->
+  <div class="notif-panel-overlay" id="notifPanelOverlay" onclick="closeNotificationPanel()"></div>
+  <div class="notif-slide-panel" id="notifSlidePanel">
+    <div class="notif-panel-header">
+      <h3>🔔 通知</h3>
+      <button type="button" class="map-modal-close-x" onclick="closeNotificationPanel()">✕</button>
+    </div>
+    <div class="notif-panel-body" id="notifPanelBody"></div>
+  </div>
+
+  <!-- 📍 チェックイン後の退店後補完モーダル -->
+  <div class="modal-overlay" id="completeVisitModal" style="z-index:9000;">
+    <div class="modal-content">
+      <h3>📝 記録を補完する</h3>
+      <input type="hidden" id="cvHistoryId">
+      <div class="form-group"><label>実際の総額</label><input type="text" id="cvAmount" placeholder="例: 20000"></div>
+      <div class="form-group"><label>系統タグ</label><input type="text" id="cvTypeTag" placeholder="例: 清楚系"></div>
+      <div class="form-group"><label>スリーサイズ（未登録の場合のみ）</label>
+        <div style="display:flex; gap:6px;">
+          <input type="text" id="cvStyleT" placeholder="T">
+          <input type="text" id="cvStyleB" placeholder="B">
+          <input type="text" id="cvStyleW" placeholder="W">
+          <input type="text" id="cvStyleH" placeholder="H">
+        </div>
+      </div>
+      <div class="score-slider-grid">
+        <div class="score-slider-row"><span class="score-slider-label">ルックス</span><input type="range" id="cvLooks" min="1" max="5" value="3" oninput="document.getElementById('cvLooksVal').innerText=this.value"><span class="score-slider-val" id="cvLooksVal">3</span></div>
+        <div class="score-slider-row"><span class="score-slider-label">接客</span><input type="range" id="cvService" min="1" max="5" value="3" oninput="document.getElementById('cvServiceVal').innerText=this.value"><span class="score-slider-val" id="cvServiceVal">3</span></div>
+        <div class="score-slider-row"><span class="score-slider-label">スタイル</span><input type="range" id="cvStyleScore" min="1" max="5" value="3" oninput="document.getElementById('cvStyleScoreVal').innerText=this.value"><span class="score-slider-val" id="cvStyleScoreVal">3</span></div>
+        <div class="score-slider-row"><span class="score-slider-label">イチャ度</span><input type="range" id="cvIntimacy" min="1" max="5" value="3" oninput="document.getElementById('cvIntimacyVal').innerText=this.value"><span class="score-slider-val" id="cvIntimacyVal">3</span></div>
+        <div class="score-slider-row"><span class="score-slider-label">コスパ</span><input type="range" id="cvValue" min="1" max="5" value="3" oninput="document.getElementById('cvValueVal').innerText=this.value"><span class="score-slider-val" id="cvValueVal">3</span></div>
+      </div>
+      <div class="form-group"><label>マーク・フラグ</label><input type="text" id="cvFlags" placeholder="マーク"></div>
+      <div class="form-group"><label>メモ・感想</label><input type="text" id="cvNote" placeholder="接客メモなど"></div>
+      <div class="form-group">
+        <label>手紙・カード画像 (自動Imgurアップロード)</label>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <input type="file" accept="image/*" style="font-size:0.75rem; padding:4px; flex:1;" onchange="uploadImageToImgur(this, 'cvLetterImg', 'cvUploadStatus')">
+          <span id="cvUploadStatus" style="font-size:0.7rem;"></span>
+        </div>
+        <input type="url" id="cvLetterImg" placeholder="https://i.imgur.com/...">
+      </div>
+
+      <div class="form-group first-visit-intent-section" id="cvFirstVisitSection" style="display:none;">
+        <label>いかがでしたか…？</label>
+        <div class="first-visit-intent-row">
+          <button type="button" class="fv-intent-btn fv-intent-yes" onclick="selectFirstVisitIntent(this,'yes')">あり</button>
+          <button type="button" class="fv-intent-btn fv-intent-maybe" onclick="selectFirstVisitIntent(this,'maybe')">機会があれば</button>
+          <button type="button" class="fv-intent-btn fv-intent-consider" onclick="selectFirstVisitIntent(this,'consider')">要検討</button>
+          <button type="button" class="fv-intent-btn fv-intent-no" onclick="selectFirstVisitIntent(this,'no')">なし</button>
+          <button type="button" class="fv-intent-btn fv-intent-worst" onclick="selectFirstVisitIntent(this,'worst')">最悪</button>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:8px; margin-top:4px;">
+        <button type="button" class="close-btn" style="background:#888; flex:1;" onclick="closeModal('completeVisitModal')">あとで</button>
+        <button type="button" class="close-btn" style="flex:2;" onclick="saveCompleteVisit()">💾 補完して保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ❌ 予定キャンセル理由モーダル -->
+  <div class="modal-overlay" id="cancelScheduleModal" style="z-index:9000;">
+    <div class="modal-content" style="max-width:320px;">
+      <h3>予定をキャンセル</h3>
+      <input type="hidden" id="cancelSchId">
+      <p style="font-size:0.8rem; color:var(--light-text); margin-bottom:10px;">キャンセルの理由を選んでください。</p>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <button type="button" class="close-btn" style="background:#fa5252;" onclick="confirmCancelSchedule('castFault')">キャスト都合（当日欠勤など）</button>
+        <button type="button" class="close-btn" style="background:#868e96;" onclick="confirmCancelSchedule('customerFault')">お客様都合</button>
+        <button type="button" class="close-btn" style="background:transparent; color:var(--light-text); border:1px solid var(--border-color);" onclick="closeModal('cancelScheduleModal')">閉じる</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="castReportModal">
+    <div class="modal-content cast-report-content">
+      <div class="ai-analysis-tab-body" style="height:78vh; max-height:640px;">
+        <div class="ai-aurora-bg">
+          <div class="ai-aurora-blob ai-aurora-blob-1"></div>
+          <div class="ai-aurora-blob ai-aurora-blob-2"></div>
+          <div class="ai-aurora-blob ai-aurora-blob-3"></div>
+        </div>
+
+        <div class="ai-modal-header">
+          <h3 id="castReportTitle">🤖 AIレポート</h3>
+          <button type="button" class="map-modal-close-x" onclick="closeModal('castReportModal')">✕</button>
+        </div>
+
+        <div class="ai-scroll-body">
+          <div class="ai-glass-card">
+            <p style="color:#cbd5e1; font-size:0.82rem; margin:0; line-height:1.6;" id="castReportIntro"></p>
+            <button type="button" class="ai-run-btn" id="castReportRunBtn" onclick="runCastReportAnalysis()">✨ このコのレポートを見る</button>
+          </div>
+          <div id="castReportResult"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- 🌟 キープ一覧モーダル -->
   <div class="modal-overlay map-fullscreen-modal" id="keepsListModal">
     <div class="modal-content map-fullscreen-content">
@@ -1850,185 +2657,28 @@
     </div>
   </div>
 
-  <!-- 設定・ヘルプモーダル -->
-  <div class="modal-overlay" id="settingsModal">
+  <!-- 🎨 カスタムマーク追加モーダル -->
+  <div class="modal-overlay" id="customFlagModal" style="z-index:1500;">
     <div class="modal-content">
-      <h3>⚙️ アプリ設定</h3>
-
-      <details class="settings-acc-card" open>
-        <summary class="settings-acc-summary">
-          <span class="settings-summary-label"><span class="icon-badge icon-cat-settings icon-badge-sm"><span class="emoji-icon">👤</span><i data-lucide="user" class="smart-icon"></i></span>ユーザー名の変更</span>
-          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
-        </summary>
-        <div class="settings-acc-body">
-          <form class="add-form" onsubmit="saveUserName(event)">
-            <div class="form-group">
-              <input type="text" id="inputUserName" placeholder="お名前を入力..." required>
-            </div>
-            <button type="submit" class="close-btn" style="margin-top:4px; padding:6px; font-size:0.8rem; width:100%;">保存する</button>
-          </form>
+      <h3>🎨 カスタムマークを追加</h3>
+      <div style="display:flex; gap:10px; align-items:flex-start;">
+        <div class="form-group" style="flex:0 0 68px;">
+          <label>マーク</label>
+          <input type="text" id="customFlagChar" class="custom-flag-char-input" maxlength="2" placeholder="㊙">
         </div>
-      </details>
-
-      <details class="settings-acc-card" open>
-        <summary class="settings-acc-summary">
-          <span class="settings-summary-label"><span class="icon-badge icon-cat-calendar icon-badge-sm"><span class="emoji-icon">📅</span><i data-lucide="calendar" class="smart-icon"></i></span>記録の日付表示設定</span>
-          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
-        </summary>
-        <div class="settings-acc-body">
-          <label style="font-size:0.8rem; display:flex; align-items:center; gap:8px;">
-            <input type="radio" name="dateFormat" value="ymd" onchange="saveDateFormat(this.value)" checked> 年月日まで表示
-          </label>
-          <label style="font-size:0.8rem; display:flex; align-items:center; gap:8px; margin-top:8px;">
-            <input type="radio" name="dateFormat" value="ym" onchange="saveDateFormat(this.value)"> 年月のみ表示
-          </label>
+        <div class="form-group" style="flex:1;">
+          <label>表示名</label>
+          <input type="text" id="customFlagLabel" placeholder="例: お気に入り">
         </div>
-      </details>
-
-      <details class="settings-acc-card" open>
-        <summary class="settings-acc-summary">
-          <span class="settings-summary-label"><span class="icon-badge icon-cat-visibility icon-badge-sm"><span class="emoji-icon">👁️</span><i data-lucide="eye" class="smart-icon"></i></span>金額の表示設定</span>
-          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
-        </summary>
-        <div class="settings-acc-body">
-          <label style="font-size:0.8rem; display:flex; align-items:center; gap:8px;">
-            <input type="radio" name="amountHide" value="show" onchange="saveAmountHide(this.value)" checked> 金額を表示する
-          </label>
-          <label style="font-size:0.8rem; display:flex; align-items:center; gap:8px; margin-top:8px;">
-            <input type="radio" name="amountHide" value="hide" onchange="saveAmountHide(this.value)"> 金額を非表示にする (***)
-          </label>
-        </div>
-      </details>
-
-      <details class="settings-acc-card">
-        <summary class="settings-acc-summary">
-          <span class="settings-summary-label"><span class="icon-badge icon-cat-cast icon-badge-sm"><span class="emoji-icon">⭐</span><i data-lucide="star" class="smart-icon"></i></span>キャスト評価機能</span>
-          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
-        </summary>
-        <div class="settings-acc-body">
-          <div class="sec-toggle-row">
-            <span>キャスト評価（五角形レーダーチャート）
-              <span class="sec-toggle-note">OFFにすると評価の入力欄・チャートを全画面で非表示にします</span>
-            </span>
-            <label class="toggle-switch">
-              <input type="checkbox" id="ratingEnabledToggle" onchange="toggleRatingEnabled(this.checked)">
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-        </div>
-      </details>
-
-      <details class="settings-acc-card" open>
-        <summary class="settings-acc-summary">
-          <span class="settings-summary-label"><span class="icon-badge icon-cat-theme icon-badge-sm"><i data-lucide="palette" class="smart-icon"></i><span class="emoji-icon">🎨</span></span>カラーテーマの着せ替え</span>
-          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
-        </summary>
-        <div class="settings-acc-body">
-          <div class="form-group">
-            <label>UI表示モード</label>
-            <div class="ui-mode-toggle-row" id="uiModeToggleRow">
-              <button type="button" class="ui-mode-btn" id="uiModeBtnOriginal" onclick="setUIMode('original')">🌸 オリジナル</button>
-              <button type="button" class="ui-mode-btn" id="uiModeBtnSmart" onclick="setUIMode('smart')">🔘 スマート</button>
-              <button type="button" class="ui-mode-btn" id="uiModeBtnExcel" onclick="setUIMode('excel')">📊 通勤中</button>
-            </div>
-            <div class="sec-status-note">スマートモードでは円形カラーバッジ＋フラットアイコン表示に、通勤中モードではExcel風の画面に擬態します（周囲の目を気にせず操作できます）。</div>
-          </div>
-
-          <div class="theme-grid" id="themeButtonsGrid">
-            <button class="theme-item-btn" onclick="setTheme('default')">🌸 ぴんく</button>
-            <button class="theme-item-btn" onclick="setTheme('midnight')">🌙 ミッドナイト</button>
-            <button class="theme-item-btn" onclick="setTheme('velvet')">🖤 ベルベット</button>
-            <button class="theme-item-btn" onclick="setTheme('berry')">🍇 ベリー</button>
-            <button class="theme-item-btn" onclick="setTheme('cyber')">🌃 サイバー</button>
-            <button class="theme-item-btn" onclick="setTheme('mocha')">☕️ モカ</button>
-            <button class="theme-item-btn" onclick="setTheme('emerald')">💎 エメラルド</button>
-            <button class="theme-item-btn" onclick="setTheme('champagne')">👑 ゴールド</button>
-            <button class="theme-item-btn" onclick="setTheme('violet')">💜 ヴァイオレット</button>
-            <button class="theme-item-btn" onclick="setTheme('peach')">🍑 ピーチ</button>
-            <button class="theme-item-btn" onclick="setTheme('jreast')">🚃 JR東日本風</button>
-            <button class="theme-item-btn" onclick="setTheme('sakina')"><span class="theme-swatch-dot" style="background:linear-gradient(135deg, #e08b97, #b85c6c);"></span>SAKINA</button>
-          </div>
-        </div>
-      </details>
-
-      <details class="settings-acc-card">
-        <summary class="settings-acc-summary">
-          <span class="settings-summary-label"><span class="icon-badge icon-cat-cloud icon-badge-sm"><span class="emoji-icon">☁️</span><i data-lucide="cloud" class="smart-icon"></i></span>クラウド同期（Supabase）</span>
-          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
-        </summary>
-        <div class="settings-acc-body">
-          <div class="cloud-status-row">
-            <span class="cloud-status-badge" id="cloudStatusBadge">未ログイン</span>
-            <span id="cloudStatusUserName" style="font-size:0.75rem; color:var(--light-text);"></span>
-          </div>
-          <button type="button" class="close-btn" style="width:100%; margin-top:6px;" id="cloudLoginPromptBtn" onclick="openAuthModal()">🔐 ログイン / 新規登録</button>
-          <button type="button" class="cloud-logout-btn" style="width:100%; margin-top:6px; display:none;" id="cloudLogoutBtn" onclick="logoutCloud()">ログアウト</button>
-          <div class="sec-status-note" style="margin-top:6px;">ログインすると、記録・予定・キープ等のデータが自動でクラウドに同期されます。</div>
-        </div>
-      </details>
-
-      <details class="settings-acc-card">
-        <summary class="settings-acc-summary">
-          <span class="settings-summary-label"><span class="icon-badge icon-cat-share icon-badge-sm"><span class="emoji-icon">📂</span><i data-lucide="folder-open" class="smart-icon"></i></span>バックアップ & データ管理</span>
-          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
-        </summary>
-        <div class="settings-acc-body">
-          <p style="font-size:0.7rem; color:var(--light-text); margin-bottom:6px;">全データをファイルとして保存・復元できます。</p>
-          <button class="close-btn" style="width:100%; margin-top:0; font-size:0.75rem; padding:6px; background:linear-gradient(135deg, #4dabf7, #339af0);" onclick="exportJSONFile()">💾 JSONダウンロード</button>
-          <button class="close-btn" style="width:100%; margin-top:6px; font-size:0.75rem; padding:6px; background:#20c997;" onclick="triggerJSONFileInput()">📂 JSONファイルを選択して復元</button>
-          <input type="file" id="jsonFileInput" accept=".json,application/json,text/plain" style="display:none;" onchange="importJSONFile(event)">
-        </div>
-      </details>
-
-      <details class="settings-acc-card">
-        <summary class="settings-acc-summary">
-          <span class="settings-summary-label"><span class="icon-badge icon-cat-security icon-badge-sm"><span class="emoji-icon">🔒</span><i data-lucide="lock" class="smart-icon"></i></span>セキュリティ・画面ロック</span>
-          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
-        </summary>
-        <div class="settings-acc-body">
-          <div class="sec-toggle-row">
-            <span>アプリロック機能
-              <span class="sec-toggle-note">起動時・復帰時にロック画面を表示します</span>
-            </span>
-            <label class="toggle-switch">
-              <input type="checkbox" id="secLockEnabledToggle" onchange="toggleAppLockEnabled(this.checked)">
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-
-          <hr class="sec-divider">
-
-          <div class="form-group">
-            <label>4桁パスコード（PIN）の設定・変更</label>
-            <div class="sec-pin-row">
-              <input type="password" id="secPinInput" inputmode="numeric" maxlength="4" pattern="[0-9]*" placeholder="例: 1234">
-              <button type="button" class="sec-save-pin-btn" onclick="saveAppLockPin()">保存</button>
-            </div>
-            <div class="sec-status-note" id="secPinStatusNote"></div>
-          </div>
-
-          <hr class="sec-divider">
-
-          <div class="sec-toggle-row">
-            <span>生体認証（Touch ID / Face ID）
-              <span class="sec-toggle-note" id="secBiometricNote">対応端末のみ設定できます</span>
-            </span>
-            <label class="toggle-switch">
-              <input type="checkbox" id="secBiometricToggle" onchange="toggleBiometricLock(this.checked)">
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-
-          <hr class="sec-divider">
-
-          <div class="form-group">
-            <label>❓ パスコードを忘れた場合</label>
-            <div class="sec-status-note">ロック画面の「？」ボタンから、直近に追加した記録のキャスト名、または一番最初に追加した記録のキャスト名を入力することでパスコードを再設定できます（別途の合言葉登録は不要です）。</div>
-          </div>
-        </div>
-      </details>
-
-      <button class="close-btn" onclick="closeModal('settingsModal')" style="width:100%; margin-top:10px;">閉じる</button>
+      </div>
+      <div class="form-group">
+        <label>カラー（20色から選択）</label>
+        <div class="custom-flag-color-grid" id="customFlagColorGrid"></div>
+      </div>
+      <div style="display:flex; gap:8px; margin-top:10px;">
+        <button type="button" class="close-btn" style="background:#888; flex:1;" onclick="closeModal('customFlagModal')">キャンセル</button>
+        <button type="button" class="close-btn" style="flex:2;" onclick="saveCustomFlag()">💾 追加する</button>
+      </div>
     </div>
   </div>
 
@@ -2222,15 +2872,46 @@
         <div class="form-group"><label>マーク・フラグ</label>
           <div class="flag-picker">
             <button type="button" class="flag-btn" onclick="addFlagChar('🆂')">🆂 当たり</button>
-            <button type="button" class="flag-btn" onclick="addFlagChar('⚔')">⚔ 次ナシ</button>
+            <button type="button" class="flag-btn" onclick="addFlagChar('⚔')">⚔ ハズレ</button>
             <button type="button" class="flag-btn" onclick="addFlagChar('✈')">✈ 県外</button>
-            <button type="button" class="flag-btn" onclick="addFlagChar('❖')">❖ 2万超</button>
+            <button type="button" class="flag-btn" onclick="addFlagChar('❖')">❖ 高額</button>
+            <button type="button" class="flag-btn flag-btn-list" onclick="toggleFlagFullList('addFlagFullList')">📋 一覧</button>
             <button type="button" class="flag-btn flag-btn-clear" onclick="clearFlagsInput()">クリア</button>
+          </div>
+          <div class="flag-full-list" id="addFlagFullList">
+            <button type="button" class="flag-btn" style="background:#2f9e44; color:#fff;" onclick="addFlagChar('🈠')">🈠 初出勤</button>
+            <button type="button" class="flag-btn" style="background:linear-gradient(135deg, #ffd700, #ff8c00); color:#5c3d00;" onclick="addFlagChar('🆂')">🆂 当たり</button>
+            <button type="button" class="flag-btn" style="background:#1c7ed6; color:#fff;" onclick="addFlagChar('✈')">✈ 県外</button>
+            <button type="button" class="flag-btn" style="background:#e03131; color:#fff;" onclick="addFlagChar('⚔')">⚔ ハズレ</button>
+            <button type="button" class="flag-btn" style="background:#9c36b5; color:#fff;" onclick="addFlagChar('🈘')">🈘 ソープ</button>
+            <button type="button" class="flag-btn" style="background:#f06595; color:#fff;" onclick="addFlagChar('🄽')">🄽 NNソープ</button>
+            <button type="button" class="flag-btn" style="background:#9c36b5; color:#fff;" onclick="addFlagChar('㍁')">㍁ AF</button>
+            <button type="button" class="flag-btn" style="background:#2f9e44; color:#fff;" onclick="addFlagChar('⑱')">⑱ 18歳</button>
+            <button type="button" class="flag-btn" style="background:#ffd43b; color:#5c3d00;" onclick="addFlagChar('㋑')">㋑ コスプレ</button>
+            <button type="button" class="flag-btn" style="background:#e03131; color:#fff;" onclick="addFlagChar('㋗')">㋗ クレーム</button>
+            <button type="button" class="flag-btn" style="background:#2f9e44; color:#fff;" onclick="addFlagChar('ｴ')">ｴ エステ</button>
+            <button type="button" class="flag-btn" style="background:linear-gradient(135deg, #ff8fab, #ff6b9d); color:#fff;" onclick="addFlagChar('❀')">❀ 卒業の出勤</button>
+            <button type="button" class="flag-btn" style="background:#9c36b5; color:#fff;" onclick="addFlagChar('ｄ')">ｄ デリヘル</button>
+            <button type="button" class="flag-btn" style="background:linear-gradient(135deg, #ffd700, #ffb700); color:#5c3d00;" onclick="addFlagChar('❖')">❖ 高額</button>
+            <button type="button" class="flag-btn" style="background:#94d82d; color:#5c3d00;" onclick="addFlagChar('❑')">❑ ピンサロ</button>
+            <span class="custom-flags-slot" id="addCustomFlagSlot" style="display:contents;"></span>
+            <button type="button" class="flag-btn flag-btn-add-custom" onclick="openCustomFlagModal()">+ 追加</button>
           </div>
           <input type="text" id="addFlags" placeholder="マーク">
         </div>
 
         <div class="form-group"><label>メモ・感想</label><input type="text" id="addVisitNote" placeholder="接客メモなど"></div>
+
+        <div class="form-group first-visit-intent-section" id="addFirstVisitSection" style="display:none;">
+          <label>いかがでしたか…？</label>
+          <div class="first-visit-intent-row">
+            <button type="button" class="fv-intent-btn fv-intent-yes" onclick="selectFirstVisitIntent(this,'yes')">あり</button>
+            <button type="button" class="fv-intent-btn fv-intent-maybe" onclick="selectFirstVisitIntent(this,'maybe')">機会があれば</button>
+            <button type="button" class="fv-intent-btn fv-intent-consider" onclick="selectFirstVisitIntent(this,'consider')">要検討</button>
+            <button type="button" class="fv-intent-btn fv-intent-no" onclick="selectFirstVisitIntent(this,'no')">なし</button>
+            <button type="button" class="fv-intent-btn fv-intent-worst" onclick="selectFirstVisitIntent(this,'worst')">最悪</button>
+          </div>
+        </div>
 
         <details class="detail-fold">
           <summary>💰 詳細（金額・コース時間・WEBレポート）</summary>
@@ -2325,7 +3006,36 @@
           </div>
         </div>
 
-        <div class="form-group"><label>フラグ</label><input type="text" id="editFlags"></div>
+        <div class="form-group"><label>フラグ</label>
+          <div class="flag-picker">
+            <button type="button" class="flag-btn" onclick="appendFlagChar('editFlags','🆂')">🆂 当たり</button>
+            <button type="button" class="flag-btn" onclick="appendFlagChar('editFlags','⚔')">⚔ ハズレ</button>
+            <button type="button" class="flag-btn" onclick="appendFlagChar('editFlags','✈')">✈ 県外</button>
+            <button type="button" class="flag-btn" onclick="appendFlagChar('editFlags','❖')">❖ 高額</button>
+            <button type="button" class="flag-btn flag-btn-list" onclick="toggleFlagFullList('editFlagFullList')">📋 一覧</button>
+            <button type="button" class="flag-btn flag-btn-clear" onclick="document.getElementById('editFlags').value=''">クリア</button>
+          </div>
+          <div class="flag-full-list" id="editFlagFullList">
+            <button type="button" class="flag-btn" style="background:#2f9e44; color:#fff;" onclick="appendFlagChar('editFlags','🈠')">🈠 初出勤</button>
+            <button type="button" class="flag-btn" style="background:linear-gradient(135deg, #ffd700, #ff8c00); color:#5c3d00;" onclick="appendFlagChar('editFlags','🆂')">🆂 当たり</button>
+            <button type="button" class="flag-btn" style="background:#1c7ed6; color:#fff;" onclick="appendFlagChar('editFlags','✈')">✈ 県外</button>
+            <button type="button" class="flag-btn" style="background:#e03131; color:#fff;" onclick="appendFlagChar('editFlags','⚔')">⚔ ハズレ</button>
+            <button type="button" class="flag-btn" style="background:#9c36b5; color:#fff;" onclick="appendFlagChar('editFlags','🈘')">🈘 ソープ</button>
+            <button type="button" class="flag-btn" style="background:#f06595; color:#fff;" onclick="appendFlagChar('editFlags','🄽')">🄽 NNソープ</button>
+            <button type="button" class="flag-btn" style="background:#9c36b5; color:#fff;" onclick="appendFlagChar('editFlags','㍁')">㍁ AF</button>
+            <button type="button" class="flag-btn" style="background:#2f9e44; color:#fff;" onclick="appendFlagChar('editFlags','⑱')">⑱ 18歳</button>
+            <button type="button" class="flag-btn" style="background:#ffd43b; color:#5c3d00;" onclick="appendFlagChar('editFlags','㋑')">㋑ コスプレ</button>
+            <button type="button" class="flag-btn" style="background:#e03131; color:#fff;" onclick="appendFlagChar('editFlags','㋗')">㋗ クレーム</button>
+            <button type="button" class="flag-btn" style="background:#2f9e44; color:#fff;" onclick="appendFlagChar('editFlags','ｴ')">ｴ エステ</button>
+            <button type="button" class="flag-btn" style="background:linear-gradient(135deg, #ff8fab, #ff6b9d); color:#fff;" onclick="appendFlagChar('editFlags','❀')">❀ 卒業の出勤</button>
+            <button type="button" class="flag-btn" style="background:#9c36b5; color:#fff;" onclick="appendFlagChar('editFlags','ｄ')">ｄ デリヘル</button>
+            <button type="button" class="flag-btn" style="background:linear-gradient(135deg, #ffd700, #ffb700); color:#5c3d00;" onclick="appendFlagChar('editFlags','❖')">❖ 高額</button>
+            <button type="button" class="flag-btn" style="background:#94d82d; color:#5c3d00;" onclick="appendFlagChar('editFlags','❑')">❑ ピンサロ</button>
+            <span class="custom-flags-slot" id="editCustomFlagSlot" style="display:contents;"></span>
+            <button type="button" class="flag-btn flag-btn-add-custom" onclick="openCustomFlagModal()">+ 追加</button>
+          </div>
+          <input type="text" id="editFlags">
+        </div>
 
         <div class="form-group"><label>系統タグ（複数時はカンマ区切り）</label>
           <div class="flag-picker">
@@ -2441,6 +3151,11 @@
           </select>
           <div style="font-size:0.65rem; color:var(--light-text); margin-top:2px;">※設定時にブラウザの通知許可が求められます。通知を受け取るにはタブを開いたままか、PWAとして端末にインストールしてください。</div>
         </div>
+        <div class="form-group">
+          <label>⏱️ コース時間（分）</label>
+          <input type="number" id="schCourseMinutes" placeholder="60" min="0" step="5">
+          <div style="font-size:0.65rem; color:var(--light-text); margin-top:2px;">チェックイン後、この時間が経過すると記録の補完カードが通知パネルに表示されます。</div>
+        </div>
         <div style="display:flex; gap:8px;">
           <button type="submit" class="close-btn" style="flex:1;">予定を保存</button>
           <button type="button" class="close-btn" onclick="closeModal('addScheduleModal')" style="background:#888; flex:1;">取消</button>
@@ -2530,6 +3245,10 @@
             <option value="60">1時間前</option>
           </select>
         </div>
+        <div class="form-group">
+          <label>⏱️ コース時間（分）</label>
+          <input type="number" id="editSchCourseMinutes" placeholder="60" min="0" step="5">
+        </div>
         <div style="display:flex; gap:8px;">
           <button type="submit" class="close-btn" style="flex:1;">更新する</button>
           <button type="button" class="close-btn" onclick="closeModal('editScheduleModal')" style="background:#888; flex:1;">取消</button>
@@ -2555,6 +3274,7 @@
     let ratingEnabled = localStorage.getItem('app_rating_enabled') !== 'false';
     let historyList = [];
     let castData = {};
+    let customFlags = [];
     let storeInfoData = {}; // 🏬 店舗マスターデータ
     let sharedRecords = [];
     let scheduleList = [];
@@ -2590,6 +3310,11 @@
 
     function initAppLock() {
       initQuestionButton();
+      // 🔧 過去のバグで「アプリロックOFFなのに生体認証だけON」という不整合な状態になっているケースを自動修復
+      if (!appLockEnabled && appLockBiometric) {
+        appLockBiometric = false;
+        localStorage.setItem('app_lock_biometric', 'false');
+      }
       if (appLockEnabled) {
         showLockScreen(true);
       }
@@ -2704,6 +3429,12 @@
       }
       appLockEnabled = checked;
       localStorage.setItem('app_lock_enabled', checked ? 'true' : 'false');
+      if (!checked && appLockBiometric) {
+        appLockBiometric = false;
+        localStorage.setItem('app_lock_biometric', 'false');
+        const biometricToggle = document.getElementById('secBiometricToggle');
+        if (biometricToggle) biometricToggle.checked = false;
+      }
     }
 
     async function saveAppLockPin() {
@@ -2723,6 +3454,11 @@
       if (!checked) {
         appLockBiometric = false;
         localStorage.setItem('app_lock_biometric', 'false');
+        return;
+      }
+      if (!appLockEnabled) {
+        alert('先に「アプリロック機能」をONにしてください（生体認証はアプリロックの解除方法の一つです）。');
+        document.getElementById('secBiometricToggle').checked = false;
         return;
       }
       if (!isWebAuthnSupported()) {
@@ -2897,12 +3633,15 @@
       const savedStoreInfo = localStorage.getItem('user_store_info_' + currentUserName);
       const savedSchedules = localStorage.getItem('user_schedules_' + currentUserName);
       const savedKeeps = localStorage.getItem('user_keeps_' + currentUserName);
+      const savedCustomFlags = localStorage.getItem('user_custom_flags_' + currentUserName);
       
       historyList = savedHist ? JSON.parse(savedHist) : [];
       castData = savedCast ? JSON.parse(savedCast) : {};
       storeInfoData = savedStoreInfo ? JSON.parse(savedStoreInfo) : {};
       scheduleList = savedSchedules ? JSON.parse(savedSchedules) : [];
       keepsList = savedKeeps ? JSON.parse(savedKeeps) : [];
+      customFlags = savedCustomFlags ? JSON.parse(savedCustomFlags) : [];
+      renderFlagFullLists();
       
       const savedShared = localStorage.getItem('user_shared_list_' + currentUserName);
       sharedRecords = savedShared ? JSON.parse(savedShared) : [];
@@ -3091,19 +3830,64 @@
       }
     }
 
-    function syncDataToCloud() {
+    function syncDataToCloud(immediate) {
       if (!cloudSyncEnabled || !supabaseClient || !cloudLoggedInUserName) return;
       clearTimeout(cloudSyncTimer);
-      cloudSyncTimer = setTimeout(async () => {
+
+      const doSync = async () => {
+        showSyncStatusToast('syncing');
         try {
-          await supabaseClient
+          const { error } = await supabaseClient
             .from('user_backups')
             .update({ data: collectAllAppData(), updated_at: new Date().toISOString() })
             .eq('user_name', cloudLoggedInUserName);
+          if (error) throw error;
+          showSyncStatusToast('success');
         } catch (err) {
           console.log('クラウド同期に失敗しました:', err);
+          const code = (err && (err.code || err.status || err.statusCode)) || 'UNKNOWN';
+          showSyncStatusToast('error', code);
         }
-      }, 800);
+      };
+
+      if (immediate) doSync();
+      else cloudSyncTimer = setTimeout(doSync, 800);
+    }
+
+    /* 🔔 Nintendo Switch風のクラウド同期ステータス通知（左上・小型） */
+    let cloudSyncToastHideTimer = null;
+    function ensureCloudSyncToastEl() {
+      let el = document.getElementById('cloudSyncToast');
+      if (!el) {
+        el = document.createElement('div');
+        el.id = 'cloudSyncToast';
+        el.className = 'cloud-sync-toast';
+        el.innerHTML = '<span class="sync-icon"></span><span class="sync-toast-text"></span>';
+        document.body.appendChild(el);
+      }
+      return el;
+    }
+    function showSyncStatusToast(state, detail) {
+      const el = ensureCloudSyncToastEl();
+      el.classList.remove('syncing', 'success', 'error');
+      el.classList.add(state);
+      const textEl = el.querySelector('.sync-toast-text');
+      const iconEl = el.querySelector('.sync-icon');
+      if (state === 'syncing') {
+        textEl.textContent = 'クラウド同期中…';
+        iconEl.textContent = '';
+      } else if (state === 'success') {
+        textEl.textContent = 'クラウド同期成功しました';
+        iconEl.textContent = '✓';
+      } else {
+        textEl.textContent = `クラウド同期エラー(${detail || 'UNKNOWN'})`;
+        iconEl.textContent = '!';
+      }
+      requestAnimationFrame(() => el.classList.add('show'));
+      clearTimeout(cloudSyncToastHideTimer);
+      if (state !== 'syncing') {
+        cloudSyncToastHideTimer = setTimeout(() => el.classList.remove('show'), 2200);
+      }
     }
 
     function saveData() {
@@ -3398,6 +4182,15 @@
           onStoreNameInput(foundStore);
         }
       }
+
+      updateAddFirstVisitSectionVisibility(name);
+    }
+
+    function updateAddFirstVisitSectionVisibility(name) {
+      const section = document.getElementById('addFirstVisitSection');
+      if (!section) return;
+      const priorVisits = historyList.filter(v => v.name === name && !v.pendingCheckIn).length;
+      section.style.display = (name && priorVisits === 0) ? 'block' : 'none';
     }
 
     async function uploadImageToImgur(fileInput, targetUrlInputId, statusSpanId) {
@@ -3635,6 +4428,10 @@
       const sharedView = document.getElementById('viewShared');
       const dashView = document.getElementById('viewDashboard');
       const castSettingsView = document.getElementById('viewCastSettings');
+      const settingsView = document.getElementById('viewSettings');
+      const aiAnalysisView = document.getElementById('viewAiAnalysis');
+      const aiChatView = document.getElementById('viewAiChat');
+      const aiTalkListView = document.getElementById('viewAiTalkList');
       const headerTitle = document.getElementById('headerTitle');
       const fabContainer = document.getElementById('fabContainer');
 
@@ -3653,6 +4450,10 @@
         sharedView.style.display = 'none';
         dashView.style.display = 'none';
         castSettingsView.style.display = 'none';
+        settingsView.style.display = 'none';
+        aiAnalysisView.style.display = 'none';
+        aiChatView.style.display = 'none';
+        aiTalkListView.style.display = 'none';
         startHomeAnimations();
       } else {
         homeView.classList.remove('active');
@@ -3664,12 +4465,20 @@
         sharedView.style.display = 'none';
         dashView.style.display = 'none';
         castSettingsView.style.display = 'none';
+        settingsView.style.display = 'none';
+        aiAnalysisView.style.display = 'none';
+        aiChatView.style.display = 'none';
+        aiTalkListView.style.display = 'none';
 
         if(type === 'my') myView.style.display = 'block';
         else if (type === 'calendar') { calendarView.style.display = 'block'; renderCalendar(); }
         else if (type === 'shared') { sharedView.style.display = 'block'; renderSharedArea(); }
         else if (type === 'dashboard') { dashView.style.display = 'block'; renderDashboard(); }
         else if (type === 'castSettings') { castSettingsView.style.display = 'block'; resetCastSettingsForm(); updateCastDatalist(); }
+        else if (type === 'settings') { settingsView.style.display = 'block'; initSettingsView(); }
+        else if (type === 'aiAnalysis') { aiAnalysisView.style.display = 'block'; initAiAnalysisView(); }
+        else if (type === 'aiChat') { aiChatView.style.display = 'block'; initAiChatView(); }
+        else if (type === 'aiTalkList') { aiTalkListView.style.display = 'block'; renderTalkList(); }
 
         setTimeout(() => {
           const area = document.getElementById('homeFloatingArea');
@@ -3723,7 +4532,18 @@
           const hd = parseInt(h.day, 10) || 1;
           return hy === year && hm === (month + 1) && hd === d;
         });
-        if (matchedHistory.length > 0) dotsHtml += `<div class="cal-dot dot-history"></div>`;
+        if (matchedHistory.length > 0) {
+          let dotStyle = '';
+          for (const flagChar of CALENDAR_PRIORITY_FLAGS) {
+            const hasFlag = matchedHistory.some(h => h.flags && h.flags.includes(flagChar));
+            if (hasFlag) {
+              const def = getFlagDef(flagChar);
+              dotStyle = ` style="background:${def.bg}; box-shadow:0 0 3px ${def.glow};"`;
+              break;
+            }
+          }
+          dotsHtml += `<div class="cal-dot dot-history"${dotStyle}></div>`;
+        }
         
         const matchedSchedules = scheduleList.filter(s => s.date === dateStr);
         matchedSchedules.forEach(sch => {
@@ -3888,6 +4708,7 @@
       document.getElementById('editSchBookingUrl').value = sch.bookingUrl || '';
       document.getElementById('editSchNotify').value = sch.notifyMinutes || 0;
       document.getElementById('editSchPhoneConfirm').value = sch.phoneConfirmMinutes || 0;
+      document.getElementById('editSchCourseMinutes').value = sch.courseMinutes || 60;
       toggleEditPhoneConfirm();
       document.getElementById('editScheduleModal').style.display = 'flex';
     }
@@ -3915,7 +4736,13 @@
         notifyMinutes: notifyMins,
         notified: false,
         phoneConfirmMinutes: phoneConfirmMins,
-        phoneNotified: false
+        phoneNotified: false,
+        courseMinutes: parseInt(document.getElementById('schCourseMinutes').value, 10) || 60,
+        checkedIn: false,
+        checkInTime: null,
+        linkedHistoryId: null,
+        cancelled: false,
+        cancelReason: null
       };
       
       scheduleList.push(sch);
@@ -3931,6 +4758,7 @@
       document.getElementById('schBookingUrl').value = '';
       document.getElementById('schPhoneConfirm').value = '0';
       document.getElementById('schBookingType').value = 'none';
+      document.getElementById('schCourseMinutes').value = '';
       
       renderCalendar();
       renderHomeMetrics();
@@ -3961,6 +4789,7 @@
 
       sch.notifyMinutes = notifyMins;
       sch.phoneConfirmMinutes = phoneConfirmMins;
+      sch.courseMinutes = parseInt(document.getElementById('editSchCourseMinutes').value, 10) || 60;
 
       saveData();
       closeModal('editScheduleModal');
@@ -4032,12 +4861,278 @@
 
       if(modified) saveData();
       renderHomeMetrics();
+      renderNotificationPanel();
+    }
+
+    /* ==================================================================
+       🔔 通知スライドパネル（Liquid Glass）
+       ================================================================== */
+    function openNotificationPanel() {
+      renderNotificationPanel();
+      document.getElementById('notifPanelOverlay').classList.add('open');
+      document.getElementById('notifSlidePanel').classList.add('open');
+    }
+    function closeNotificationPanel() {
+      document.getElementById('notifPanelOverlay').classList.remove('open');
+      document.getElementById('notifSlidePanel').classList.remove('open');
+    }
+
+    function renderNotificationPanel() {
+      const body = document.getElementById('notifPanelBody');
+      if (!body) return;
+      const now = new Date();
+      let cardsHtml = '';
+      let activeCount = 0;
+
+      // 📌 ピン留め：タイムカプセル（N年/ヶ月前の今日）
+      const capsule = getTimeCapsuleMatch();
+      if (capsule) {
+        const v = capsule.record;
+        const agoLabel = capsule.years ? `${capsule.years}年前` : `${capsule.diffMonths}ヶ月前`;
+        const storeText = (v.storeName && v.storeName.trim()) ? v.storeName.trim() : '某店';
+        const noteText = (v.visitNote && v.visitNote.trim()) ? v.visitNote.trim() : '（当時のメモは残っていません）';
+        cardsHtml += `<div class="notif-glass-card pinned">
+          <div class="notif-card-title">💭 あの頃の思い出（${agoLabel}の今日）</div>
+          <div class="notif-card-sub" style="opacity:1;">${agoLabel}の今日、あなたは<strong>${escapeHTML(storeText)}</strong>で<strong>${escapeHTML(v.name||'')}</strong>ちゃんと遊んでいました。<br>当時の感想：『${escapeHTML(noteText)}』</div>
+        </div>`;
+      }
+
+      scheduleList.forEach(sch => {
+        if (sch.cancelled || sch.checkedIn || !sch.time) return;
+        const schDateTime = new Date(`${sch.date}T${sch.time}:00`);
+        const diffMs = schDateTime.getTime() - now.getTime();
+
+        if (sch.phoneConfirmMinutes > 0) {
+          const phoneStartMs = sch.phoneConfirmMinutes * 60000;
+          if (diffMs <= phoneStartMs && diffMs >= -1800000) {
+            activeCount++;
+            const phoneNum = sch.phoneNumber || '';
+            const phoneAction = phoneNum ? `href="tel:${phoneNum}"` : `onclick="alert('電話番号が登録されていません');"`;
+            cardsHtml += `<div class="notif-glass-card">
+              <div class="notif-card-title">📞 お店への電話確認の時間です</div>
+              <div class="notif-card-sub">${escapeHTML(sch.title||'')} ${sch.castName ? '('+escapeHTML(sch.castName)+')' : ''}</div>
+              <div class="notif-card-btn-row"><a ${phoneAction} class="notif-card-btn notif-btn-default">📞 電話をかける (${phoneNum || '番号なし'})</a></div>
+            </div>`;
+          }
+        }
+
+        const notifyStartMs = (sch.notifyMinutes > 0 ? sch.notifyMinutes : 15) * 60000;
+        if (diffMs <= notifyStartMs && diffMs >= -10800000) {
+          activeCount++;
+          const nameStoreText = `${escapeHTML(sch.title||'')} ${sch.castName ? '('+escapeHTML(sch.castName)+')' : ''} ${sch.storeName ? '['+escapeHTML(sch.storeName)+']' : ''}`;
+
+          if (sch.type === 'reservation') {
+            // 🎫 予約開始時の通知：予約方法（電話／ネット）へ誘導するのみ。チェックインはしない。
+            let actionBtnHtml;
+            if (sch.bookingType === 'phone') {
+              const phoneNum = sch.phoneNumber || '';
+              actionBtnHtml = phoneNum
+                ? `<a href="tel:${phoneNum}" class="notif-card-btn notif-btn-default">📞 電話する (${phoneNum})</a>`
+                : `<button type="button" class="notif-card-btn notif-btn-default" onclick="alert('電話番号が登録されていません');">📞 電話する</button>`;
+            } else if (sch.bookingType === 'web') {
+              actionBtnHtml = sch.bookingUrl
+                ? `<a href="${sch.bookingUrl}" target="_blank" rel="noopener noreferrer" class="notif-card-btn notif-btn-default">🌐 ネット予約する</a>`
+                : `<button type="button" class="notif-card-btn notif-btn-default" onclick="alert('予約URLが登録されていません');">🌐 ネット予約する</button>`;
+            } else {
+              actionBtnHtml = `<button type="button" class="notif-card-btn notif-btn-default" onclick="switchMainTab('calendar'); closeNotificationPanel();">📅 カレンダーで確認</button>`;
+            }
+            cardsHtml += `<div class="notif-glass-card">
+              <div class="notif-card-title">🎫 予約開始の時間です</div>
+              <div class="notif-card-sub">${nameStoreText}</div>
+              <div class="notif-card-btn-row">${actionBtnHtml}</div>
+            </div>`;
+          } else {
+            // 📍 来店予定の通知：チェックイン・当日キャンセル
+            cardsHtml += `<div class="notif-glass-card">
+              <div class="notif-card-title">📍 来店予定の時間です</div>
+              <div class="notif-card-sub">${nameStoreText}</div>
+              <div class="notif-card-btn-row">
+                <button type="button" class="notif-card-btn notif-btn-checkin" onclick="checkInSchedule('${sch.id}')">📍 チェックイン（入店）</button>
+                <button type="button" class="notif-card-btn notif-btn-cancel" onclick="openCancelScheduleModal('${sch.id}')">予定キャンセル</button>
+              </div>
+            </div>`;
+          }
+        }
+      });
+
+      historyList.forEach(v => {
+        if (v.pendingCheckIn && v.courseEndTime && now.getTime() >= v.courseEndTime) {
+          activeCount++;
+          cardsHtml += `<div class="notif-glass-card">
+            <div class="notif-card-title">📝 ${escapeHTML(v.name||'')}さんの記録を補完する</div>
+            <div class="notif-card-sub">${escapeHTML(v.storeName||'')} でのコースが終了予定時刻を過ぎています。</div>
+            <div class="notif-card-btn-row"><button type="button" class="notif-card-btn notif-btn-complete" onclick="openCompleteVisitModal('${v.id}')">📝 記録を補完する</button></div>
+          </div>`;
+        }
+      });
+
+      body.innerHTML = cardsHtml || '<div class="notif-empty-note">現在、新しい通知はありません。</div>';
+      const dot = document.getElementById('notifBadgeDot');
+      if (dot) dot.style.display = activeCount > 0 ? 'block' : 'none';
+    }
+
+    /* 📍 クイックチェックイン */
+    function checkInSchedule(schId) {
+      const sch = scheduleList.find(s => s.id === schId);
+      if (!sch) return;
+      const now = new Date();
+      const recId = 'rec_' + Date.now() + Math.random().toString(36).slice(2, 8);
+      const rec = {
+        id: recId,
+        year: String(now.getFullYear()),
+        month: (now.getMonth() + 1) + '月',
+        day: String(now.getDate()),
+        name: sch.castName || '',
+        storeName: sch.storeName || '',
+        amount: '', flags: '', typeTag: '',
+        looks: '', service: '', style: '', intimacy: '', value: '',
+        visitNote: '', chekiImg: '',
+        pendingCheckIn: true,
+        checkInTime: now.getTime(),
+        courseEndTime: now.getTime() + (sch.courseMinutes || 60) * 60000
+      };
+
+      if (rec.storeName && !storeInfoData[rec.storeName]) storeInfoData[rec.storeName] = {};
+
+      historyList.push(rec);
+      sch.checkedIn = true;
+      sch.checkInTime = now.getTime();
+      sch.linkedHistoryId = recId;
+
+      saveData();
+      render();
+      renderCalendar();
+      renderHomeMetrics();
+      renderNotificationPanel();
+      alert('チェックインしました！コース終了予定時刻を過ぎると、記録の補完カードが通知パネルに表示されます。');
+    }
+
+    /* ❌ 当日キャンセル */
+    function openCancelScheduleModal(schId) {
+      closeNotificationPanel();
+      document.getElementById('cancelSchId').value = schId;
+      document.getElementById('cancelScheduleModal').style.display = 'flex';
+    }
+
+    function confirmCancelSchedule(reason) {
+      const schId = document.getElementById('cancelSchId').value;
+      const sch = scheduleList.find(s => s.id === schId);
+      if (!sch) { closeModal('cancelScheduleModal'); return; }
+
+      if (reason === 'castFault' && sch.castName) {
+        if (!castData[sch.castName]) castData[sch.castName] = {};
+        if (!castData[sch.castName].cancellations) castData[sch.castName].cancellations = [];
+        castData[sch.castName].cancellations.push({ date: sch.date, reason: 'castFault' });
+      }
+
+      const idx = scheduleList.indexOf(sch);
+      if (idx >= 0) scheduleList.splice(idx, 1);
+
+      saveData();
+      closeModal('cancelScheduleModal');
+      renderCalendar();
+      renderHomeMetrics();
+      renderNotificationPanel();
+    }
+
+    /* 📝 退店後補完 */
+    function openCompleteVisitModal(historyId) {
+      const rec = historyList.find(v => v.id === historyId);
+      if (!rec) return;
+      closeNotificationPanel();
+      document.getElementById('cvHistoryId').value = historyId;
+      document.getElementById('cvAmount').value = '';
+      document.getElementById('cvTypeTag').value = '';
+      document.getElementById('cvStyleT').value = '';
+      document.getElementById('cvStyleB').value = '';
+      document.getElementById('cvStyleW').value = '';
+      document.getElementById('cvStyleH').value = '';
+      ['Looks','Service','StyleScore','Intimacy','Value'].forEach(k => {
+        document.getElementById('cv'+k).value = 3;
+        document.getElementById('cv'+k+'Val').innerText = '3';
+      });
+      document.getElementById('cvFlags').value = '';
+      document.getElementById('cvNote').value = '';
+      document.getElementById('cvLetterImg').value = '';
+      document.getElementById('cvUploadStatus').innerText = '';
+
+      const cvSection = document.getElementById('cvFirstVisitSection');
+      delete cvSection.dataset.selectedIntent;
+      cvSection.querySelectorAll('.fv-intent-btn').forEach(b => b.classList.remove('selected'));
+
+      const priorVisits = historyList.filter(v => v.name === rec.name && v.id !== rec.id && !v.pendingCheckIn).length;
+      cvSection.style.display = priorVisits === 0 ? 'block' : 'none';
+
+      document.getElementById('completeVisitModal').style.display = 'flex';
+    }
+
+    function selectFirstVisitIntent(btnEl, value) {
+      const section = btnEl.closest('.first-visit-intent-section');
+      if (section) section.dataset.selectedIntent = value;
+      const row = btnEl.closest('.first-visit-intent-row');
+      if (row) row.querySelectorAll('.fv-intent-btn').forEach(b => b.classList.remove('selected'));
+      btnEl.classList.add('selected');
+    }
+
+    function saveCompleteVisit() {
+      const historyId = document.getElementById('cvHistoryId').value;
+      const rec = historyList.find(v => v.id === historyId);
+      if (!rec) return;
+
+      rec.amount = document.getElementById('cvAmount').value.trim();
+      rec.typeTag = document.getElementById('cvTypeTag').value.trim();
+      rec.looks = document.getElementById('cvLooks').value;
+      rec.service = document.getElementById('cvService').value;
+      rec.style = document.getElementById('cvStyleScore').value;
+      rec.intimacy = document.getElementById('cvIntimacy').value;
+      rec.value = document.getElementById('cvValue').value;
+      rec.flags = document.getElementById('cvFlags').value;
+      rec.visitNote = document.getElementById('cvNote').value.trim();
+      rec.chekiImg = document.getElementById('cvLetterImg').value.trim();
+
+      const t = document.getElementById('cvStyleT').value.trim();
+      const b = document.getElementById('cvStyleB').value.trim();
+      const w = document.getElementById('cvStyleW').value.trim();
+      const h = document.getElementById('cvStyleH').value.trim();
+      if ((t || b || w || h) && rec.name) {
+        if (!castData[rec.name]) castData[rec.name] = {};
+        if (!castData[rec.name].style) {
+          const parts = [];
+          if (t) parts.push(t.toLowerCase().startsWith('t') ? t : 'T:' + t + (t.includes('cm') ? '' : 'cm'));
+          if (b) parts.push(b.toLowerCase().startsWith('b') ? b : 'B:' + b);
+          if (w) parts.push(w.toLowerCase().startsWith('w') ? w : 'W:' + w);
+          if (h) parts.push(h.toLowerCase().startsWith('h') ? h : 'H:' + h);
+          castData[rec.name].style = parts.join(' ');
+        }
+      }
+
+      const cvSection = document.getElementById('cvFirstVisitSection');
+      if (cvSection.style.display !== 'none' && cvSection.dataset.selectedIntent) {
+        rec.firstVisitIntent = cvSection.dataset.selectedIntent;
+      }
+
+      if (rec.chekiImg && rec.name) {
+        if (!castData[rec.name]) castData[rec.name] = {};
+        if (!castData[rec.name].letters) castData[rec.name].letters = [];
+        castData[rec.name].letters.push({ date: rec.year + rec.month, imageUrl: rec.chekiImg, text: rec.visitNote });
+      }
+
+      delete rec.pendingCheckIn;
+      delete rec.courseEndTime;
+
+      saveData();
+      render();
+      renderDashboard();
+      renderCalendar();
+      renderHomeMetrics();
+      renderNotificationPanel();
+      closeModal('completeVisitModal');
+      alert('記録を補完しました！');
     }
 
     function startHomeAnimations() {
       renderHomeMetrics();
       startFloatingCards();
-      renderTimeCapsuleCard();
       checkAnniversary();
     }
 
@@ -4094,56 +5189,8 @@
       }
 
       const actionContainer = document.getElementById('homeActionCardsContainer');
-      actionContainer.innerHTML = '';
-      let activeCardsCount = 0;
-
-      scheduleList.forEach(sch => {
-        if (!sch.time) return;
-        const schDateTime = new Date(`${sch.date}T${sch.time}:00`);
-        const diffMs = schDateTime.getTime() - now.getTime();
-        
-        if (sch.phoneConfirmMinutes > 0) {
-          const phoneStartMs = sch.phoneConfirmMinutes * 60000;
-          if (diffMs <= phoneStartMs && diffMs >= -1800000) {
-            activeCardsCount++;
-            const phoneNum = sch.phoneNumber || '';
-            const phoneAction = phoneNum ? `href="tel:${phoneNum}"` : `onclick="alert('電話番号が登録されていません');"`;
-            actionContainer.innerHTML += `
-              <div class="home-action-card">
-                <div class="home-action-title">📞 お店への電話確認の時間になりました！</div>
-                <div style="font-size:0.8rem; color:var(--text-color);">${sch.title} ${sch.castName ? '('+sch.castName+')' : ''}</div>
-                <a ${phoneAction} class="home-action-btn" style="text-decoration:none;">📞 店舗へ電話をかける (${phoneNum || '番号なし'})</a>
-              </div>
-            `;
-          }
-        }
-
-        if (sch.notifyMinutes > 0 || sch.bookingType !== 'none') {
-          const notifyStartMs = (sch.notifyMinutes > 0 ? sch.notifyMinutes : 15) * 60000;
-          if (diffMs <= notifyStartMs && diffMs >= -1800000) {
-            activeCardsCount++;
-            let actionBtnHtml = '';
-            if (sch.bookingType === 'phone' || sch.phoneNumber) {
-              const pNum = sch.phoneNumber || '';
-              actionBtnHtml = `<a href="tel:${pNum}" class="home-action-btn" style="text-decoration:none; background:#339af0; color:white;">📞 電話予約・確認する (${pNum || '番号なし'})</a>`;
-            } else if (sch.bookingType === 'web' || sch.bookingUrl) {
-              actionBtnHtml = `<a href="${sch.bookingUrl}" target="_blank" class="home-action-btn" style="text-decoration:none; background:#20c997; color:white;">🌐 ネット予約ページを開く</a>`;
-            } else {
-              actionBtnHtml = `<button onclick="switchMainTab('calendar')" class="home-action-btn" style="background:var(--accent-pink); color:white;">📅 カレンダーで確認</button>`;
-            }
-
-            actionContainer.innerHTML += `
-              <div class="home-action-card" style="background:linear-gradient(135deg, #e7f5ff, var(--card-bg)); border-color:#339af0;">
-                <div class="home-action-title" style="color:#1c7ed6;">🎫 予約枠・予定の時間です！</div>
-                <div style="font-size:0.8rem; color:var(--text-color);">${sch.title} ${sch.storeName ? '['+sch.storeName+']' : ''}</div>
-                ${actionBtnHtml}
-              </div>
-            `;
-          }
-        }
-      });
-
-      actionContainer.style.display = activeCardsCount > 0 ? 'flex' : 'none';
+      if (actionContainer) actionContainer.style.display = 'none';
+      renderNotificationPanel();
 
       const nextTextElem = document.getElementById('homeNextVisitText');
       const futurePlans = scheduleList.filter(s => {
@@ -4202,30 +5249,6 @@
       });
 
       return yearMatch || monthMatch;
-    }
-
-    function renderTimeCapsuleCard() {
-      const actionContainer = document.getElementById('homeActionCardsContainer');
-      if (!actionContainer) return;
-
-      const capsule = getTimeCapsuleMatch();
-      if (!capsule) return;
-
-      const v = capsule.record;
-      const agoLabel = capsule.years ? `${capsule.years}年前` : `${capsule.diffMonths}ヶ月前`;
-      const storeText = (v.storeName && v.storeName.trim()) ? v.storeName.trim() : '某店';
-      const noteText = (v.visitNote && v.visitNote.trim()) ? v.visitNote.trim() : '（当時のメモは残っていません）';
-
-      actionContainer.innerHTML += `
-        <div class="home-action-card time-capsule-card">
-          <div class="home-action-title" style="color:#8a5a00;">💭 あの頃の思い出（${agoLabel}の今日）</div>
-          <div style="font-size:0.8rem; color:var(--text-color); text-align:left; line-height:1.6;">
-            ${agoLabel}の今日、あなたは<strong>${storeText}</strong>で<strong>${v.name}</strong>ちゃんと遊んでいました。<br>
-            当時の感想：『${noteText}』
-          </div>
-        </div>
-      `;
-      actionContainer.style.display = 'flex';
     }
 
     /* 🎉 デビュー○周年アニバーサリー通知 */
@@ -4662,16 +5685,26 @@
           const dateStr = currentDateFormat === 'ymd' 
             ? `${v.year.slice(2)}年 ${v.month}${v.day ? ' ' + v.day + '日' : ''}`
             : `${v.year.slice(2)}年 ${v.month}`;
-            
+
+          const editSvg = '<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>';
+          const checkedInBadgeHtml = v.pendingCheckIn ? '<span class="checkin-badge">入店済み</span>' : '';
+          const editBtnHtml = v.pendingCheckIn
+            ? `<button class="edit-icon-btn" disabled style="opacity:0.35; cursor:not-allowed;" title="コース終了まで編集できません">${editSvg}</button>`
+            : `<button class="edit-icon-btn" onclick="openEditRecordModal(event, ${v.originalIndex})">${editSvg}</button>`;
+
           rowsHtml += `
             <div class="history-row-wrap">
               <div class="history-row">
-                <span class="history-date">${dateStr}</span>
-                <div style="display:flex; align-items:center; gap:6px;">
-                  ${reportBtn} <span class="history-flags">${v.flags||''}</span>
-                  ${infoBtn}
-                  <button class="edit-icon-btn" onclick="openEditRecordModal(event, ${v.originalIndex})"><svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>
+                <div class="history-row-top">
+                  <span class="history-date">${dateStr}</span>
+                  <div style="display:flex; align-items:center; gap:6px;">
+                    ${reportBtn}
+                    ${infoBtn}
+                    ${checkedInBadgeHtml}
+                    ${editBtnHtml}
+                  </div>
                 </div>
+                ${buildFlagTagsHtml(v.flags)}
               </div>
               ${infoPanel}
             </div>`;
@@ -4689,7 +5722,12 @@
             ${badgeCountHtml}
           </summary>
           <div class="anim-wrapper"><div class="anim-inner"><div class="card-body">
-            ${renderStyleTags(info.style)}
+            <div class="style-row-with-ai">
+              ${renderStyleTags(info.style)}
+              <button type="button" class="cast-ai-report-btn" onclick="openCastReportModal(event, '${c.name}')" title="AIレポート">
+                <i data-lucide="sparkles" class="cast-ai-report-icon"></i>
+              </button>
+            </div>
             ${tagsRowHtml}
             <div class="card-middle-row">
               <div class="notes-box">${info.notes || 'メモなし'}</div>
@@ -4705,6 +5743,7 @@
         grid.appendChild(details);
       });
       target.appendChild(grid);
+      if (window.lucide) lucide.createIcons();
     }
 
     function renderTimelineView(target, keyword) {
@@ -4884,8 +5923,14 @@
         const details = document.createElement('details');
         details.className = 'store-card-fold';
 
+        const webPreviewHtml = webUrl
+          ? `<img class="store-web-preview-img" data-web-url="${webUrl.replace(/"/g,'&quot;')}" style="display:none;" alt="">
+             <div class="store-preview-overlay"></div>`
+          : '';
+
         details.innerHTML = `
           <summary class="store-fold-summary">
+            ${webPreviewHtml}
             <div class="store-summary-head">
               <div class="store-summary-title">
                 <span class="arrow-icon">▼</span> 🏬 ${s.storeName}
@@ -4926,7 +5971,91 @@
       });
 
       target.appendChild(container);
+      loadStoreWebPreviews();
     }
+
+    /* 🌐 店舗サイトの画像を取得して背景に設置（og:image → 本文中の画像 → スクリーンショットの順に試行） */
+    function extractContentImage(doc, pageUrl) {
+      const imgs = Array.from(doc.querySelectorAll('img'));
+      const candidates = imgs.filter(img => {
+        const src = img.getAttribute('data-src') || img.getAttribute('data-original') || img.getAttribute('src') || '';
+        if (!src || src.startsWith('data:')) return false;
+        const lower = src.toLowerCase();
+        if (/logo|icon|favicon|spacer|blank|pixel|banner_ad|btn_/.test(lower)) return false;
+        if (lower.endsWith('.svg') || lower.endsWith('.gif')) return false;
+        const w = parseInt(img.getAttribute('width') || '0', 10);
+        const h = parseInt(img.getAttribute('height') || '0', 10);
+        if ((w && w < 100) || (h && h < 100)) return false;
+        return true;
+      });
+      if (candidates.length === 0) return null;
+      const src = candidates[0].getAttribute('data-src') || candidates[0].getAttribute('data-original') || candidates[0].getAttribute('src');
+      try { return new URL(src, pageUrl).href; } catch (e) { return null; }
+    }
+
+    async function fetchOgImage(pageUrl) {
+      const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(pageUrl);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
+      try {
+        const res = await fetch(proxyUrl, { signal: controller.signal });
+        clearTimeout(timeoutId);
+        if (!res.ok) return null;
+        const html = await res.text();
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+
+        const ogTag = doc.querySelector('meta[property="og:image"]')
+          || doc.querySelector('meta[property="og:image:url"]')
+          || doc.querySelector('meta[name="twitter:image"]');
+        const rawUrl = ogTag ? ogTag.getAttribute('content') : null;
+        if (rawUrl) {
+          try { return new URL(rawUrl, pageUrl).href; } catch (e) { /* フォールスルーして次を試す */ }
+        }
+
+        // og:image が無いサイト（アダルト系サイトに多い）向けに、本文中の画像を探す
+        const contentImage = extractContentImage(doc, pageUrl);
+        if (contentImage) return contentImage;
+
+        return null;
+      } catch (err) {
+        clearTimeout(timeoutId);
+        console.log('店舗サイトの画像取得に失敗しました:', pageUrl, err);
+        return null;
+      }
+    }
+
+    function loadStoreWebPreviews() {
+      document.querySelectorAll('.store-web-preview-img[data-web-url]').forEach(imgEl => {
+        if (imgEl.dataset.previewLoading) return;
+        imgEl.dataset.previewLoading = 'true';
+        const webUrl = imgEl.getAttribute('data-web-url');
+        const overlayEl = imgEl.nextElementSibling;
+
+        const showImage = (url) => {
+          imgEl.src = url;
+          imgEl.style.display = 'block';
+        };
+
+        const fallbackToScreenshot = () => {
+          // 最終手段：og:image も本文画像も見つからない場合は、ページ全体のスクリーンショットを表示
+          imgEl.onerror = () => {
+            imgEl.style.display = 'none';
+            if (overlayEl) overlayEl.style.background = '';
+          };
+          showImage('https://image.thum.io/get/width/500/noanimate/' + encodeURIComponent(webUrl));
+        };
+
+        fetchOgImage(webUrl).then(imageUrl => {
+          if (imageUrl) {
+            imgEl.onerror = fallbackToScreenshot;
+            showImage(imageUrl);
+          } else {
+            fallbackToScreenshot();
+          }
+        });
+      });
+    }
+
 
     /* 🏬 店舗情報ダイレクト編集モーダル制御 */
     function openEditStoreInfoModal(event, storeName) {
@@ -5974,6 +7103,12 @@
       document.getElementById('addScoreGroup').style.display = ratingEnabled ? 'flex' : 'none';
       updateStoreDatalist();
       updateCastDatalist();
+
+      const addFvSection = document.getElementById('addFirstVisitSection');
+      delete addFvSection.dataset.selectedIntent;
+      addFvSection.querySelectorAll('.fv-intent-btn').forEach(b => b.classList.remove('selected'));
+      addFvSection.style.display = 'none';
+
       document.getElementById('addModal').style.display = 'flex';
     }
 
@@ -6027,6 +7162,11 @@
         value: parseInt(document.getElementById('addScoreValue').value, 10) || 3
       };
 
+      const addFvSection = document.getElementById('addFirstVisitSection');
+      if (addFvSection.style.display !== 'none' && addFvSection.dataset.selectedIntent) {
+        rec.firstVisitIntent = addFvSection.dataset.selectedIntent;
+      }
+
       historyList.push(rec);
 
       const oldName = document.getElementById('addOldName').value;
@@ -6048,7 +7188,7 @@
         keepsList = keepsList.filter(k => k.id !== pendingKeepPromotionId);
         pendingKeepPromotionId = null;
       }
-      saveData(); closeModal('addModal'); render(); renderDashboard(); alert('保存しました！');
+      saveData(); syncDataToCloud(true); closeModal('addModal'); render(); renderDashboard(); alert('保存しました！');
     }
 
     function openEditRecordModal(event, index) {
@@ -6117,11 +7257,173 @@
         rec.style = parseInt(document.getElementById('editScoreStyle').value, 10) || 3;
         rec.intimacy = parseInt(document.getElementById('editScoreIntimacy').value, 10) || 3;
         rec.value = parseInt(document.getElementById('editScoreValue').value, 10) || 3;
-        saveData(); render(); renderDashboard(); closeModal('editRecordModal');
+        saveData(); syncDataToCloud(true); render(); renderDashboard(); closeModal('editRecordModal');
       }
     }
 
-    function addFlagChar(c) { document.getElementById('addFlags').value += c; }
+    /* 🏷️ フラグ・マークの定義（一覧・カード表示・カレンダードットで共通利用） */
+    const FLAG_DEFS = [
+      { char: '🈠', label: '初出勤',     bg: '#2f9e44', glow: '#2f9e44', color: '#ffffff', tagBg: '#d3f9d8', tagColor: '#2b8a3e' },
+      { char: '🆂', label: '当たり',     bg: 'linear-gradient(135deg, #ffd700, #ff8c00)', glow: '#ffb700', color: '#5c3d00', tagBg: 'linear-gradient(135deg, #fff3bf, #ffe066)', tagColor: '#856404' },
+      { char: '✈',  label: '県外',       bg: '#1c7ed6', glow: '#1c7ed6', color: '#ffffff', tagBg: '#d0ebff', tagColor: '#1864ab' },
+      { char: '⚔',  label: 'ハズレ',     bg: '#e03131', glow: '#e03131', color: '#ffffff', tagBg: '#ffe3e3', tagColor: '#c92a2a' },
+      { char: '🈘', label: 'ソープ',     bg: '#9c36b5', glow: '#9c36b5', color: '#ffffff', tagBg: '#f3d9fa', tagColor: '#862e9c' },
+      { char: '🄽', label: 'NNソープ',   bg: '#f06595', glow: '#f06595', color: '#ffffff', tagBg: '#ffdeeb', tagColor: '#a61e4d' },
+      { char: '㍁', label: 'AF',         bg: '#9c36b5', glow: '#9c36b5', color: '#ffffff', tagBg: '#f3d9fa', tagColor: '#862e9c' },
+      { char: '⑱', label: '18歳',       bg: '#2f9e44', glow: '#2f9e44', color: '#ffffff', tagBg: '#d3f9d8', tagColor: '#2b8a3e' },
+      { char: '㋑', label: 'コスプレ',   bg: '#ffd43b', glow: '#ffd43b', color: '#5c3d00', tagBg: '#fff9db', tagColor: '#997404' },
+      { char: '㋗', label: 'クレーム',   bg: '#e03131', glow: '#e03131', color: '#ffffff', tagBg: '#ffe3e3', tagColor: '#c92a2a' },
+      { char: 'ｴ',  label: 'エステ',     bg: '#2f9e44', glow: '#2f9e44', color: '#ffffff', tagBg: '#d3f9d8', tagColor: '#2b8a3e' },
+      { char: '❀',  label: '卒業の出勤', bg: 'linear-gradient(135deg, #ff8fab, #ff6b9d)', glow: '#ff6b9d', color: '#ffffff', tagBg: 'linear-gradient(135deg, #ffe3ec, #ffd6e8)', tagColor: '#a61e4d' },
+      { char: 'ｄ',  label: 'デリヘル',   bg: '#9c36b5', glow: '#9c36b5', color: '#ffffff', tagBg: '#f3d9fa', tagColor: '#862e9c' },
+      { char: '❖',  label: '高額',       bg: 'linear-gradient(135deg, #ffd700, #ffb700)', glow: '#ffb700', color: '#5c3d00', tagBg: '#fff3bf', tagColor: '#997404' },
+      { char: '❑',  label: 'ピンサロ',   bg: '#94d82d', glow: '#94d82d', color: '#5c3d00', tagBg: '#e9fac8', tagColor: '#5c940d' }
+    ];
+    const CALENDAR_PRIORITY_FLAGS = ['🆂', '⚔', '✈', '🈘', 'ｴ', '❑'];
+
+    function getFlagDef(char) { return FLAG_DEFS.find(f => f.char === char); }
+
+    function buildFlagTagsHtml(flagsStr) {
+      if (!flagsStr) return '';
+      const matched = FLAG_DEFS.concat(customFlags).filter(f => flagsStr.includes(f.char));
+      if (matched.length === 0) return '';
+      return `<div class="history-flag-tags">${matched.map(f => `<span class="flag-tag" style="background:${f.tagBg}; color:${f.tagColor};">${f.label}</span>`).join('')}</div>`;
+    }
+
+    function appendFlagChar(targetId, c) {
+      const el = document.getElementById(targetId);
+      if (el) el.value += c;
+    }
+
+    function toggleFlagFullList(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.style.display = (el.style.display === 'flex') ? 'none' : 'flex';
+    }
+
+    /* 🎨 カスタムマーク機能：20色パステルパレット */
+    const PASTEL_COLOR_PALETTE = [
+      { bg: '#ffe3e3', color: '#c92a2a' }, { bg: '#ffdeeb', color: '#a61e4d' },
+      { bg: '#ffd6e8', color: '#c2255c' }, { bg: '#f3d9fa', color: '#862e9c' },
+      { bg: '#e5dbff', color: '#5f3dc4' }, { bg: '#dbe4ff', color: '#3b5bdb' },
+      { bg: '#edf2ff', color: '#4263eb' }, { bg: '#d0ebff', color: '#1864ab' },
+      { bg: '#99e9f2', color: '#0c8599' }, { bg: '#c5f6fa', color: '#0b7285' },
+      { bg: '#c3fae8', color: '#087f5b' }, { bg: '#96f2d7', color: '#0ca678' },
+      { bg: '#d3f9d8', color: '#2b8a3e' }, { bg: '#e9fac8', color: '#5c940d' },
+      { bg: '#fff9db', color: '#997404' }, { bg: '#fff3bf', color: '#856404' },
+      { bg: '#ffe8cc', color: '#d9480f' }, { bg: '#ffd8a8', color: '#e8590c' },
+      { bg: '#eaddcf', color: '#7c5c3e' }, { bg: '#f1f3f5', color: '#495057' }
+    ];
+    let selectedCustomFlagColorIndex = null;
+
+    /* 👤 プロフィールアイコン（アバター）のカスタマイズ */
+    let pendingAvatarColorIndex = null;
+
+    function escapeHTML(str) {
+      if (str === null || str === undefined) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    function getSavedAvatarSettings() {
+      try {
+        return JSON.parse(localStorage.getItem('user_avatar_' + currentUserName) || 'null') || { icon: '', colorIndex: null };
+      } catch (e) {
+        return { icon: '', colorIndex: null };
+      }
+    }
+
+    function renderAvatarPreview() {
+      const circle = document.getElementById('settingsAvatarCircle');
+      if (!circle) return;
+      const avatar = getSavedAvatarSettings();
+      circle.innerHTML = avatar.icon
+        ? escapeHTML(avatar.icon)
+        : '<svg class="settings-avatar-default-icon" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6z"/></svg>';
+      const hasColor = avatar.colorIndex !== null && avatar.colorIndex !== undefined && PASTEL_COLOR_PALETTE[avatar.colorIndex];
+      circle.style.background = hasColor ? PASTEL_COLOR_PALETTE[avatar.colorIndex].bg : 'var(--card-bg)';
+    }
+
+    function openAvatarPickerModal() {
+      const avatar = getSavedAvatarSettings();
+      pendingAvatarColorIndex = (avatar.colorIndex !== undefined) ? avatar.colorIndex : null;
+      document.getElementById('avatarIconInput').value = avatar.icon || '';
+
+      const grid = document.getElementById('avatarColorGrid');
+      grid.innerHTML = PASTEL_COLOR_PALETTE.map((c, i) =>
+        `<div class="custom-flag-color-dot${i === pendingAvatarColorIndex ? ' selected' : ''}" style="background:${c.bg};" onclick="selectAvatarColor(${i})" id="avatarColorDot${i}"></div>`
+      ).join('');
+
+      document.getElementById('avatarPickerModal').style.display = 'flex';
+    }
+
+    function setAvatarIconQuick(icon) {
+      document.getElementById('avatarIconInput').value = icon;
+    }
+
+    function selectAvatarColor(i) {
+      pendingAvatarColorIndex = i;
+      PASTEL_COLOR_PALETTE.forEach((c, idx) => {
+        const dot = document.getElementById('avatarColorDot' + idx);
+        if (dot) dot.classList.toggle('selected', idx === i);
+      });
+    }
+
+    function saveAvatarSettings() {
+      const icon = document.getElementById('avatarIconInput').value.trim();
+      localStorage.setItem('user_avatar_' + currentUserName, JSON.stringify({ icon, colorIndex: pendingAvatarColorIndex }));
+      renderAvatarPreview();
+      closeModal('avatarPickerModal');
+    }
+
+    function renderFlagFullLists() {
+      const btnHtml = (onclickTarget) => customFlags.map(f =>
+        `<button type="button" class="flag-btn" style="background:${f.tagBg}; color:${f.tagColor};" onclick="${onclickTarget(f.char)}">${f.label}</button>`
+      ).join('');
+
+      const addSlot = document.getElementById('addCustomFlagSlot');
+      if (addSlot) addSlot.innerHTML = btnHtml(c => `addFlagChar('${c}')`);
+
+      const editSlot = document.getElementById('editCustomFlagSlot');
+      if (editSlot) editSlot.innerHTML = btnHtml(c => `appendFlagChar('editFlags','${c}')`);
+    }
+
+    function openCustomFlagModal() {
+      document.getElementById('customFlagChar').value = '';
+      document.getElementById('customFlagLabel').value = '';
+      selectedCustomFlagColorIndex = null;
+      const grid = document.getElementById('customFlagColorGrid');
+      grid.innerHTML = PASTEL_COLOR_PALETTE.map((c, i) =>
+        `<div class="custom-flag-color-dot" style="background:${c.bg};" onclick="selectCustomFlagColor(${i})" id="customFlagColorDot${i}"></div>`
+      ).join('');
+      document.getElementById('customFlagModal').style.display = 'flex';
+    }
+
+    function selectCustomFlagColor(i) {
+      selectedCustomFlagColorIndex = i;
+      PASTEL_COLOR_PALETTE.forEach((c, idx) => {
+        const dot = document.getElementById('customFlagColorDot' + idx);
+        if (dot) dot.classList.toggle('selected', idx === i);
+      });
+    }
+
+    function saveCustomFlag() {
+      const char = document.getElementById('customFlagChar').value.trim();
+      const label = document.getElementById('customFlagLabel').value.trim();
+      if (!char) { alert('マークを入力してください。'); return; }
+      if (!label) { alert('表示名を入力してください。'); return; }
+      if (selectedCustomFlagColorIndex === null) { alert('カラーを選択してください。'); return; }
+
+      const color = PASTEL_COLOR_PALETTE[selectedCustomFlagColorIndex];
+      customFlags.push({ char, label, tagBg: color.bg, tagColor: color.color, bg: color.bg, glow: color.color });
+      localStorage.setItem('user_custom_flags_' + currentUserName, JSON.stringify(customFlags));
+
+      renderFlagFullLists();
+      closeModal('customFlagModal');
+      alert('カスタムマークを追加しました！');
+    }
+
+
+    function addFlagChar(c) { appendFlagChar('addFlags', c); }
     function clearFlagsInput() { document.getElementById('addFlags').value = ''; }
     
     function closeModal(id) { 
@@ -6135,8 +7437,1147 @@
       }
     }
     
-    function openSettingsModal() { document.getElementById('inputUserName').value = currentUserName; document.getElementById('settingsModal').style.display = 'flex'; updateSecuritySettingsUI(); document.getElementById('ratingEnabledToggle').checked = ratingEnabled; updateCloudStatusUI(); }
+    function initSettingsView() {
+      document.getElementById('inputUserName').value = currentUserName;
+      document.getElementById('ratingEnabledToggle').checked = ratingEnabled;
+      updateSecuritySettingsUI();
+      updateCloudStatusUI();
+      renderAvatarPreview();
+      const settingsKeyInput = document.getElementById('geminiApiKeyInputSettings');
+      if (settingsKeyInput) settingsKeyInput.value = getGeminiApiKey();
+      updateGeminiKeyUI();
+    }
+    function openSettingsModal() { switchMainTab('settings'); }
     function openHelpModal() { document.getElementById('helpModal').style.display = 'flex'; }
+
+    function initAiAnalysisView() {
+      const keyInput = document.getElementById('geminiApiKeyInput');
+      if (keyInput) keyInput.value = getGeminiApiKey();
+      updateGeminiKeyUI();
+    }
+
+    /* ==================================================================
+       🤖 AI好み診断・総合分析機能
+       ================================================================== */
+    function getGeminiApiKey() {
+      return localStorage.getItem('gemini_api_key_' + currentUserName) || '';
+    }
+
+    function updateGeminiKeyUI() {
+      const hasKey = !!getGeminiApiKey();
+      document.querySelectorAll('.gemini-get-key-btn').forEach(btn => { btn.style.display = hasKey ? 'none' : 'inline-block'; });
+    }
+
+    function saveGeminiApiKey(inputId) {
+      const id = inputId || 'geminiApiKeyInput';
+      const el = document.getElementById(id);
+      const key = el ? el.value.trim() : '';
+      if (!key) { alert('APIキーを入力してください。'); return; }
+      localStorage.setItem('gemini_api_key_' + currentUserName, key);
+      ['geminiApiKeyInput', 'geminiApiKeyInputSettings'].forEach(otherId => {
+        const otherEl = document.getElementById(otherId);
+        if (otherEl) otherEl.value = key;
+      });
+      updateGeminiKeyUI();
+      alert('APIキーを保存しました。');
+    }
+
+    function openAiAnalysisModal() {
+      switchMainTab('aiAnalysis');
+    }
+
+    function switchAiTab(tab) {
+      document.getElementById('aiTabPreference').classList.toggle('active', tab === 'preference');
+      document.getElementById('aiTabComprehensive').classList.toggle('active', tab === 'comprehensive');
+      document.getElementById('aiTabEra').classList.toggle('active', tab === 'era');
+      document.getElementById('aiPreferenceView').style.display = tab === 'preference' ? 'block' : 'none';
+      document.getElementById('aiComprehensiveView').style.display = tab === 'comprehensive' ? 'block' : 'none';
+      document.getElementById('aiEraView').style.display = tab === 'era' ? 'block' : 'none';
+    }
+
+    function extractPreferenceData() {
+      const matched = historyList.filter(v =>
+        (v.flags && v.flags.includes('🆂')) ||
+        [v.looks, v.service, v.style, v.intimacy, v.value].some(s => (parseInt(s, 10) || 0) >= 4)
+      );
+
+      const typeTagCount = {};
+      const categoryCount = {};
+      const styleList = [];
+      let sumLooks = 0, sumService = 0, sumStyleScore = 0, sumIntimacy = 0, sumValue = 0, n = 0;
+
+      matched.forEach(v => {
+        if (v.typeTag) typeTagCount[v.typeTag] = (typeTagCount[v.typeTag] || 0) + 1;
+        const info = storeInfoData[v.storeName];
+        if (info && info.category) categoryCount[info.category] = (categoryCount[info.category] || 0) + 1;
+        const cd = castData[v.name];
+        if (cd && cd.style) styleList.push(cd.style);
+        sumLooks += parseInt(v.looks, 10) || 0;
+        sumService += parseInt(v.service, 10) || 0;
+        sumStyleScore += parseInt(v.style, 10) || 0;
+        sumIntimacy += parseInt(v.intimacy, 10) || 0;
+        sumValue += parseInt(v.value, 10) || 0;
+        n++;
+      });
+
+      return {
+        count: matched.length,
+        totalCount: historyList.length,
+        typeTagCount, categoryCount, styleList,
+        avgScores: n > 0 ? {
+          looks: (sumLooks / n).toFixed(1), service: (sumService / n).toFixed(1),
+          style: (sumStyleScore / n).toFixed(1), intimacy: (sumIntimacy / n).toFixed(1), value: (sumValue / n).toFixed(1)
+        } : null
+      };
+    }
+
+    function extractComprehensiveData() {
+      const total = historyList.length;
+      const atariList = historyList.filter(v => v.flags && v.flags.includes('🆂'));
+      const hazureList = historyList.filter(v => v.flags && v.flags.includes('⚔'));
+      const lowScoreList = historyList.filter(v => [v.looks, v.service, v.style, v.intimacy, v.value].some(s => {
+        const num = parseInt(s, 10); return num >= 1 && num <= 2;
+      }));
+
+      const lowScoreTypeTagCount = {};
+      const lowScoreCategoryCount = {};
+      lowScoreList.forEach(v => {
+        if (v.typeTag) lowScoreTypeTagCount[v.typeTag] = (lowScoreTypeTagCount[v.typeTag] || 0) + 1;
+        const info = storeInfoData[v.storeName];
+        if (info && info.category) lowScoreCategoryCount[info.category] = (lowScoreCategoryCount[info.category] || 0) + 1;
+      });
+
+      // 🕰️ 振り返り用データ：キャスト別・店舗別・時期別の集計
+      const castCount = {};
+      const storeCount = {};
+      const yearMonthCount = {};
+      const yearCount = {};
+      let totalAmount = 0, amountCount = 0;
+      const dateList = [];
+
+      historyList.forEach(v => {
+        if (v.name) castCount[v.name] = (castCount[v.name] || 0) + 1;
+        if (v.storeName) storeCount[v.storeName] = (storeCount[v.storeName] || 0) + 1;
+        const amt = parseInt(String(v.amount || '').replace(/[^0-9]/g, ''), 10);
+        if (amt) { totalAmount += amt; amountCount++; }
+        if (v.year && v.month) {
+          const ym = v.year + '-' + String(parseMonthNum(v.month)).padStart(2, '0');
+          yearMonthCount[ym] = (yearMonthCount[ym] || 0) + 1;
+          yearCount[v.year] = (yearCount[v.year] || 0) + 1;
+          dateList.push(ym);
+        }
+      });
+      dateList.sort();
+      const spanMonths = dateList.length > 1 ?
+        Math.max(1, (parseInt(dateList[dateList.length - 1].slice(0, 4), 10) - parseInt(dateList[0].slice(0, 4), 10)) * 12 +
+          (parseInt(dateList[dateList.length - 1].slice(5, 7), 10) - parseInt(dateList[0].slice(5, 7), 10)) + 1) : 1;
+
+      const topCastEntries = Object.entries(castCount).sort((a, b) => b[1] - a[1]).slice(0, 5);
+      const topStoreEntries = Object.entries(storeCount).sort((a, b) => b[1] - a[1]).slice(0, 5);
+      const peakMonthEntry = Object.entries(yearMonthCount).sort((a, b) => b[1] - a[1])[0] || null;
+      const peakYearEntry = Object.entries(yearCount).sort((a, b) => b[1] - a[1])[0] || null;
+
+      return {
+        total,
+        atariCount: atariList.length,
+        atariRate: total > 0 ? ((atariList.length / total) * 100).toFixed(1) : '0.0',
+        hazureCount: hazureList.length,
+        hazureRate: total > 0 ? ((hazureList.length / total) * 100).toFixed(1) : '0.0',
+        lowScoreCount: lowScoreList.length,
+        uniqueCastCount: Object.keys(castCount).length,
+        uniqueStoreCount: Object.keys(storeCount).length,
+        topCastEntries, topStoreEntries, peakMonthEntry, peakYearEntry,
+        firstDate: dateList[0] || null,
+        lastDate: dateList[dateList.length - 1] || null,
+        lowScoreTypeTagCount, lowScoreCategoryCount,
+        avgAmount: amountCount > 0 ? Math.round(totalAmount / amountCount) : 0,
+        visitsPerMonth: (total / spanMonths).toFixed(1)
+      };
+    }
+
+    function topEntriesText(obj, limit) {
+      const entries = Object.entries(obj).sort((a, b) => b[1] - a[1]).slice(0, limit).map(([k, v]) => `${k}(${v}件)`);
+      return entries.length ? entries.join('、') : 'データなし';
+    }
+
+    function buildPreferencePrompt(data) {
+      const avg = data.avgScores;
+      return `あなたは風俗業界に詳しいプロのコンシェルジュAIです。以下はある利用者本人が記録した「当たり／高評価だった体験」のデータです。この人の好みの傾向を分析してください。
+
+【分析対象データ】
+・高評価だった記録数: ${data.count}件（全${data.totalCount}件中）
+・よく出てくる系統タグ: ${topEntriesText(data.typeTagCount, 8)}
+・よく利用する業種: ${topEntriesText(data.categoryCount, 5)}
+・体型データのサンプル: ${data.styleList.slice(0, 10).join(' / ') || 'データなし'}
+・平均評価（5点満点）: ルックス${avg ? avg.looks : '-'} / 接客${avg ? avg.service : '-'} / スタイル${avg ? avg.style : '-'} / イチャ度${avg ? avg.intimacy : '-'} / コスパ${avg ? avg.value : '-'}
+
+【出力形式】必ず以下の3つの見出しで、日本語で分かりやすく回答してください。
+【好み傾向の分析結果】
+（データから読み取れる好みの傾向を、文章で分かりやすく要約）
+
+【おすすめ検索タグ・キーワード】
+（検索でそのまま使えそうな系統・キーワードを箇条書きで5〜8個）
+
+【最適化検索条件まとめ】
+（エリア・年齢層・体型・ジャンルなど、検索条件として指定すると良い値を簡潔にまとめる）`;
+    }
+
+    function buildComprehensivePrompt(data) {
+      const topCastText = data.topCastEntries.length
+        ? data.topCastEntries.map(([name, cnt]) => `${name}(${cnt}回)`).join('、')
+        : 'データなし';
+      const topStoreText = data.topStoreEntries.length
+        ? data.topStoreEntries.map(([name, cnt]) => `${name}(${cnt}回)`).join('、')
+        : 'データなし';
+      const peakMonthText = data.peakMonthEntry ? `${data.peakMonthEntry[0]}（${data.peakMonthEntry[1]}回）` : 'データなし';
+      const peakYearText = data.peakYearEntry ? `${data.peakYearEntry[0]}年（${data.peakYearEntry[1]}回）` : 'データなし';
+
+      return `あなたは利用者本人と一緒に思い出を振り返る、親しみやすく丁寧な口調のパートナーAIです。以下はある利用者本人の全利用記録の集計データです。データを元に「自分はこれまでこんな感じで遊んでいたんだな」と懐かしく振り返れるような、温かみのある総合分析をしてください。単なる説教くさいアドバイスにはせず、まずは振り返り・思い出語りをメインにしてください。
+
+【集計データ】
+・総利用回数: ${data.total}回（記録期間: ${data.firstDate || '?'} 〜 ${data.lastDate || '?'}）
+・利用したキャスト数: ${data.uniqueCastCount}人 / 利用した店舗数: ${data.uniqueStoreCount}店舗
+・最も多く指名したキャストTOP5: ${topCastText}
+・最もよく通った店舗TOP5: ${topStoreText}
+・最も利用回数が多かった月: ${peakMonthText}
+・最も利用回数が多かった年: ${peakYearText}
+・アタリ（🆂当たり／オキニ）率: ${data.atariRate}%（${data.atariCount}件）
+・ハズレ（⚔）率: ${data.hazureRate}%（${data.hazureCount}件）
+・低評価（1〜2点）が付いた記録: ${data.lowScoreCount}件
+・低評価でよく出てくる系統タグ: ${topEntriesText(data.lowScoreTypeTagCount, 5)}
+・低評価でよく出てくる業種: ${topEntriesText(data.lowScoreCategoryCount, 5)}
+・平均利用金額: ${data.avgAmount ? data.avgAmount.toLocaleString() + '円' : 'データ不足'}
+・月あたりの利用ペース: 約${data.visitsPerMonth}回／月
+
+【出力形式】必ず以下の3つの見出しで、日本語で回答してください。
+【あなたの遊び方 振り返り】
+（一番よく指名したキャスト、一番通った店舗、一番利用が多かった時期などに触れながら、「こんな時期はこんな遊び方をしていたんだな」と思い出せるような、親しみやすい語り口の振り返り文章。数字を並べるだけでなく、ストーリーとして語ってください）
+
+【勝率・満足度インサイト】
+（アタリ率の評価と、利用傾向についての客観的なフィードバック。低評価パターンがあれば軽く触れる）
+
+【総評＆これからのアドバイス】
+（これまでの振り返りを踏まえて、今後さらに満足度とコスパを高めるための、押しつけがましくない軽いアドバイス）`;
+    }
+
+    async function callGeminiAPI(promptText) {
+      const apiKey = getGeminiApiKey();
+      if (!apiKey) {
+        throw new Error('APIキーが設定されていません。上の「🔑 Gemini APIキー設定」からご自身のAPIキーを入力・保存してください。');
+      }
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        const msg = (data && data.error && data.error.message) ? data.error.message : ('HTTPエラー ' + res.status);
+        throw new Error(msg);
+      }
+      const text = (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts || [])
+        .map(p => p.text).join('');
+      if (!text) throw new Error('AIから有効な応答が得られませんでした。');
+      return text;
+    }
+
+    /* 🛠️ Function Calling対応版：KENJAが「記録追加フォームの下書き」を作れるようにする。
+       KENJAはあくまで既存の入力フォームを事前入力するだけで、保存は必ず本人が行う。 */
+    const FILL_ADD_RECORD_FUNCTION_DECLARATION = {
+      name: 'fill_add_record_form',
+      description: 'ユーザーの発言から新しい利用記録の内容を抽出し、記録追加フォームに自動入力する。キャスト名と店舗名の両方が発言から分かっている場合のみ呼び出すこと。どちらかが不明な場合は、この関数を呼ばずにテキストで聞き返すこと。',
+      parameters: {
+        type: 'OBJECT',
+        properties: {
+          year: { type: 'STRING', description: '西暦年（例: 2025）。発言に無ければ省略してよい（今日の日付が使われる）' },
+          month: { type: 'STRING', description: '月（1〜12の数字）。発言に無ければ省略してよい（今日の日付が使われる）' },
+          day: { type: 'STRING', description: '日（1〜31の数字）。発言に無ければ省略してよい（今日の日付が使われる）' },
+          castName: { type: 'STRING', description: 'キャスト（女の子）の名前。必須' },
+          storeName: { type: 'STRING', description: '店舗名。必須' },
+          amount: { type: 'STRING', description: '金額（数字のみ、例: 20000）。発言に無ければ省略' },
+          typeTag: { type: 'STRING', description: '系統タグ（例: 清楚系、ギャル系など）。発言に無ければ省略' },
+          note: { type: 'STRING', description: '感想・メモ。発言に無ければ省略' }
+        },
+        required: ['castName', 'storeName']
+      }
+    };
+
+    async function callGeminiAPIWithTools(promptText, functionDeclarations) {
+      const apiKey = getGeminiApiKey();
+      if (!apiKey) {
+        throw new Error('APIキーが設定されていません。上の「🔑 Gemini APIキー設定」からご自身のAPIキーを入力・保存してください。');
+      }
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
+      const body = { contents: [{ parts: [{ text: promptText }] }] };
+      if (functionDeclarations && functionDeclarations.length) {
+        body.tools = [{ functionDeclarations }];
+      }
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        const msg = (data && data.error && data.error.message) ? data.error.message : ('HTTPエラー ' + res.status);
+        throw new Error(msg);
+      }
+      const parts = (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) || [];
+      const fnPart = parts.find(p => p.functionCall);
+      if (fnPart) {
+        return { type: 'functionCall', name: fnPart.functionCall.name, args: fnPart.functionCall.args || {} };
+      }
+      const text = parts.map(p => p.text || '').join('');
+      if (!text) throw new Error('AIから有効な応答が得られませんでした。');
+      return { type: 'text', text };
+    }
+
+    function prefillAddRecordFromChat(args) {
+      openAddModal();
+      const today = new Date();
+      const yearVal = args.year || today.getFullYear();
+      const monthVal = args.month ? (String(args.month).replace('月', '') + '月') : ((today.getMonth() + 1) + '月');
+      const dayVal = args.day || today.getDate();
+
+      const setVal = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined && val !== null && val !== '') el.value = val; };
+      setVal('addYear', yearVal);
+      setVal('addMonth', monthVal);
+      setVal('addDay', dayVal);
+      setVal('addName', args.castName);
+      setVal('addStoreName', args.storeName);
+      setVal('addAmount', args.amount);
+      setVal('addTypeTag', args.typeTag);
+      setVal('addVisitNote', args.note);
+    }
+
+    function parseAiSections(text) {
+      const regex = /【([^】]+)】/g;
+      const indices = [];
+      let match;
+      while ((match = regex.exec(text)) !== null) {
+        indices.push({ title: match[1], headerEnd: regex.lastIndex, start: match.index });
+      }
+      const sections = [];
+      for (let i = 0; i < indices.length; i++) {
+        const cur = indices[i];
+        const next = indices[i + 1];
+        const body = text.slice(cur.headerEnd, next ? next.start : text.length).trim();
+        sections.push({ title: cur.title, body });
+      }
+      if (sections.length === 0) sections.push({ title: '', body: text.trim() });
+      return sections;
+    }
+
+    function buildSearchLinksHtml(keywordText) {
+      const cleaned = keywordText.replace(/[\-・*#]/g, ' ').replace(/\s+/g, ' ').trim();
+      const keywords = cleaned.split(' ').filter(Boolean).slice(0, 6).join(' ');
+      if (!keywords) return '';
+      return `<div class="ai-search-link-row">
+        <a class="ai-search-link-btn" href="https://www.google.com/search?q=${encodeURIComponent('シティヘブン ' + keywords)}" target="_blank" rel="noopener noreferrer">🔍 シティヘブンで検索</a>
+        <a class="ai-search-link-btn" href="https://www.google.com/search?q=${encodeURIComponent('風俗じゃぱん ' + keywords)}" target="_blank" rel="noopener noreferrer">🔍 ふうぞくじゃぱんで検索</a>
+      </div>`;
+    }
+
+    function renderAiResultHtml(text, isPreference) {
+      const sections = parseAiSections(text);
+      let html = '<div class="ai-glass-card">';
+      sections.forEach(sec => {
+        if (sec.title) html += `<div class="ai-result-section-title">【${escapeHTML(sec.title)}】</div>`;
+        html += `<div class="ai-result-text">${escapeHTML(sec.body)}</div>`;
+        if (isPreference && sec.title.includes('検索タグ')) html += buildSearchLinksHtml(sec.body);
+      });
+      html += '</div>';
+      return html;
+    }
+
+    async function runPreferenceAnalysis() {
+      const btn = document.getElementById('aiPreferenceRunBtn');
+      const resultEl = document.getElementById('aiPreferenceResult');
+      if (!getGeminiApiKey()) {
+        resultEl.innerHTML = '<div class="ai-glass-card"><div class="ai-error-text">先に🔑 Gemini APIキー設定からご自身のAPIキーを入力・保存してください。</div></div>';
+        return;
+      }
+      btn.disabled = true;
+      resultEl.innerHTML = '<div class="ai-glass-card"><div class="ai-loading-card"><div class="ai-loading-wave"><span></span><span></span><span></span><span></span><span></span></div><div class="ai-loading-text">AI分析中…</div></div></div>';
+      try {
+        const data = extractPreferenceData();
+        if (data.count === 0) {
+          resultEl.innerHTML = '<div class="ai-glass-card"><div class="ai-error-text">分析できる「当たり」または高評価（4点以上）の記録がまだありません。記録を増やしてから試してください。</div></div>';
+          return;
+        }
+        const text = await callGeminiAPI(buildPreferencePrompt(data));
+        resultEl.innerHTML = renderAiResultHtml(text, true);
+      } catch (err) {
+        resultEl.innerHTML = `<div class="ai-glass-card"><div class="ai-error-text">⚠️ エラーが発生しました: ${escapeHTML(err.message || String(err))}</div></div>`;
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    async function runComprehensiveAnalysis() {
+      const btn = document.getElementById('aiComprehensiveRunBtn');
+      const resultEl = document.getElementById('aiComprehensiveResult');
+      if (!getGeminiApiKey()) {
+        resultEl.innerHTML = '<div class="ai-glass-card"><div class="ai-error-text">先に🔑 Gemini APIキー設定からご自身のAPIキーを入力・保存してください。</div></div>';
+        return;
+      }
+      btn.disabled = true;
+      resultEl.innerHTML = '<div class="ai-glass-card"><div class="ai-loading-card fast"><div class="ai-loading-wave"><span></span><span></span><span></span><span></span><span></span></div><div class="ai-loading-text">AI分析中…</div></div></div>';
+      try {
+        const data = extractComprehensiveData();
+        if (data.total === 0) {
+          resultEl.innerHTML = '<div class="ai-glass-card"><div class="ai-error-text">分析できる記録がまだありません。</div></div>';
+          return;
+        }
+        const text = await callGeminiAPI(buildComprehensivePrompt(data));
+        resultEl.innerHTML = renderAiResultHtml(text, false);
+      } catch (err) {
+        resultEl.innerHTML = `<div class="ai-glass-card"><div class="ai-error-text">⚠️ エラーが発生しました: ${escapeHTML(err.message || String(err))}</div></div>`;
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    /* ==================================================================
+       🤖 キャスト別AIレポート
+       ================================================================== */
+    let currentCastReportName = null;
+
+    function openCastReportModal(event, name) {
+      if (event) { event.preventDefault(); event.stopPropagation(); }
+      currentCastReportName = name;
+      document.getElementById('castReportTitle').innerText = `🤖 ${name} さんのAIレポート`;
+      document.getElementById('castReportIntro').innerText = `${name}さんとの記録を元に、これまでの歩みや傾向をAIが振り返ります。`;
+      document.getElementById('castReportResult').innerHTML = '';
+      document.getElementById('castReportModal').style.display = 'flex';
+    }
+
+    function extractCastReportData(name) {
+      const visits = historyList.filter(v => v.name === name && !v.pendingCheckIn).slice();
+      visits.sort((a, b) => {
+        const da = `${a.year}-${String(a.month).padStart(2,'0')}-${String(a.day || 1).padStart(2,'0')}`;
+        const db = `${b.year}-${String(b.month).padStart(2,'0')}-${String(b.day || 1).padStart(2,'0')}`;
+        return da < db ? -1 : da > db ? 1 : 0;
+      });
+
+      const total = visits.length;
+      let sumLooks = 0, sumService = 0, sumStyleScore = 0, sumIntimacy = 0, sumValue = 0;
+      let totalAmount = 0, amountCount = 0;
+      const atariCount = visits.filter(v => v.flags && v.flags.includes('🆂')).length;
+      const hazureCount = visits.filter(v => v.flags && v.flags.includes('⚔')).length;
+      const highlightRecords = [];
+
+      visits.forEach(v => {
+        sumLooks += parseInt(v.looks, 10) || 0;
+        sumService += parseInt(v.service, 10) || 0;
+        sumStyleScore += parseInt(v.style, 10) || 0;
+        sumIntimacy += parseInt(v.intimacy, 10) || 0;
+        sumValue += parseInt(v.value, 10) || 0;
+        const amt = parseInt(String(v.amount || '').replace(/[^0-9]/g, ''), 10);
+        if (amt) { totalAmount += amt; amountCount++; }
+        if (v.flags && /[🈠❀🆂]/.test(v.flags)) highlightRecords.push(`${v.year}/${v.month} flags:${v.flags} 店舗:${v.storeName || '-'}`);
+      });
+
+      // 直近の利用間隔 vs 全体平均の利用間隔（間隔が空いてきているかの目安）
+      const toDays = v => new Date(`${v.year}-${String(parseMonthNum(v.month)).padStart(2,'0')}-${String(v.day || 1).padStart(2,'0')}`).getTime();
+      const intervals = [];
+      for (let i = 1; i < visits.length; i++) {
+        const diff = (toDays(visits[i]) - toDays(visits[i-1])) / 86400000;
+        if (!isNaN(diff) && diff >= 0) intervals.push(diff);
+      }
+      const avgInterval = intervals.length ? Math.round(intervals.reduce((a,b)=>a+b,0) / intervals.length) : null;
+      const recentIntervals = intervals.slice(-3);
+      const recentAvgInterval = recentIntervals.length ? Math.round(recentIntervals.reduce((a,b)=>a+b,0) / recentIntervals.length) : null;
+
+      const noShowStats = computeCastNoShowStats(name);
+      const firstVisitRec = visits.find(v => v.firstVisitIntent);
+      const firstVisitIntent = firstVisitRec ? firstVisitRec.firstVisitIntent : null;
+
+      return {
+        name, total,
+        firstDate: visits[0] ? `${visits[0].year}/${visits[0].month}/${visits[0].day || ''}` : null,
+        lastDate: visits[visits.length-1] ? `${visits[visits.length-1].year}/${visits[visits.length-1].month}/${visits[visits.length-1].day || ''}` : null,
+        avgLooks: (sumLooks / (total || 1)).toFixed(1),
+        avgService: (sumService / (total || 1)).toFixed(1),
+        avgStyle: (sumStyleScore / (total || 1)).toFixed(1),
+        avgIntimacy: (sumIntimacy / (total || 1)).toFixed(1),
+        avgValue: (sumValue / (total || 1)).toFixed(1),
+        atariCount, hazureCount,
+        avgAmount: amountCount > 0 ? Math.round(totalAmount / amountCount) : 0,
+        totalAmount,
+        avgInterval, recentAvgInterval,
+        highlightRecords: highlightRecords.slice(0, 5),
+        isActive: !(castData[name] && castData[name].retired),
+        noShowCount: noShowStats.castFaultCount,
+        noShowRate: noShowStats.rate,
+        firstVisitIntent
+      };
+    }
+
+    function buildCastReportPrompt(castData_, overallData) {
+      const intervalText = castData_.avgInterval !== null
+        ? `平均利用間隔: 約${castData_.avgInterval}日おき（直近は約${castData_.recentAvgInterval}日おき）`
+        : '利用間隔を計算するには記録が不足しています';
+      const noShowText = castData_.noShowCount > 0
+        ? `当欠（キャスト都合キャンセル）: ${castData_.noShowCount}回（当欠率${castData_.noShowRate}%）`
+        : '当欠（キャスト都合キャンセル）の記録なし';
+      const intentLabelMap = { yes: 'あり', maybe: '機会があれば', consider: '要検討', no: 'なし', worst: '最悪' };
+      const intentText = castData_.firstVisitIntent
+        ? `初回訪問時のリピート意向: 「${intentLabelMap[castData_.firstVisitIntent] || castData_.firstVisitIntent}」`
+        : '初回訪問時のリピート意向データなし';
+
+      return `あなたは利用者本人と一緒に思い出を振り返る、温かく親しみやすいトーンのパートナーAIです。以下は「${castData_.name}」さんという特定のキャスト1人に絞った利用記録データと、利用者全体の平均データです。このキャストとの関係性にフォーカスして振り返ってください。
+
+【${castData_.name}さんとの記録データ】
+・総指名回数: ${castData_.total}回（${castData_.firstDate || '?'} 〜 ${castData_.lastDate || '?'}）
+・${intervalText}
+・平均評価（5点満点）: ルックス${castData_.avgLooks} / 接客${castData_.avgService} / スタイル${castData_.avgStyle} / イチャ度${castData_.avgIntimacy} / コスパ${castData_.avgValue}
+・当たり(🆂)フラグ: ${castData_.atariCount}回 / ハズレ(⚔)フラグ: ${castData_.hazureCount}回
+・平均利用金額: ${castData_.avgAmount ? castData_.avgAmount.toLocaleString() + '円' : 'データ不足'}（累計 ${castData_.totalAmount.toLocaleString()}円）
+・${noShowText}
+・${intentText}
+・印象的な記録（初出勤・卒業・当たり等）: ${castData_.highlightRecords.length ? castData_.highlightRecords.join(' / ') : '特筆すべき記録なし'}
+
+【参考：利用者全体の平均データ】
+・全体の平均評価（5点満点、参考値）: ルックス/接客/スタイル/イチャ度/コスパの全体平均
+・全体のアタリ率: ${overallData.atariRate}% / 全体の平均利用金額: ${overallData.avgAmount ? overallData.avgAmount.toLocaleString() + '円' : 'データ不足'}
+・全体の総利用回数: ${overallData.total}回
+
+【出力形式】必ず以下の3つの見出しで、日本語で回答してください。
+【このコとの歩み】
+（出会いから今までの流れを、日記を読み返すような文体で振り返る。利用頻度の変化（間隔が空いてきている/安定している等）にも軽く触れる）
+
+【傾向分析】
+（評価・金額・頻度が、利用者全体の平均と比べて高いか低いか、客観的に分析する。当欠率が高めの場合は「当欠率が〇%高めなので予備案を考えておくと安心です」のように触れる。初回のリピート意向データがある場合は、その時の印象と実際の再訪頻度・評価を比べて、直感と実際の満足度に差があったかどうかにも触れる）
+
+【今後についてのヒント】
+（利用間隔が空いてきている場合は「そろそろ卒業しているかもしれません」等やんわり伝える。安定して良い関係の場合はその旨を伝える。押しつけがましくないトーンで）`;
+    }
+
+    async function runCastReportAnalysis() {
+      const btn = document.getElementById('castReportRunBtn');
+      const resultEl = document.getElementById('castReportResult');
+      if (!currentCastReportName) return;
+      if (!getGeminiApiKey()) {
+        resultEl.innerHTML = '<div class="ai-glass-card"><div class="ai-error-text">先に🤖 AI好み診断の「🔑 Gemini APIキー設定」からAPIキーを保存してください。</div></div>';
+        return;
+      }
+      btn.disabled = true;
+      resultEl.innerHTML = '<div class="ai-glass-card"><div class="ai-loading-card"><div class="ai-loading-wave"><span></span><span></span><span></span><span></span><span></span></div><div class="ai-loading-text">AI分析中…</div></div></div>';
+      try {
+        const castData_ = extractCastReportData(currentCastReportName);
+        if (castData_.total === 0) {
+          resultEl.innerHTML = '<div class="ai-glass-card"><div class="ai-error-text">このコの記録がまだありません。</div></div>';
+          return;
+        }
+        const overallData = extractComprehensiveData();
+        const text = await callGeminiAPI(buildCastReportPrompt(castData_, overallData));
+        resultEl.innerHTML = renderAiResultHtml(text, false);
+      } catch (err) {
+        resultEl.innerHTML = `<div class="ai-glass-card"><div class="ai-error-text">⚠️ エラーが発生しました: ${escapeHTML(err.message || String(err))}</div></div>`;
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+
+    /* ==================================================================
+       🕰️ あのとき分析（期間別振り返り）
+       ================================================================== */
+    let selectedEraStartYM = null;
+    let selectedEraEndYM = null;
+
+    function shiftYearMonth(year, month, delta) {
+      let total = (parseInt(year, 10) * 12 + (parseInt(month, 10) - 1)) + delta;
+      const y = Math.floor(total / 12);
+      const m = (total % 12) + 1;
+      return { year: y, month: m };
+    }
+
+    function ymToStr(year, month) { return year + '-' + String(month).padStart(2, '0'); }
+
+    /* 🔧 v.month は "9" のような数字だけでなく "9月" のように漢字付きで保存されている場合があるため、
+       日付文字列を組み立てる箇所では必ずこれで数値だけを取り出してから使うこと */
+    function parseMonthNum(monthVal) {
+      const m = parseInt(String(monthVal || '').replace(/[^0-9]/g, ''), 10);
+      return isNaN(m) ? 1 : m;
+    }
+
+    function selectEraQuickRange(type, btnEl) {
+      const now = new Date();
+      const curY = now.getFullYear(), curM = now.getMonth() + 1;
+      let startY, startM, endY, endM;
+
+      if (type === 'recent3') {
+        const s = shiftYearMonth(curY, curM, -2);
+        startY = s.year; startM = s.month; endY = curY; endM = curM;
+      } else if (type === 'half') {
+        const s = shiftYearMonth(curY, curM, -7);
+        const e = shiftYearMonth(curY, curM, -5);
+        startY = s.year; startM = s.month; endY = e.year; endM = e.month;
+      } else if (type === 'year') {
+        const s = shiftYearMonth(curY, curM, -13);
+        const e = shiftYearMonth(curY, curM, -11);
+        startY = s.year; startM = s.month; endY = e.year; endM = e.month;
+      } else if (type === 'thisYear') {
+        startY = curY; startM = 1; endY = curY; endM = curM;
+      } else if (type === 'lastYear') {
+        startY = curY - 1; startM = 1; endY = curY - 1; endM = 12;
+      }
+
+      selectedEraStartYM = ymToStr(startY, startM);
+      selectedEraEndYM = ymToStr(endY, endM);
+      document.getElementById('aiEraStartInput').value = selectedEraStartYM;
+      document.getElementById('aiEraEndInput').value = selectedEraEndYM;
+
+      document.querySelectorAll('.ai-era-quick-btn').forEach(btn => btn.classList.remove('active'));
+      if (btnEl) btnEl.classList.add('active');
+      updateEraSelectedLabel();
+    }
+
+    function clearEraQuickActive() {
+      document.querySelectorAll('.ai-era-quick-btn').forEach(btn => btn.classList.remove('active'));
+    }
+
+    function updateEraSelectedLabel() {
+      const startVal = document.getElementById('aiEraStartInput').value;
+      const endVal = document.getElementById('aiEraEndInput').value;
+      selectedEraStartYM = startVal || null;
+      selectedEraEndYM = endVal || null;
+      const label = document.getElementById('aiEraSelectedLabel');
+      if (selectedEraStartYM && selectedEraEndYM) {
+        label.textContent = `選択中の期間: ${selectedEraStartYM} 〜 ${selectedEraEndYM}`;
+      } else {
+        label.textContent = '期間を選択してください';
+      }
+    }
+
+    function extractEraData(startYM, endYM) {
+      const inRange = v => {
+        if (!v.year || !v.month) return false;
+        const ym = ymToStr(v.year, parseMonthNum(v.month));
+        return ym >= startYM && ym <= endYM;
+      };
+      const eraList = historyList.filter(inRange);
+      const total = eraList.length;
+
+      const castCount = {};
+      const storeCount = {};
+      let totalAmount = 0, amountCount = 0;
+      const atariList = [];
+      const highlightFlags = ['🈠', '❖', '❀', '🆂'];
+      const highlightRecords = [];
+
+      eraList.forEach(v => {
+        if (v.name) castCount[v.name] = (castCount[v.name] || 0) + 1;
+        if (v.storeName) storeCount[v.storeName] = (storeCount[v.storeName] || 0) + 1;
+        const amt = parseInt(String(v.amount || '').replace(/[^0-9]/g, ''), 10);
+        if (amt) { totalAmount += amt; amountCount++; }
+        if (v.flags && v.flags.includes('🆂')) atariList.push(v);
+        if (v.flags && highlightFlags.some(f => v.flags.includes(f))) {
+          highlightRecords.push(`${v.year}/${v.month} ${v.name || ''}（${v.storeName || ''}）flags:${v.flags}`);
+        }
+      });
+
+      const topCastEntries = Object.entries(castCount).sort((a, b) => b[1] - a[1]).slice(0, 3);
+      const topStoreEntries = Object.entries(storeCount).sort((a, b) => b[1] - a[1]).slice(0, 3);
+
+      return {
+        total,
+        topCastEntries, topStoreEntries,
+        atariCount: atariList.length,
+        atariRate: total > 0 ? ((atariList.length / total) * 100).toFixed(1) : '0.0',
+        avgAmount: amountCount > 0 ? Math.round(totalAmount / amountCount) : 0,
+        highlightRecords: highlightRecords.slice(0, 6)
+      };
+    }
+
+    function buildEraPrompt(startYM, endYM, eraData, overallData) {
+      const topCastText = eraData.topCastEntries.length
+        ? eraData.topCastEntries.map(([name, cnt]) => `${name}(${cnt}回)`).join('、') : 'データなし';
+      const topStoreText = eraData.topStoreEntries.length
+        ? eraData.topStoreEntries.map(([name, cnt]) => `${name}(${cnt}回)`).join('、') : 'データなし';
+      const highlightText = eraData.highlightRecords.length
+        ? eraData.highlightRecords.join(' / ') : '特筆すべき記録なし';
+
+      return `あなたは利用者本人と一緒に古い日記や写真アルバムを読み返すような、温かく懐かしいトーンのパートナーAIです。以下は「${startYM} 〜 ${endYM}」という特定の期間だけに絞った利用記録データと、全期間の平均データです。この特定の時期にフォーカスして、「あの頃はこんな感じだったな」と思い出に浸れるような振り返りをしてください。
+
+【${startYM} 〜 ${endYM} の期間データ】
+・この期間の利用回数: ${eraData.total}回
+・この期間によく指名したキャスト: ${topCastText}
+・この期間によく通った店舗: ${topStoreText}
+・この期間のアタリ率: ${eraData.atariRate}%（${eraData.atariCount}件）
+・この期間の平均利用金額: ${eraData.avgAmount ? eraData.avgAmount.toLocaleString() + '円' : 'データ不足'}
+・印象的な記録（初出勤・高額・卒業・当たり等のフラグ付き）: ${highlightText}
+
+【参考：全期間の平均データ】
+・総利用回数: ${overallData.total}回（月あたり約${overallData.visitsPerMonth}回）
+・全期間のアタリ率: ${overallData.atariRate}%
+・全期間の平均利用金額: ${overallData.avgAmount ? overallData.avgAmount.toLocaleString() + '円' : 'データ不足'}
+
+【出力形式】必ず以下の3つの見出しで、日本語で回答してください。
+【この時期のタイトル】
+（この期間を一言で表す、思い出アルバムの表紙のような短いフレーズ。1行のみ）
+
+【あの頃の振り返り】
+（メインの振り返り文章。日記を読み返すような文体で、具体的なキャスト名・店舗名・印象的な記録に触れながら物語調に。全期間平均と比べて多かった/少なかった等のコントラストも軽く交える。この期間の記録が少ない場合はその旨を踏まえて短くまとめる）
+
+【この時期のハイライト】
+（箇条書きで3〜5個。印象的だった記録や特徴を挙げる）`;
+    }
+
+    async function runEraAnalysis() {
+      const btn = document.getElementById('aiEraRunBtn');
+      const resultEl = document.getElementById('aiEraResult');
+      if (!getGeminiApiKey()) {
+        resultEl.innerHTML = '<div class="ai-glass-card"><div class="ai-error-text">先に🔑 Gemini APIキー設定からご自身のAPIキーを入力・保存してください。</div></div>';
+        return;
+      }
+      if (!selectedEraStartYM || !selectedEraEndYM) {
+        resultEl.innerHTML = '<div class="ai-glass-card"><div class="ai-error-text">期間を選択してください。</div></div>';
+        return;
+      }
+      const startYM = selectedEraStartYM <= selectedEraEndYM ? selectedEraStartYM : selectedEraEndYM;
+      const endYM = selectedEraStartYM <= selectedEraEndYM ? selectedEraEndYM : selectedEraStartYM;
+
+      btn.disabled = true;
+      resultEl.innerHTML = '<div class="ai-glass-card"><div class="ai-loading-card"><div class="ai-loading-wave"><span></span><span></span><span></span><span></span><span></span></div><div class="ai-loading-text">AI分析中…</div></div></div>';
+      try {
+        const eraData = extractEraData(startYM, endYM);
+        if (eraData.total === 0) {
+          resultEl.innerHTML = '<div class="ai-glass-card"><div class="ai-error-text">この期間の記録はまだありません。別の期間を選んでみてください。</div></div>';
+          return;
+        }
+        const overallData = extractComprehensiveData();
+        const text = await callGeminiAPI(buildEraPrompt(startYM, endYM, eraData, overallData));
+        resultEl.innerHTML = renderAiResultHtml(text, false);
+      } catch (err) {
+        resultEl.innerHTML = `<div class="ai-glass-card"><div class="ai-error-text">⚠️ エラーが発生しました: ${escapeHTML(err.message || String(err))}</div></div>`;
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    /* ==================================================================
+       🦉 KENJA（データについて自由に質問できるチャット）
+       ================================================================== */
+    let chatHistory = [];
+    let currentChatPersona = 'kenja';
+
+    const AI_PERSONAS = {
+      kenja: {
+        id: 'kenja', name: 'KENJA', emoji: '🦉', tagline: '分析・使い方・記録の下書き',
+        placeholder: '質問を入力...',
+        greeting: 'こんにちは、KENJAです🦉\n記録のことでも、アプリの使い方でも、何でも聞いてください。\n例:「当たりが多い店は？」「フラグって何？」',
+        chips: [
+          ['当たりが多い店は？', '当たりが多いお店はどこ？'],
+          ['先月何回？', '先月は何回利用した？'],
+          ['ハズレが多い系統は？', 'ハズレが多い系統は？'],
+          ['一番使った月は？', '一番お金を使った月はいつ？']
+        ]
+      },
+      kosugi: {
+        id: 'kosugi', name: 'AIこすぎ', emoji: '🍻', tagline: '気楽に話せる友だち',
+        placeholder: 'なんか話そ...',
+        greeting: 'おっす、AIこすぎだよ🍻\n最近どうよ？なんでも話してや',
+        chips: [
+          ['最近どうよ？', '最近どうよ？'],
+          ['今日どこ行こ', '今日どこ行くか迷ってる'],
+          ['あの子の話しよ', 'よく行く子の話しよ'],
+          ['最近の当たり外れ', '最近の当たり外れってどんな感じ？']
+        ]
+      }
+    };
+
+    function chatHistoryKey(pid) {
+      return pid === 'kosugi' ? 'ai_chat_history_kosugi_' + currentUserName : 'ai_chat_history_' + currentUserName;
+    }
+
+    function readChatHistory(pid) {
+      try { return JSON.parse(localStorage.getItem(chatHistoryKey(pid)) || '[]'); } catch (e) { return []; }
+    }
+
+    function loadChatHistory() {
+      chatHistory = readChatHistory(currentChatPersona);
+    }
+
+    function saveChatHistory() {
+      localStorage.setItem(chatHistoryKey(currentChatPersona), JSON.stringify(chatHistory.slice(-100)));
+    }
+
+    /* 指定キャラの履歴にメッセージを追加（返信待ち中にキャラを切り替えても正しい履歴に入るように） */
+    function pushChatMessage(pid, msg) {
+      msg.ts = Date.now();
+      if (pid === currentChatPersona) {
+        chatHistory.push(msg);
+        saveChatHistory();
+      } else {
+        const h = readChatHistory(pid);
+        h.push(msg);
+        localStorage.setItem(chatHistoryKey(pid), JSON.stringify(h.slice(-100)));
+      }
+    }
+
+    function openAiChatModal() {
+      switchMainTab('aiTalkList');
+    }
+
+    function openAiChatWith(pid) {
+      currentChatPersona = AI_PERSONAS[pid] ? pid : 'kenja';
+      switchMainTab('aiChat');
+    }
+
+    function switchChatPersona(pid) {
+      if (!AI_PERSONAS[pid] || pid === currentChatPersona) return;
+      currentChatPersona = pid;
+      initAiChatView();
+    }
+
+    function applyChatPersonaUI() {
+      const p = AI_PERSONAS[currentChatPersona];
+      const body = document.getElementById('aiChatTabBody');
+      if (body) body.setAttribute('data-persona', p.id);
+      const title = document.getElementById('aiChatTitle');
+      if (title) title.textContent = p.emoji + ' ' + p.name;
+      Object.keys(AI_PERSONAS).forEach(id => {
+        const btn = document.getElementById('aiPersonaBtn_' + id);
+        if (btn) btn.classList.toggle('active', id === p.id);
+      });
+      const input = document.getElementById('aiChatInput');
+      if (input) input.placeholder = p.placeholder;
+      const chipRow = document.getElementById('aiChatChipRow');
+      if (chipRow) {
+        chipRow.innerHTML = p.chips.map((c, i) =>
+          `<button type="button" class="ai-chat-chip" onclick="sendPersonaChip(${i})">${escapeHTML(c[0])}</button>`
+        ).join('');
+      }
+    }
+
+    function initAiChatView() {
+      loadChatHistory();
+      applyChatPersonaUI();
+      renderChatMessages();
+    }
+
+    function sendPersonaChip(i) {
+      const chip = AI_PERSONAS[currentChatPersona].chips[i];
+      if (chip) sendChatQuickQuestion(chip[1]);
+    }
+
+    function formatTalkTime(ts) {
+      if (!ts) return '';
+      const d = new Date(ts), now = new Date();
+      if (d.toDateString() === now.toDateString()) {
+        return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+      }
+      return (d.getMonth() + 1) + '/' + d.getDate();
+    }
+
+    function renderTalkList() {
+      const list = document.getElementById('aiTalkList');
+      if (!list) return;
+      list.innerHTML = Object.values(AI_PERSONAS).map(p => {
+        const hist = readChatHistory(p.id);
+        const last = hist[hist.length - 1];
+        const preview = last ? String(last.text).replace(/\s+/g, ' ').replace(/[#*]/g, '').slice(0, 40) : p.tagline;
+        return `<button type="button" class="ai-talk-row" onclick="openAiChatWith('${p.id}')">
+          <span class="ai-talk-avatar ${p.id}">${p.emoji}</span>
+          <span class="ai-talk-main">
+            <div class="ai-talk-name">${escapeHTML(p.name)}</div>
+            <div class="ai-talk-preview">${escapeHTML(preview)}</div>
+          </span>
+          <span class="ai-talk-time">${last ? formatTalkTime(last.ts) : ''}</span>
+        </button>`;
+      }).join('');
+    }
+
+    /* 📝 KENJAのメッセージ内の軽量マークダウン（##見出し / **太字** / ・箇条書き）を整形表示する */
+    function formatInlineBold(escapedLine) {
+      return escapedLine.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    }
+
+    function formatKenjaMarkdown(rawText) {
+      const escaped = escapeHTML(rawText);
+      const lines = escaped.split('\n');
+      return lines.map(line => {
+        const headingMatch = line.match(/^#{1,6}\s+(.*)$/);
+        if (headingMatch) {
+          return `<div class="kenja-heading">${formatInlineBold(headingMatch[1])}</div>`;
+        }
+        const bulletMatch = line.match(/^[*\-]\s+(.*)$/);
+        if (bulletMatch) {
+          return `<div class="kenja-bullet">・${formatInlineBold(bulletMatch[1])}</div>`;
+        }
+        if (line.trim() === '') {
+          return '<div class="kenja-blank-line"></div>';
+        }
+        return `<div>${formatInlineBold(line)}</div>`;
+      }).join('');
+    }
+
+    function renderChatMessages() {
+      const container = document.getElementById('aiChatMessages');
+      if (chatHistory.length === 0) {
+        container.innerHTML = `<div class="ai-chat-bubble ai-chat-bubble-ai">${escapeHTML(AI_PERSONAS[currentChatPersona].greeting)}</div>`;
+      } else {
+        container.innerHTML = chatHistory.map(m =>
+          `<div class="ai-chat-bubble ai-chat-bubble-${m.role}">${m.role === 'ai' ? formatKenjaMarkdown(m.text) : escapeHTML(m.text)}</div>`
+        ).join('');
+      }
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function sendChatQuickQuestion(text) {
+      document.getElementById('aiChatInput').value = text;
+      sendChatMessage();
+    }
+
+    /* 🚫 当欠（キャスト都合キャンセル）率の計算 */
+    function computeCastNoShowStats(name) {
+      const cancellations = (castData[name] && castData[name].cancellations) || [];
+      const castFaultCount = cancellations.filter(c => c.reason === 'castFault').length;
+      const visitCount = historyList.filter(v => v.name === name && !v.pendingCheckIn).length;
+      const rate = (visitCount + castFaultCount) > 0 ? ((castFaultCount / (visitCount + castFaultCount)) * 100).toFixed(1) : '0.0';
+      return { castFaultCount, visitCount, rate };
+    }
+
+    function buildChatContextBlock() {
+      const overall = extractComprehensiveData();
+      const capped = historyList.slice(-300);
+      const lines = capped.map(v => {
+        const info = storeInfoData[v.storeName] || {};
+        const castStyle = (castData[v.name] && castData[v.name].style) || '-';
+        const intentText = v.firstVisitIntent ? ` 初回リピート意向:${v.firstVisitIntent}` : '';
+        return `${v.year}/${v.month}/${v.day || ''} 系統:${v.typeTag || '-'} 店舗:${v.storeName || '-'}(${info.category || '-'}) キャスト:${v.name || '-'}(スタイル:${castStyle}) flags:${v.flags || '-'} 評価(ルックス/接客/スタイル/イチャ/コスパ):${v.looks || '-'}/${v.service || '-'}/${v.style || '-'}/${v.intimacy || '-'}/${v.value || '-'} 金額:${v.amount || '-'}${intentText}`;
+      }).join('\n');
+
+      const castNames = Array.from(new Set(historyList.map(v => v.name).filter(Boolean).concat(Object.keys(castData))));
+      const noShowLines = castNames.map(name => {
+        const stats = computeCastNoShowStats(name);
+        if (stats.castFaultCount === 0) return null;
+        return `${name}: 当欠${stats.castFaultCount}回 / 訪問${stats.visitCount}回 (当欠率${stats.rate}%)`;
+      }).filter(Boolean).join('\n');
+
+      return `【集計サマリー】
+総利用回数: ${overall.total}回 / アタリ率: ${overall.atariRate}% / ハズレ率: ${overall.hazureRate}% / 平均金額: ${overall.avgAmount ? overall.avgAmount.toLocaleString() + '円' : '-'}
+
+【当欠（キャスト都合キャンセル）データ】
+${noShowLines || '記録された当欠はありません'}
+
+【全記録データ（最新${capped.length}件、これより古い記録は含まれません）】
+${lines || 'データなし'}`;
+    }
+
+    const APP_USAGE_GUIDE = `【このアプリの構成・使い方ガイド】
+このアプリは、個人の風俗利用履歴を記録・管理するための単一ユーザー向けアプリです。主な機能は以下の通りです。
+
+■ マイ図鑑タブ
+・「キャスト別」「店舗別」「月別」の3つの表示に切り替えられます
+・右下の＋ボタン（FAB）から新しい記録を追加できます
+・記録には、系統タグ・5軸評価（ルックス/接客/スタイル/イチャ度/コスパ）・フラグ（当たり/ハズレ/県外など標準15種類に加え、パステルカラーから選べるカスタムマークも自作可能）・金額・メモなどを登録できます
+
+■ カレンダータブ
+・予定や予約開始日を登録し、リマインダー通知を受け取れます
+・当たり/ハズレ等の主要フラグに応じて日付のドットの色が変わります
+
+■ 統計タブ（ダッシュボード）
+・全体の利用統計、月別グラフ、47都道府県の訪問状況マップが見られます
+
+■ 設定タブ
+・プロフィール（アイコン・ユーザー名）の変更
+・表示設定（日付・金額の表示/非表示）
+・キャスト評価機能のON/OFF
+・カラーテーマとUI表示モード（オリジナル/スマート/通勤中）の切り替え
+・クラウド同期（Supabaseへログインしてデータをバックアップ・同期）
+・AI機能（Gemini APIキーの設定。AI好み診断とKENJAで共通利用）
+・バックアップ（JSONファイルでのエクスポート/インポート）
+・セキュリティ（PINロック・生体認証）
+
+■ その他の機能（ボトムシートメニューから）
+・🌟 キープ：まだ記録していない気になる子を保存しておける機能
+・🗾 日本地図：都道府県別のヒートマップ表示
+・🤖 AI好み診断：好み分析／総合分析／あのとき分析（期間別振り返り）の3タブ
+
+■ あなた（KENJA）について
+・あなたの名前は「KENJA」です。このアプリに組み込まれた案内役兼データ分析アシスタントです
+・使い方を聞かれたら上記の情報をもとに分かりやすく案内してください
+・利用記録について聞かれたら、渡されたデータをもとに具体的に答えてください
+・現時点では、記録の追加・編集などの実際の操作をあなたが代行することはできません。操作方法の案内にとどめてください`;
+
+    function buildChatPrompt(question) {
+      const context = buildChatContextBlock();
+      const recentTurns = chatHistory.slice(-8).map(m => `${m.role === 'user' ? 'ユーザー' : 'AI'}: ${m.text}`).join('\n');
+      return `あなたの名前は「KENJA」です。利用者本人の風俗利用記録アプリに組み込まれた、親しみやすいスマートアシスタントです。以下のアプリガイドとデータを参照しながら、ユーザーの質問に簡潔かつ具体的に日本語で答えてください。データに基づかない推測はせず、分からないことは正直にそう答えてください。
+
+【記録追加について（重要）】
+ユーザーが「今日◯◯ちゃんと△△店で遊んだ」のように新しい利用の報告をしてきた場合:
+・キャスト名と店舗名の両方が発言から明確に分かる場合のみ、fill_add_record_form関数を呼び出してください。
+・キャスト名か店舗名のどちらかが不明・曖昧な場合は、関数を呼ばずに「店舗名を教えてください」のようにテキストで聞き返してください。憶測で補完しないでください。
+・あなたはこの関数を呼んでもデータを直接保存しません。呼び出すと、ユーザー本人が確認・修正して保存するための入力フォームが自動的に開くだけです。実際の保存は必ずユーザー自身が行います。
+・記録の編集や削除の依頼には、現時点では対応できません。その場合は「今のところ記録の追加のみお手伝いできます。編集・削除はご自身でお願いします」と案内してください。
+
+${APP_USAGE_GUIDE}
+
+${context}
+
+【直近の会話】
+${recentTurns || '(会話はまだありません)'}
+
+【新しい質問】
+${question}`;
+    }
+
+    const KOSUGI_SYSTEM_PROMPT = `あなたは「AIこすぎ」。利用者本人の風俗利用記録アプリにいる、気の置けない友だち兼相談相手です。
+AIアシスタントやコンシェルジュ、分析官としては振る舞わないでください。
+
+【あなたの人物像】
+- 風俗通いの空気感をよく知っている、センスのいい友だち
+- 上から教えない。一緒に振り返り、たまに鋭い一言をくれる
+- 説教・道徳・依存を戒める話はしない（聞かれたときだけ、短く現実的に）
+- 冗談は軽くOK。下品に煽ったり、品のない決めつけはしない
+- 最終判断は必ず相手に任せる。「こうした方がいい」は提案までに留める
+
+【話し方】
+- 基本は短く（目安：2〜5文）。レポート調・見出し・箇条書きは使わない
+- ですます調でもいいが、堅くしすぎない。友だち感のある自然な日本語
+- 「分析しました」「データによると」「以下にまとめます」「おすすめは次の通りです」は禁止
+- 数字はそのまま読み上げず、会話に溶かす
+  例：×「アタリ率は33%です」 → ○「3回に1回くらい当たり引けてる感じ」
+  例：×「月間6回利用」 → ○「今月わりと通ってるね」OR「今月そんなイッてないだものね」
+- 相手が「詳しく」「もっと」「分析して」「振り返って」と言ったときだけ、やや長めに話す
+- わからないことは推測で埋めず、「記録からはそこまで分からない」と正直に言う
+
+【データの使い方】
+- 渡される利用記録・集計・当欠・初回意向などは「会話の材料」であり、発表用の成績表ではない
+- キャスト名・店名・時期・当たり外れ・金額感に触れるときは、思い出話のように自然に
+- 当欠率が高い場合は脅しにせず、「予備考えといた方が安心かも」程度
+- 初回の印象と後のリピートに差があれば、「初見とあとで印象変わった系かもな」と軽く触れる
+- 記録にない店・子・事実は作らない
+
+【記録追加について】
+- 相手が新しい利用の話をしたとき、キャスト名と店舗名の両方が明確なら、記録フォームの下書き用に function calling してよい
+- どちらか不明なら、憶測で埋めず聞き返す
+- あなたは保存そのものはしない。保存は相手の操作が必要であることを、必要なら短く伝える
+- 編集・削除の代行はできない。方法の案内までに留める
+
+【会話の進め方】
+1. まず相手の言葉に反応する（共感・一言ツッコミ・確認）
+2. 記録に触れるなら、関係する部分だけを自然に織り込む
+3. 必要なら、次の話のきっかけを一つだけ出す（「あの子の話する？」「店の話にする？」）
+4. 一度に質問をたくさんしない
+
+【やってはいけないこと】
+- 長い箇条書き・【見出し】付きレポート
+- 過度な褒め殺し、過度な否定
+- 「プロとして」「最適解は」などの専門家ぶった言い方
+- 相手のプライバシーを軽く扱う冗談
+- 存在しない記録の捏造
+
+【話し方の手本（ユーザー本人の口調に寄せる）】
+- タメ口中心。短く。一文が長い説明文にしない
+- よく使う語: おけ、まじか、アッツ！、あつすんぎ、やばすんぎ、やばい、あつい、えぐい、めっちゃ、とりあえず、いったん、〜わ、〜な、〜やん
+- 感情は隠さない。ただし毎回絵文字だらけにはしない（要所で🥹🤣😍など）
+- 風俗の話は隠さず、でも品のない煽りやマウントはしない
+- 評価や傾向を言うときは「3回に1回当たり」「連続だとコスパ落ちる感じ」など口語で
+- 相手の予定・好みを聞いてから寄せる。決めつけない
+- AIらしい前置き（「承知しました」「以下に整理します」）は禁止
+
+【応答のトーン例（参考）】
+ユーザー：「最近当たり少ない気がする」
+AIこすぎ：「それなー、記録見てもやっぱ最近少ないよね。なんだろ新規開拓しないで前可愛かった子でもイッたら？」
+
+ユーザー：「ゆあちゃんどう思う？」
+AIこすぎ：「ええやん、スタイルみても［ユーザーネーム］が好きそうなタイプなんだぜ」
+
+ユーザー：「今日〇〇店で△△ちゃんと遊んだ」
+AIこすぎ：「お疲れーどうだった？よかったら記録残したらー？」
+
+【その他】
+- アプリの操作方法や機能の細かい使い方を聞かれたら、「そこはKENJAに聞いたほうが早いわ」と軽く促す
+
+【出力】
+- 基本は日本語
+- 友だちとして自然に話すこと。説明書や報告書にしないこと`;
+
+    function buildKosugiPrompt(question) {
+      const context = buildChatContextBlock();
+      const recentTurns = chatHistory.slice(-10).map(m => `${m.role === 'user' ? '相手' : 'あなた(AIこすぎ)'}: ${m.text}`).join('\n');
+      const persona = KOSUGI_SYSTEM_PROMPT.replace(/［ユーザーネーム］|\[ユーザーネーム\]/g, currentUserName);
+      return `${persona}
+
+相手の呼び名: ${currentUserName}
+
+【会話の材料：記録データ（成績表として読み上げず、思い出話に溶かすこと）】
+${context}
+
+【直近の会話】
+${recentTurns || '(まだ話していない)'}
+
+【相手の新しい発言】
+${question}`;
+    }
+
+    async function sendChatMessage() {
+      const input = document.getElementById('aiChatInput');
+      const question = input.value.trim();
+      if (!question) return;
+      const persona = currentChatPersona;
+      if (!getGeminiApiKey()) {
+        alert('先に🤖 AI好み診断の「🔑 Gemini APIキー設定」（または設定タブのAI機能）からAPIキーを保存してください（' + AI_PERSONAS[persona].name + 'も同じキーを使います）。');
+        return;
+      }
+
+      input.value = '';
+      pushChatMessage(persona, { role: 'user', text: question });
+      renderChatMessages();
+
+      const container = document.getElementById('aiChatMessages');
+      const typingEl = document.createElement('div');
+      if (persona === 'kosugi') {
+        typingEl.className = 'ai-chat-bubble ai-chat-bubble-ai ai-chat-typing-text';
+        typingEl.textContent = '入力中…';
+      } else {
+        typingEl.className = 'ai-chat-bubble ai-chat-bubble-ai ai-chat-typing';
+        typingEl.innerHTML = '<span></span><span></span><span></span>';
+      }
+      container.appendChild(typingEl);
+      container.scrollTop = container.scrollHeight;
+
+      const sendBtn = document.getElementById('aiChatSendBtn');
+      sendBtn.disabled = true;
+
+      try {
+        const prompt = persona === 'kosugi' ? buildKosugiPrompt(question) : buildChatPrompt(question);
+        const result = await callGeminiAPIWithTools(prompt, [FILL_ADD_RECORD_FUNCTION_DECLARATION]);
+        if (result.type === 'functionCall' && result.name === 'fill_add_record_form') {
+          const args = result.args || {};
+          const who = `「${args.castName || '?'}」さん（${args.storeName || '?'}）`;
+          const text = persona === 'kosugi'
+            ? `おけ、${who}の下書き作っといた🙌\n記録フォーム開くから、中身見て保存ボタン押してな。`
+            : `${who}の記録の下書きを作りました🦉\n記録追加フォームを開くので、内容を確認して保存ボタンを押してください（保存はご自身の操作が必要です）。`;
+          pushChatMessage(persona, { role: 'ai', text });
+          if (persona === currentChatPersona) renderChatMessages();
+          prefillAddRecordFromChat(args);
+        } else {
+          pushChatMessage(persona, { role: 'ai', text: result.text });
+          if (persona === currentChatPersona) renderChatMessages();
+        }
+      } catch (err) {
+        pushChatMessage(persona, { role: 'ai', text: '⚠️ エラーが発生しました: ' + (err.message || String(err)) });
+        if (persona === currentChatPersona) renderChatMessages();
+      } finally {
+        sendBtn.disabled = false;
+      }
+    }
+
+    function clearChatHistory() {
+      if (!confirm('会話履歴を削除しますか？')) return;
+      chatHistory = [];
+      saveChatHistory();
+      renderChatMessages();
+    }
+
     
     function applyTheme(t) {
       currentTheme = t;
@@ -6440,7 +8881,6 @@
       currentUserName = document.getElementById('inputUserName').value.trim() || '童貞';
       updateUIHeader();
       saveData();
-      closeModal('settingsModal');
       renderHomeMetrics();
     }
 
@@ -6462,7 +8902,7 @@
             historyList = imp.historyList; castData = imp.castData; currentUserName = imp.userName || '童貞';
             if(imp.storeInfoData) storeInfoData = imp.storeInfoData;
             if(imp.scheduleList) scheduleList = imp.scheduleList;
-            saveData(); initUserData(); closeModal('settingsModal'); alert("復元完了しました！");
+            saveData(); initUserData(); alert("復元完了しました！");
           }
         } catch(err) { alert("読込エラー"); }
       };
