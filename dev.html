@@ -1353,9 +1353,6 @@
     .ai-talk-preview { font-size: 0.76rem; color: var(--light-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .ai-talk-time { font-size: 0.68rem; color: var(--light-text); flex-shrink: 0; align-self: flex-start; }
     .ai-chat-back-btn { background: none; border: none; font-size: 1.7rem; line-height: 1; color: var(--accent-pink); cursor: pointer; padding: 0 4px; }
-    .ai-persona-switch { display: flex; gap: 6px; padding: 8px 12px; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
-    .ai-persona-btn { flex: 1; padding: 8px 4px; border-radius: 999px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--light-text); font-size: 0.76rem; font-weight: bold; cursor: pointer; transition: all 0.2s ease; }
-    .ai-persona-btn.active { color: #fff; border-color: transparent; }
     #aiPersonaBtn_kenja.active { background: linear-gradient(135deg, #7928CA, #0070F3); }
     #aiPersonaBtn_kosugi.active { background: linear-gradient(135deg, #ff9a56, #ff6b6b); }
     .ai-chat-tab-body[data-persona="kosugi"] .ai-chat-header h3 { color: #f76707; }
@@ -2265,11 +2262,6 @@
               <button type="button" class="ai-chat-clear-btn" onclick="clearChatHistory()" title="会話をクリア">🗑️</button>
               <button type="button" class="map-modal-close-x" onclick="switchMainTab('home')">✕</button>
             </div>
-          </div>
-
-          <div class="ai-persona-switch">
-            <button type="button" class="ai-persona-btn active" id="aiPersonaBtn_kenja" onclick="switchChatPersona('kenja')">🦉 KENJA</button>
-            <button type="button" class="ai-persona-btn" id="aiPersonaBtn_kosugi" onclick="switchChatPersona('kosugi')">🍻 AIこすぎ</button>
           </div>
 
           <div class="ai-chat-chip-row" id="aiChatChipRow"></div>
