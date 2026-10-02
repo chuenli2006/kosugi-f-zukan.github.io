@@ -148,21 +148,56 @@
     .sheet-ad-carousel {
       display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
       gap: 10px; -ms-overflow-style: none; scrollbar-width: none;
-      padding-bottom: 2px;
+      padding-bottom: 2px; align-items: flex-start;
+      height: 180px; /* JSで現在画像に合わせてアニメーション更新 */
+      transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .sheet-ad-carousel::-webkit-scrollbar { display: none; }
     .sheet-ad-card {
       flex: 0 0 100%; scroll-snap-align: center;
-      width: 100%; aspect-ratio: 686 / 400;
-      background: linear-gradient(135deg, var(--soft-pink), var(--card-bg));
+      width: 100%;
+      background: var(--bg-color);
       border: 1px solid var(--border-color); border-radius: 16px;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 6px; color: var(--light-text); text-align: center; padding: 10px;
-      box-sizing: border-box;
+      display: block; padding: 0; overflow: hidden;
+      box-sizing: border-box; text-decoration: none; color: inherit;
+      line-height: 0;
+    }
+    .sheet-ad-card img {
+      width: 100%; height: auto; display: block;
+      border-radius: 16px; object-fit: contain;
+      vertical-align: top;
     }
     .sheet-ad-card .ad-icon { font-size: 1.6rem; }
     .sheet-ad-card .ad-label { font-size: 0.78rem; font-weight: bold; color: var(--accent-pink); }
     .sheet-ad-card .ad-sub { font-size: 0.65rem; color: var(--light-text); }
+
+    /* 📢 起動時広告ポップアップ */
+    .ad-popup-overlay {
+      display: none; position: fixed; inset: 0; z-index: 9600;
+      background: rgba(0,0,0,0.55); backdrop-filter: blur(4px);
+      justify-content: center; align-items: center; padding: 20px;
+      box-sizing: border-box;
+    }
+    .ad-popup-overlay.open { display: flex; }
+    .ad-popup-content {
+      position: relative; width: 100%; max-width: 360px;
+      border-radius: 16px; overflow: hidden;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+      background: var(--card-bg); border: 1px solid var(--border-color);
+      animation: modalFadeIn 0.25s ease-out forwards;
+    }
+    .ad-popup-content a { display: block; line-height: 0; }
+    .ad-popup-content img {
+      width: 100%; height: auto; display: block; border-radius: 16px;
+    }
+    .ad-popup-close {
+      position: absolute; top: 8px; right: 8px; z-index: 2;
+      width: 32px; height: 32px; border-radius: 50%; border: none;
+      background: rgba(0,0,0,0.55); color: #fff; font-size: 1rem; font-weight: bold;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+    .ad-popup-close:active { transform: scale(0.92); }
     .sheet-ad-dots {
       display: flex; justify-content: center; gap: 6px; margin: 8px 0 2px;
     }
@@ -1116,6 +1151,7 @@
     .icon-cat-devlock   { --icon-bg: #F5F5F4; --icon-color: #78716C; }
     .icon-cat-ai        { --icon-bg: #EDE9FE; --icon-color: #7C3AED; }
     .icon-cat-aichat    { --icon-bg: #DBEAFE; --icon-color: #2563EB; }
+    .icon-cat-album     { --icon-bg: #FFE8CC; --icon-color: #D9480F; }
     .icon-cat-visibility{ --icon-bg: #F0F9FF; --icon-color: #0369A1; }
     .icon-cat-cloud     { --icon-bg: #DBEAFE; --icon-color: #1D4ED8; }
 
@@ -1362,6 +1398,32 @@
     .ai-chat-tab-body[data-persona="kosugi"] .ai-chat-chip { border-color: #ffd8a8; }
     .ai-chat-tab-body[data-persona="kosugi"] .ai-chat-send-btn { background: linear-gradient(135deg, #ffa94d, #ff6b6b); }
     .ai-chat-typing-text { font-size: 0.75rem; color: var(--light-text); padding: 10px 14px; animation: aiTextPulse 1.3s ease-in-out infinite; }
+
+    /* 📋 長押しコンテキストメニュー */
+    .ctx-menu-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 9200; align-items: flex-end; justify-content: center; }
+    .ctx-menu-overlay.open { display: flex; }
+    .ctx-menu-sheet { width: 100%; max-width: 500px; background: var(--card-bg); border-radius: 16px 16px 0 0; padding: 10px 12px calc(14px + env(safe-area-inset-bottom, 0px)); animation: ctxSheetUp 0.22s ease; box-sizing: border-box; }
+    @keyframes ctxSheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    .ctx-menu-body { display: flex; flex-direction: column; gap: 0; margin-bottom: 8px; }
+    .ctx-menu-item { text-align: left; padding: 14px 10px; border: none; background: none; color: var(--text-color); font-size: 0.88rem; border-bottom: 1px solid var(--border-color); width: 100%; font-family: inherit; }
+    .ctx-menu-item:last-child { border-bottom: none; }
+    .ctx-menu-cancel { width: 100%; padding: 12px; border-radius: 10px; border: none; background: var(--bg-color); color: var(--light-text); font-weight: bold; font-size: 0.85rem; }
+
+    /* 📖 振り返りアルバム */
+    .album-tab-body { width: 100%; min-height: 70vh; background: var(--bg-color); border-radius: var(--radius); border: 1px solid var(--border-color); overflow: hidden; display: flex; flex-direction: column; animation: settingsFadeIn 0.4s ease both; }
+    .album-year-tabs { display: flex; gap: 6px; padding: 10px 12px; overflow-x: auto; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
+    .album-year-tab { flex-shrink: 0; padding: 7px 16px; border-radius: 999px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-color); font-size: 0.8rem; font-weight: bold; cursor: pointer; }
+    .album-year-tab.active { background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink)); color: #fff; border-color: transparent; }
+    .album-scroll-body { flex: 1; overflow-y: auto; padding: 14px; }
+    .album-month-section { margin-bottom: 22px; animation: settingsSectionSlide 0.4s ease both; }
+    .album-month-title { font-size: 0.92rem; font-weight: bold; color: var(--accent-pink); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .album-month-title::before { content: '●'; font-size: 0.6rem; }
+    .album-photo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 8px; }
+    .album-photo-item { position: relative; aspect-ratio: 1; border-radius: 10px; overflow: hidden; cursor: pointer; border: 1px solid var(--border-color); }
+    .album-photo-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .album-highlight-row { font-size: 0.74rem; color: var(--text-color); background: var(--soft-pink); border-radius: 10px; padding: 6px 10px; margin-bottom: 6px; }
+    .album-empty-month-card { font-size: 0.8rem; color: var(--light-text); background: var(--card-bg); border: 1px dashed var(--border-color); border-radius: 10px; padding: 12px; }
+    .album-empty-note { text-align: center; color: var(--light-text); font-size: 0.85rem; padding: 40px 10px; }
 
     .ai-chat-typing { display: flex; gap: 4px; align-items: center; padding: 12px 14px; }
     .ai-chat-typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--light-text); animation: chatTypingBounce 1s ease-in-out infinite; display: inline-block; }
@@ -2274,6 +2336,18 @@
           </form>
         </div>
       </div>
+
+      <!-- 10. 振り返りアルバムタブ -->
+      <div id="viewAlbum" class="tab-content">
+        <div class="album-tab-body">
+          <div class="ai-chat-header">
+            <h3>📖 振り返りアルバム</h3>
+            <button type="button" class="map-modal-close-x" onclick="switchMainTab('home')">✕</button>
+          </div>
+          <div class="album-year-tabs" id="albumYearTabs"></div>
+          <div class="album-scroll-body" id="albumScrollBody"></div>
+        </div>
+      </div>
     </main>
   </div>
 
@@ -2302,6 +2376,17 @@
   </div>
 
   <!-- 📱 拡張メニュー：ボトムシート（ナビゲーションの5枠に入りきらない機能を格納） -->
+
+  <!-- 📢 起動時広告ポップアップ -->
+  <div class="ad-popup-overlay" id="adPopupOverlay" onclick="if(event.target===this) closeAdPopup()">
+    <div class="ad-popup-content">
+      <button type="button" class="ad-popup-close" onclick="closeAdPopup()" aria-label="閉じる">✕</button>
+      <a id="adPopupLink" href="https://delice.love/?inviter_id=37447a98-d051-70b8-06db-f0c9fa7b0322" target="_blank" rel="noopener noreferrer">
+        <img id="adPopupImg" src="" alt="広告">
+      </a>
+    </div>
+  </div>
+
   <div class="bottom-sheet-overlay" id="moreMenuOverlay" onclick="closeMoreMenu()"></div>
   <div class="bottom-sheet" id="moreMenuSheet">
     <div class="bottom-sheet-handle" onclick="closeMoreMenu()"></div>
@@ -2331,28 +2416,12 @@
         <span class="nav-icon icon-badge icon-cat-aichat icon-badge-sm"><span class="emoji-icon">💬</span><i data-lucide="messages-square" class="smart-icon"></i></span><span>AIトーク</span>
       </button>
 
-      <div class="sheet-ad-carousel" id="sheetAdCarousel" onscroll="handleSheetAdScroll()">
-        <div class="sheet-ad-card">
-          <span class="ad-icon">🎀</span>
-          <span class="ad-label">広告枠 ①</span>
-          <span class="ad-sub">686×400 バナー掲載スペース</span>
-        </div>
-        <div class="sheet-ad-card">
-          <span class="ad-icon">✨</span>
-          <span class="ad-label">広告枠 ②</span>
-          <span class="ad-sub">686×400 バナー掲載スペース</span>
-        </div>
-        <div class="sheet-ad-card">
-          <span class="ad-icon">💌</span>
-          <span class="ad-label">広告枠 ③</span>
-          <span class="ad-sub">686×400 バナー掲載スペース</span>
-        </div>
-      </div>
-      <div class="sheet-ad-dots" id="sheetAdDots">
-        <span class="sheet-ad-dot active"></span>
-        <span class="sheet-ad-dot"></span>
-        <span class="sheet-ad-dot"></span>
-      </div>
+      <button class="sheet-nav-item" id="nav-album" onclick="openAlbumTab(); closeMoreMenu();">
+        <span class="nav-icon icon-badge icon-cat-album icon-badge-sm"><span class="emoji-icon">📖</span><i data-lucide="book-image" class="smart-icon"></i></span><span>振り返りアルバム</span>
+      </button>
+
+      <div class="sheet-ad-carousel" id="sheetAdCarousel" onscroll="handleSheetAdScroll()"></div>
+      <div class="sheet-ad-dots" id="sheetAdDots"></div>
     </div>
   </div>
 
@@ -2586,6 +2655,14 @@
   </div>
 
   <!-- ❌ 予定キャンセル理由モーダル -->
+  <!-- 📋 長押しコンテキストメニュー -->
+  <div class="ctx-menu-overlay" id="ctxMenuOverlay" onclick="if(event.target===this) closeContextMenu();">
+    <div class="ctx-menu-sheet">
+      <div class="ctx-menu-body" id="ctxMenuBody"></div>
+      <button type="button" class="ctx-menu-cancel" onclick="closeContextMenu()">キャンセル</button>
+    </div>
+  </div>
+
   <div class="modal-overlay" id="cancelScheduleModal" style="z-index:9000;">
     <div class="modal-content" style="max-width:320px;">
       <h3>予定をキャンセル</h3>
@@ -3349,6 +3426,8 @@
       lockVisibilityArmed = false;
       screen.classList.remove('visible');
       setTimeout(() => { screen.classList.remove('open'); }, 350);
+      // ロック解除後に広告ポップアップを表示
+      setTimeout(() => tryShowStartupAdPopup(), 400);
     }
 
     function updateLockDots() {
@@ -4399,6 +4478,7 @@
 
     /* 📱 拡張メニュー：ボトムシートの開閉 */
     function openMoreMenu() {
+      buildSheetAdCarousel(true); // 毎回ランダム順で再構築
       document.getElementById('moreMenuOverlay').classList.add('open');
       document.getElementById('moreMenuSheet').classList.add('open');
     }
@@ -4407,7 +4487,92 @@
       document.getElementById('moreMenuSheet').classList.remove('open');
     }
 
-    /* 📱 拡張メニュー：広告カルーセルのドットインジケーター連動 */
+
+    /* 📢 広告バナー（拡張メニュー・起動ポップアップ共通） */
+    const AD_BANNER_IMAGES = [
+      'https://i.imgur.com/fhtNsXd.jpeg',
+      'https://i.imgur.com/TzjFfjx.jpeg',
+      'https://i.imgur.com/5Uh32Gd.jpeg',
+      'https://i.imgur.com/qehvSPF.jpeg',
+      'https://i.imgur.com/RYZPZbn.jpeg',
+      'https://i.imgur.com/WcK49S8.jpeg'
+    ];
+    const AD_BANNER_LINK = 'https://delice.love/?inviter_id=37447a98-d051-70b8-06db-f0c9fa7b0322';
+    let startupAdPopupShownThisSession = false;
+    let sheetAdCarouselBuilt = false;
+
+    function shuffleArray(arr) {
+      const a = arr.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const t = a[i]; a[i] = a[j]; a[j] = t;
+      }
+      return a;
+    }
+
+    function buildSheetAdCarousel(forceRebuild) {
+      const carousel = document.getElementById('sheetAdCarousel');
+      const dotsEl = document.getElementById('sheetAdDots');
+      if (!carousel || !dotsEl) return;
+      if (sheetAdCarouselBuilt && !forceRebuild) return;
+
+      const order = shuffleArray(AD_BANNER_IMAGES);
+      carousel.innerHTML = order.map(src =>
+        `<a class="sheet-ad-card" href="${AD_BANNER_LINK}" target="_blank" rel="noopener noreferrer">` +
+        `<img src="${src}" alt="広告バナー" loading="lazy" onload="updateSheetAdCarouselHeight()"></a>`
+      ).join('');
+      dotsEl.innerHTML = order.map((_, i) =>
+        `<span class="sheet-ad-dot${i === 0 ? ' active' : ''}"></span>`
+      ).join('');
+      sheetAdCarouselBuilt = true;
+      carousel.scrollLeft = 0;
+      // 最初の画像の高さに合わせる
+      requestAnimationFrame(() => updateSheetAdCarouselHeight());
+    }
+
+    function updateSheetAdCarouselHeight() {
+      const carousel = document.getElementById('sheetAdCarousel');
+      if (!carousel) return;
+      const cards = carousel.querySelectorAll('.sheet-ad-card');
+      if (!cards.length) return;
+      const cardWidth = carousel.clientWidth || 1;
+      const activeIndex = Math.min(
+        Math.max(0, Math.round(carousel.scrollLeft / cardWidth)),
+        cards.length - 1
+      );
+      const img = cards[activeIndex].querySelector('img');
+      if (!img) return;
+      const applyHeight = () => {
+        const h = img.offsetHeight || Math.round(cardWidth * (img.naturalHeight && img.naturalWidth
+          ? img.naturalHeight / img.naturalWidth : 0.58));
+        if (h > 0) carousel.style.height = h + 'px';
+      };
+      if (img.complete && img.naturalWidth) applyHeight();
+      else img.addEventListener('load', applyHeight, { once: true });
+    }
+
+    function tryShowStartupAdPopup() {
+      if (startupAdPopupShownThisSession) return;
+      // ロック画面が表示中ならまだ出さない
+      const lock = document.getElementById('appLockScreen');
+      if (lock && lock.classList.contains('open')) return;
+      startupAdPopupShownThisSession = true;
+      const img = AD_BANNER_IMAGES[Math.floor(Math.random() * AD_BANNER_IMAGES.length)];
+      const imgEl = document.getElementById('adPopupImg');
+      const linkEl = document.getElementById('adPopupLink');
+      const overlay = document.getElementById('adPopupOverlay');
+      if (!imgEl || !linkEl || !overlay) return;
+      imgEl.src = img;
+      linkEl.href = AD_BANNER_LINK;
+      overlay.classList.add('open');
+    }
+
+    function closeAdPopup() {
+      const overlay = document.getElementById('adPopupOverlay');
+      if (overlay) overlay.classList.remove('open');
+    }
+
+    /* 📱 拡張メニュー：広告カルーセルのドットインジケーター連動＋高さアニメーション */
     function handleSheetAdScroll() {
       const carousel = document.getElementById('sheetAdCarousel');
       const dots = document.querySelectorAll('#sheetAdDots .sheet-ad-dot');
@@ -4415,6 +4580,7 @@
       const cardWidth = carousel.clientWidth;
       const activeIndex = Math.round(carousel.scrollLeft / cardWidth);
       dots.forEach((dot, i) => dot.classList.toggle('active', i === activeIndex));
+      updateSheetAdCarouselHeight();
     }
 
     function switchMainTab(type) {
@@ -4432,6 +4598,7 @@
       const aiAnalysisView = document.getElementById('viewAiAnalysis');
       const aiChatView = document.getElementById('viewAiChat');
       const aiTalkListView = document.getElementById('viewAiTalkList');
+      const albumView = document.getElementById('viewAlbum');
       const headerTitle = document.getElementById('headerTitle');
       const fabContainer = document.getElementById('fabContainer');
 
@@ -4454,6 +4621,7 @@
         aiAnalysisView.style.display = 'none';
         aiChatView.style.display = 'none';
         aiTalkListView.style.display = 'none';
+        albumView.style.display = 'none';
         startHomeAnimations();
       } else {
         homeView.classList.remove('active');
@@ -4469,6 +4637,7 @@
         aiAnalysisView.style.display = 'none';
         aiChatView.style.display = 'none';
         aiTalkListView.style.display = 'none';
+        albumView.style.display = 'none';
 
         if(type === 'my') myView.style.display = 'block';
         else if (type === 'calendar') { calendarView.style.display = 'block'; renderCalendar(); }
@@ -4479,6 +4648,7 @@
         else if (type === 'aiAnalysis') { aiAnalysisView.style.display = 'block'; initAiAnalysisView(); }
         else if (type === 'aiChat') { aiChatView.style.display = 'block'; initAiChatView(); }
         else if (type === 'aiTalkList') { aiTalkListView.style.display = 'block'; renderTalkList(); }
+        else if (type === 'album') { albumView.style.display = 'block'; initAlbumView(); }
 
         setTimeout(() => {
           const area = document.getElementById('homeFloatingArea');
@@ -5622,6 +5792,7 @@
       list.forEach(c => {
         const details = document.createElement('details');
         details.className = 'cast-card' + (c.favCount >= 5 ? ' super-favorite' : (c.favCount >= 1 ? ' favorite' : ''));
+        details.dataset.castName = c.name;
         const info = castData[c.name] || { link: '', notes: '', oldName: '', style: '', letters: [] };
         const isActive = info.status ? info.status === 'active' : (info.link && info.link.trim() !== '');
 
@@ -5922,6 +6093,7 @@
 
         const details = document.createElement('details');
         details.className = 'store-card-fold';
+        details.dataset.storeName = s.storeName;
 
         const webPreviewHtml = webUrl
           ? `<img class="store-web-preview-img" data-web-url="${webUrl.replace(/"/g,'&quot;')}" style="display:none;" alt="">
@@ -6514,6 +6686,124 @@
       document.getElementById('mapImageLightbox').style.display = 'flex';
     }
 
+    /* ==================================================================
+       📖 振り返りアルバム（月・年ごとの写真・手紙・ハイライトまとめ）
+       ================================================================== */
+    let albumCurrentYear = null;
+
+    function openAlbumTab() {
+      switchMainTab('album');
+    }
+
+    function buildAlbumData() {
+      const buckets = {};
+
+      function ensureBucket(year, month) {
+        const key = year + '-' + String(month).padStart(2, '0');
+        if (!buckets[key]) buckets[key] = { year: String(year), month, photos: [], recordCount: 0, castNames: new Set(), highlights: [] };
+        return buckets[key];
+      }
+
+      historyList.forEach(v => {
+        if (!v.year || !v.month || v.pendingCheckIn) return;
+        const monthNum = parseMonthNum(v.month);
+        const bucket = ensureBucket(v.year, monthNum);
+        bucket.recordCount++;
+        if (v.name) bucket.castNames.add(v.name);
+        if (v.chekiImg) {
+          bucket.photos.push({ img: v.chekiImg, date: `${v.year}年${monthNum}月${v.day ? v.day + '日' : ''}`, text: v.visitNote || '' });
+        }
+        if (v.flags && /[🈠❀🆂]/.test(v.flags)) {
+          bucket.highlights.push(`${v.name || '?'}(${v.flags})`);
+        }
+      });
+
+      Object.keys(castData).forEach(name => {
+        const letters = (castData[name] && castData[name].letters) || [];
+        letters.forEach(l => {
+          if (!l.imageUrl) return;
+          const s = String(l.date || '');
+          const yearMatch = s.match(/^(\d{4})/);
+          if (!yearMatch) return;
+          const year = yearMatch[1];
+          const month = parseMonthNum(s.slice(4));
+          const bucket = ensureBucket(year, month);
+          if (!bucket.photos.some(p => p.img === l.imageUrl)) {
+            bucket.photos.push({ img: l.imageUrl, date: s || '思い出', text: l.text || '' });
+          }
+        });
+      });
+
+      return Object.keys(buckets).sort().reverse().map(key => buckets[key]);
+    }
+
+    function initAlbumView() {
+      const data = buildAlbumData();
+      window._albumMonthData = data;
+
+      const years = Array.from(new Set(data.map(b => b.year))).sort().reverse();
+      const yearTabsEl = document.getElementById('albumYearTabs');
+
+      if (years.length === 0) {
+        yearTabsEl.innerHTML = '';
+        document.getElementById('albumScrollBody').innerHTML = '<div class="album-empty-note">まだ思い出の記録がありません。</div>';
+        return;
+      }
+
+      if (!albumCurrentYear || !years.includes(albumCurrentYear)) albumCurrentYear = years[0];
+
+      yearTabsEl.innerHTML = years.map(y =>
+        `<button type="button" class="album-year-tab${y === albumCurrentYear ? ' active' : ''}" onclick="switchAlbumYear('${y}')">${y}年</button>`
+      ).join('');
+
+      renderAlbumMonths();
+    }
+
+    function switchAlbumYear(year) {
+      albumCurrentYear = year;
+      document.querySelectorAll('.album-year-tab').forEach(btn => btn.classList.toggle('active', btn.textContent === year + '年'));
+      renderAlbumMonths();
+    }
+
+    function renderAlbumMonths() {
+      const data = (window._albumMonthData || []).filter(b => b.year === albumCurrentYear);
+      const body = document.getElementById('albumScrollBody');
+      if (data.length === 0) { body.innerHTML = '<div class="album-empty-note">この年の記録はまだありません。</div>'; return; }
+
+      body.innerHTML = data.map(bucket => {
+        const highlightHtml = bucket.highlights.length
+          ? `<div class="album-highlight-row">✨ ${bucket.highlights.slice(0, 5).map(escapeHTML).join(' ／ ')}</div>` : '';
+
+        if (bucket.photos.length === 0) {
+          const names = Array.from(bucket.castNames).slice(0, 3).map(escapeHTML).join('、');
+          return `<div class="album-month-section">
+            <div class="album-month-title">${bucket.year}年${bucket.month}月</div>
+            ${highlightHtml}
+            <div class="album-empty-month-card">この月は${bucket.recordCount}回${names ? '（' + names + '）' : ''}。写真はまだありません。</div>
+          </div>`;
+        }
+
+        const photosHtml = bucket.photos.map((p, i) =>
+          `<div class="album-photo-item" onclick="openAlbumLightbox('${bucket.year}-${bucket.month}', ${i})"><img src="${p.img}" alt="思い出" loading="lazy"></div>`
+        ).join('');
+
+        return `<div class="album-month-section">
+          <div class="album-month-title">${bucket.year}年${bucket.month}月</div>
+          ${highlightHtml}
+          <div class="album-photo-grid">${photosHtml}</div>
+        </div>`;
+      }).join('');
+    }
+
+    function openAlbumLightbox(bucketKey, index) {
+      const bucket = (window._albumMonthData || []).find(b => (b.year + '-' + b.month) === bucketKey);
+      if (!bucket) return;
+      const item = bucket.photos[index];
+      if (!item) return;
+      window._mapGalleryCache = bucket.photos;
+      openMapImageLightbox(index);
+    }
+
     function setDashPeriod(type) { dashPeriodType = type; renderDashboard(); }
 
     function filterRecordsByPeriod(list, type) {
@@ -6800,7 +7090,7 @@
         <div class="stat-card" onclick="openBadge3DModal('time')" style="cursor:pointer;"><div class="stat-card-lbl">⏱️ 累計プレイ時間</div><div class="stat-card-val" style="font-size:0.9rem;">${playTimeDisplay}</div></div>
         <div class="stat-card" onclick="openBadge3DModal('stores')" style="cursor:pointer;"><div class="stat-card-lbl">🏬 開拓店舗数</div><div class="stat-card-val">${uniqueStores}店舗</div></div>
         <div class="stat-card" onclick="openBadge3DModal('favs')" style="cursor:pointer;"><div class="stat-card-lbl">🆂 累計アタリ体験</div><div class="stat-card-val">${totalFavs}回</div></div>
-        <div class="stat-card" onclick="openBadge3DModal('photos')" style="cursor:pointer;"><div class="stat-card-lbl">💌 フォト・手紙数</div><div class="stat-card-val">${totalMemories}枚</div></div>
+        <div class="stat-card" onclick="openAlbumTab()" style="cursor:pointer;"><div class="stat-card-lbl">💌 フォト・手紙数</div><div class="stat-card-val">${totalMemories}枚</div></div>
         <div class="stat-card" onclick="openBadge3DModal('career')" style="cursor:pointer;"><div class="stat-card-lbl">📅 キャリア（経過年数）</div><div class="stat-card-val" style="font-size:0.85rem;">${durationDisplay}</div></div>
       `;
 
@@ -8925,9 +9215,149 @@ ${question}`;
       }
     });
 
+    /* ==================================================================
+       👆 タッチ操作の改善（スワイプ切替・長押しメニュー・スワイプで閉じる）
+       ================================================================== */
+
+    /* ① スワイプでタブ切り替え（ホーム→マイ図鑑→カレンダー→統計） */
+    (function initSwipeTabs() {
+      const area = document.querySelector('main.content-area');
+      if (!area) return;
+      const ORDER = ['home', 'my', 'calendar', 'dashboard'];
+      let startX = 0, startY = 0, tracking = false;
+
+      area.addEventListener('touchstart', (e) => {
+        if (e.touches.length !== 1) return;
+        if (e.target.closest('.xl-grid-wrap, .sheet-ad-carousel, .map-scroll-body, .ai-chat-chip-row')) { tracking = false; return; }
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        tracking = true;
+      }, { passive: true });
+
+      area.addEventListener('touchend', (e) => {
+        if (!tracking) return;
+        tracking = false;
+        const dx = e.changedTouches[0].clientX - startX;
+        const dy = e.changedTouches[0].clientY - startY;
+        if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+
+        const activeNav = document.querySelector('.nav-item.active');
+        const current = activeNav ? activeNav.id.replace('nav-', '') : 'home';
+        const idx = ORDER.indexOf(current);
+        if (idx === -1) return;
+        if (dx < 0 && idx < ORDER.length - 1) switchMainTab(ORDER[idx + 1]);
+        else if (dx > 0 && idx > 0) switchMainTab(ORDER[idx - 1]);
+      }, { passive: true });
+    })();
+
+    /* ② 長押しでコンテキストメニュー（キャストカード・店舗カード） */
+    let longPressTimer = null;
+    let longPressMoved = false;
+
+    document.addEventListener('touchstart', function(e) {
+      const summary = e.target.closest('.cast-card > summary, .store-card-fold > summary');
+      if (!summary) return;
+      longPressMoved = false;
+      longPressTimer = setTimeout(() => {
+        if (!longPressMoved) {
+          if (navigator.vibrate) navigator.vibrate(15);
+          openCardContextMenu(summary);
+        }
+      }, 550);
+    }, { passive: true });
+    document.addEventListener('touchmove', function() { longPressMoved = true; clearTimeout(longPressTimer); }, { passive: true });
+    document.addEventListener('touchend', function() { clearTimeout(longPressTimer); });
+    document.addEventListener('touchcancel', function() { clearTimeout(longPressTimer); });
+
+    function openCardContextMenu(summaryEl) {
+      const details = summaryEl.closest('details');
+      if (!details) return;
+      const castName = details.dataset.castName;
+      const storeName = details.dataset.storeName;
+      const esc = (s) => String(s).replace(/'/g, "\\'");
+      let itemsHtml = '';
+
+      if (castName) {
+        itemsHtml = `
+          <button type="button" class="ctx-menu-item" onclick="closeContextMenu(); openCastReportModal(event, '${esc(castName)}')">🤖 AIレポートを見る</button>
+          <button type="button" class="ctx-menu-item" onclick="closeContextMenu(); openLetterListModal(event, '${esc(castName)}')">💌 手紙を見る</button>
+          <button type="button" class="ctx-menu-item" onclick="closeContextMenu(); openExportCastModal(event, '${esc(castName)}')">📤 友だちへ共有</button>
+        `;
+      } else if (storeName) {
+        itemsHtml = `
+          <button type="button" class="ctx-menu-item" onclick="closeContextMenu(); openEditStoreInfoModal(event, '${esc(storeName)}')">⚙️ 店舗情報を編集</button>
+        `;
+      } else {
+        return;
+      }
+
+      document.getElementById('ctxMenuBody').innerHTML = itemsHtml;
+      document.getElementById('ctxMenuOverlay').classList.add('open');
+    }
+
+    function closeContextMenu() {
+      document.getElementById('ctxMenuOverlay').classList.remove('open');
+    }
+
+    /* ③ 通知パネルを右スワイプで閉じる */
+    (function initNotifPanelSwipe() {
+      const panel = document.getElementById('notifSlidePanel');
+      if (!panel) return;
+      let startX = 0, dragX = 0, dragging = false;
+
+      panel.addEventListener('touchstart', (e) => {
+        if (e.touches.length !== 1) return;
+        startX = e.touches[0].clientX;
+        dragX = 0;
+        dragging = true;
+        panel.style.transition = 'none';
+      }, { passive: true });
+
+      panel.addEventListener('touchmove', (e) => {
+        if (!dragging) return;
+        dragX = e.touches[0].clientX - startX;
+        if (dragX < 0) dragX = 0;
+        panel.style.transform = `translateX(${dragX}px)`;
+      }, { passive: true });
+
+      panel.addEventListener('touchend', () => {
+        if (!dragging) return;
+        dragging = false;
+        panel.style.transition = '';
+        panel.style.transform = '';
+        if (dragX > 90) closeNotificationPanel();
+        dragX = 0;
+      });
+    })();
+
+    /* ④ ナビバーを上スワイプでボトムシートメニューを表示 */
+    (function initNavSwipeUp() {
+      const nav = document.querySelector('nav.floating-nav');
+      if (!nav) return;
+      let startY = 0, tracking = false;
+
+      nav.addEventListener('touchstart', (e) => {
+        if (e.touches.length !== 1) return;
+        startY = e.touches[0].clientY;
+        tracking = true;
+      }, { passive: true });
+
+      nav.addEventListener('touchend', (e) => {
+        if (!tracking) return;
+        tracking = false;
+        const dy = e.changedTouches[0].clientY - startY;
+        if (dy < -40) openMoreMenu();
+      }, { passive: true });
+    })();
+
     initAppLock();
     initUserData();
     initCloudAuth();
+    buildSheetAdCarousel(false);
+    // ロックOFFの場合は起動直後に広告ポップアップを表示
+    if (!appLockEnabled) {
+      setTimeout(() => tryShowStartupAdPopup(), 600);
+    }
   </script>
 </body>
 </html>
