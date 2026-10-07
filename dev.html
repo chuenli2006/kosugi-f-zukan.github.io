@@ -198,6 +198,343 @@
       backdrop-filter: blur(4px);
     }
     .ad-popup-close:active { transform: scale(0.92); }
+
+    /* ========== 💰 いい値ぇー！スコア ========== */
+    .gv-tab-body {
+      width: 100%; display: flex; flex-direction: column; gap: 14px;
+      animation: settingsFadeIn 0.35s ease both;
+    }
+    #gvContent {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      width: 100%;
+    }
+    #gvContent.gv-content-animating > * {
+      animation: gvCardIn 0.42s cubic-bezier(0.25, 1, 0.5, 1) both;
+    }
+    #gvContent.gv-content-animating > *:nth-child(1) { animation-delay: 0.02s; }
+    #gvContent.gv-content-animating > *:nth-child(2) { animation-delay: 0.08s; }
+    #gvContent.gv-content-animating > *:nth-child(3) { animation-delay: 0.14s; }
+    #gvContent.gv-content-animating > *:nth-child(4) { animation-delay: 0.20s; }
+    #gvContent.gv-content-animating > *:nth-child(5) { animation-delay: 0.26s; }
+    #gvContent.gv-content-animating > *:nth-child(6) { animation-delay: 0.32s; }
+    @keyframes gvCardIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes gvBadgePop {
+      0% { opacity: 0; transform: scale(0.6); }
+      70% { transform: scale(1.08); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    @keyframes gvDotIn {
+      from { opacity: 0; transform: scale(0.5); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes gvRingPulse {
+      0%, 100% { filter: drop-shadow(0 0 0 transparent); }
+      50% { filter: drop-shadow(0 0 6px rgba(32, 201, 151, 0.45)); }
+    }
+
+    .gv-top-bar {
+      display: flex; align-items: center; justify-content: space-between; gap: 6px;
+      background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius);
+      padding: 12px; box-shadow: var(--shadow); width: 100%; box-sizing: border-box;
+    }
+    .gv-nav-btn {
+      min-width: 72px; height: 36px; padding: 0 10px; border-radius: 18px;
+      border: 1.5px solid var(--primary-pink);
+      background: var(--soft-pink); color: var(--accent-pink); font-weight: bold; font-size: 0.78rem;
+      cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 2px;
+      flex-shrink: 0; white-space: nowrap;
+      transition: transform 0.12s ease, opacity 0.2s;
+    }
+    .gv-nav-btn:active { transform: scale(0.96); }
+    .gv-nav-btn:disabled, .gv-nav-btn.hidden-nav {
+      opacity: 0; pointer-events: none;
+    }
+    .gv-period-label {
+      flex: 1; text-align: center; font-size: 1rem; font-weight: bold; color: var(--accent-pink);
+      line-height: 1.25;
+    }
+    .gv-period-label .gv-period-main { display: block; }
+    .gv-period-label .gv-period-badge {
+      display: inline-block; margin-top: 2px; font-size: 0.68rem; font-weight: bold;
+      color: var(--accent-pink); background: var(--soft-pink); border: 1px solid var(--primary-pink);
+      padding: 1px 8px; border-radius: 999px;
+    }
+    .gv-mode-row {
+      display: flex; gap: 8px; width: 100%;
+    }
+    .gv-mode-btn {
+      flex: 1; padding: 9px 6px; border-radius: 12px; border: 1.5px solid var(--border-color);
+      background: var(--bg-color); color: var(--text-color); font-size: 0.78rem; font-weight: bold;
+      cursor: pointer; transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.12s;
+    }
+    .gv-mode-btn:active { transform: scale(0.97); }
+    .gv-mode-btn.active {
+      background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink));
+      color: #fff; border-color: transparent;
+    }
+
+    .gv-hero-card {
+      background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius);
+      padding: 14px; box-shadow: var(--shadow); text-align: center; width: 100%;
+      box-sizing: border-box;
+    }
+    .gv-ring-wrap {
+      position: relative; width: 220px; height: 220px; margin: 0 auto 4px;
+    }
+    .gv-ring-wrap.svg-ready .gv-ring-fg {
+      transition: stroke-dashoffset 0.85s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .gv-ring-wrap.gv-goal-met {
+      animation: gvRingPulse 1.2s ease-in-out 1;
+    }
+    .gv-ring-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .gv-ring-bg { fill: none; stroke: var(--border-color); stroke-linecap: round; opacity: 0.55; }
+    .gv-ring-fg {
+      fill: none; stroke-linecap: round;
+    }
+    .gv-ring-eff { stroke: #20c997; }
+    .gv-ring-sav { stroke: #4dabf7; }
+    .gv-ring-con { stroke: var(--accent-pink); }
+    .gv-ring-center {
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; pointer-events: none;
+      padding: 32% 20%;
+      box-sizing: border-box;
+      gap: 3px;
+    }
+    .gv-score-num {
+      font-size: 1.85rem; font-weight: 800; color: var(--accent-pink);
+      line-height: 1; margin: 0; padding: 0;
+      font-variant-numeric: tabular-nums;
+    }
+    .gv-score-num.gv-score-high { color: #0ca678; }
+    .gv-score-num.gv-score-mid { color: var(--accent-pink); }
+    .gv-score-num.gv-score-low { color: #e67700; }
+    .gv-score-goal-line {
+      font-size: 0.68rem; font-weight: bold; color: var(--light-text);
+      line-height: 1.2; margin: 0; padding: 0;
+      white-space: nowrap;
+    }
+    .gv-score-label {
+      font-size: 0.62rem; font-weight: bold; color: var(--light-text);
+      line-height: 1.2; margin: 0; padding: 0;
+      white-space: nowrap;
+    }
+    .gv-hero-sub {
+      font-size: 0.75rem; color: var(--light-text); margin-top: 12px;
+      line-height: 1.4; padding: 0 4px;
+    }
+    .gv-ring-legend {
+      display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 10px;
+    }
+    .gv-ring-legend-item {
+      display: inline-flex; align-items: center; gap: 5px; font-size: 0.7rem; font-weight: bold; color: var(--text-color);
+      background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 999px;
+      padding: 5px 10px; cursor: pointer; transition: transform 0.12s, border-color 0.15s, background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .gv-ring-legend-item:active { transform: scale(0.96); }
+    .gv-ring-legend-item:hover, .gv-ring-legend-item:focus {
+      border-color: var(--primary-pink); background: var(--soft-pink); outline: none;
+    }
+    .gv-ring-legend-dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+    }
+    .gv-help-btn {
+      width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+      border: 1.5px solid var(--border-color); background: transparent;
+      color: var(--light-text); font-size: 0.8rem; font-weight: bold;
+      cursor: pointer; opacity: 0.55; transition: opacity 0.15s, transform 0.12s, border-color 0.15s, color 0.15s;
+      display: inline-flex; align-items: center; justify-content: center;
+      line-height: 1; padding: 0; margin-left: 2px;
+    }
+    .gv-help-btn:hover, .gv-help-btn:focus {
+      opacity: 1; border-color: var(--primary-pink); color: var(--accent-pink); outline: none;
+    }
+    .gv-help-btn:active { transform: scale(0.92); }
+    .gv-help-body {
+      text-align: left; font-size: 0.82rem; line-height: 1.65; color: var(--text-color);
+      max-height: 60vh; overflow-y: auto; padding: 4px 2px;
+    }
+    .gv-help-body h4 {
+      font-size: 0.88rem; color: var(--accent-pink); margin: 14px 0 6px; font-weight: bold;
+    }
+    .gv-help-body h4:first-child { margin-top: 0; }
+    .gv-help-body p { margin: 0 0 8px; }
+    .gv-help-body ul { margin: 0 0 8px; padding-left: 1.2em; }
+    .gv-help-body li { margin-bottom: 4px; }
+    .gv-help-pill {
+      display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px;
+      vertical-align: middle;
+    }
+
+
+    .gv-metrics-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%;
+    }
+    .gv-metric-card {
+      background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 14px;
+      padding: 14px 12px; box-shadow: var(--shadow); text-align: center;
+    }
+    .gv-metric-lbl { font-size: 0.68rem; color: var(--light-text); margin-bottom: 6px; }
+    .gv-metric-val { font-size: 1.05rem; font-weight: bold; color: var(--accent-pink); }
+    .gv-metric-val.neutral { color: var(--text-color); }
+    .gv-empty-box {
+      background: var(--card-bg); border: 2px dashed var(--primary-pink); border-radius: var(--radius);
+      padding: 24px 14px; text-align: center; color: var(--light-text); font-size: 0.85rem;
+      box-shadow: var(--shadow);
+    }
+    .gv-note {
+      font-size: 0.7rem; color: var(--light-text); text-align: center; line-height: 1.55;
+      padding: 4px 10px 12px;
+    }
+
+    .gv-layer-row {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%;
+    }
+    .gv-layer-card {
+      background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 14px;
+      padding: 12px 8px; text-align: center; box-shadow: var(--shadow);
+    }
+    .gv-layer-ring {
+      position: relative; width: 64px; height: 64px; margin: 0 auto 8px;
+    }
+    .gv-layer-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .gv-layer-ring .gv-ring-bg { stroke-width: 7; fill: none; }
+    .gv-layer-ring .gv-ring-fg { stroke-width: 7; fill: none; }
+    .gv-layer-ring-center {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; font-weight: 800; color: var(--accent-pink);
+    }
+    .gv-layer-lbl { font-size: 0.65rem; color: var(--light-text); font-weight: bold; }
+    .gv-layer-sub { font-size: 0.6rem; color: var(--light-text); margin-top: 3px; }
+
+    .gv-goals-card {
+      background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius);
+      padding: 14px; box-shadow: var(--shadow); width: 100%; box-sizing: border-box;
+    }
+    .gv-goals-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 10px; padding-bottom: 6px; border-bottom: 2px solid var(--soft-pink);
+    }
+    .gv-goals-title { font-size: 0.9rem; font-weight: bold; color: var(--accent-pink); }
+    .gv-goals-edit-btn {
+      font-size: 0.72rem; font-weight: bold; padding: 5px 12px; border-radius: 12px;
+      border: 1px solid var(--primary-pink); background: var(--soft-pink); color: var(--accent-pink);
+      cursor: pointer; transition: transform 0.12s;
+    }
+    .gv-goals-edit-btn:active { transform: scale(0.96); }
+    .gv-goal-row { margin-bottom: 10px; }
+    .gv-goal-row:last-child { margin-bottom: 0; }
+    .gv-goal-meta {
+      display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;
+      font-size: 0.75rem; gap: 8px;
+    }
+    .gv-goal-name { font-weight: bold; color: var(--text-color); }
+    .gv-goal-progress-text { color: var(--light-text); font-variant-numeric: tabular-nums; }
+    .gv-goal-bar {
+      height: 10px; border-radius: 999px; background: var(--bg-color); border: 1px solid var(--border-color);
+      overflow: hidden;
+    }
+    .gv-goal-bar-fill {
+      height: 100%; width: 0%; border-radius: 999px;
+      background: linear-gradient(90deg, var(--primary-pink), var(--accent-pink));
+      transition: width 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .gv-goal-bar-fill.ok { background: linear-gradient(90deg, #20c997, #0ca678); }
+    .gv-goal-bar-fill.over { background: linear-gradient(90deg, #ff922b, #e03131); }
+    .gv-goal-badge {
+      display: inline-block; font-size: 0.65rem; font-weight: bold; padding: 1px 7px; border-radius: 8px;
+      margin-left: 4px;
+      animation: gvBadgePop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      animation-delay: 0.45s;
+    }
+    .gv-goal-badge.ok { background: #d3f9d8; color: #2b8a3e; }
+    .gv-goal-badge.over { background: #ffe3e3; color: #c92a2a; }
+
+    .gv-highlight-card {
+      background: linear-gradient(135deg, var(--soft-pink), var(--card-bg));
+      border: 1px solid var(--border-color); border-radius: var(--radius); padding: 14px;
+      box-shadow: var(--shadow); width: 100%; box-sizing: border-box;
+    }
+    .gv-highlight-title {
+      font-size: 0.9rem; font-weight: bold; color: var(--accent-pink);
+      margin-bottom: 10px; padding-bottom: 6px; border-bottom: 2px solid var(--soft-pink);
+    }
+    .gv-highlight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .gv-highlight-item {
+      text-align: center; background: var(--bg-color); border: 1px solid var(--border-color);
+      border-radius: 10px; padding: 10px;
+    }
+    .gv-highlight-val { font-size: 1.2rem; font-weight: bold; color: var(--accent-pink); line-height: 1.2; }
+    .gv-highlight-lbl { font-size: 0.68rem; color: var(--light-text); margin-top: 2px; }
+    .gv-goal-form { display: flex; flex-direction: column; gap: 12px; text-align: left; }
+    .gv-goal-form .form-group label { font-size: 0.75rem; font-weight: bold; color: var(--accent-pink); }
+    .gv-goal-form input {
+      padding: 9px 11px; border: 1px solid var(--border-color); border-radius: 8px;
+      font-size: 0.85rem; background: var(--bg-color); color: var(--text-color); width: 100%;
+      box-sizing: border-box;
+    }
+    .gv-goal-form .gv-goal-hint { font-size: 0.68rem; color: var(--light-text); margin-top: 3px; }
+
+    .gv-section-card {
+      background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius);
+      padding: 14px; box-shadow: var(--shadow); width: 100%; box-sizing: border-box;
+    }
+    .gv-section-header {
+      display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+      margin-bottom: 10px; padding-bottom: 6px; border-bottom: 2px solid var(--soft-pink);
+    }
+    .gv-section-title { font-size: 0.88rem; font-weight: bold; color: var(--accent-pink); }
+    .gv-section-sub { font-size: 0.72rem; color: var(--light-text); font-weight: bold; }
+    .gv-day-dots {
+      display: flex; flex-wrap: wrap; gap: 7px; justify-content: flex-start;
+    }
+    .gv-day-dot {
+      width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border-color);
+      background: transparent; box-sizing: border-box;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.55rem; color: var(--light-text); font-weight: bold;
+      transition: transform 0.12s;
+    }
+    .gv-day-dot.has {
+      border-color: var(--accent-pink); background: var(--soft-pink); color: var(--accent-pink);
+      animation: gvDotIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+    .gv-day-dot.high { border-color: #0ca678; background: #d3f9d8; color: #2b8a3e; }
+    .gv-day-dot.mid { border-color: #4dabf7; background: #d0ebff; color: #1864ab; }
+    .gv-day-dot.low { border-color: #fab005; background: #fff3bf; color: #e67700; }
+    .gv-day-dot:active { transform: scale(0.9); }
+    .gv-month-dots {
+      display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px 8px;
+    }
+    .gv-month-dot-wrap { text-align: center; }
+    .gv-month-dot {
+      width: 36px; height: 36px; border-radius: 50%; margin: 0 auto 4px;
+      border: 2.5px solid var(--border-color); background: transparent;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem; font-weight: 800; color: var(--light-text);
+      transition: transform 0.12s;
+    }
+    .gv-month-dot.has {
+      border-color: var(--accent-pink); color: var(--accent-pink); background: var(--soft-pink);
+      animation: gvDotIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+    .gv-month-dot.ok {
+      border-color: #0ca678; color: #0ca678; background: #d3f9d8;
+      animation: gvDotIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+    .gv-month-dot-lbl { font-size: 0.6rem; color: var(--light-text); }
+    .gv-trend-chart-wrap {
+      position: relative; width: 100%; height: 168px; margin-top: 2px;
+    }
+
+
     .sheet-ad-dots {
       display: flex; justify-content: center; gap: 6px; margin: 8px 0 2px;
     }
@@ -1154,6 +1491,7 @@
     .icon-cat-album     { --icon-bg: #FFE8CC; --icon-color: #D9480F; }
     .icon-cat-visibility{ --icon-bg: #F0F9FF; --icon-color: #0369A1; }
     .icon-cat-cloud     { --icon-bg: #DBEAFE; --icon-color: #1D4ED8; }
+    .icon-cat-goodvalue { --icon-bg: #ECFDF5; --icon-color: #059669; }
 
     /* ⭐ ステータスタグ：スマートモード時はピルバッジ形式に統一 */
     [data-ui-mode="smart"] .status-badge,
@@ -2348,6 +2686,24 @@
           <div class="album-scroll-body" id="albumScrollBody"></div>
         </div>
       </div>
+
+      <!-- 💰 いい値ぇー！スコア -->
+      <div id="viewGoodValue" class="tab-content">
+        <div class="gv-tab-body">
+          <div class="gv-top-bar">
+            <button type="button" class="gv-nav-btn" id="gvPrevBtn" onclick="shiftGoodValuePeriod(-1)" aria-label="前へ">◀ 先月</button>
+            <div class="gv-period-label" id="gvPeriodLabel">—</div>
+            <button type="button" class="gv-nav-btn" id="gvNextBtn" onclick="shiftGoodValuePeriod(1)" aria-label="次へ">来月 ▶</button>
+          </div>
+          <div class="gv-mode-row">
+            <button type="button" class="gv-mode-btn active" id="gvModeMonth" onclick="setGoodValueMode('month')">月別</button>
+            <button type="button" class="gv-mode-btn" id="gvModeYear" onclick="setGoodValueMode('year')">年別</button>
+            <button type="button" class="gv-mode-btn" id="gvModeAll" onclick="setGoodValueMode('all')">全期間</button>
+          </div>
+          <div id="gvContent"></div>
+          <p class="gv-note">※総合スコア＝効率45%＋節約35%＋安定20%。評価未入力はフラグのみ算出。節約目安は同満足帯の過去中央値との差です。</p>
+        </div>
+      </div>
     </main>
   </div>
 
@@ -2420,8 +2776,50 @@
         <span class="nav-icon icon-badge icon-cat-album icon-badge-sm"><span class="emoji-icon">📖</span><i data-lucide="book-image" class="smart-icon"></i></span><span>振り返りアルバム</span>
       </button>
 
+      <button class="sheet-nav-item" id="nav-goodValue" onclick="switchMainTab('goodValue'); closeMoreMenu();">
+        <span class="nav-icon icon-badge icon-cat-goodvalue icon-badge-sm"><span class="emoji-icon">💰</span><i data-lucide="circle-dollar-sign" class="smart-icon"></i></span><span>いい値ぇー</span>
+      </button>
+
       <div class="sheet-ad-carousel" id="sheetAdCarousel" onscroll="handleSheetAdScroll()"></div>
       <div class="sheet-ad-dots" id="sheetAdDots"></div>
+    </div>
+  </div>
+
+  <!-- 💰 いい値ぇー ヘルプ・凡例説明モーダル -->
+  <div class="modal-overlay" id="gvHelpModal">
+    <div class="modal-content" style="max-width:420px;">
+      <h3 id="gvHelpModalTitle">💰 いい値ぇー！とは？</h3>
+      <div class="gv-help-body" id="gvHelpModalBody"></div>
+      <button type="button" class="close-btn" onclick="closeModal('gvHelpModal')" style="margin-top:12px;">閉じる</button>
+    </div>
+  </div>
+
+  <!-- 💰 いい値ぇー 目標設定モーダル -->
+  <div class="modal-overlay" id="gvGoalsModal">
+    <div class="modal-content">
+      <h3 id="gvGoalsModalTitle">🎯 いい値ぇー目標</h3>
+      <p id="gvGoalsModalSub" class="gv-goal-hint" style="text-align:center; margin-bottom:10px;"></p>
+      <form class="gv-goal-form" onsubmit="saveGoodValueGoals(event)">
+        <div class="form-group" id="gvGoalBudgetGroup">
+          <label id="gvGoalBudgetLabel">予算上限（円）</label>
+          <input type="number" id="gvGoalBudget" min="0" step="1000" placeholder="例: 40000">
+          <div class="gv-goal-hint" id="gvGoalBudgetHint">この期間の合計金額が上限以内なら達成。空欄でOFF</div>
+        </div>
+        <div class="form-group">
+          <label>スコア目標（0〜100）</label>
+          <input type="number" id="gvGoalScore" min="0" max="100" step="1" placeholder="例: 70">
+          <div class="gv-goal-hint">総合スコアがこの値以上なら達成</div>
+        </div>
+        <div class="form-group">
+          <label>時間単価上限（円/分）</label>
+          <input type="number" id="gvGoalYpm" min="0" step="10" placeholder="例: 400">
+          <div class="gv-goal-hint">平均時間単価がこの値以下なら達成。空欄でOFF</div>
+        </div>
+        <div style="display:flex; gap:8px; margin-top:6px;">
+          <button type="button" class="close-btn" style="background:#888; flex:1;" onclick="closeModal('gvGoalsModal')">キャンセル</button>
+          <button type="submit" class="close-btn" style="flex:2;">💾 保存する</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -4572,16 +4970,848 @@
       if (overlay) overlay.classList.remove('open');
     }
 
-    /* 📱 拡張メニュー：広告カルーセルのドットインジケーター連動＋高さアニメーション */
-    function handleSheetAdScroll() {
-      const carousel = document.getElementById('sheetAdCarousel');
-      const dots = document.querySelectorAll('#sheetAdDots .sheet-ad-dot');
-      if (!carousel || !dots.length) return;
-      const cardWidth = carousel.clientWidth;
-      const activeIndex = Math.round(carousel.scrollLeft / cardWidth);
-      dots.forEach((dot, i) => dot.classList.toggle('active', i === activeIndex));
-      updateSheetAdCarouselHeight();
+
+    /* ==================================================================
+       💰 いい値ぇー！スコア（Phase 1）
+       ================================================================== */
+    let gvMode = 'month'; // 'month' | 'year' | 'all'
+    let gvCursor = new Date(); // 表示中の年月（月別・年別）
+
+    const GV_R0 = 50 * Math.pow(60, 0.4) / 20000; // 満足50・60分・2万円 ≒ スコア50
+
+    function gvParseAxis(val) {
+      const n = parseInt(val, 10);
+      if (isNaN(n)) return 3;
+      return Math.max(1, Math.min(5, n));
     }
+
+    function gvIsDefaultScores(rec) {
+      const axes = [rec.looks, rec.service, rec.style, rec.intimacy, rec.value];
+      return axes.every(v => {
+        if (v === '' || v === null || v === undefined) return true;
+        const n = parseInt(v, 10);
+        return isNaN(n) || n === 3;
+      });
+    }
+
+    function gvParseCourseMinutes(rec) {
+      const raw = rec.courseTime;
+      if (raw === '' || raw === null || raw === undefined) return 60;
+      const n = parseInt(String(raw).replace(/[^0-9]/g, ''), 10);
+      if (!n || isNaN(n)) return 60;
+      return Math.max(1, Math.min(600, n));
+    }
+
+    function gvParseAmount(rec) {
+      const n = parseInt(String(rec.amount || '').replace(/[^0-9]/g, ''), 10);
+      return (n && n > 0) ? n : null;
+    }
+
+    function gvHasFlag(rec, char) {
+      return !!(rec.flags && String(rec.flags).includes(char));
+    }
+
+    /** 1回あたりのいい値ぇー指数 0〜100。対象外は null */
+    function computeVisitGoodValue(rec) {
+      if (!rec || rec.pendingCheckIn) return null;
+
+      if (gvIsDefaultScores(rec)) {
+        const atari = gvHasFlag(rec, '🆂');
+        const hazure = gvHasFlag(rec, '⚔');
+        if (atari && !hazure) return 75;
+        if (hazure && !atari) return 25;
+        return 50; // 通常 or 両方
+      }
+
+      const looks = gvParseAxis(rec.looks);
+      const service = gvParseAxis(rec.service);
+      const style = gvParseAxis(rec.style);
+      const intimacy = gvParseAxis(rec.intimacy);
+      const value = gvParseAxis(rec.value);
+
+      let S = 20 * (0.35 * value + 0.20 * service + 0.15 * intimacy + 0.15 * looks + 0.15 * style);
+      const atari = gvHasFlag(rec, '🆂');
+      const hazure = gvHasFlag(rec, '⚔');
+      if (atari && !hazure) S = Math.min(100, S * 1.15);
+      else if (hazure && !atari) S = S * 0.70;
+
+      const C = gvParseAmount(rec);
+      if (C === null) return Math.max(0, Math.min(100, S));
+
+      const T = gvParseCourseMinutes(rec);
+      const raw = (S * Math.pow(T, 0.4)) / C;
+      const score = 50 + 25 * Math.log(Math.max(raw, 1e-9) / GV_R0);
+      return Math.max(0, Math.min(100, score));
+    }
+
+    function gvVisitInPeriod(rec, mode, cursor) {
+      if (!rec || rec.pendingCheckIn) return false;
+      if (mode === 'all') return true;
+      const y = parseInt(rec.year, 10);
+      if (!y || isNaN(y)) return false;
+      if (mode === 'year') return y === cursor.getFullYear();
+      const m = parseMonthNum(rec.month);
+      return y === cursor.getFullYear() && m === (cursor.getMonth() + 1);
+    }
+
+    /* ---------- Phase 2+: Fit風UI・モード別目標・日次/月次ドット・傾向 ---------- */
+    let gvTrendChart = null;
+
+    function gvDefaultGoalSet(mode) {
+      if (mode === 'year') return { budget: null, score: 70, ypm: null };
+      if (mode === 'all') return { budget: null, score: 70, ypm: null };
+      return { budget: null, score: 70, ypm: null };
+    }
+
+    function getGoodValueGoalsAll() {
+      try {
+        const raw = localStorage.getItem('gv_goals_' + currentUserName);
+        if (!raw) return { month: gvDefaultGoalSet('month'), year: gvDefaultGoalSet('year'), all: gvDefaultGoalSet('all') };
+        const g = JSON.parse(raw);
+        // 旧形式（フラット）からの移行
+        if (g.month || g.year || g.all) {
+          return {
+            month: Object.assign(gvDefaultGoalSet('month'), g.month || {}),
+            year: Object.assign(gvDefaultGoalSet('year'), g.year || {}),
+            all: Object.assign(gvDefaultGoalSet('all'), g.all || {})
+          };
+        }
+        // legacy single set → 月次にコピー、年次は予算×12目安
+        const legacy = {
+          budget: g.budget != null && g.budget !== '' ? Number(g.budget) : null,
+          score: g.score != null && g.score !== '' ? Number(g.score) : 70,
+          ypm: g.ypm != null && g.ypm !== '' ? Number(g.ypm) : null
+        };
+        const yearBudget = legacy.budget != null ? legacy.budget * 12 : null;
+        return {
+          month: Object.assign({}, legacy),
+          year: { budget: yearBudget, score: legacy.score, ypm: legacy.ypm },
+          all: { budget: null, score: legacy.score, ypm: legacy.ypm }
+        };
+      } catch (e) {
+        return { month: gvDefaultGoalSet('month'), year: gvDefaultGoalSet('year'), all: gvDefaultGoalSet('all') };
+      }
+    }
+
+    function getGoodValueGoals(mode) {
+      const all = getGoodValueGoalsAll();
+      const m = mode || gvMode;
+      return Object.assign(gvDefaultGoalSet(m), all[m] || {});
+    }
+
+    function suggestGoodValueGoals(mode) {
+      const withAmount = historyList.filter(v => !v.pendingCheckIn && gvParseAmount(v) !== null);
+      const byMonth = {};
+      withAmount.forEach(v => {
+        const y = parseInt(v.year, 10);
+        const m = parseMonthNum(v.month);
+        if (!y) return;
+        const key = y + '-' + String(m).padStart(2, '0');
+        byMonth[key] = (byMonth[key] || 0) + gvParseAmount(v);
+      });
+      const monthSums = Object.values(byMonth).sort((a, b) => a - b);
+      let monthBudget = 40000;
+      if (monthSums.length) {
+        monthBudget = Math.round(monthSums[Math.floor(monthSums.length / 2)] * 0.9 / 1000) * 1000;
+      }
+      const ypms = [];
+      withAmount.forEach(v => {
+        const C = gvParseAmount(v);
+        if (C) ypms.push(C / gvParseCourseMinutes(v));
+      });
+      ypms.sort((a, b) => a - b);
+      const ypm = ypms.length >= 3
+        ? Math.round(ypms[Math.floor(ypms.length / 2)] * 1.05 / 10) * 10
+        : 400;
+
+      if (mode === 'year') {
+        return { budget: monthBudget * 12, score: 70, ypm: ypm };
+      }
+      if (mode === 'all') {
+        return { budget: null, score: 70, ypm: ypm };
+      }
+      return { budget: monthBudget, score: 70, ypm: ypm };
+    }
+
+    function openGoodValueGoalsModal() {
+      const mode = gvMode;
+      const g = getGoodValueGoals(mode);
+      const sug = suggestGoodValueGoals(mode);
+      const titles = { month: '月次の目標', year: '年次の目標', all: '全期間の目標' };
+      const subs = {
+        month: 'いま表示中の「月別」にだけ適用されます',
+        year: 'いま表示中の「年別」にだけ適用されます',
+        all: '「全期間」表示用です（予算は通常OFF）'
+      };
+      document.getElementById('gvGoalsModalTitle').textContent = '🎯 ' + titles[mode];
+      document.getElementById('gvGoalsModalSub').textContent = subs[mode];
+      document.getElementById('gvGoalBudgetLabel').textContent =
+        mode === 'year' ? '年間予算上限（円）' : mode === 'all' ? '予算上限（円・任意）' : '月間予算上限（円）';
+      document.getElementById('gvGoalBudgetGroup').style.display = 'flex';
+      document.getElementById('gvGoalBudget').value = g.budget != null ? g.budget : (sug.budget != null ? sug.budget : '');
+      document.getElementById('gvGoalScore').value = g.score != null ? g.score : 70;
+      document.getElementById('gvGoalYpm').value = g.ypm != null ? g.ypm : (sug.ypm != null ? sug.ypm : '');
+      document.getElementById('gvGoalsModal').style.display = 'flex';
+    }
+
+    function saveGoodValueGoals(e) {
+      e.preventDefault();
+      const budgetRaw = document.getElementById('gvGoalBudget').value.trim();
+      const scoreRaw = document.getElementById('gvGoalScore').value.trim();
+      const ypmRaw = document.getElementById('gvGoalYpm').value.trim();
+      const entry = {
+        budget: budgetRaw === '' ? null : Math.max(0, parseInt(budgetRaw, 10) || 0),
+        score: scoreRaw === '' ? 70 : Math.max(0, Math.min(100, parseInt(scoreRaw, 10) || 70)),
+        ypm: ypmRaw === '' ? null : Math.max(0, parseInt(ypmRaw, 10) || 0)
+      };
+      const all = getGoodValueGoalsAll();
+      all[gvMode] = entry;
+      localStorage.setItem('gv_goals_' + currentUserName, JSON.stringify(all));
+      closeModal('gvGoalsModal');
+      renderGoodValueView();
+    }
+
+    function gvSatisfactionBand(rec) {
+      if (gvIsDefaultScores(rec)) {
+        if (gvHasFlag(rec, '🆂') && !gvHasFlag(rec, '⚔')) return 'high';
+        if (gvHasFlag(rec, '⚔') && !gvHasFlag(rec, '🆂')) return 'low';
+        return 'mid';
+      }
+      const looks = gvParseAxis(rec.looks);
+      const service = gvParseAxis(rec.service);
+      const style = gvParseAxis(rec.style);
+      const intimacy = gvParseAxis(rec.intimacy);
+      const value = gvParseAxis(rec.value);
+      const S = 20 * (0.35 * value + 0.20 * service + 0.15 * intimacy + 0.15 * looks + 0.15 * style);
+      if (S >= 70) return 'high';
+      if (S <= 45) return 'low';
+      return 'mid';
+    }
+
+    function gvMedian(arr) {
+      if (!arr.length) return null;
+      const a = arr.slice().sort((x, y) => x - y);
+      const mid = Math.floor(a.length / 2);
+      return a.length % 2 ? a[mid] : (a[mid - 1] + a[mid]) / 2;
+    }
+
+    function gvBandMedianMap() {
+      const buckets = { high: [], mid: [], low: [] };
+      historyList.forEach(v => {
+        if (v.pendingCheckIn) return;
+        const C = gvParseAmount(v);
+        if (C === null) return;
+        buckets[gvSatisfactionBand(v)].push(C);
+      });
+      return { high: gvMedian(buckets.high), mid: gvMedian(buckets.mid), low: gvMedian(buckets.low) };
+    }
+
+    function aggregateGoodValue(mode, cursor) {
+      const visits = historyList.filter(v => gvVisitInPeriod(v, mode, cursor));
+      const scores = [];
+      let sumAmount = 0, amountCount = 0;
+      let sumYenPerMin = 0, ypmCount = 0;
+      let atari = 0, hazure = 0, modeB = 0;
+      let savingsSum = 0, savingsUsed = 0;
+      const bandMed = gvBandMedianMap();
+      const dayMap = {}; // day -> scores[]
+      const monthMap = {}; // 1-12 -> scores[] & amounts
+
+      visits.forEach(v => {
+        const s = computeVisitGoodValue(v);
+        if (s !== null) scores.push(s);
+        if (!gvIsDefaultScores(v)) modeB++;
+        if (gvHasFlag(v, '🆂')) atari++;
+        if (gvHasFlag(v, '⚔')) hazure++;
+        const C = gvParseAmount(v);
+        if (C !== null) {
+          sumAmount += C;
+          amountCount++;
+          const T = gvParseCourseMinutes(v);
+          sumYenPerMin += C / T;
+          ypmCount++;
+          const med = bandMed[gvSatisfactionBand(v)];
+          if (med != null && med > 0) {
+            if (med - C > 0) savingsSum += (med - C);
+            savingsUsed++;
+          }
+        }
+        const day = parseInt(v.day, 10) || 1;
+        const mon = parseMonthNum(v.month);
+        if (s !== null) {
+          if (!dayMap[day]) dayMap[day] = [];
+          dayMap[day].push(s);
+          if (!monthMap[mon]) monthMap[mon] = { scores: [], amount: 0 };
+          monthMap[mon].scores.push(s);
+          if (C) monthMap[mon].amount += C;
+        }
+      });
+
+      const n = scores.length;
+      const efficiency = n > 0 ? scores.reduce((a, b) => a + b, 0) / n : null;
+      const hazureRate = n > 0 ? (hazure / n) * 100 : null;
+      let consistency = n > 0 ? Math.max(0, Math.min(100, 100 - (hazureRate || 0) * 1.2)) : null;
+      let savingsScore = null;
+      if (savingsUsed > 0) {
+        savingsScore = Math.max(0, Math.min(100, 50 + (savingsSum / (sumAmount + savingsSum || 1)) * 80));
+      } else if (n > 0) {
+        savingsScore = 50;
+      }
+      let overall = null;
+      if (efficiency != null) {
+        overall = Math.round(0.45 * efficiency + 0.35 * (savingsScore != null ? savingsScore : 50) + 0.20 * (consistency != null ? consistency : 50));
+      }
+
+      const goals = getGoodValueGoals(mode);
+      const totalAmount = amountCount > 0 ? sumAmount : null;
+      const avgYpm = ypmCount > 0 ? Math.round(sumYenPerMin / ypmCount) : null;
+
+      // 傾向用: 月別は日ごと平均スコア、年別は月ごと
+      const trendLabels = [];
+      const trendValues = [];
+      if (mode === 'month') {
+        const daysInMonth = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0).getDate();
+        for (let d = 1; d <= daysInMonth; d++) {
+          if (dayMap[d] && dayMap[d].length) {
+            trendLabels.push(d + '日');
+            trendValues.push(Math.round(dayMap[d].reduce((a, b) => a + b, 0) / dayMap[d].length));
+          }
+        }
+      } else if (mode === 'year') {
+        for (let m = 1; m <= 12; m++) {
+          trendLabels.push(m + '月');
+          if (monthMap[m] && monthMap[m].scores.length) {
+            trendValues.push(Math.round(monthMap[m].scores.reduce((a, b) => a + b, 0) / monthMap[m].scores.length));
+          } else {
+            trendValues.push(null);
+          }
+        }
+      } else {
+        // 全期間: 年ごと
+        const yearMap = {};
+        visits.forEach(v => {
+          const y = parseInt(v.year, 10);
+          const s = computeVisitGoodValue(v);
+          if (!y || s == null) return;
+          if (!yearMap[y]) yearMap[y] = [];
+          yearMap[y].push(s);
+        });
+        Object.keys(yearMap).sort().forEach(y => {
+          trendLabels.push(y + '年');
+          trendValues.push(Math.round(yearMap[y].reduce((a, b) => a + b, 0) / yearMap[y].length));
+        });
+      }
+
+      return {
+        count: n,
+        score: overall,
+        efficiency: efficiency != null ? Math.round(efficiency) : null,
+        savingsScore: savingsScore != null ? Math.round(savingsScore) : null,
+        consistency: consistency != null ? Math.round(consistency) : null,
+        savingsYen: savingsUsed > 0 ? Math.round(savingsSum) : null,
+        avgYenPerMin: avgYpm,
+        totalAmount,
+        atariRate: n > 0 ? (atari / n) * 100 : null,
+        hazureRate,
+        ratedCount: modeB,
+        goals,
+        budgetOk: goals.budget != null && totalAmount != null ? totalAmount <= goals.budget : null,
+        scoreOk: goals.score != null && overall != null ? overall >= goals.score : null,
+        ypmOk: goals.ypm != null && avgYpm != null ? avgYpm <= goals.ypm : null,
+        dayMap, monthMap, trendLabels, trendValues
+      };
+    }
+
+    function formatGvAmount(n) {
+      if (n === null || n === undefined) return '—';
+      if (currentAmountHide === 'hide') return '***';
+      return '¥' + Number(n).toLocaleString();
+    }
+
+    function gvScoreClass(score) {
+      if (score === null) return '';
+      if (score >= 70) return 'gv-score-high';
+      if (score >= 40) return 'gv-score-mid';
+      return 'gv-score-low';
+    }
+
+    function gvGoalBarHtml(name, currentLabel, targetLabel, ratio, status) {
+      const pct = Math.max(0, Math.min(100, Math.round((ratio == null ? 0 : ratio) * 100)));
+      let fillCls = '', badge = '';
+      if (status === 'ok') { fillCls = 'ok'; badge = '<span class="gv-goal-badge ok">達成</span>'; }
+      else if (status === 'over') { fillCls = 'over'; badge = '<span class="gv-goal-badge over">超過</span>'; }
+      return `<div class="gv-goal-row">
+        <div class="gv-goal-meta">
+          <span class="gv-goal-name">${name}${badge}</span>
+          <span class="gv-goal-progress-text">${currentLabel} / ${targetLabel}</span>
+        </div>
+        <div class="gv-goal-bar"><div class="gv-goal-bar-fill ${fillCls}" data-width="${pct}" style="width:0%;"></div></div>
+      </div>`;
+    }
+
+
+    function openGvMetricHelp(kind) {
+      const map = {
+        efficiency: {
+          title: '🟢 効率スコアとは？',
+          body: `<p><strong>効率</strong>は「満足度に対して、どれだけコスパよく遊べたか」を表します。</p>
+            <ul>
+              <li>見た目・接客・スタイル・密着・コスパなどの評価と、金額・コース時間から算出します。</li>
+              <li>評価がすべて未入力（3）の回は、当たり／ハズレのフラグだけで計算します。</li>
+              <li>高いほど「満足のわりに安く・ちょうどよく遊べた」傾向です。</li>
+            </ul>
+            <p>総合スコアのうち <strong>45%</strong> を占めます。</p>`
+        },
+        savings: {
+          title: '🔵 節約スコアとは？',
+          body: `<p><strong>節約</strong>は「同じくらいの満足感の回と比べて、いくら抑えられたか」の目安です。</p>
+            <ul>
+              <li>過去の記録を満足帯（高め／普通／低め）に分け、その中央値の金額と比較します。</li>
+              <li>中央値より安く済んだ分を「節約目安」として積み上げます。</li>
+              <li>データが少ないときは中間値寄りのスコアになります。</li>
+            </ul>
+            <p>総合スコアのうち <strong>35%</strong> を占めます。</p>`
+        },
+        consistency: {
+          title: '🩷 安定スコアとは？',
+          body: `<p><strong>安定</strong>は「ハズレが少なく、ブレずに楽しめているか」を表します。</p>
+            <ul>
+              <li>ハズレフラグ（⚔）の割合が低いほど高くなります。</li>
+              <li>計算の目安：100 −（ハズレ率 × 1.2）</li>
+              <li>当たりが多くても、ハズレが多いと安定は下がります。</li>
+            </ul>
+            <p>総合スコアのうち <strong>20%</strong> を占めます。</p>`
+        }
+      };
+      const item = map[kind];
+      if (!item) return;
+      document.getElementById('gvHelpModalTitle').textContent = item.title;
+      document.getElementById('gvHelpModalBody').innerHTML = item.body;
+      document.getElementById('gvHelpModal').style.display = 'flex';
+    }
+
+    function openGvFeatureHelp() {
+      document.getElementById('gvHelpModalTitle').textContent = '💰 いい値ぇー！とは？';
+      document.getElementById('gvHelpModalBody').innerHTML = `
+        <p>「いくら使ったか」だけでなく、<strong>どれだけ納得感のある遊び方ができているか</strong>をスコア化する画面です。</p>
+        <h4>総合スコアの内訳</h4>
+        <ul>
+          <li><span class="gv-help-pill" style="background:#20c997"></span><strong>効率 45%</strong> … 満足 × コスパ</li>
+          <li><span class="gv-help-pill" style="background:#4dabf7"></span><strong>節約 35%</strong> … 同満足帯より安く済んだ度合い</li>
+          <li><span class="gv-help-pill" style="background:var(--accent-pink)"></span><strong>安定 20%</strong> … ハズレの少なさ</li>
+        </ul>
+        <h4>期間の見方</h4>
+        <ul>
+          <li><strong>月別</strong> … その月の記録・日ごとのドット・月次目標</li>
+          <li><strong>年別</strong> … 月ごとのスコア・年次目標</li>
+          <li><strong>全期間</strong> … これまでの全体傾向</li>
+        </ul>
+        <h4>目標について</h4>
+        <p>予算・スコア・時間単価の目標は、<strong>月別／年別／全期間で別々に保存</strong>されます。「編集」から設定できます。</p>
+        <h4>ヒント</h4>
+        <ul>
+          <li>リング下の「効率・節約・安定」をタップすると、それぞれの詳しい説明が開きます。</li>
+          <li>金額や評価を入れるほど、スコアの精度が上がります。</li>
+        </ul>`;
+      document.getElementById('gvHelpModal').style.display = 'flex';
+    }
+
+    function gvConcentricRingHtml(eff, sav, con, overall, goalScore) {
+      const rings = [
+        { r: 45, sw: 5, val: eff, cls: 'gv-ring-eff' },
+        { r: 36, sw: 5, val: sav, cls: 'gv-ring-sav' },
+        { r: 27, sw: 5, val: con, cls: 'gv-ring-con' }
+      ];
+      let circles = '';
+      rings.forEach((ring, idx) => {
+        const c = 2 * Math.PI * ring.r;
+        const v = ring.val == null ? 0 : ring.val;
+        const targetOff = c * (1 - v / 100);
+        // 初期は未塗り → JSで実値へ
+        circles += `<circle class="gv-ring-bg" cx="50" cy="50" r="${ring.r}" stroke-width="${ring.sw}"></circle>`;
+        circles += `<circle class="gv-ring-fg ${ring.cls}" data-target-offset="${targetOff.toFixed(2)}" data-circ="${c.toFixed(2)}"
+          cx="50" cy="50" r="${ring.r}" stroke-width="${ring.sw}"
+          stroke-dasharray="${c.toFixed(2)}" stroke-dashoffset="${c.toFixed(2)}"></circle>`;
+      });
+      const cls = gvScoreClass(overall);
+      const goalLine = goalScore != null
+        ? `<div class="gv-score-goal-line">/ ${goalScore} 目標</div>`
+        : '';
+      const metClass = (overall != null && goalScore != null && overall >= goalScore) ? ' gv-goal-met' : '';
+      return `<div class="gv-ring-wrap${metClass}" id="gvMainRingWrap">
+        <svg viewBox="0 0 100 100" aria-hidden="true">${circles}</svg>
+        <div class="gv-ring-center">
+          <div class="gv-score-num ${cls}" id="gvScoreNumAnim" data-target="${overall != null ? overall : ''}">0</div>
+          ${goalLine}
+          <div class="gv-score-label">いい値ぇー！スコア</div>
+        </div>
+      </div>
+      <div class="gv-ring-legend">
+        <button type="button" class="gv-ring-legend-item" onclick="openGvMetricHelp('efficiency')" aria-label="効率の説明">
+          <span class="gv-ring-legend-dot" style="background:#20c997"></span>効率 ${eff != null ? eff : '—'}
+        </button>
+        <button type="button" class="gv-ring-legend-item" onclick="openGvMetricHelp('savings')" aria-label="節約の説明">
+          <span class="gv-ring-legend-dot" style="background:#4dabf7"></span>節約 ${sav != null ? sav : '—'}
+        </button>
+        <button type="button" class="gv-ring-legend-item" onclick="openGvMetricHelp('consistency')" aria-label="安定の説明">
+          <span class="gv-ring-legend-dot" style="background:var(--accent-pink)"></span>安定 ${con != null ? con : '—'}
+        </button>
+        <button type="button" class="gv-help-btn" onclick="openGvFeatureHelp()" aria-label="いい値ぇー！の説明">？</button>
+      </div>`;
+    }
+
+    function gvAnimateRingsAndScore() {
+      const wrap = document.getElementById('gvMainRingWrap');
+      if (!wrap) return;
+      // レイアウト後に transition を有効化してから offset を更新
+      requestAnimationFrame(() => {
+        wrap.classList.add('svg-ready');
+        wrap.querySelectorAll('.gv-ring-fg').forEach((el, i) => {
+          const target = el.getAttribute('data-target-offset');
+          if (target != null) {
+            setTimeout(() => { el.style.strokeDashoffset = target; }, i * 60);
+          }
+        });
+      });
+      const numEl = document.getElementById('gvScoreNumAnim');
+      if (!numEl) return;
+      const target = parseInt(numEl.getAttribute('data-target'), 10);
+      if (isNaN(target)) {
+        numEl.textContent = '—';
+        return;
+      }
+      const duration = 700;
+      const startTs = performance.now();
+      const step = (now) => {
+        const t = Math.min(1, (now - startTs) / duration);
+        const eased = 1 - Math.pow(1 - t, 3);
+        numEl.textContent = String(Math.round(target * eased));
+        if (t < 1) requestAnimationFrame(step);
+        else numEl.textContent = String(target);
+      };
+      requestAnimationFrame(step);
+    }
+
+    function gvAnimateGoalBars() {
+      document.querySelectorAll('.gv-goal-bar-fill[data-width]').forEach((el, i) => {
+        const w = el.getAttribute('data-width');
+        el.style.width = '0%';
+        setTimeout(() => { el.style.width = w + '%'; }, 80 + i * 70);
+      });
+    }
+
+    function gvStaggerDayDots() {
+      document.querySelectorAll('.gv-day-dot.has, .gv-month-dot.has, .gv-month-dot.ok').forEach((el, i) => {
+        el.style.animationDelay = (0.05 + i * 0.025) + 's';
+      });
+    }
+
+
+    function gvDayDotsHtml(mode, cursor, data) {
+      if (mode === 'month') {
+        const daysInMonth = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0).getDate();
+        let hasCount = 0;
+        let dots = '';
+        for (let d = 1; d <= daysInMonth; d++) {
+          const arr = data.dayMap[d];
+          if (arr && arr.length) {
+            hasCount++;
+            const avg = arr.reduce((a, b) => a + b, 0) / arr.length;
+            const tier = avg >= 70 ? 'high' : avg >= 40 ? 'mid' : 'low';
+            dots += `<span class="gv-day-dot has ${tier}" title="${d}日">${d}</span>`;
+          } else {
+            dots += `<span class="gv-day-dot" title="${d}日"></span>`;
+          }
+        }
+        return `<div class="gv-section-card">
+          <div class="gv-section-header">
+            <span class="gv-section-title">この月の記録日</span>
+            <span class="gv-section-sub">${hasCount}/${daysInMonth} 日</span>
+          </div>
+          <div class="gv-day-dots">${dots}</div>
+        </div>`;
+      }
+      if (mode === 'year') {
+        const goal = data.goals.score != null ? data.goals.score : 70;
+        let okCount = 0, hasCount = 0;
+        let cells = '';
+        for (let m = 1; m <= 12; m++) {
+          const entry = data.monthMap[m];
+          let cls = '', label = '—';
+          if (entry && entry.scores.length) {
+            hasCount++;
+            const avg = Math.round(entry.scores.reduce((a, b) => a + b, 0) / entry.scores.length);
+            label = String(avg);
+            if (avg >= goal) { cls = 'ok'; okCount++; }
+            else cls = 'has';
+          }
+          cells += `<div class="gv-month-dot-wrap">
+            <div class="gv-month-dot ${cls}">${label}</div>
+            <div class="gv-month-dot-lbl">${m}月</div>
+          </div>`;
+        }
+        return `<div class="gv-section-card">
+          <div class="gv-section-header">
+            <span class="gv-section-title">月ごとのスコア</span>
+            <span class="gv-section-sub">目標達成 ${okCount}/12 ／ 記録あり ${hasCount}</span>
+          </div>
+          <div class="gv-month-dots">${cells}</div>
+        </div>`;
+      }
+      return '';
+    }
+
+    function gvRenderTrendChart(labels, values) {
+      const canvas = document.getElementById('gvTrendCanvas');
+      if (!canvas || typeof Chart === 'undefined') return;
+      if (gvTrendChart) { gvTrendChart.destroy(); gvTrendChart = null; }
+      const filteredLabels = [];
+      const filteredValues = [];
+      labels.forEach((l, i) => {
+        if (values[i] != null) { filteredLabels.push(l); filteredValues.push(values[i]); }
+      });
+      if (!filteredValues.length) return;
+      const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent-pink').trim() || '#f72585';
+      gvTrendChart = new Chart(canvas.getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: filteredLabels,
+          datasets: [{
+            data: filteredValues,
+            backgroundColor: accent,
+            borderRadius: 4,
+            maxBarThickness: 28
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: { duration: 450, easing: 'easeOutQuart' },
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { font: { size: 9 }, maxRotation: 0 }, grid: { display: false } },
+            y: { min: 0, max: 100, ticks: { font: { size: 9 }, stepSize: 25 }, grid: { color: 'rgba(128,128,128,0.15)' } }
+          }
+        }
+      });
+    }
+
+    function initGoodValueView() {
+      // 当月にリセットはしない（ユーザーの選択を維持）。初回のみ現在月
+      if (!window._gvInitialized) {
+        gvCursor = new Date();
+        gvMode = 'month';
+        window._gvInitialized = true;
+      }
+      renderGoodValueView();
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function setGoodValueMode(mode) {
+      gvMode = mode;
+      if (mode === 'month' || mode === 'year') {
+        // 未来に居る場合は現在に戻す
+        const now = new Date();
+        if (gvMode === 'month') {
+          const cur = new Date(gvCursor.getFullYear(), gvCursor.getMonth(), 1);
+          const limit = new Date(now.getFullYear(), now.getMonth(), 1);
+          if (cur > limit) gvCursor = new Date(now.getFullYear(), now.getMonth(), 1);
+        } else {
+          if (gvCursor.getFullYear() > now.getFullYear()) {
+            gvCursor = new Date(now.getFullYear(), 0, 1);
+          }
+        }
+      }
+      renderGoodValueView();
+    }
+
+    function shiftGoodValuePeriod(delta) {
+      if (gvMode === 'all') return;
+      const now = new Date();
+      if (gvMode === 'month') {
+        const next = new Date(gvCursor.getFullYear(), gvCursor.getMonth() + delta, 1);
+        const limit = new Date(now.getFullYear(), now.getMonth(), 1);
+        if (delta > 0 && next > limit) return;
+        gvCursor = next;
+      } else if (gvMode === 'year') {
+        const y = gvCursor.getFullYear() + delta;
+        if (delta > 0 && y > now.getFullYear()) return;
+        gvCursor = new Date(y, 0, 1);
+      }
+      renderGoodValueView();
+    }
+
+    function updateGoodValueChrome() {
+      const label = document.getElementById('gvPeriodLabel');
+      const prevBtn = document.getElementById('gvPrevBtn');
+      const nextBtn = document.getElementById('gvNextBtn');
+      const now = new Date();
+
+      document.getElementById('gvModeMonth').classList.toggle('active', gvMode === 'month');
+      document.getElementById('gvModeYear').classList.toggle('active', gvMode === 'year');
+      document.getElementById('gvModeAll').classList.toggle('active', gvMode === 'all');
+
+      if (gvMode === 'all') {
+        label.innerHTML = '<span class="gv-period-main">全期間</span>';
+        prevBtn.classList.add('hidden-nav');
+        nextBtn.classList.add('hidden-nav');
+        prevBtn.disabled = true;
+        nextBtn.disabled = true;
+        prevBtn.innerHTML = '◀';
+        nextBtn.innerHTML = '▶';
+        return;
+      }
+
+      prevBtn.classList.remove('hidden-nav');
+      prevBtn.disabled = false;
+
+      if (gvMode === 'month') {
+        const isCurrentMonth = gvCursor.getFullYear() === now.getFullYear() && gvCursor.getMonth() === now.getMonth();
+        const y = gvCursor.getFullYear();
+        const m = gvCursor.getMonth() + 1;
+        if (isCurrentMonth) {
+          label.innerHTML = `<span class="gv-period-main">${y}年${m}月</span><span class="gv-period-badge">当月</span>`;
+        } else {
+          label.innerHTML = `<span class="gv-period-main">${y}年${m}月</span>`;
+        }
+        prevBtn.innerHTML = '◀ 先月';
+        nextBtn.innerHTML = '来月 ▶';
+        if (isCurrentMonth) {
+          nextBtn.classList.add('hidden-nav');
+          nextBtn.disabled = true;
+        } else {
+          nextBtn.classList.remove('hidden-nav');
+          nextBtn.disabled = false;
+        }
+      } else {
+        const y = gvCursor.getFullYear();
+        const isCurrentYear = y === now.getFullYear();
+        if (isCurrentYear) {
+          label.innerHTML = `<span class="gv-period-main">${y}年</span><span class="gv-period-badge">今年</span>`;
+        } else {
+          label.innerHTML = `<span class="gv-period-main">${y}年</span>`;
+        }
+        prevBtn.innerHTML = '◀ 前年';
+        nextBtn.innerHTML = '翌年 ▶';
+        if (isCurrentYear) {
+          nextBtn.classList.add('hidden-nav');
+          nextBtn.disabled = true;
+        } else {
+          nextBtn.classList.remove('hidden-nav');
+          nextBtn.disabled = false;
+        }
+      }
+    }
+
+    function renderGoodValueView() {
+      updateGoodValueChrome();
+      const root = document.getElementById('gvContent');
+      if (!root) return;
+      if (gvTrendChart) { try { gvTrendChart.destroy(); } catch (e) {} gvTrendChart = null; }
+
+      const data = aggregateGoodValue(gvMode, gvCursor);
+      const modeTitle = gvMode === 'month' ? '月次' : gvMode === 'year' ? '年次' : '全期間';
+
+      if (data.count === 0) {
+        root.innerHTML = `<div class="gv-empty-box">この期間の記録がありません。<br>記録を追加するとスコアが表示されます。</div>
+        <div class="gv-goals-card" style="margin-top:12px;">
+          <div class="gv-goals-header">
+            <span class="gv-goals-title">🎯 ${modeTitle}の目標</span>
+            <button type="button" class="gv-goals-edit-btn" onclick="openGoodValueGoalsModal()">編集</button>
+          </div>
+          <div class="gv-note" style="text-align:left;padding:0;">目標は月別・年別・全期間で別々に保存されます。</div>
+        </div>`;
+        return;
+      }
+
+      const sc = data.score;
+      const g = data.goals;
+      const total = formatGvAmount(data.totalAmount);
+      const ypm = data.avgYenPerMin !== null
+        ? (currentAmountHide === 'hide' ? '***/分' : `¥${data.avgYenPerMin.toLocaleString()}/分`)
+        : '—';
+      const atari = data.atariRate !== null ? `${data.atariRate.toFixed(0)}%` : '—';
+      const hazure = data.hazureRate !== null ? `${data.hazureRate.toFixed(0)}%` : '—';
+      const savingsDisp = data.savingsYen != null ? formatGvAmount(data.savingsYen) : '—';
+
+      const ring = gvConcentricRingHtml(data.efficiency, data.savingsScore, data.consistency, sc, g.score);
+      const dots = gvDayDotsHtml(gvMode, gvCursor, data);
+
+      let goalsHtml = '';
+      if (g.budget != null && g.budget > 0) {
+        const cur = data.totalAmount != null ? data.totalAmount : 0;
+        const status = data.totalAmount == null ? null : (data.budgetOk ? 'ok' : 'over');
+        goalsHtml += gvGoalBarHtml(
+          gvMode === 'year' ? '年間予算' : '予算',
+          formatGvAmount(data.totalAmount), formatGvAmount(g.budget),
+          Math.min(cur / g.budget, 1.2), status
+        );
+      }
+      if (g.score != null) {
+        const status = sc == null ? null : (data.scoreOk ? 'ok' : null);
+        goalsHtml += gvGoalBarHtml('スコア', sc != null ? String(sc) : '—', String(g.score),
+          Math.min((sc || 0) / Math.max(g.score, 1), 1), status);
+      }
+      if (g.ypm != null && g.ypm > 0) {
+        const cur = data.avgYenPerMin;
+        const status = cur == null ? null : (data.ypmOk ? 'ok' : 'over');
+        const curLabel = cur != null ? (currentAmountHide === 'hide' ? '***/分' : `¥${cur.toLocaleString()}/分`) : '—';
+        const tgtLabel = currentAmountHide === 'hide' ? '***/分' : `¥${g.ypm.toLocaleString()}/分`;
+        goalsHtml += gvGoalBarHtml('時間単価', curLabel, tgtLabel, Math.min((cur || 0) / g.ypm, 1.2), status);
+      }
+      if (!goalsHtml) {
+        goalsHtml = '<div class="gv-note" style="text-align:left;padding:0;">目標未設定です。「編集」からこの表示モード用の目標を設定できます。</div>';
+      }
+
+      const hasTrend = data.trendValues.some(v => v != null);
+      const trendBlock = hasTrend ? `
+        <div class="gv-section-card">
+          <div class="gv-section-header">
+            <span class="gv-section-title">傾向</span>
+            <span class="gv-section-sub">スコア推移</span>
+          </div>
+          <div class="gv-trend-chart-wrap"><canvas id="gvTrendCanvas"></canvas></div>
+        </div>` : '';
+
+      root.innerHTML = `
+        <div class="gv-hero-card">
+          ${ring}
+          <div class="gv-hero-sub">対象 ${data.count}回 ／ 評価あり ${data.ratedCount}回 ／ 合計 ${total}</div>
+        </div>
+        ${dots}
+        <div class="gv-goals-card">
+          <div class="gv-goals-header">
+            <span class="gv-goals-title">🎯 ${modeTitle}の目標</span>
+            <button type="button" class="gv-goals-edit-btn" onclick="openGoodValueGoalsModal()">編集</button>
+          </div>
+          ${goalsHtml}
+        </div>
+        ${trendBlock}
+        <div class="gv-highlight-card">
+          <div class="gv-highlight-title">期間ハイライト</div>
+          <div class="gv-highlight-grid">
+            <div class="gv-highlight-item"><div class="gv-highlight-val">${savingsDisp}</div><div class="gv-highlight-lbl">節約目安</div></div>
+            <div class="gv-highlight-item"><div class="gv-highlight-val">${ypm}</div><div class="gv-highlight-lbl">平均時間単価</div></div>
+            <div class="gv-highlight-item"><div class="gv-highlight-val">${atari}</div><div class="gv-highlight-lbl">当たり率</div></div>
+            <div class="gv-highlight-item"><div class="gv-highlight-val">${hazure}</div><div class="gv-highlight-lbl">ハズレ率</div></div>
+          </div>
+        </div>`;
+
+      if (hasTrend) {
+        requestAnimationFrame(() => gvRenderTrendChart(data.trendLabels, data.trendValues));
+      }
+
+      // 入場アニメ・リング・バー・ドット
+      root.classList.remove('gv-content-animating');
+      void root.offsetWidth;
+      root.classList.add('gv-content-animating');
+      requestAnimationFrame(() => {
+        gvAnimateRingsAndScore();
+        gvAnimateGoalBars();
+        gvStaggerDayDots();
+      });
+    }
+
 
     function switchMainTab(type) {
       document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -4599,6 +5829,7 @@
       const aiChatView = document.getElementById('viewAiChat');
       const aiTalkListView = document.getElementById('viewAiTalkList');
       const albumView = document.getElementById('viewAlbum');
+      const goodValueView = document.getElementById('viewGoodValue');
       const headerTitle = document.getElementById('headerTitle');
       const fabContainer = document.getElementById('fabContainer');
 
@@ -4622,6 +5853,7 @@
         aiChatView.style.display = 'none';
         aiTalkListView.style.display = 'none';
         albumView.style.display = 'none';
+        if (goodValueView) goodValueView.style.display = 'none';
         startHomeAnimations();
       } else {
         homeView.classList.remove('active');
@@ -4638,6 +5870,7 @@
         aiChatView.style.display = 'none';
         aiTalkListView.style.display = 'none';
         albumView.style.display = 'none';
+        if (goodValueView) goodValueView.style.display = 'none';
 
         if(type === 'my') myView.style.display = 'block';
         else if (type === 'calendar') { calendarView.style.display = 'block'; renderCalendar(); }
@@ -4649,6 +5882,7 @@
         else if (type === 'aiChat') { aiChatView.style.display = 'block'; initAiChatView(); }
         else if (type === 'aiTalkList') { aiTalkListView.style.display = 'block'; renderTalkList(); }
         else if (type === 'album') { albumView.style.display = 'block'; initAlbumView(); }
+        else if (type === 'goodValue') { if (goodValueView) goodValueView.style.display = 'block'; initGoodValueView(); }
 
         setTimeout(() => {
           const area = document.getElementById('homeFloatingArea');
