@@ -505,7 +505,21 @@
     .gv-day-dot.has {
       border-color: var(--accent-pink); background: var(--soft-pink); color: var(--accent-pink);
       animation: gvDotIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      cursor: pointer;
     }
+    .gv-day-detail-list { display: flex; flex-direction: column; gap: 10px; max-height: 55vh; overflow-y: auto; text-align: left; }
+    .gv-day-detail-item {
+      background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 12px;
+      padding: 12px; box-sizing: border-box;
+    }
+    .gv-day-detail-name { font-weight: bold; font-size: 0.92rem; color: var(--accent-pink); margin-bottom: 4px; }
+    .gv-day-detail-meta { font-size: 0.78rem; color: var(--light-text); line-height: 1.5; }
+    .gv-day-detail-score {
+      display: inline-block; margin-top: 6px; font-size: 0.75rem; font-weight: bold;
+      padding: 2px 8px; border-radius: 8px; background: var(--soft-pink); color: var(--accent-pink);
+    }
+    .gv-day-detail-empty { text-align: center; color: var(--light-text); font-size: 0.85rem; padding: 16px; }
+
     .gv-day-dot.high { border-color: #0ca678; background: #d3f9d8; color: #2b8a3e; }
     .gv-day-dot.mid { border-color: #4dabf7; background: #d0ebff; color: #1864ab; }
     .gv-day-dot.low { border-color: #fab005; background: #fff3bf; color: #e67700; }
@@ -1328,7 +1342,84 @@
       background: linear-gradient(135deg, var(--soft-pink), var(--card-bg));
       border-radius: 20px; border: 1px solid var(--border-color); box-shadow: var(--shadow);
       animation: settingsFadeIn 0.4s ease both;
+      transition: background 0.4s ease, border-color 0.3s ease;
     }
+    .settings-profile-card[data-gv-type="cost_crafter"] {
+      background: linear-gradient(135deg, #e6fcf5, var(--card-bg));
+      border-color: #96f2d7;
+    }
+    .settings-profile-card[data-gv-type="self_saver"] {
+      background: linear-gradient(135deg, #e7f5ff, var(--card-bg));
+      border-color: #a5d8ff;
+    }
+    .settings-profile-card[data-gv-type="balanced"] {
+      background: linear-gradient(135deg, var(--soft-pink), var(--card-bg));
+      border-color: var(--primary-pink);
+    }
+    .settings-profile-card[data-gv-type="loyal_fan"] {
+      background: linear-gradient(135deg, #f3f0ff, var(--card-bg));
+      border-color: #d0bfff;
+    }
+    .settings-profile-card[data-gv-type="careful_reviewer"] {
+      background: linear-gradient(135deg, #f1f3f5, var(--card-bg));
+      border-color: #ced4da;
+    }
+    .settings-gv-type-row {
+      display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%;
+    }
+    .settings-gv-type-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.78rem; font-weight: bold; padding: 5px 12px; border-radius: 999px;
+      background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-color);
+    }
+    .settings-gv-type-badge .gv-type-dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+    }
+    .settings-gv-type-desc {
+      font-size: 0.68rem; color: var(--light-text); text-align: center; line-height: 1.4;
+      max-width: 280px;
+    }
+    .settings-gv-rediag-btn {
+      font-size: 0.72rem; font-weight: bold; padding: 5px 14px; border-radius: 999px;
+      border: 1px solid var(--border-color); background: var(--card-bg); color: var(--accent-pink);
+      cursor: pointer;
+    }
+    .settings-gv-rediag-btn:active { transform: scale(0.96); }
+
+    /* アンケートモーダル */
+    .gv-quiz-progress {
+      height: 4px; background: var(--bg-color); border-radius: 999px; overflow: hidden; margin-bottom: 14px;
+    }
+    .gv-quiz-progress-fill {
+      height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary-pink), var(--accent-pink));
+      transition: width 0.3s ease; border-radius: 999px;
+    }
+    .gv-quiz-q {
+      font-size: 0.95rem; font-weight: bold; color: var(--text-color); margin-bottom: 14px; line-height: 1.45;
+      text-align: left;
+    }
+    .gv-quiz-opts { display: flex; flex-direction: column; gap: 8px; }
+    .gv-quiz-opt {
+      text-align: left; padding: 12px 14px; border-radius: 12px;
+      border: 1.5px solid var(--border-color); background: var(--bg-color); color: var(--text-color);
+      font-size: 0.85rem; font-weight: bold; cursor: pointer; line-height: 1.4;
+      transition: border-color 0.15s, background 0.15s, transform 0.1s;
+    }
+    .gv-quiz-opt:active { transform: scale(0.98); }
+    .gv-quiz-opt:hover, .gv-quiz-opt:focus {
+      border-color: var(--primary-pink); background: var(--soft-pink); outline: none;
+    }
+    .gv-quiz-result {
+      text-align: center; padding: 8px 4px;
+    }
+    .gv-quiz-result-name {
+      font-size: 1.25rem; font-weight: 800; color: var(--accent-pink); margin: 8px 0 6px;
+    }
+    .gv-quiz-result-desc {
+      font-size: 0.82rem; color: var(--text-color); line-height: 1.55; text-align: left;
+      background: var(--bg-color); border-radius: 12px; padding: 12px; border: 1px solid var(--border-color);
+    }
+
     .settings-avatar-btn {
       position: relative; border: none; background: none; padding: 0; cursor: pointer;
       animation: avatarPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
@@ -2371,7 +2462,7 @@
 
       <!-- 7. 設定タブ（SNS風プロフィールカード＋設定セクション） -->
       <div id="viewSettings" class="tab-content">
-        <div class="settings-profile-card">
+        <div class="settings-profile-card" id="settingsProfileCard">
           <button type="button" class="settings-avatar-btn" id="settingsAvatarBtn" onclick="openAvatarPickerModal()">
             <span class="settings-avatar-circle" id="settingsAvatarCircle">
               <svg class="settings-avatar-default-icon" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6z"/></svg>
@@ -2382,6 +2473,14 @@
             <input type="text" id="inputUserName" class="settings-username-input" placeholder="お名前を入力..." required>
             <button type="submit" class="settings-username-save-btn">保存</button>
           </form>
+          <div class="settings-gv-type-row" id="settingsGvTypeRow">
+            <span class="settings-gv-type-badge" id="settingsGvTypeBadge">
+              <span class="gv-type-dot" id="settingsGvTypeDot" style="background:var(--light-text)"></span>
+              <span id="settingsGvTypeLabel">スコアタイプ未診断</span>
+            </span>
+            <div class="settings-gv-type-desc" id="settingsGvTypeDesc">いい値ぇースコアの考え方を診断すると、あなた向けの式とカード色が設定されます。</div>
+            <button type="button" class="settings-gv-rediag-btn" onclick="openGvScoreQuiz(true)">診断する</button>
+          </div>
         </div>
 
         <div class="settings-sections">
@@ -2701,7 +2800,7 @@
             <button type="button" class="gv-mode-btn" id="gvModeAll" onclick="setGoodValueMode('all')">全期間</button>
           </div>
           <div id="gvContent"></div>
-          <p class="gv-note">※総合スコア＝効率45%＋節約35%＋安定20%。評価未入力はフラグのみ算出。節約目安は同満足帯の過去中央値との差です。</p>
+          <p class="gv-note">※通常: 効率45%＋節約35%＋安定20%。評価オフ／未入力が多い場合は 効率30%＋節約45%＋安定25%（フラグ＋金額で算出）。</p>
         </div>
       </div>
     </main>
@@ -2782,6 +2881,27 @@
 
       <div class="sheet-ad-carousel" id="sheetAdCarousel" onscroll="handleSheetAdScroll()"></div>
       <div class="sheet-ad-dots" id="sheetAdDots"></div>
+    </div>
+  </div>
+
+  <!-- 💰 いい値ぇー スコータイプ診断アンケート -->
+  <div class="modal-overlay" id="gvQuizModal">
+    <div class="modal-content" style="max-width:420px;">
+      <h3 id="gvQuizTitle">スコアの考え方診断</h3>
+      <div class="gv-quiz-progress"><div class="gv-quiz-progress-fill" id="gvQuizProgressFill"></div></div>
+      <div id="gvQuizStep"></div>
+      <div style="display:flex; gap:8px; margin-top:14px;">
+        <button type="button" class="close-btn" style="background:#888; flex:1;" id="gvQuizSkipBtn" onclick="skipGvScoreQuiz()">あとで</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 💰 いい値ぇー 記録日詳細 -->
+  <div class="modal-overlay" id="gvDayDetailModal">
+    <div class="modal-content" style="max-width:400px;">
+      <h3 id="gvDayDetailTitle">記録</h3>
+      <div id="gvDayDetailBody" class="gv-day-detail-list"></div>
+      <button type="button" class="close-btn" onclick="closeModal('gvDayDetailModal')" style="margin-top:12px;">閉じる</button>
     </div>
   </div>
 
@@ -4152,6 +4272,7 @@
       document.getElementById('headerTitle').innerText = titleText;
       document.getElementById('pageTitle').innerText = titleText + " [V18.6 Pro]";
       document.getElementById('currentUserNameDisplay').innerText = currentUserName;
+      if (typeof applyGvProfileToUi === 'function') applyGvProfileToUi();
       document.getElementById('sharedCount').innerText = sharedRecords.length;
       const keepsCountEl = document.getElementById('keepsCount');
       if (keepsCountEl) keepsCountEl.innerText = keepsList.length;
@@ -5011,37 +5132,400 @@
       return !!(rec.flags && String(rec.flags).includes(char));
     }
 
-    /** 1回あたりのいい値ぇー指数 0〜100。対象外は null */
-    function computeVisitGoodValue(rec) {
-      if (!rec || rec.pendingCheckIn) return null;
-
-      if (gvIsDefaultScores(rec)) {
-        const atari = gvHasFlag(rec, '🆂');
-        const hazure = gvHasFlag(rec, '⚔');
-        if (atari && !hazure) return 75;
-        if (hazure && !atari) return 25;
-        return 50; // 通常 or 両方
+    /* ========== いい値ぇー スコータイプ診断・式切替 ========== */
+    const GV_TYPE_META = {
+      cost_crafter: {
+        label: 'コスパ職人',
+        desc: '金額と時間のコスパを軸に、当たり・ハズレで満足度を補正します。',
+        formula: 'cost_crafter',
+        color: '#0ca678',
+        short: 'フラグ＋時間単価型'
+      },
+      self_saver: {
+        label: '自分基準の節約家',
+        desc: '過去の同じ帯の自分と比べて「今回は得だったか」を重視します。',
+        formula: 'self_saver',
+        color: '#339af0',
+        short: '相対コスパ型'
+      },
+      balanced: {
+        label: 'バランス型',
+        desc: '満足の目安とコース時間・金額のバランスで総合的に評価します。',
+        formula: 'balanced',
+        color: 'var(--accent-pink)',
+        short: '対数コスパ型'
+      },
+      loyal_fan: {
+        label: '固定ファン',
+        desc: '同じ子への再訪を「本当に良かった当たり」の証拠として厚めに見ます。',
+        formula: 'loyal_fan',
+        color: '#7950f2',
+        short: 'リピート価値型'
+      },
+      careful_reviewer: {
+        label: '慎重レビュアー',
+        desc: 'ハズレの連続や直近のブレを厳しめに見て、安定した遊び方を評価します。',
+        formula: 'careful_reviewer',
+        color: '#495057',
+        short: '文脈減点型'
       }
+    };
 
+    const GV_QUIZ_QUESTIONS = [
+      {
+        q: '記録でいちばん残したいのは？',
+        opts: [
+          { id: 'A', label: 'いくらで何分遊んだか（金額・時間）' },
+          { id: 'B', label: '当たり／ハズレの感覚' },
+          { id: 'C', label: 'また会いたいか（同じ子・店）' }
+        ]
+      },
+      {
+        q: '「いい買い物だった」と思うのは？',
+        opts: [
+          { id: 'A', label: '相場より明らかに安いとき' },
+          { id: 'B', label: '自分の過去の同じくらいの回より安いとき' },
+          { id: 'C', label: '高くても当たりならよい' }
+        ]
+      },
+      {
+        q: '同じ子・店に行きますか？',
+        opts: [
+          { id: 'A', label: 'ほとんど初対面' },
+          { id: 'B', label: '半々' },
+          { id: 'C', label: '気に入ったら通う' }
+        ]
+      },
+      {
+        q: 'ハズレの記録は？',
+        opts: [
+          { id: 'A', label: 'ちゃんと⚔を付ける' },
+          { id: 'B', label: 'たまに付ける' },
+          { id: 'C', label: 'あまり付けない' }
+        ]
+      }
+    ];
+
+    let gvQuizAnswers = [];
+    let gvQuizIndex = 0;
+    let gvQuizFromSettings = false;
+
+    function getGvProfile() {
+      try {
+        const raw = localStorage.getItem('gv_profile_' + currentUserName);
+        if (raw) return JSON.parse(raw);
+      } catch (e) {}
+      return null;
+    }
+
+    function saveGvProfile(profile) {
+      localStorage.setItem('gv_profile_' + currentUserName, JSON.stringify(profile));
+      applyGvProfileToUi();
+    }
+
+    function getGvFormulaId() {
+      const p = getGvProfile();
+      if (p && p.formula && GV_TYPE_META[p.type]) return p.formula;
+      return 'cost_crafter'; // 未診断時のデフォルト
+    }
+
+    function resolveGvTypeFromAnswers(ans) {
+      // ans: ['A'|'B'|'C', ...] length 4
+      const [q1, q2, q3, q4] = ans;
+      // 優先: 固定ファン
+      if (q3 === 'C' && (q1 === 'C' || q2 === 'C')) return 'loyal_fan';
+      // 慎重レビュアー
+      if (q4 === 'A' && (q2 === 'C' || q1 === 'B')) return 'careful_reviewer';
+      // 自分基準の節約家
+      if (q2 === 'B') return 'self_saver';
+      // コスパ職人
+      if (q1 === 'A' || q2 === 'A') return 'cost_crafter';
+      // バランス
+      if (q2 === 'C') return 'balanced';
+      return 'cost_crafter';
+    }
+
+    function applyGvProfileToUi() {
+      const card = document.getElementById('settingsProfileCard');
+      const badge = document.getElementById('settingsGvTypeLabel');
+      const desc = document.getElementById('settingsGvTypeDesc');
+      const dot = document.getElementById('settingsGvTypeDot');
+      const btn = document.querySelector('.settings-gv-rediag-btn');
+      const p = getGvProfile();
+      if (!card) return;
+      if (p && p.type && GV_TYPE_META[p.type]) {
+        const m = GV_TYPE_META[p.type];
+        card.setAttribute('data-gv-type', p.type);
+        if (badge) badge.textContent = m.label;
+        if (desc) desc.textContent = m.desc + '（' + m.short + '）';
+        if (dot) dot.style.background = m.color.indexOf('var(') === 0 ? '' : m.color;
+        if (dot && m.color.indexOf('var(') === 0) dot.style.background = 'var(--accent-pink)';
+        if (btn) btn.textContent = '再診断';
+      } else {
+        card.removeAttribute('data-gv-type');
+        if (badge) badge.textContent = 'スコアタイプ未診断';
+        if (desc) desc.textContent = 'いい値ぇースコアの考え方を診断すると、あなた向けの式とカード色が設定されます。';
+        if (dot) dot.style.background = 'var(--light-text)';
+        if (btn) btn.textContent = '診断する';
+      }
+    }
+
+    function openGvScoreQuiz(fromSettings) {
+      gvQuizFromSettings = !!fromSettings;
+      gvQuizAnswers = [];
+      gvQuizIndex = 0;
+      const skip = document.getElementById('gvQuizSkipBtn');
+      if (skip) skip.style.display = fromSettings ? 'none' : 'block';
+      document.getElementById('gvQuizTitle').textContent = 'スコアの考え方診断';
+      renderGvQuizStep();
+      document.getElementById('gvQuizModal').style.display = 'flex';
+    }
+
+    function skipGvScoreQuiz() {
+      // 未診断のままデフォルト式。再表示は次回いい値ぇーでも可（フラグは立てない＝また聞ける）
+      // しつこくしないようセッションだけスキップ
+      try { sessionStorage.setItem('gv_quiz_skipped', '1'); } catch (e) {}
+      closeModal('gvQuizModal');
+    }
+
+    function renderGvQuizStep() {
+      const fill = document.getElementById('gvQuizProgressFill');
+      const stepEl = document.getElementById('gvQuizStep');
+      if (!stepEl) return;
+      if (gvQuizIndex >= GV_QUIZ_QUESTIONS.length) {
+        const typeId = resolveGvTypeFromAnswers(gvQuizAnswers);
+        const meta = GV_TYPE_META[typeId];
+        if (fill) fill.style.width = '100%';
+        stepEl.innerHTML = `
+          <div class="gv-quiz-result">
+            <div style="font-size:0.78rem;color:var(--light-text);">あなたのタイプ</div>
+            <div class="gv-quiz-result-name">${meta.label}</div>
+            <div class="gv-quiz-result-desc">${meta.desc}<br><br><strong>採用する式:</strong> ${meta.short}</div>
+            <button type="button" class="close-btn" style="margin-top:14px;" onclick="confirmGvQuizResult('${typeId}')">この設定で始める</button>
+          </div>`;
+        const skip = document.getElementById('gvQuizSkipBtn');
+        if (skip) skip.style.display = 'none';
+        return;
+      }
+      const q = GV_QUIZ_QUESTIONS[gvQuizIndex];
+      if (fill) fill.style.width = ((gvQuizIndex / GV_QUIZ_QUESTIONS.length) * 100) + '%';
+      stepEl.innerHTML = `
+        <div class="gv-quiz-q">Q${gvQuizIndex + 1}. ${q.q}</div>
+        <div class="gv-quiz-opts">
+          ${q.opts.map(o => `
+            <button type="button" class="gv-quiz-opt" onclick="answerGvQuiz('${o.id}')">${o.label}</button>
+          `).join('')}
+        </div>`;
+    }
+
+    function answerGvQuiz(id) {
+      gvQuizAnswers[gvQuizIndex] = id;
+      gvQuizIndex++;
+      renderGvQuizStep();
+    }
+
+    function confirmGvQuizResult(typeId) {
+      const meta = GV_TYPE_META[typeId];
+      if (!meta) return;
+      saveGvProfile({
+        type: typeId,
+        formula: meta.formula,
+        answers: gvQuizAnswers.slice(),
+        diagnosedAt: new Date().toISOString()
+      });
+      try { sessionStorage.removeItem('gv_quiz_skipped'); } catch (e) {}
+      closeModal('gvQuizModal');
+      if (typeof renderGoodValueView === 'function') {
+        try { renderGoodValueView(); } catch (e) {}
+      }
+    }
+
+    function maybePromptGvQuiz() {
+      if (getGvProfile()) return;
+      try {
+        if (sessionStorage.getItem('gv_quiz_skipped') === '1') return;
+      } catch (e) {}
+      setTimeout(() => openGvScoreQuiz(false), 400);
+    }
+
+    /** 評価機能OFF、または全軸が未入力(3)か */
+    function gvIsFlagOnlyMode(rec) {
+      if (typeof ratingEnabled !== 'undefined' && ratingEnabled === false) return true;
+      return gvIsDefaultScores(rec);
+    }
+
+    function gvYpmMedianAll() {
+      const arr = [];
+      historyList.forEach(v => {
+        if (!v || v.pendingCheckIn) return;
+        const C = gvParseAmount(v);
+        if (C == null) return;
+        arr.push(C / gvParseCourseMinutes(v));
+      });
+      return gvMedian(arr);
+    }
+
+    function gvYpmMedianForBand(band) {
+      const arr = [];
+      historyList.forEach(v => {
+        if (!v || v.pendingCheckIn) return;
+        const C = gvParseAmount(v);
+        if (C == null) return;
+        if (gvSatisfactionBand(v) !== band) return;
+        arr.push(C / gvParseCourseMinutes(v));
+      });
+      return gvMedian(arr);
+    }
+
+    function gvIsRepeatCast(rec) {
+      const name = (rec.name || '').trim().toLowerCase();
+      if (!name) return false;
+      let count = 0;
+      for (let i = 0; i < historyList.length; i++) {
+        const v = historyList[i];
+        if (!v || v.pendingCheckIn) continue;
+        if ((v.name || '').trim().toLowerCase() === name) {
+          count++;
+          if (count >= 2) return true;
+        }
+      }
+      return false;
+    }
+
+    function gvSameStorePrevHazure(rec) {
+      const store = (rec.store || rec.shop || '').trim().toLowerCase();
+      if (!store) return false;
+      // 簡易: 同店舗でハズレが2件以上
+      let n = 0;
+      historyList.forEach(v => {
+        if (!v || v.pendingCheckIn) return;
+        const s = (v.store || v.shop || '').trim().toLowerCase();
+        if (s === store && gvHasFlag(v, '⚔')) n++;
+      });
+      return n >= 2;
+    }
+
+    function gvCostFromYpm(C, T) {
+      const y = C / T;
+      const med = gvYpmMedianAll();
+      const yMed = med != null && med > 0 ? med : 300; // フォールバック
+      const val = 50 + 25 * Math.log(Math.max(yMed, 1e-6) / Math.max(y, 1e-6));
+      return Math.max(0, Math.min(100, val));
+    }
+
+    function gvFlagBaseS(rec, formulaId) {
+      const atari = gvHasFlag(rec, '🆂');
+      const hazure = gvHasFlag(rec, '⚔');
+      const repeat = gvIsRepeatCast(rec);
+      if (formulaId === 'loyal_fan') {
+        if (hazure && !atari) return 25;
+        if (atari && !hazure) return repeat ? 88 : 70;
+        return repeat ? 60 : 48;
+      }
+      // cost_crafter / self_saver / balanced / careful defaults
+      if (atari && !hazure) return repeat ? Math.min(90, 80 + 6) : 80;
+      if (hazure && !atari) {
+        let s = formulaId === 'careful_reviewer' ? 20 : 22;
+        if (gvSameStorePrevHazure(rec)) s -= 6;
+        return Math.max(10, s);
+      }
+      return 50;
+    }
+
+    function gvRatedBaseS(rec) {
       const looks = gvParseAxis(rec.looks);
       const service = gvParseAxis(rec.service);
       const style = gvParseAxis(rec.style);
       const intimacy = gvParseAxis(rec.intimacy);
       const value = gvParseAxis(rec.value);
-
       let S = 20 * (0.35 * value + 0.20 * service + 0.15 * intimacy + 0.15 * looks + 0.15 * style);
       const atari = gvHasFlag(rec, '🆂');
       const hazure = gvHasFlag(rec, '⚔');
       if (atari && !hazure) S = Math.min(100, S * 1.15);
       else if (hazure && !atari) S = S * 0.70;
+      return S;
+    }
 
-      const C = gvParseAmount(rec);
-      if (C === null) return Math.max(0, Math.min(100, S));
+    /** 1回あたりのいい値ぇー指数 0〜100。対象外は null */
+    function computeVisitGoodValue(rec) {
+      if (!rec || rec.pendingCheckIn) return null;
+      const formulaId = getGvFormulaId();
+      const flagOnly = gvIsFlagOnlyMode(rec);
 
-      const T = gvParseCourseMinutes(rec);
-      const raw = (S * Math.pow(T, 0.4)) / C;
-      const score = 50 + 25 * Math.log(Math.max(raw, 1e-9) / GV_R0);
-      return Math.max(0, Math.min(100, score));
+      // --- 案1: コスパ職人 ---
+      if (formulaId === 'cost_crafter') {
+        const Sbase = flagOnly ? gvFlagBaseS(rec, formulaId) : gvRatedBaseS(rec);
+        const C = gvParseAmount(rec);
+        if (C == null) return Math.max(0, Math.min(100, Sbase));
+        const T = gvParseCourseMinutes(rec);
+        const Ccost = gvCostFromYpm(C, T);
+        return Math.max(0, Math.min(100, 0.55 * Sbase + 0.45 * Ccost));
+      }
+
+      // --- 案3: 自分基準の節約家 ---
+      if (formulaId === 'self_saver') {
+        const Sbase = flagOnly ? gvFlagBaseS(rec, formulaId) : gvRatedBaseS(rec);
+        const C = gvParseAmount(rec);
+        if (C == null) return Math.max(0, Math.min(100, Sbase));
+        const T = gvParseCourseMinutes(rec);
+        const y = C / T;
+        const band = gvSatisfactionBand(rec);
+        const yb = gvYpmMedianForBand(band);
+        let Crel;
+        if (yb == null || yb <= 0) {
+          Crel = gvCostFromYpm(C, T); // 母数不足時は案1へフォールバック
+        } else {
+          const delta = (yb - y) / (yb + 1e-6);
+          Crel = Math.max(0, Math.min(100, 50 + 40 * delta));
+        }
+        return Math.max(0, Math.min(100, 0.50 * Sbase + 0.50 * Crel));
+      }
+
+      // --- 案4: 固定ファン ---
+      if (formulaId === 'loyal_fan') {
+        const Sloy = flagOnly ? gvFlagBaseS(rec, 'loyal_fan') : (() => {
+          let S = gvRatedBaseS(rec);
+          if (gvIsRepeatCast(rec)) S = Math.min(100, S + 8);
+          return S;
+        })();
+        const C = gvParseAmount(rec);
+        if (C == null) return Math.max(0, Math.min(100, Sloy));
+        const T = gvParseCourseMinutes(rec);
+        const Ccost = gvCostFromYpm(C, T);
+        return Math.max(0, Math.min(100, 0.65 * Sloy + 0.35 * Ccost));
+      }
+
+      // --- 案2 / 慎重レビュアー: 対数コスパ ---
+      {
+        let S = flagOnly ? gvFlagBaseS(rec, formulaId === 'careful_reviewer' ? 'careful_reviewer' : 'balanced') : gvRatedBaseS(rec);
+        // balanced 用のフラグベース微調整
+        if (flagOnly && formulaId === 'balanced') {
+          const atari = gvHasFlag(rec, '🆂');
+          const hazure = gvHasFlag(rec, '⚔');
+          if (atari && !hazure) S = gvIsRepeatCast(rec) ? 80 : 72;
+          else if (hazure && !atari) S = 28;
+          else S = 50;
+        }
+        const C = gvParseAmount(rec);
+        if (C == null) return Math.max(0, Math.min(100, S));
+        const T = gvParseCourseMinutes(rec);
+        const raw = (S * Math.pow(T, 0.4)) / C;
+        let score = 50 + 25 * Math.log(Math.max(raw, 1e-9) / GV_R0);
+        if (formulaId === 'careful_reviewer') {
+          if (gvSameStorePrevHazure(rec)) score -= 5;
+          // 直近のハズレ多さ（簡易）
+          let hazureRecent = 0;
+          historyList.forEach(v => {
+            if (!v || v.pendingCheckIn) return;
+            if (gvHasFlag(v, '⚔')) hazureRecent++;
+          });
+          if (hazureRecent >= 2 && historyList.length >= 3) {
+            const rate = hazureRecent / Math.max(historyList.length, 1);
+            if (rate >= 0.25) score -= 8;
+          }
+        }
+        return Math.max(0, Math.min(100, score));
+      }
     }
 
     function gvVisitInPeriod(rec, mode, cursor) {
@@ -5259,7 +5743,15 @@
       }
       let overall = null;
       if (efficiency != null) {
-        overall = Math.round(0.45 * efficiency + 0.35 * (savingsScore != null ? savingsScore : 50) + 0.20 * (consistency != null ? consistency : 50));
+        const sav = savingsScore != null ? savingsScore : 50;
+        const cons = consistency != null ? consistency : 50;
+        // 評価オフ、または期間内の評価入力がほぼ無い → 節約・安定の比重を上げる
+        const flagHeavy = (typeof ratingEnabled !== 'undefined' && ratingEnabled === false) || (n > 0 && modeB / n < 0.25);
+        if (flagHeavy) {
+          overall = Math.round(0.30 * efficiency + 0.45 * sav + 0.25 * cons);
+        } else {
+          overall = Math.round(0.45 * efficiency + 0.35 * sav + 0.20 * cons);
+        }
       }
 
       const goals = getGoodValueGoals(mode);
@@ -5357,7 +5849,7 @@
           body: `<p><strong>効率</strong>は「満足度に対して、どれだけコスパよく遊べたか」を表します。</p>
             <ul>
               <li>見た目・接客・スタイル・密着・コスパなどの評価と、金額・コース時間から算出します。</li>
-              <li>評価がすべて未入力（3）の回は、当たり／ハズレのフラグだけで計算します。</li>
+              <li>評価オフ・未入力の回は、当たり／ハズレのフラグを満足度の目安にし、金額・時間があればコスパも反映します（当たりベース75・通常50・ハズレ25）。</li>
               <li>高いほど「満足のわりに安く・ちょうどよく遊べた」傾向です。</li>
             </ul>
             <p>総合スコアのうち <strong>45%</strong> を占めます。</p>`
@@ -5396,9 +5888,10 @@
         <p>「いくら使ったか」だけでなく、<strong>どれだけ納得感のある遊び方ができているか</strong>をスコア化する画面です。</p>
         <h4>総合スコアの内訳</h4>
         <ul>
-          <li><span class="gv-help-pill" style="background:#20c997"></span><strong>効率 45%</strong> … 満足 × コスパ</li>
-          <li><span class="gv-help-pill" style="background:#4dabf7"></span><strong>節約 35%</strong> … 同満足帯より安く済んだ度合い</li>
-          <li><span class="gv-help-pill" style="background:var(--accent-pink)"></span><strong>安定 20%</strong> … ハズレの少なさ</li>
+          <li><span class="gv-help-pill" style="background:#20c997"></span><strong>効率</strong> … 満足 × コスパ（通常45%／評価オフ時30%）</li>
+          <li><span class="gv-help-pill" style="background:#4dabf7"></span><strong>節約</strong> … 同満足帯より安く済んだ度合い（通常35%／評価オフ時45%）</li>
+          <li><span class="gv-help-pill" style="background:var(--accent-pink)"></span><strong>安定</strong> … ハズレの少なさ（通常20%／評価オフ時25%）</li>
+          <li>評価機能をOFFにしている場合は「フラグ＋金額モード」になります。</li>
         </ul>
         <h4>期間の見方</h4>
         <ul>
@@ -5507,6 +6000,56 @@
     }
 
 
+
+    function openGvDayDetail(day) {
+      const y = gvCursor.getFullYear();
+      const m = gvCursor.getMonth() + 1;
+      const visits = historyList.filter(v => {
+        if (!v || v.pendingCheckIn) return false;
+        if (parseInt(v.year, 10) !== y) return false;
+        if (parseMonthNum(v.month) !== m) return false;
+        const d = parseInt(v.day, 10) || 1;
+        return d === day;
+      });
+
+      document.getElementById('gvDayDetailTitle').textContent = `${y}年${m}月${day}日の記録`;
+      const body = document.getElementById('gvDayDetailBody');
+      if (!visits.length) {
+        body.innerHTML = '<div class="gv-day-detail-empty">この日の記録はありません。</div>';
+        document.getElementById('gvDayDetailModal').style.display = 'flex';
+        return;
+      }
+
+      body.innerHTML = visits.map(v => {
+        const score = computeVisitGoodValue(v);
+        const scoreTxt = score != null ? `いい値ぇー ${Math.round(score)}` : '';
+        const name = (v.name || '（名前なし）').toString();
+        const store = (v.store || v.shop || '').toString();
+        const amount = gvParseAmount(v);
+        const mins = gvParseCourseMinutes(v);
+        const amountStr = amount != null
+          ? (currentAmountHide === 'hide' ? '***' : '¥' + amount.toLocaleString())
+          : '—';
+        const flags = (v.flags || '').toString();
+        const flagBits = [];
+        if (flags.includes('🆂')) flagBits.push('当たり');
+        if (flags.includes('⚔')) flagBits.push('ハズレ');
+        const meta = [
+          store ? store : null,
+          mins ? mins + '分' : null,
+          '金額 ' + amountStr,
+          flagBits.length ? flagBits.join('・') : null
+        ].filter(Boolean).join(' ／ ');
+        return `<div class="gv-day-detail-item">
+          <div class="gv-day-detail-name">${escapeHTML(name)}</div>
+          <div class="gv-day-detail-meta">${escapeHTML(meta)}</div>
+          ${scoreTxt ? `<span class="gv-day-detail-score">${scoreTxt}</span>` : ''}
+        </div>`;
+      }).join('');
+
+      document.getElementById('gvDayDetailModal').style.display = 'flex';
+    }
+
     function gvDayDotsHtml(mode, cursor, data) {
       if (mode === 'month') {
         const daysInMonth = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0).getDate();
@@ -5518,7 +6061,7 @@
             hasCount++;
             const avg = arr.reduce((a, b) => a + b, 0) / arr.length;
             const tier = avg >= 70 ? 'high' : avg >= 40 ? 'mid' : 'low';
-            dots += `<span class="gv-day-dot has ${tier}" title="${d}日">${d}</span>`;
+            dots += `<button type="button" class="gv-day-dot has ${tier}" title="${d}日の記録を見る" onclick="openGvDayDetail(${d})">${d}</button>`;
           } else {
             dots += `<span class="gv-day-dot" title="${d}日"></span>`;
           }
@@ -5529,6 +6072,7 @@
             <span class="gv-section-sub">${hasCount}/${daysInMonth} 日</span>
           </div>
           <div class="gv-day-dots">${dots}</div>
+          <div class="gv-note" style="text-align:left;padding:8px 0 0;margin:0;">色付きの日をタップすると、その日の記録を簡潔に確認できます。</div>
         </div>`;
       }
       if (mode === 'year') {
@@ -5597,14 +6141,11 @@
     }
 
     function initGoodValueView() {
-      // 当月にリセットはしない（ユーザーの選択を維持）。初回のみ現在月
-      if (!window._gvInitialized) {
-        gvCursor = new Date();
-        gvMode = 'month';
-        window._gvInitialized = true;
-      }
+      const now = new Date();
+      gvCursor = new Date(now.getFullYear(), now.getMonth(), 1);
+      gvMode = 'month';
       renderGoodValueView();
-      if (window.lucide) lucide.createIcons();
+      maybePromptGvQuiz();
     }
 
     function setGoodValueMode(mode) {
@@ -5716,7 +6257,7 @@
         root.innerHTML = `<div class="gv-empty-box">この期間の記録がありません。<br>記録を追加するとスコアが表示されます。</div>
         <div class="gv-goals-card" style="margin-top:12px;">
           <div class="gv-goals-header">
-            <span class="gv-goals-title">🎯 ${modeTitle}の目標</span>
+            <span class="gv-goals-title">${modeTitle}の目標</span>
             <button type="button" class="gv-goals-edit-btn" onclick="openGoodValueGoalsModal()">編集</button>
           </div>
           <div class="gv-note" style="text-align:left;padding:0;">目標は月別・年別・全期間で別々に保存されます。</div>
@@ -5737,27 +6278,46 @@
       const ring = gvConcentricRingHtml(data.efficiency, data.savingsScore, data.consistency, sc, g.score);
       const dots = gvDayDotsHtml(gvMode, gvCursor, data);
 
+      // 表示用目標: 未設定の項目はおすすめ値で補完（バーを常時3本出す）
+      const sug = suggestGoodValueGoals(gvMode);
+      const gDisp = {
+        budget: (g.budget != null && g.budget > 0) ? g.budget : (gvMode === 'all' ? null : sug.budget),
+        score: (g.score != null) ? g.score : (sug.score != null ? sug.score : 70),
+        ypm: (g.ypm != null && g.ypm > 0) ? g.ypm : sug.ypm
+      };
+      // 達成判定は実目標（保存値）優先。未保存なら表示目標で判定
+      const budgetTarget = gDisp.budget;
+      const scoreTarget = gDisp.score;
+      const ypmTarget = gDisp.ypm;
+      const budgetOk = budgetTarget != null && data.totalAmount != null ? data.totalAmount <= budgetTarget : null;
+      const scoreOk = scoreTarget != null && sc != null ? sc >= scoreTarget : null;
+      const ypmOk = ypmTarget != null && data.avgYenPerMin != null ? data.avgYenPerMin <= ypmTarget : null;
+
       let goalsHtml = '';
-      if (g.budget != null && g.budget > 0) {
+      // 月予算 / 年予算
+      if (budgetTarget != null && budgetTarget > 0) {
         const cur = data.totalAmount != null ? data.totalAmount : 0;
-        const status = data.totalAmount == null ? null : (data.budgetOk ? 'ok' : 'over');
+        const status = data.totalAmount == null ? null : (budgetOk ? 'ok' : 'over');
+        const budgetName = gvMode === 'year' ? '年間予算' : (gvMode === 'month' ? '月予算' : '予算');
         goalsHtml += gvGoalBarHtml(
-          gvMode === 'year' ? '年間予算' : '予算',
-          formatGvAmount(data.totalAmount), formatGvAmount(g.budget),
-          Math.min(cur / g.budget, 1.2), status
+          budgetName,
+          formatGvAmount(data.totalAmount), formatGvAmount(budgetTarget),
+          Math.min(cur / budgetTarget, 1.2), status
         );
       }
-      if (g.score != null) {
-        const status = sc == null ? null : (data.scoreOk ? 'ok' : null);
-        goalsHtml += gvGoalBarHtml('スコア', sc != null ? String(sc) : '—', String(g.score),
-          Math.min((sc || 0) / Math.max(g.score, 1), 1), status);
+      // スコア目標
+      if (scoreTarget != null) {
+        const status = sc == null ? null : (scoreOk ? 'ok' : null);
+        goalsHtml += gvGoalBarHtml('スコア', sc != null ? String(sc) : '—', String(scoreTarget),
+          Math.min((sc || 0) / Math.max(scoreTarget, 1), 1), status);
       }
-      if (g.ypm != null && g.ypm > 0) {
+      // 平均時間単価
+      if (ypmTarget != null && ypmTarget > 0) {
         const cur = data.avgYenPerMin;
-        const status = cur == null ? null : (data.ypmOk ? 'ok' : 'over');
+        const status = cur == null ? null : (ypmOk ? 'ok' : 'over');
         const curLabel = cur != null ? (currentAmountHide === 'hide' ? '***/分' : `¥${cur.toLocaleString()}/分`) : '—';
-        const tgtLabel = currentAmountHide === 'hide' ? '***/分' : `¥${g.ypm.toLocaleString()}/分`;
-        goalsHtml += gvGoalBarHtml('時間単価', curLabel, tgtLabel, Math.min((cur || 0) / g.ypm, 1.2), status);
+        const tgtLabel = currentAmountHide === 'hide' ? '***/分' : `¥${ypmTarget.toLocaleString()}/分`;
+        goalsHtml += gvGoalBarHtml('時間単価', curLabel, tgtLabel, Math.min((cur || 0) / ypmTarget, 1.2), status);
       }
       if (!goalsHtml) {
         goalsHtml = '<div class="gv-note" style="text-align:left;padding:0;">目標未設定です。「編集」からこの表示モード用の目標を設定できます。</div>';
@@ -5776,12 +6336,12 @@
       root.innerHTML = `
         <div class="gv-hero-card">
           ${ring}
-          <div class="gv-hero-sub">対象 ${data.count}回 ／ 評価あり ${data.ratedCount}回 ／ 合計 ${total}</div>
+          <div class="gv-hero-sub">${(typeof ratingEnabled !== 'undefined' && !ratingEnabled) ? 'フラグ＋金額モード' : `評価あり ${data.ratedCount}回`} ／ 対象 ${data.count}回 ／ 合計 ${total}</div>
         </div>
         ${dots}
         <div class="gv-goals-card">
           <div class="gv-goals-header">
-            <span class="gv-goals-title">🎯 ${modeTitle}の目標</span>
+            <span class="gv-goals-title">${modeTitle}の目標</span>
             <button type="button" class="gv-goals-edit-btn" onclick="openGoodValueGoalsModal()">編集</button>
           </div>
           ${goalsHtml}
