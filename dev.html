@@ -2611,6 +2611,52 @@
     .cloud-status-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 0; }
     .cloud-status-badge { font-size: 0.72rem; font-weight: bold; padding: 3px 10px; border-radius: 999px; }
     .cloud-status-badge.online { background: #DCFCE7; color: #15803D; }
+    .cloud-status-badge.pending { background: #FEF3C7; color: #B45309; }
+    .cloud-status-badge.conflict { background: #FEE2E2; color: #B91C1C; }
+    .cloud-status-badge.syncing { background: #DBEAFE; color: #1D4ED8; }
+    .cloud-dash {
+      margin-top: 10px; padding: 12px; border-radius: 12px;
+      background: var(--bg-color); border: 1px solid var(--border-color);
+    }
+    .cloud-dash-title {
+      font-size: 0.78rem; font-weight: 800; color: var(--accent-pink); margin-bottom: 8px;
+    }
+    .cloud-dash-row {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.75rem; padding: 5px 0; border-bottom: 1px dashed var(--border-color);
+    }
+    .cloud-dash-row:last-child { border-bottom: none; }
+    .cloud-dash-label { color: var(--light-text); font-weight: bold; }
+    .cloud-dash-value { color: var(--text-color); font-weight: 800; text-align: right; }
+    .cloud-dash-actions { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+    .cloud-dash-actions .close-btn { margin-top: 0; }
+    .cloud-conflict-box {
+      margin-top: 10px; padding: 10px 12px; border-radius: 10px;
+      background: #FEF2F2; border: 1px solid #FECACA; color: #991B1B;
+      font-size: 0.78rem; font-weight: bold; line-height: 1.45;
+    }
+    .cloud-conflict-options { display: flex; flex-direction: column; gap: 8px; margin: 12px 0; text-align: left; }
+    .cloud-conflict-option {
+      display: flex; align-items: flex-start; gap: 8px; padding: 10px 12px;
+      border: 1px solid var(--border-color); border-radius: 10px; background: var(--bg-color);
+      cursor: pointer; font-size: 0.82rem;
+    }
+    .cloud-conflict-option input { margin-top: 3px; accent-color: var(--accent-pink); }
+    .cloud-conflict-option strong { color: var(--accent-pink); }
+    .cloud-diff-block {
+      text-align: left; font-size: 0.75rem; background: var(--bg-color);
+      border: 1px solid var(--border-color); border-radius: 10px; padding: 10px;
+      max-height: 40vh; overflow-y: auto; margin-top: 8px; line-height: 1.5;
+    }
+    .cloud-diff-block h4 { font-size: 0.78rem; color: var(--accent-pink); margin: 8px 0 4px; }
+    .cloud-history-item {
+      display: flex; justify-content: space-between; gap: 8px;
+      font-size: 0.72rem; padding: 8px 0; border-bottom: 1px solid var(--border-color);
+    }
+    .cloud-history-item:last-child { border-bottom: none; }
+    .cloud-history-ok { color: #15803D; font-weight: bold; }
+    .cloud-history-err { color: #B91C1C; font-weight: bold; }
+    .cloud-history-warn { color: #B45309; font-weight: bold; }
 
     /* 🔔 クラウド同期ステータス通知（Nintendo Switch風・左上・小型） */
     .cloud-sync-toast {
@@ -3226,7 +3272,36 @@
               </div>
               <button type="button" class="close-btn" style="width:100%; margin-top:6px;" id="cloudLoginPromptBtn" onclick="openAuthModal()">🔐 ログイン / 新規登録</button>
               <button type="button" class="cloud-logout-btn" style="width:100%; margin-top:6px; display:none;" id="cloudLogoutBtn" onclick="logoutCloud()">ログアウト</button>
-              <div class="sec-status-note" style="margin-top:6px;">ログインすると、記録・予定・キープ等のデータが自動でクラウドに同期されます。</div>
+
+              <div class="cloud-dash" id="cloudSyncDashboard" style="display:none;">
+                <div class="cloud-dash-title">☁️ データ同期</div>
+                <div class="cloud-dash-row">
+                  <span class="cloud-dash-label">クラウド状態</span>
+                  <span class="cloud-dash-value" id="cloudDashState">—</span>
+                </div>
+                <div class="cloud-dash-row">
+                  <span class="cloud-dash-label">最終同期</span>
+                  <span class="cloud-dash-value" id="cloudDashLastSync">—</span>
+                </div>
+                <div class="cloud-dash-row">
+                  <span class="cloud-dash-label">ローカル変更</span>
+                  <span class="cloud-dash-value" id="cloudDashLocalChanges">0件</span>
+                </div>
+                <div class="cloud-dash-row">
+                  <span class="cloud-dash-label">クラウド変更</span>
+                  <span class="cloud-dash-value" id="cloudDashCloudChanges">0件</span>
+                </div>
+                <div class="cloud-conflict-box" id="cloudConflictBanner" style="display:none;">
+                  ⚠️ ローカルとクラウドでデータが異なります
+                </div>
+                <div class="cloud-dash-actions">
+                  <button type="button" class="close-btn" id="cloudSyncNowBtn" onclick="syncNowManual()">今すぐ同期</button>
+                  <button type="button" class="cloud-logout-btn" onclick="openCloudSyncHistoryModal()">同期履歴を見る</button>
+                  <button type="button" class="cloud-logout-btn" id="cloudResolveConflictBtn" style="display:none; border-color:#FCA5A5; color:#B91C1C;" onclick="openCloudConflictModal()">競合を解決する</button>
+                </div>
+              </div>
+
+              <div class="sec-status-note" style="margin-top:6px;">ログインすると、記録・予定・キープ等のデータが自動でクラウドに同期されます。差分がある場合は採用する側を選べます。</div>
             </div>
           </details>
 
@@ -3728,6 +3803,43 @@
   </div>
 
   <!-- 💌 手紙・カード全画像ギャラリーモーダル -->
+
+  <!-- ☁️ クラウド競合解決 -->
+  <div class="modal-overlay" id="cloudConflictModal">
+    <div class="modal-card" style="max-width:420px;">
+      <h3>⚠️ データが異なります</h3>
+      <p style="font-size:0.8rem; color:var(--light-text); margin:0 0 8px; line-height:1.5;">ローカルとクラウドで内容が一致しません。どちらを採用しますか？</p>
+      <div class="cloud-conflict-options">
+        <label class="cloud-conflict-option">
+          <input type="radio" name="cloudConflictChoice" value="cloud" checked>
+          <span><strong>クラウド</strong><br><span style="font-size:0.72rem;color:var(--light-text);">この端末の内容をクラウドの内容で上書きします</span></span>
+        </label>
+        <label class="cloud-conflict-option">
+          <input type="radio" name="cloudConflictChoice" value="local">
+          <span><strong>この端末</strong><br><span style="font-size:0.72rem;color:var(--light-text);">クラウドをこの端末の内容で上書きします</span></span>
+        </label>
+        <label class="cloud-conflict-option">
+          <input type="radio" name="cloudConflictChoice" value="diff">
+          <span><strong>差分を確認</strong><br><span style="font-size:0.72rem;color:var(--light-text);">件数の違いなどを確認してから決めます</span></span>
+        </label>
+      </div>
+      <div class="cloud-diff-block" id="cloudDiffPreview" style="display:none;"></div>
+      <div style="display:flex; gap:8px; margin-top:12px;">
+        <button type="button" class="close-btn" style="background:#888; flex:1;" onclick="closeModal('cloudConflictModal')">キャンセル</button>
+        <button type="button" class="close-btn" style="flex:2;" onclick="applyCloudConflictChoice()">実行する</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ☁️ 同期履歴 -->
+  <div class="modal-overlay" id="cloudSyncHistoryModal">
+    <div class="modal-card" style="max-width:420px;">
+      <h3>📜 同期履歴</h3>
+      <div id="cloudSyncHistoryList" style="max-height:50vh; overflow-y:auto; text-align:left;"></div>
+      <button type="button" class="close-btn" style="margin-top:12px;" onclick="closeModal('cloudSyncHistoryModal')">閉じる</button>
+    </div>
+  </div>
+
   <div class="modal-overlay" id="letterModal">
     <div class="modal-content">
       <h3 id="letterModalTitle">💌 メッセージカード・手紙</h3>
@@ -4958,11 +5070,22 @@
     let cloudSyncEnabled = false;
     let cloudLoggedInUserName = localStorage.getItem('app_cloud_user') || '';
     let cloudSyncTimer = null;
+    let cloudLastSyncedAt = localStorage.getItem('app_cloud_last_sync') || '';
+    let cloudLastSyncedHash = localStorage.getItem('app_cloud_last_hash') || '';
+    let cloudLocalDirty = localStorage.getItem('app_cloud_local_dirty') === 'true';
+    let cloudRemoteDirty = false;
+    let cloudPendingRemote = null; // { data, updated_at, hash }
+    let cloudSyncInProgress = false;
+    try {
+      window._cloudSyncHistory = JSON.parse(localStorage.getItem('app_cloud_sync_history') || '[]');
+      if (!Array.isArray(window._cloudSyncHistory)) window._cloudSyncHistory = [];
+    } catch (_) { window._cloudSyncHistory = []; }
 
     function initCloudAuth() {
       if (cloudLoggedInUserName) {
         cloudSyncEnabled = true;
         updateCloudStatusUI();
+        setTimeout(() => { inspectCloudRemote(); }, 600);
       } else {
         openAuthModal();
       }
@@ -5056,9 +5179,20 @@
       cloudSyncEnabled = true;
       cloudLoggedInUserName = name;
       localStorage.setItem('app_cloud_user', name);
+      const h = hashAppData(collectAllAppData());
+      cloudLastSyncedAt = new Date().toISOString();
+      cloudLastSyncedHash = h;
+      cloudLocalDirty = false;
+      cloudRemoteDirty = false;
+      cloudPendingRemote = null;
+      localStorage.setItem('app_cloud_last_sync', cloudLastSyncedAt);
+      localStorage.setItem('app_cloud_last_hash', cloudLastSyncedHash);
+      localStorage.setItem('app_cloud_local_dirty', 'false');
+      pushCloudSyncHistory({ result: 'ok', direction: 'login', detail: 'ログイン同期' });
       closeModal('authModal');
       updateCloudStatusUI();
       alert('クラウドログインしました！これ以降、データが自動的に同期されます。');
+      setTimeout(() => { inspectCloudRemote(); }, 400);
     }
 
     function logoutCloud() {
@@ -5069,49 +5203,376 @@
       alert('ログアウトしました（ローカルのデータはそのまま残ります）。');
     }
 
+    function hashAppData(data) {
+      try {
+        const s = JSON.stringify(data || {});
+        let h = 0;
+        for (let i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+        return String(h) + ':' + s.length;
+      } catch (_) { return '0:0'; }
+    }
+
+    function countAppDataItems(data) {
+      if (!data) return 0;
+      const hist = (data.historyList && data.historyList.length) || 0;
+      const casts = data.castData ? Object.keys(data.castData).length : 0;
+      const stores = data.storeInfoData ? Object.keys(data.storeInfoData).length : 0;
+      const sch = (data.scheduleList && data.scheduleList.length) || 0;
+      const keeps = (data.keepsList && data.keepsList.length) || 0;
+      const shared = (data.sharedRecords && data.sharedRecords.length) || 0;
+      return hist + casts + stores + sch + keeps + shared;
+    }
+
+    function summarizeDataDiff(local, remote) {
+      const L = local || {};
+      const R = remote || {};
+      const rows = [];
+      const pairs = [
+        ['記録', (L.historyList || []).length, (R.historyList || []).length],
+        ['女の子', L.castData ? Object.keys(L.castData).length : 0, R.castData ? Object.keys(R.castData).length : 0],
+        ['店舗', L.storeInfoData ? Object.keys(L.storeInfoData).length : 0, R.storeInfoData ? Object.keys(R.storeInfoData).length : 0],
+        ['予定', (L.scheduleList || []).length, (R.scheduleList || []).length],
+        ['キープ', (L.keepsList || []).length, (R.keepsList || []).length],
+        ['共有', (L.sharedRecords || []).length, (R.sharedRecords || []).length]
+      ];
+      pairs.forEach(([label, a, b]) => {
+        const d = a - b;
+        const sign = d > 0 ? '+' + d : String(d);
+        rows.push({ label, local: a, cloud: b, diff: d, sign });
+      });
+      return rows;
+    }
+
+    function pushCloudSyncHistory(entry) {
+      const list = window._cloudSyncHistory || [];
+      list.unshift({
+        at: entry.at || new Date().toISOString(),
+        result: entry.result || 'ok',
+        detail: entry.detail || '',
+        direction: entry.direction || 'push'
+      });
+      window._cloudSyncHistory = list.slice(0, 30);
+      try { localStorage.setItem('app_cloud_sync_history', JSON.stringify(window._cloudSyncHistory)); } catch (_) {}
+    }
+
+    function markCloudLocalDirty() {
+      if (!cloudSyncEnabled) return;
+      cloudLocalDirty = true;
+      localStorage.setItem('app_cloud_local_dirty', 'true');
+      updateCloudSyncDashboard();
+    }
+
+    function clearCloudLocalDirty(hash) {
+      cloudLocalDirty = false;
+      cloudRemoteDirty = false;
+      cloudPendingRemote = null;
+      cloudLastSyncedAt = new Date().toISOString();
+      cloudLastSyncedHash = hash || hashAppData(collectAllAppData());
+      localStorage.setItem('app_cloud_local_dirty', 'false');
+      localStorage.setItem('app_cloud_last_sync', cloudLastSyncedAt);
+      localStorage.setItem('app_cloud_last_hash', cloudLastSyncedHash);
+      updateCloudSyncDashboard();
+    }
+
+    function formatCloudTime(iso) {
+      if (!iso) return '—';
+      try {
+        const d = new Date(iso);
+        if (isNaN(d.getTime())) return iso;
+        const p = (n) => String(n).padStart(2, '0');
+        return d.getFullYear() + '/' + p(d.getMonth() + 1) + '/' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+      } catch (_) { return iso; }
+    }
+
     function updateCloudStatusUI() {
       const badge = document.getElementById('cloudStatusBadge');
       const nameEl = document.getElementById('cloudStatusUserName');
       const loginBtn = document.getElementById('cloudLoginPromptBtn');
       const logoutBtn = document.getElementById('cloudLogoutBtn');
+      const dash = document.getElementById('cloudSyncDashboard');
       if (!badge) return;
       if (cloudSyncEnabled && cloudLoggedInUserName) {
-        badge.innerText = 'オンライン同期中';
-        badge.classList.remove('offline'); badge.classList.add('online');
         nameEl.innerText = cloudLoggedInUserName;
         loginBtn.style.display = 'none';
         logoutBtn.style.display = 'block';
+        if (dash) dash.style.display = 'block';
       } else {
         badge.innerText = '未ログイン';
-        badge.classList.remove('online'); badge.classList.add('offline');
+        badge.className = 'cloud-status-badge offline';
         nameEl.innerText = '';
         loginBtn.style.display = 'block';
         logoutBtn.style.display = 'none';
+        if (dash) dash.style.display = 'none';
       }
+      updateCloudSyncDashboard();
+    }
+
+    function updateCloudSyncDashboard() {
+      const badge = document.getElementById('cloudStatusBadge');
+      const stateEl = document.getElementById('cloudDashState');
+      const lastEl = document.getElementById('cloudDashLastSync');
+      const localEl = document.getElementById('cloudDashLocalChanges');
+      const cloudEl = document.getElementById('cloudDashCloudChanges');
+      const banner = document.getElementById('cloudConflictBanner');
+      const resolveBtn = document.getElementById('cloudResolveConflictBtn');
+      if (!cloudSyncEnabled || !cloudLoggedInUserName) return;
+
+      const localData = collectAllAppData();
+      const localHash = hashAppData(localData);
+      const localChanged = cloudLocalDirty || (cloudLastSyncedHash && localHash !== cloudLastSyncedHash);
+      const cloudChanged = !!cloudRemoteDirty;
+
+      let localCount = localChanged ? Math.max(1, Math.abs(countAppDataItems(localData) - (cloudPendingRemote ? countAppDataItems(cloudPendingRemote.data) : countAppDataItems(localData)))) : 0;
+      if (localChanged && localCount === 0) localCount = 1;
+      let cloudCount = 0;
+      if (cloudChanged && cloudPendingRemote) {
+        const rows = summarizeDataDiff(localData, cloudPendingRemote.data);
+        cloudCount = rows.reduce((s, r) => s + (r.diff !== 0 ? 1 : 0), 0) || 1;
+      }
+
+      if (lastEl) lastEl.textContent = formatCloudTime(cloudLastSyncedAt);
+      if (localEl) localEl.textContent = (localChanged ? localCount : 0) + '件';
+      if (cloudEl) cloudEl.textContent = (cloudChanged ? cloudCount : 0) + '件';
+
+      const conflict = localChanged && cloudChanged;
+      if (banner) banner.style.display = conflict ? 'block' : 'none';
+      if (resolveBtn) resolveBtn.style.display = conflict ? 'block' : 'none';
+
+      if (badge) {
+        badge.className = 'cloud-status-badge';
+        if (cloudSyncInProgress) {
+          badge.classList.add('syncing');
+          badge.innerText = '同期中…';
+          if (stateEl) stateEl.textContent = '● 同期中';
+        } else if (conflict) {
+          badge.classList.add('conflict');
+          badge.innerText = '競合あり';
+          if (stateEl) stateEl.textContent = '⚠️ 差分あり';
+        } else if (localChanged || cloudChanged) {
+          badge.classList.add('pending');
+          badge.innerText = '未同期';
+          if (stateEl) stateEl.textContent = localChanged ? '● ローカルに変更あり' : '● クラウドに変更あり';
+        } else {
+          badge.classList.add('online');
+          badge.innerText = '同期済み';
+          if (stateEl) stateEl.textContent = '● 同期済み';
+        }
+      }
+    }
+
+    async function fetchCloudBackupRow() {
+      if (!supabaseClient || !cloudLoggedInUserName) return null;
+      const { data: row, error } = await supabaseClient
+        .from('user_backups')
+        .select('data, updated_at')
+        .eq('user_name', cloudLoggedInUserName)
+        .maybeSingle();
+      if (error) throw error;
+      return row;
+    }
+
+    async function inspectCloudRemote() {
+      if (!cloudSyncEnabled || !supabaseClient || !cloudLoggedInUserName) return;
+      try {
+        const row = await fetchCloudBackupRow();
+        if (!row) return;
+        const remoteHash = hashAppData(row.data);
+        const localHash = hashAppData(collectAllAppData());
+        const remoteNewer = row.updated_at && cloudLastSyncedAt && (new Date(row.updated_at).getTime() > new Date(cloudLastSyncedAt).getTime());
+        const hashDiff = remoteHash !== localHash;
+        if (hashDiff && (remoteNewer || remoteHash !== cloudLastSyncedHash)) {
+          cloudRemoteDirty = true;
+          cloudPendingRemote = { data: row.data, updated_at: row.updated_at, hash: remoteHash };
+        } else if (!hashDiff) {
+          cloudRemoteDirty = false;
+          cloudPendingRemote = null;
+          if (!cloudLocalDirty) {
+            cloudLastSyncedHash = remoteHash;
+            if (row.updated_at) cloudLastSyncedAt = row.updated_at;
+            localStorage.setItem('app_cloud_last_hash', cloudLastSyncedHash);
+            localStorage.setItem('app_cloud_last_sync', cloudLastSyncedAt);
+          }
+        }
+        updateCloudSyncDashboard();
+      } catch (err) {
+        console.log('クラウド状態確認に失敗:', err);
+      }
+    }
+
+    async function pushLocalToCloud() {
+      const payload = collectAllAppData();
+      const { error } = await supabaseClient
+        .from('user_backups')
+        .update({ data: payload, updated_at: new Date().toISOString() })
+        .eq('user_name', cloudLoggedInUserName);
+      if (error) throw error;
+      clearCloudLocalDirty(hashAppData(payload));
+      pushCloudSyncHistory({ result: 'ok', direction: 'push', detail: 'この端末 → クラウド' });
+    }
+
+    async function pullCloudToLocal() {
+      const row = cloudPendingRemote || await fetchCloudBackupRow();
+      if (!row || !row.data) throw new Error('クラウドデータがありません');
+      applyCloudData(row.data);
+      const h = hashAppData(row.data);
+      cloudLastSyncedAt = row.updated_at || new Date().toISOString();
+      cloudLastSyncedHash = h;
+      cloudLocalDirty = false;
+      cloudRemoteDirty = false;
+      cloudPendingRemote = null;
+      localStorage.setItem('app_cloud_local_dirty', 'false');
+      localStorage.setItem('app_cloud_last_sync', cloudLastSyncedAt);
+      localStorage.setItem('app_cloud_last_hash', cloudLastSyncedHash);
+      pushCloudSyncHistory({ result: 'ok', direction: 'pull', detail: 'クラウド → この端末' });
+      updateCloudSyncDashboard();
     }
 
     function syncDataToCloud(immediate) {
       if (!cloudSyncEnabled || !supabaseClient || !cloudLoggedInUserName) return;
+      markCloudLocalDirty();
       clearTimeout(cloudSyncTimer);
 
       const doSync = async () => {
+        if (cloudSyncInProgress) return;
+        cloudSyncInProgress = true;
+        updateCloudSyncDashboard();
         showSyncStatusToast('syncing');
         try {
-          const { error } = await supabaseClient
-            .from('user_backups')
-            .update({ data: collectAllAppData(), updated_at: new Date().toISOString() })
-            .eq('user_name', cloudLoggedInUserName);
-          if (error) throw error;
+          // 先にクラウド側を確認
+          const row = await fetchCloudBackupRow();
+          if (row) {
+            const remoteHash = hashAppData(row.data);
+            const localHash = hashAppData(collectAllAppData());
+            const remoteChanged = remoteHash !== cloudLastSyncedHash && remoteHash !== localHash;
+            const remoteNewer = row.updated_at && cloudLastSyncedAt && (new Date(row.updated_at).getTime() > new Date(cloudLastSyncedAt).getTime() + 2000);
+            if (remoteChanged && remoteNewer) {
+              cloudRemoteDirty = true;
+              cloudPendingRemote = { data: row.data, updated_at: row.updated_at, hash: remoteHash };
+              cloudSyncInProgress = false;
+              updateCloudSyncDashboard();
+              showSyncStatusToast('error', '競合');
+              pushCloudSyncHistory({ result: 'conflict', direction: 'check', detail: 'ローカルとクラウドで差分' });
+              openCloudConflictModal();
+              return;
+            }
+          }
+          await pushLocalToCloud();
           showSyncStatusToast('success');
         } catch (err) {
           console.log('クラウド同期に失敗しました:', err);
-          const code = (err && (err.code || err.status || err.statusCode)) || 'UNKNOWN';
-          showSyncStatusToast('error', code);
+          const code = (err && (err.code || err.status || err.statusCode || err.message)) || 'UNKNOWN';
+          showSyncStatusToast('error', String(code).slice(0, 24));
+          pushCloudSyncHistory({ result: 'error', direction: 'push', detail: String(code).slice(0, 80) });
+        } finally {
+          cloudSyncInProgress = false;
+          updateCloudSyncDashboard();
         }
       };
 
       if (immediate) doSync();
       else cloudSyncTimer = setTimeout(doSync, 800);
+    }
+
+    async function syncNowManual() {
+      if (!cloudSyncEnabled || !supabaseClient || !cloudLoggedInUserName) {
+        alert('先にクラウドへログインしてください。');
+        return;
+      }
+      cloudSyncInProgress = true;
+      updateCloudSyncDashboard();
+      showSyncStatusToast('syncing');
+      try {
+        await inspectCloudRemote();
+        const localData = collectAllAppData();
+        const localHash = hashAppData(localData);
+        const localChanged = cloudLocalDirty || (cloudLastSyncedHash && localHash !== cloudLastSyncedHash);
+        if (localChanged && cloudRemoteDirty) {
+          openCloudConflictModal();
+          showSyncStatusToast('error', '競合');
+          return;
+        }
+        if (cloudRemoteDirty && !localChanged) {
+          await pullCloudToLocal();
+          showSyncStatusToast('success');
+          return;
+        }
+        await pushLocalToCloud();
+        showSyncStatusToast('success');
+      } catch (err) {
+        console.log(err);
+        showSyncStatusToast('error', '失敗');
+        pushCloudSyncHistory({ result: 'error', direction: 'manual', detail: String(err && err.message || err).slice(0, 80) });
+      } finally {
+        cloudSyncInProgress = false;
+        updateCloudSyncDashboard();
+      }
+    }
+
+    function openCloudConflictModal() {
+      const prev = document.getElementById('cloudDiffPreview');
+      if (prev) { prev.style.display = 'none'; prev.innerHTML = ''; }
+      const radios = document.querySelectorAll('input[name="cloudConflictChoice"]');
+      radios.forEach(r => { r.checked = r.value === 'cloud'; });
+      document.getElementById('cloudConflictModal').style.display = 'flex';
+    }
+
+    async function applyCloudConflictChoice() {
+      const choice = (document.querySelector('input[name="cloudConflictChoice"]:checked') || {}).value || 'cloud';
+      if (choice === 'diff') {
+        try {
+          if (!cloudPendingRemote) await inspectCloudRemote();
+          const rows = summarizeDataDiff(collectAllAppData(), (cloudPendingRemote && cloudPendingRemote.data) || {});
+          const el = document.getElementById('cloudDiffPreview');
+          if (el) {
+            el.style.display = 'block';
+            el.innerHTML = '<h4>差分サマリー（件数）</h4>' + rows.map(r =>
+              `<div>${r.label}: 端末 ${r.local} ／ クラウド ${r.cloud} （差 ${r.sign}）</div>`
+            ).join('') + '<p style="margin-top:8px;color:var(--light-text);font-size:0.7rem;">確認後、クラウドまたはこの端末を選んで「実行する」を押してください。</p>';
+          }
+        } catch (err) {
+          alert('差分の取得に失敗しました。');
+        }
+        return;
+      }
+      cloudSyncInProgress = true;
+      updateCloudSyncDashboard();
+      try {
+        if (choice === 'cloud') {
+          if (!cloudPendingRemote) await inspectCloudRemote();
+          await pullCloudToLocal();
+          alert('クラウドの内容をこの端末に反映しました。');
+        } else {
+          await pushLocalToCloud();
+          alert('この端末の内容をクラウドに反映しました。');
+        }
+        closeModal('cloudConflictModal');
+        showSyncStatusToast('success');
+      } catch (err) {
+        alert('反映に失敗しました: ' + (err && err.message ? err.message : err));
+        showSyncStatusToast('error', '失敗');
+      } finally {
+        cloudSyncInProgress = false;
+        updateCloudSyncDashboard();
+      }
+    }
+
+    function openCloudSyncHistoryModal() {
+      const list = window._cloudSyncHistory || [];
+      const el = document.getElementById('cloudSyncHistoryList');
+      if (!el) return;
+      if (!list.length) {
+        el.innerHTML = '<div style="color:var(--light-text);font-size:0.8rem;padding:12px 0;">まだ同期履歴がありません。</div>';
+      } else {
+        el.innerHTML = list.map(item => {
+          const cls = item.result === 'ok' ? 'cloud-history-ok' : (item.result === 'conflict' ? 'cloud-history-warn' : 'cloud-history-err');
+          const label = item.result === 'ok' ? '成功' : (item.result === 'conflict' ? '競合' : '失敗');
+          return `<div class="cloud-history-item">
+            <div><div class="${cls}">${label}</div><div style="color:var(--light-text);">${item.detail || item.direction || ''}</div></div>
+            <div style="color:var(--light-text); white-space:nowrap;">${formatCloudTime(item.at)}</div>
+          </div>`;
+        }).join('');
+      }
+      document.getElementById('cloudSyncHistoryModal').style.display = 'flex';
     }
 
     /* 🔔 Nintendo Switch風のクラウド同期ステータス通知（左上・小型） */
