@@ -625,6 +625,256 @@
     .home-top-panel { position: relative; z-index: 2; width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
     .home-card-a { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 12px 16px; box-shadow: var(--shadow); backdrop-filter: blur(8px); }
     [data-theme="midnight"] .home-card-a, [data-theme="velvet"] .home-card-a, [data-theme="cyber"] .home-card-a { background: rgba(26,26,36,0.85); }
+
+    /* ホーム: ウィジェットスタック（左右スワイプ） */
+    .home-widget-stack {
+      width: 100%;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow);
+      background: var(--card-bg);
+      backdrop-filter: blur(8px);
+      position: relative;
+    }
+    [data-theme="midnight"] .home-widget-stack,
+    [data-theme="velvet"] .home-widget-stack,
+    [data-theme="cyber"] .home-widget-stack { background: rgba(26,26,36,0.85); }
+    [data-theme="jreast"] .home-widget-stack { border-radius: 6px; }
+    .home-widget-track {
+      display: flex;
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      height: auto;
+      transition: height 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .home-widget-track::-webkit-scrollbar { display: none; }
+    .home-widget-page {
+      flex: 0 0 100%;
+      width: 100%;
+      scroll-snap-align: start;
+      padding: 12px 16px 8px;
+      box-sizing: border-box;
+      min-height: 72px;
+      height: fit-content;
+      align-self: flex-start;
+    }
+    .home-widget-page--tap { cursor: pointer; }
+    .home-widget-page--tap:active { opacity: 0.92; }
+    .home-widget-dots {
+      display: flex; justify-content: center; gap: 6px;
+      opacity: 0;
+      pointer-events: none;
+      max-height: 0;
+      overflow: hidden;
+      padding: 0;
+      transform: translateY(4px);
+      transition:
+        opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+        transform 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+        max-height 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+        padding 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .home-widget-dots.is-visible {
+      opacity: 1;
+      pointer-events: auto;
+      max-height: 24px;
+      padding: 0 0 8px;
+      transform: translateY(0);
+    }
+    .home-widget-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--border-color);
+      transition: background 0.2s, transform 0.2s;
+    }
+    .home-widget-dot.active {
+      background: var(--accent-pink);
+      transform: scale(1.25);
+    }
+
+    /* プレイ状況ウィジェット（折りたたみ） */
+    .home-widget-page[data-widget="play"] {
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      position: relative;
+    }
+    .home-play-head {
+      display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2px;
+    }
+    .home-play-title { font-size: 0.75rem; color: var(--light-text); font-weight: bold; }
+    .home-play-main {
+      display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+      position: relative;
+    }
+    .home-play-main-left {
+      display: flex; align-items: baseline; gap: 8px; min-width: 0;
+    }
+    .home-play-rates-collapsed {
+      text-align: right; flex-shrink: 0;
+    }
+    .home-play-rates-collapsed .home-play-rates-lbl {
+      font-size: 0.68rem; color: var(--light-text); font-weight: bold;
+    }
+    .home-play-rates-collapsed .home-play-rates-val {
+      font-size: 0.88rem; font-weight: bold; color: var(--accent-pink);
+    }
+    /* 展開部：閉じ時は非表示（max-height 方式） */
+    .home-play-rates-collapsed {
+      transition: opacity 0.22s ease, transform 0.22s ease;
+    }
+    .home-widget-page[data-widget="play"].is-expanded .home-play-rates-collapsed {
+      opacity: 0;
+      transform: translateY(-4px);
+      pointer-events: none;
+      position: absolute;
+      right: 16px;
+      visibility: hidden;
+    }
+    .home-play-detail {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      margin-top: 0;
+      transition:
+        max-height 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+        margin-top 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .home-play-detail-inner {
+      overflow: hidden;
+    }
+    .home-widget-page[data-widget="play"].is-expanded .home-play-detail {
+      max-height: 220px;
+      opacity: 1;
+      margin-top: 8px;
+    }
+    /* 切替完了時の軽いフェード */
+    .home-widget-page.hw-page-enter {
+      animation: hwPageEnter 0.28s cubic-bezier(0.4, 0, 0.2, 1) both;
+    }
+    @keyframes hwPageEnter {
+      from { opacity: 0.55; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    /* いい値ぇー入場：リング・バー再アニメ用 */
+    .home-gv-ring-fg.hw-anim-ring {
+      transition: stroke-dashoffset 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .home-gv-bar-fill.hw-anim-bar {
+      transition: width 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .home-play-chips {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 8px;
+    }
+    .home-play-chip {
+      background: var(--bg-color); border: 1px solid var(--border-color);
+      border-radius: 10px; padding: 6px 4px; text-align: center;
+    }
+    .home-play-chip-val {
+      font-size: 0.88rem; font-weight: 800; color: var(--accent-pink); line-height: 1.2;
+    }
+    .home-play-chip-lbl {
+      font-size: 0.58rem; font-weight: bold; color: var(--light-text); margin-top: 2px;
+    }
+    .home-play-footer {
+      display: flex; justify-content: space-between; align-items: center; gap: 8px;
+      font-size: 0.72rem; font-weight: bold; color: var(--text-color);
+      flex-wrap: wrap;
+    }
+    .home-play-okini {
+      font-size: 0.72rem; font-weight: bold; color: var(--accent-pink);
+      max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      margin-top: 6px;
+    }
+    .home-play-okini-muted { color: var(--light-text); font-weight: bold; }
+
+    .home-widget-page[data-widget="goodValue"] {
+      background: linear-gradient(135deg, var(--soft-pink) 0%, var(--card-bg) 55%);
+    }
+    [data-theme="midnight"] .home-widget-page[data-widget="goodValue"],
+    [data-theme="velvet"] .home-widget-page[data-widget="goodValue"],
+    [data-theme="cyber"] .home-widget-page[data-widget="goodValue"],
+    [data-theme="berry"] .home-widget-page[data-widget="goodValue"],
+    [data-theme="mocha"] .home-widget-page[data-widget="goodValue"] {
+      background: linear-gradient(135deg, var(--soft-pink) 0%, transparent 60%);
+    }
+    .home-gv-row {
+      display: flex; align-items: center; gap: 14px;
+    }
+    .home-gv-ring {
+      position: relative; width: 64px; height: 64px; flex-shrink: 0;
+    }
+    .home-gv-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .home-gv-ring-bg { fill: none; stroke: var(--border-color); stroke-width: 6; opacity: 0.85; }
+    .home-gv-ring-fg {
+      fill: none; stroke: var(--accent-pink); stroke-width: 6; stroke-linecap: round;
+      transition: stroke-dashoffset 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .home-gv-ring-fg.gv-score-high { stroke: #0ca678; }
+    .home-gv-ring-fg.gv-score-mid { stroke: var(--accent-pink); }
+    .home-gv-ring-fg.gv-score-low { stroke: #fab005; }
+    .home-gv-ring-center {
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 0;
+      font-size: 1.15rem; font-weight: 800; color: var(--accent-pink);
+      font-variant-numeric: tabular-nums; line-height: 1;
+    }
+    .home-gv-ring-center .home-gv-ring-sub {
+      font-size: 0.55rem; font-weight: bold; color: var(--light-text); margin-top: 2px;
+    }
+    .home-gv-ring-center.gv-score-high { color: #0ca678; }
+    .home-gv-ring-center.gv-score-mid { color: var(--accent-pink); }
+    .home-gv-ring-center.gv-score-low { color: #e67700; }
+    .home-gv-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+    .home-gv-title-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+    }
+    .home-gv-title { font-size: 0.78rem; color: var(--accent-pink); font-weight: 800; }
+    .home-gv-period {
+      font-size: 0.65rem; font-weight: bold; color: var(--accent-pink);
+      background: var(--card-bg); border: 1px solid var(--primary-pink);
+      padding: 1px 8px; border-radius: 999px;
+    }
+    .home-gv-meta-row {
+      display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+    }
+    .home-gv-goal { font-size: 0.82rem; font-weight: bold; color: var(--text-color); }
+    .home-gv-count { font-size: 0.78rem; font-weight: bold; color: var(--light-text); }
+    .home-gv-bars {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;
+    }
+    .home-gv-bar-item { min-width: 0; }
+    .home-gv-bar-label {
+      display: flex; justify-content: space-between; font-size: 0.6rem; font-weight: bold;
+      color: var(--light-text); margin-bottom: 2px;
+    }
+    .home-gv-bar-label span:last-child { color: var(--text-color); }
+    .home-gv-bar-track {
+      height: 4px; border-radius: 999px; background: var(--border-color); overflow: hidden;
+    }
+    .home-gv-bar-fill {
+      height: 100%; border-radius: 999px; width: 0%;
+      transition: width 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .home-gv-bar-fill.eff { background: #20c997; }
+    .home-gv-bar-fill.sav { background: #4dabf7; }
+    .home-gv-bar-fill.con { background: var(--accent-pink); }
+    .home-gv-footer {
+      display: flex; justify-content: space-between; align-items: center; gap: 8px;
+      margin-top: 2px;
+    }
+    .home-gv-ypm { font-size: 0.72rem; font-weight: bold; color: var(--text-color); }
+    .home-gv-type-pill {
+      display: inline-block; font-size: 0.6rem; font-weight: bold;
+      padding: 2px 8px; border-radius: 999px; background: var(--card-bg);
+      color: var(--accent-pink); border: 1px solid var(--primary-pink);
+    }
+
+
     .home-card-b { background: linear-gradient(135deg, var(--soft-pink), var(--card-bg)); border: 1.5px dashed var(--primary-pink); border-radius: var(--radius); padding: 10px 16px; text-align: center; box-shadow: var(--shadow); }
     .home-card-c { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 10px 14px; text-align: center; box-shadow: var(--shadow); cursor: pointer; transition: transform 0.1s; }
     .home-card-c:active { transform: scale(0.98); }
@@ -633,6 +883,7 @@
 
     /* 🚃 JR東日本風テーマ：カード・境界線の質感（フラット＆ピシッとした構造） */
     [data-theme="jreast"] .home-card-a,
+    [data-theme="jreast"] .home-widget-stack,
     [data-theme="jreast"] details.cast-card,
     [data-theme="jreast"] .stat-card,
     [data-theme="jreast"] details.store-card-fold {
@@ -898,7 +1149,7 @@
     .badge-count-gold { background: var(--gold-border) !important; color: #ffffff !important; }
     .badge-count-gray { background: #94a3b8 !important; color: #ffffff !important; }
 
-    /* ⏳ キャスト別 継続期間フリップ＆振動表示機能 */
+    /* ⏳ 女の子別 継続期間フリップ＆振動表示機能 */
     .badge-count-flip-wrap { display: inline-block; cursor: pointer; -webkit-user-select: none; user-select: none; }
     .badge-count-flip-wrap .badge-count { display: inline-block; transform: scaleX(1); transition: transform 0.2s ease; white-space: nowrap; }
     .badge-count-flip-wrap.flipping .badge-count { transform: scaleX(0); }
@@ -1248,7 +1499,7 @@
     .score-slider-row input[type="range"] { flex: 1; accent-color: var(--accent-pink); }
     .score-slider-val { flex: 0 0 34px; text-align: center; font-size: 0.78rem; font-weight: bold; color: var(--accent-pink); }
 
-    /* ⭐ キャストカード内：五角形レーダーチャート（アコーディオン・スリム表示） */
+    /* ⭐ 女の子カード内：五角形レーダーチャート（アコーディオン・スリム表示） */
     .radar-slim-block { margin-top: 4px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; }
     .radar-slim-toggle {
       width: 100%; display: flex; align-items: center; justify-content: space-between;
@@ -1261,7 +1512,7 @@
     .radar-slim-chart-inner { overflow: hidden; }
     .radar-chart-wrap { position: relative; width: 100%; max-width: 240px; height: 170px; margin: 0 auto; padding-bottom: 10px; }
 
-    /* ⭐ 統計タブ：項目別NO.1キャスト */
+    /* ⭐ 統計タブ：項目別NO.1女の子 */
     .score-rank-list { display: flex; flex-direction: column; gap: 6px; }
     .score-rank-item { display: flex; align-items: center; justify-content: space-between; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 10px; padding: 8px 12px; }
     .score-rank-label { font-size: 0.78rem; font-weight: bold; color: var(--light-text); }
@@ -1969,7 +2220,7 @@
       #sharedContent { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
       .shared-card { margin-bottom: 0; }
       .home-top-panel { flex-direction: row; max-width: 100%; }
-      .home-card-a, .home-card-b, .home-card-c { flex: 1; }
+      .home-widget-stack, .home-card-a, .home-card-b, .home-card-c { flex: 1; }
       #viewHome.active { height: auto; min-height: 70vh; }
       .dash-charts-row { flex-direction: row; gap: 14px; }
       .dash-charts-row > .stat-section { flex: 1; margin-bottom: 14px; }
@@ -2101,9 +2352,9 @@
       <h3>❓ パスコードを忘れた場合</h3>
 
       <div id="recoveryStepWord">
-        <div class="recovery-step-note">直近に追加した記録のキャスト名、または一番最初に追加した記録のキャスト名を入力してください。</div>
+        <div class="recovery-step-note">直近に追加した記録の女の子名、または一番最初に追加した記録の女の子名を入力してください。</div>
         <div class="form-group">
-          <label>キャスト名</label>
+          <label>女の子名</label>
           <input type="text" id="recoveryWordInput" placeholder="例: ゆあ">
         </div>
         <div class="recovery-error-msg" id="recoveryWordError"></div>
@@ -2216,7 +2467,7 @@
     <aside class="sidebar-area">
       <header>
         <h1 id="headerTitle">童貞の風俗履歴図鑑</h1>
-        <div class="header-sub">マイ キャスト ＆ プレイレコード</div>
+        <div class="header-sub">マイガールノートブック</div>
         <div class="header-btn-row">
           <button class="pill-btn" onclick="switchMainTab('settings')" title="ユーザー設定・テーマ変更">
             <span class="icon-badge icon-cat-settings icon-badge-sm"><span class="emoji-icon">👤</span><i data-lucide="user" class="smart-icon"></i></span>
@@ -2271,17 +2522,90 @@
           <!-- 🔔 アクション通知エリア -->
           <div id="homeActionCardsContainer" style="display:none; flex-direction:column; gap:8px; width:100%;"></div>
 
-          <div class="home-card-a">
-            <div style="font-size: 0.75rem; color: var(--light-text); font-weight: bold; margin-bottom: 2px;">今月のプレイ状況</div>
-            <div style="display: flex; justify-content: space-between; align-items: baseline;">
-              <div>
-                <span class="counter-big" id="homeMonthCount">0回</span>
-                <span style="font-size: 0.8rem; margin-left: 6px; font-weight: bold;" id="homeMonthDiff">--</span>
+          <div class="home-widget-stack" id="homeWidgetStack">
+            <div class="home-widget-track" id="homeWidgetTrack">
+              <div class="home-widget-page" data-widget="play" id="homeWidgetPlay">
+                <div class="home-play-head">
+                  <span class="home-play-title">今月のプレイ状況</span>
+                </div>
+                <div class="home-play-main">
+                  <div class="home-play-main-left">
+                    <span class="counter-big" id="homeMonthCount">0回</span>
+                    <span style="font-size: 0.8rem; font-weight: bold;" id="homeMonthDiff">--</span>
+                  </div>
+                  <div class="home-play-rates-collapsed">
+                    <div class="home-play-rates-lbl">当たり / ハズレ</div>
+                    <div class="home-play-rates-val" id="homePlayRatesCollapsed">0% / 0%</div>
+                  </div>
+                </div>
+                <div class="home-play-detail">
+                  <div class="home-play-detail-inner">
+                    <div class="home-play-chips">
+                      <div class="home-play-chip">
+                        <div class="home-play-chip-val" id="homePlayAtari">0%</div>
+                        <div class="home-play-chip-lbl">当たり</div>
+                      </div>
+                      <div class="home-play-chip">
+                        <div class="home-play-chip-val" id="homePlayHazure">0%</div>
+                        <div class="home-play-chip-lbl">ハズレ</div>
+                      </div>
+                      <div class="home-play-chip">
+                        <div class="home-play-chip-val" id="homePlayDays">0日</div>
+                        <div class="home-play-chip-lbl">記録日</div>
+                      </div>
+                    </div>
+                    <div class="home-play-footer">
+                      <span id="homePlayAmount">合計 —</span>
+                      <span id="homePlayAvg">平均 —</span>
+                    </div>
+                    <div class="home-play-okini" id="homePlayOkini">オキニとの記録なし</div>
+                  </div>
+                </div>
               </div>
-              <div style="text-align: right;">
-                <div style="font-size: 0.72rem; color: var(--light-text);">当たり率 / オキニ率</div>
-                <div style="font-size: 0.88rem; font-weight: bold; color: var(--accent-pink);" id="homeMonthRates">0% / 0%</div>
+              <div class="home-widget-page home-widget-page--tap" data-widget="goodValue" id="homeWidgetGoodValue" onclick="switchMainTab('goodValue')">
+                <div class="home-gv-row">
+                  <div class="home-gv-ring" id="homeGvRing">
+                    <svg viewBox="0 0 64 64" aria-hidden="true">
+                      <circle class="home-gv-ring-bg" cx="32" cy="32" r="25"></circle>
+                      <circle class="home-gv-ring-fg" id="homeGvRingFg" cx="32" cy="32" r="25"
+                        stroke-dasharray="157.08" stroke-dashoffset="157.08"></circle>
+                    </svg>
+                    <div class="home-gv-ring-center" id="homeGvScore">—<span class="home-gv-ring-sub">点</span></div>
+                  </div>
+                  <div class="home-gv-main">
+                    <div class="home-gv-title-row">
+                      <span class="home-gv-title">いい値ぇー！</span>
+                      <span class="home-gv-period">今月</span>
+                    </div>
+                    <div class="home-gv-meta-row">
+                      <span class="home-gv-goal" id="homeGvGoal">目標 —</span>
+                      <span class="home-gv-count" id="homeGvCount">0回</span>
+                    </div>
+                    <div class="home-gv-bars">
+                      <div class="home-gv-bar-item">
+                        <div class="home-gv-bar-label"><span>効率</span><span id="homeGvEffVal">—</span></div>
+                        <div class="home-gv-bar-track"><div class="home-gv-bar-fill eff" id="homeGvEffBar"></div></div>
+                      </div>
+                      <div class="home-gv-bar-item">
+                        <div class="home-gv-bar-label"><span>節約</span><span id="homeGvSavVal">—</span></div>
+                        <div class="home-gv-bar-track"><div class="home-gv-bar-fill sav" id="homeGvSavBar"></div></div>
+                      </div>
+                      <div class="home-gv-bar-item">
+                        <div class="home-gv-bar-label"><span>安定</span><span id="homeGvConVal">—</span></div>
+                        <div class="home-gv-bar-track"><div class="home-gv-bar-fill con" id="homeGvConBar"></div></div>
+                      </div>
+                    </div>
+                    <div class="home-gv-footer">
+                      <span class="home-gv-ypm" id="homeGvYpm">—</span>
+                      <span id="homeGvType"></span>
+                    </div>
+                  </div>
+                </div>
               </div>
+            </div>
+            <div class="home-widget-dots" id="homeWidgetDots">
+              <span class="home-widget-dot active" data-idx="0"></span>
+              <span class="home-widget-dot" data-idx="1"></span>
             </div>
           </div>
 
@@ -2306,7 +2630,7 @@
                 <span id="selectedTypeBadgeText">タグ</span>
                 <span class="btn-close-tag" onclick="clearSelectedTypeTag(event)">×</span>
               </div>
-              <input type="text" id="searchKeyword" list="searchDatalist" placeholder="キャスト名、店舗名、系統等で検索..." oninput="handleSearchInput(this.value)">
+              <input type="text" id="searchKeyword" list="searchDatalist" placeholder="女の子名、店舗名、系統等で検索..." oninput="handleSearchInput(this.value)">
               <datalist id="searchDatalist"></datalist>
             </div>
             <button class="btn-options-toggle" onclick="toggleOptionsFold()">
@@ -2326,7 +2650,7 @@
               </div>
 
               <div class="btn-group">
-                <button class="btn-toggle active" id="viewCast" onclick="changeView('cast')">キャスト別図鑑</button>
+                <button class="btn-toggle active" id="viewCast" onclick="changeView('cast')">女の子別図鑑</button>
                 <button class="btn-toggle" id="viewTimeline" onclick="changeView('timeline')">月別時系列</button>
                 <button class="btn-toggle" id="viewStore" onclick="changeView('store')">🏬 店舗別</button>
               </div>
@@ -2412,7 +2736,7 @@
         </div>
 
         <div id="csNotFoundMsg" class="cs-not-found" style="display:none;">
-          該当するキャストデータが見つかりませんでした。名前をご確認ください。
+          該当する女の子データが見つかりませんでした。名前をご確認ください。
         </div>
 
         <div id="csEditForm" class="cs-edit-form" style="display:none;">
@@ -2439,7 +2763,7 @@
             </div>
           </div>
 
-          <div class="form-group" id="csScoreGroup"><label>⭐ キャスト基本評価（1〜5・プレイ記録の平均とは別に保存されます）</label>
+          <div class="form-group" id="csScoreGroup"><label>⭐ 女の子基本評価（1〜5・プレイ記録の平均とは別に保存されます）</label>
             <div class="score-slider-grid">
               <div class="score-slider-row"><span class="score-slider-label">ルックス</span><input type="range" id="csScoreLooks" min="1" max="5" value="3" oninput="document.getElementById('csScoreLooksVal').innerText=this.value"><span class="score-slider-val" id="csScoreLooksVal">3</span></div>
               <div class="score-slider-row"><span class="score-slider-label">接客</span><input type="range" id="csScoreService" min="1" max="5" value="3" oninput="document.getElementById('csScoreServiceVal').innerText=this.value"><span class="score-slider-val" id="csScoreServiceVal">3</span></div>
@@ -2451,11 +2775,11 @@
 
           <div class="form-group"><label>旧・源氏名</label><input type="text" id="csOldName" placeholder="例: ここみ"></div>
           <div class="form-group"><label>店舗WebプロフURL</label><input type="url" id="csLink" placeholder="https://..."></div>
-          <div class="form-group"><label>メモ・特徴</label><textarea id="csNotes" rows="4" placeholder="キャストの特徴やメモなど"></textarea></div>
+          <div class="form-group"><label>メモ・特徴</label><textarea id="csNotes" rows="4" placeholder="女の子の特徴やメモなど"></textarea></div>
 
           <div style="display:flex; gap:8px; margin-top:2px;">
             <button type="button" class="close-btn" style="background:#888; flex:1;" onclick="cancelCastSettingsForm()">キャンセル</button>
-            <button type="button" class="close-btn" style="flex:2;" onclick="saveCastSettingsForm()">💾 キャスト情報を更新</button>
+            <button type="button" class="close-btn" style="flex:2;" onclick="saveCastSettingsForm()">💾 女の子情報を更新</button>
           </div>
         </div>
       </div>
@@ -2512,12 +2836,12 @@
 
           <details class="settings-acc-card">
             <summary class="settings-acc-summary">
-              <span class="settings-summary-label"><span class="icon-badge icon-cat-cast icon-badge-sm"><span class="emoji-icon">⭐</span><i data-lucide="star" class="smart-icon"></i></span>キャスト評価機能</span>
+              <span class="settings-summary-label"><span class="icon-badge icon-cat-cast icon-badge-sm"><span class="emoji-icon">⭐</span><i data-lucide="star" class="smart-icon"></i></span>女の子評価機能</span>
               <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
             </summary>
             <div class="settings-acc-body">
               <div class="sec-toggle-row">
-                <span>キャスト評価（五角形レーダーチャート）
+                <span>女の子評価（五角形レーダーチャート）
                   <span class="sec-toggle-note">OFFにすると評価の入力欄・チャートを全画面で非表示にします</span>
                 </span>
                 <label class="toggle-switch">
@@ -2652,7 +2976,7 @@
 
               <div class="form-group">
                 <label>❓ パスコードを忘れた場合</label>
-                <div class="sec-status-note">ロック画面の「？」ボタンから、直近に追加した記録のキャスト名、または一番最初に追加した記録のキャスト名を入力することでパスコードを再設定できます（別途の合言葉登録は不要です）。</div>
+                <div class="sec-status-note">ロック画面の「？」ボタンから、直近に追加した記録の女の子名、または一番最初に追加した記録の女の子名を入力することでパスコードを再設定できます（別途の合言葉登録は不要です）。</div>
               </div>
             </div>
           </details>
@@ -3110,7 +3434,7 @@
     </div>
   </div>
 
-  <!-- 🤖 キャスト別AIレポート -->
+  <!-- 🤖 女の子別AIレポート -->
   <!-- 🔔 通知スライドパネル（Liquid Glass） -->
   <div class="notif-panel-overlay" id="notifPanelOverlay" onclick="closeNotificationPanel()"></div>
   <div class="notif-slide-panel" id="notifSlidePanel">
@@ -3187,7 +3511,7 @@
       <input type="hidden" id="cancelSchId">
       <p style="font-size:0.8rem; color:var(--light-text); margin-bottom:10px;">キャンセルの理由を選んでください。</p>
       <div style="display:flex; flex-direction:column; gap:8px;">
-        <button type="button" class="close-btn" style="background:#fa5252;" onclick="confirmCancelSchedule('castFault')">キャスト都合（当日欠勤など）</button>
+        <button type="button" class="close-btn" style="background:#fa5252;" onclick="confirmCancelSchedule('castFault')">女の子都合（当日欠勤など）</button>
         <button type="button" class="close-btn" style="background:#868e96;" onclick="confirmCancelSchedule('customerFault')">お客様都合</button>
         <button type="button" class="close-btn" style="background:transparent; color:var(--light-text); border:1px solid var(--border-color);" onclick="closeModal('cancelScheduleModal')">閉じる</button>
       </div>
@@ -3277,7 +3601,7 @@
     </div>
   </div>
 
-  <!-- 📤 キャスト別 選択式共有エクスポートモーダル -->
+  <!-- 📤 女の子別 選択式共有エクスポートモーダル -->
   <div class="modal-overlay" id="exportCastModal">
     <div class="modal-content">
       <h3>📤 友だちへ共有</h3>
@@ -3288,7 +3612,7 @@
       <div style="background:var(--bg-color); border:1px solid var(--border-color); border-radius:10px; padding:10px 12px; text-align:left; margin-bottom:10px; display:flex; flex-direction:column; gap:6px;">
         <div style="font-size:0.75rem; font-weight:bold; color:var(--accent-pink); margin-bottom:2px;">共有する項目を選択:</div>
         <label style="font-size:0.82rem; font-weight:bold; display:flex; align-items:center; gap:8px; cursor:pointer;">
-          <input type="checkbox" id="chkIncludeInfo" checked onchange="updateExportFileName()" style="width:16px; height:16px; accent-color:var(--accent-pink);"> キャスト基本情報（名前・スタイル・メモ等）
+          <input type="checkbox" id="chkIncludeInfo" checked onchange="updateExportFileName()" style="width:16px; height:16px; accent-color:var(--accent-pink);"> 女の子基本情報（名前・スタイル・メモ等）
         </label>
         <label style="font-size:0.82rem; font-weight:bold; display:flex; align-items:center; gap:8px; cursor:pointer;">
           <input type="checkbox" id="chkIncludeVisits" checked onchange="updateExportFileName()" style="width:16px; height:16px; accent-color:var(--accent-pink);"> 利用履歴（日付・回数・マーク等）
@@ -3335,8 +3659,8 @@
       <div class="help-section" style="display:flex; flex-direction:column; gap:4px; max-height: 60vh; overflow-y: auto; padding-right: 4px;">
         
         <div class="help-box">
-          <h4>1. キャスト別図鑑 ＆ 月別時系列ビュー ＆ 店舗別ビュー</h4>
-          <p><strong>キャスト別・店舗別管理:</strong> 店舗カードは折りたたみ式でスマートに表示。所在地や電話番号、Webリンクも編集管理できます。</p>
+          <h4>1. 女の子別図鑑 ＆ 月別時系列ビュー ＆ 店舗別ビュー</h4>
+          <p><strong>女の子別・店舗別管理:</strong> 店舗カードは折りたたみ式でスマートに表示。所在地や電話番号、Webリンクも編集管理できます。</p>
         </div>
 
         <div class="help-box">
@@ -3351,7 +3675,7 @@
 
         <div class="help-box">
           <h4>4. 📤 友だちへの共有機能</h4>
-          <p>キャストごとの基本情報や利用履歴を .json ファイルとして書き出して簡単に共有可能です。</p>
+          <p>女の子ごとの基本情報や利用履歴を .json ファイルとして書き出して簡単に共有可能です。</p>
         </div>
 
       </div>
@@ -3371,7 +3695,7 @@
         </div>
 
         <div class="form-group">
-          <label>キャスト名</label>
+          <label>女の子名</label>
           <input type="text" id="addName" list="castDatalist" oninput="onCastNameInput(this.value)" required placeholder="例: ゆあ">
           <datalist id="castDatalist"></datalist>
         </div>
@@ -3873,7 +4197,7 @@
     let storeInfoData = {}; // 🏬 店舗マスターデータ
     let sharedRecords = [];
     let scheduleList = [];
-    let keepsList = []; // 🌟 キープ（未訪問の気になるキャスト）
+    let keepsList = []; // 🌟 キープ（未訪問の気になる女の子）
     let pendingKeepPromotionId = null;
     let bubbleInterval;
     let dashPeriodType = 'month';
@@ -4106,7 +4430,7 @@
     function verifyRecoveryWord() {
       const word = document.getElementById('recoveryWordInput').value.trim().toLowerCase();
       const errEl = document.getElementById('recoveryWordError');
-      if (!word) { errEl.innerText = 'キャスト名を入力してください。'; return; }
+      if (!word) { errEl.innerText = '女の子名を入力してください。'; return; }
       if (!historyList || historyList.length === 0) {
         errEl.innerText = '記録データがないため復元できません。';
         return;
@@ -4117,7 +4441,7 @@
         document.getElementById('recoveryStepWord').style.display = 'none';
         document.getElementById('recoveryStepNewPin').style.display = 'block';
       } else {
-        errEl.innerText = 'キャスト名が違います。';
+        errEl.innerText = '女の子名が違います。';
       }
     }
 
@@ -4503,7 +4827,7 @@
     }
 
     /* ==================================================================
-       🌟 キープ機能（未訪問の気になるキャストの保存・管理）
+       🌟 キープ機能（未訪問の気になる女の子の保存・管理）
        ================================================================== */
     function openKeepsListModal() {
       renderKeepsList();
@@ -4986,7 +5310,7 @@
       saveData();
       render();
       renderDashboard();
-      alert('キャスト情報を更新しました！');
+      alert('女の子情報を更新しました！');
       resetCastSettingsForm();
     }
 
@@ -7125,9 +7449,90 @@
       document.getElementById('homeMonthCount').innerText = thisCount + '回';
       document.getElementById('homeMonthDiff').innerHTML = diffHtml;
 
-      const favs = thisMonthVisits.filter(v => v.flags && v.flags.includes('🆂')).length;
-      const favRate = thisCount > 0 ? Math.round((favs / thisCount) * 100) : 0;
-      document.getElementById('homeMonthRates').innerText = `${favRate}% / ${favRate}%`;
+      const atariN = thisMonthVisits.filter(v => v.flags && String(v.flags).includes('🆂')).length;
+      const hazureN = thisMonthVisits.filter(v => v.flags && String(v.flags).includes('⚔')).length;
+      const atariRate = thisCount > 0 ? Math.round((atariN / thisCount) * 100) : 0;
+      const hazureRate = thisCount > 0 ? Math.round((hazureN / thisCount) * 100) : 0;
+      const daySet = new Set();
+      thisMonthVisits.forEach(v => {
+        const d = parseInt(v.day, 10);
+        if (d) daySet.add(d);
+      });
+      let sumAmt = 0, amtN = 0;
+      thisMonthVisits.forEach(v => {
+        const n = parseInt(String(v.amount || '').replace(/[^0-9]/g, ''), 10);
+        if (n && n > 0) { sumAmt += n; amtN++; }
+      });
+
+      const elAtari = document.getElementById('homePlayAtari');
+      const elHazure = document.getElementById('homePlayHazure');
+      const elDays = document.getElementById('homePlayDays');
+      const elAmount = document.getElementById('homePlayAmount');
+      const elAvg = document.getElementById('homePlayAvg');
+      const elOkini = document.getElementById('homePlayOkini');
+      // legacy id may be gone
+      const legacyRates = document.getElementById('homeMonthRates');
+      if (legacyRates) legacyRates.innerText = `${atariRate}% / ${atariRate}%`;
+
+      if (elAtari) elAtari.textContent = atariRate + '%';
+      if (elHazure) elHazure.textContent = hazureRate + '%';
+      if (elDays) elDays.textContent = daySet.size + '日';
+      const ratesCollapsed = document.getElementById('homePlayRatesCollapsed');
+      if (ratesCollapsed) ratesCollapsed.textContent = atariRate + '% / ' + hazureRate + '%';
+      // 毎回閉じた状態から
+      const playPage = document.getElementById('homeWidgetPlay');
+      if (playPage) playPage.classList.remove('is-expanded');
+      if (elAmount) {
+        if (typeof currentAmountHide !== 'undefined' && currentAmountHide === 'hide') {
+          elAmount.textContent = '合計 ***';
+        } else if (amtN > 0) {
+          elAmount.textContent = '合計 ¥' + sumAmt.toLocaleString();
+        } else {
+          elAmount.textContent = '合計 —';
+        }
+      }
+      if (elAvg) {
+        if (typeof currentAmountHide !== 'undefined' && currentAmountHide === 'hide') {
+          elAvg.textContent = '平均 ***/回';
+        } else if (amtN > 0) {
+          elAvg.textContent = '平均 ¥' + Math.round(sumAmt / amtN).toLocaleString() + '/回';
+        } else {
+          elAvg.textContent = '平均 —';
+        }
+      }
+      if (elOkini) {
+        // 今月、オキニ（🆂付き）記録が多い子
+        const okiniMap = {};
+        thisMonthVisits.forEach(v => {
+          if (!v.name) return;
+          if (!(v.flags && String(v.flags).includes('🆂'))) return;
+          okiniMap[v.name] = (okiniMap[v.name] || 0) + 1;
+        });
+        // フォールバック: 全期間でオキニ（fav）の子のうち、今月の訪問数
+        if (!Object.keys(okiniMap).length) {
+          const lifetimeFav = {};
+          historyList.forEach(v => {
+            if (v.name && v.flags && String(v.flags).includes('🆂')) {
+              lifetimeFav[v.name] = (lifetimeFav[v.name] || 0) + 1;
+            }
+          });
+          thisMonthVisits.forEach(v => {
+            if (v.name && lifetimeFav[v.name]) {
+              okiniMap[v.name] = (okiniMap[v.name] || 0) + 1;
+            }
+          });
+        }
+        const ranked = Object.entries(okiniMap).sort((a, b) => b[1] - a[1]);
+        if (ranked.length) {
+          const [name, cnt] = ranked[0];
+          const extra = ranked.length > 1 ? ` ほか${ranked.length - 1}人` : '';
+          elOkini.className = 'home-play-okini';
+          elOkini.textContent = `オキニ ${name} と ${cnt}回` + extra;
+        } else {
+          elOkini.className = 'home-play-okini home-play-okini-muted';
+          elOkini.textContent = thisCount > 0 ? '今月のオキニ記録なし' : 'オキニとの記録なし';
+        }
+      }
 
       const daysElem = document.getElementById('homeDaysSinceLast');
       if(historyList.length === 0) {
@@ -7179,6 +7584,275 @@
           nextTextElem.innerHTML = `あと ${diffDaysNext} 日 <span style="font-size:0.75rem;">（${next.date.slice(5)} ${subText}）</span>`;
         }
       }
+
+      // いい値ぇー！ホームウィジェット（ミニリング）
+      try {
+        const cursor = new Date(now.getFullYear(), now.getMonth(), 1);
+        const gv = (typeof aggregateGoodValue === 'function')
+          ? aggregateGoodValue('month', cursor)
+          : null;
+        const gGoals = (typeof getGoodValueGoals === 'function')
+          ? getGoodValueGoals('month')
+          : { score: 70 };
+        const sc = gv && gv.score != null ? gv.score : null;
+        const goalSc = (gGoals && gGoals.score != null) ? gGoals.score : 70;
+        const scoreEl = document.getElementById('homeGvScore');
+        const fg = document.getElementById('homeGvRingFg');
+        const goalEl = document.getElementById('homeGvGoal');
+        const countEl = document.getElementById('homeGvCount');
+        const ypmEl = document.getElementById('homeGvYpm');
+        const typeEl = document.getElementById('homeGvType');
+        const CIRC = 157.08; // r=25
+        if (scoreEl) {
+          const cls = (typeof gvScoreClass === 'function' && sc != null) ? gvScoreClass(sc) : '';
+          scoreEl.innerHTML = (sc != null ? String(sc) : '—') + '<span class="home-gv-ring-sub">点</span>';
+          scoreEl.className = 'home-gv-ring-center' + (cls ? ' ' + cls : '');
+          if (fg) {
+            const ratio = sc != null ? Math.max(0, Math.min(1, sc / 100)) : 0;
+            fg.style.strokeDashoffset = String(CIRC * (1 - ratio));
+            fg.className = 'home-gv-ring-fg' + (cls ? ' ' + cls : '');
+          }
+        }
+        if (goalEl) goalEl.textContent = '目標 ' + goalSc;
+        if (countEl) countEl.textContent = (gv && gv.count != null ? gv.count : 0) + '回';
+
+        const setBar = (valId, barId, v) => {
+          const valEl = document.getElementById(valId);
+          const barEl = document.getElementById(barId);
+          if (valEl) valEl.textContent = v != null ? String(v) : '—';
+          if (barEl) barEl.style.width = (v != null ? Math.max(0, Math.min(100, v)) : 0) + '%';
+        };
+        setBar('homeGvEffVal', 'homeGvEffBar', gv ? gv.efficiency : null);
+        setBar('homeGvSavVal', 'homeGvSavBar', gv ? gv.savingsScore : null);
+        setBar('homeGvConVal', 'homeGvConBar', gv ? gv.consistency : null);
+
+        if (ypmEl) {
+          if (gv && gv.avgYenPerMin != null) {
+            ypmEl.textContent = (typeof currentAmountHide !== 'undefined' && currentAmountHide === 'hide')
+              ? '***/分'
+              : `平均 ¥${gv.avgYenPerMin.toLocaleString()}/分`;
+          } else if (gv && gv.count > 0) {
+            ypmEl.textContent = '金額データなし';
+          } else {
+            ypmEl.textContent = '記録を追加してスコアを見る';
+          }
+        }
+        if (typeEl) {
+          const p = (typeof getGvProfile === 'function') ? getGvProfile() : null;
+          if (p && p.type && typeof GV_TYPE_META !== 'undefined' && GV_TYPE_META[p.type]) {
+            typeEl.innerHTML = `<span class="home-gv-type-pill">${GV_TYPE_META[p.type].label}</span>`;
+          } else {
+            typeEl.innerHTML = '';
+          }
+        }
+      } catch (e) { /* ignore widget errors */ }
+
+      initHomeWidgetStack();
+    }
+
+    function countLabel(gv) {
+      if (!gv || !gv.count) return '記録を追加';
+      return gv.count + '回';
+    }
+
+    function updateHomeWidgetHeight() {
+      const track = document.getElementById('homeWidgetTrack');
+      if (!track) return;
+      const pages = track.querySelectorAll('.home-widget-page');
+      if (!pages.length) return;
+      const w = track.clientWidth || 1;
+      const idx = Math.min(pages.length - 1, Math.max(0, Math.round(track.scrollLeft / w)));
+      const page = pages[idx];
+      if (!page) return;
+      const prev = track.style.height;
+      track.style.height = 'auto';
+      const h = Math.ceil(page.getBoundingClientRect().height);
+      if (prev) track.style.height = prev;
+      else track.style.height = track.offsetHeight + 'px';
+      requestAnimationFrame(() => {
+        if (h > 0) track.style.height = h + 'px';
+      });
+    }
+
+    function homeWidgetPlayEnterAnim(page) {
+      if (!page) return;
+      page.classList.remove('hw-page-enter');
+      void page.offsetWidth;
+      page.classList.add('hw-page-enter');
+      const onEnd = () => {
+        page.classList.remove('hw-page-enter');
+        page.removeEventListener('animationend', onEnd);
+      };
+      page.addEventListener('animationend', onEnd);
+    }
+
+    function homeWidgetReplayGvAnim() {
+      const fg = document.getElementById('homeGvRingFg');
+      const bars = document.querySelectorAll('.home-gv-bar-fill');
+      if (fg) {
+        const cur = fg.style.strokeDashoffset;
+        const circ = 157.08;
+        fg.style.transition = 'none';
+        fg.style.strokeDashoffset = String(circ);
+        void fg.offsetWidth;
+        fg.style.transition = '';
+        requestAnimationFrame(() => {
+          fg.style.strokeDashoffset = cur || String(circ);
+        });
+      }
+      bars.forEach((bar) => {
+        const w = bar.style.width;
+        bar.style.transition = 'none';
+        bar.style.width = '0%';
+        void bar.offsetWidth;
+        bar.style.transition = '';
+        requestAnimationFrame(() => {
+          bar.style.width = w || '0%';
+        });
+      });
+    }
+
+    let homeWidgetStackInited = false;
+    let homeWidgetDotsHideTimer = null;
+    let homeWidgetHeightTimer = null;
+    let homeWidgetLastPageIdx = -1;
+    let homePlayToggleLock = false;
+
+    function scheduleHomeWidgetHeight(delay) {
+      if (homeWidgetHeightTimer) clearTimeout(homeWidgetHeightTimer);
+      homeWidgetHeightTimer = setTimeout(() => {
+        updateHomeWidgetHeight();
+        homeWidgetHeightTimer = null;
+      }, delay == null ? 120 : delay);
+    }
+
+    function initHomeWidgetStack() {
+      const track = document.getElementById('homeWidgetTrack');
+      const dotsWrap = document.getElementById('homeWidgetDots');
+      const dots = document.querySelectorAll('#homeWidgetDots .home-widget-dot');
+      if (!track || !dots.length) return;
+
+      const getPageIdx = () => {
+        const w = track.clientWidth || 1;
+        const pages = track.querySelectorAll('.home-widget-page');
+        return Math.min(pages.length - 1, Math.max(0, Math.round(track.scrollLeft / w)));
+      };
+
+      const updateDots = () => {
+        const idx = getPageIdx();
+        dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+      };
+
+      const showDotsTemporarily = () => {
+        if (!dotsWrap) return;
+        dotsWrap.classList.add('is-visible');
+        if (homeWidgetDotsHideTimer) clearTimeout(homeWidgetDotsHideTimer);
+        homeWidgetDotsHideTimer = setTimeout(() => {
+          dotsWrap.classList.remove('is-visible');
+        }, 1200);
+      };
+
+      const onPageSettled = () => {
+        const idx = getPageIdx();
+        updateDots();
+        updateHomeWidgetHeight();
+        if (idx !== homeWidgetLastPageIdx) {
+          homeWidgetLastPageIdx = idx;
+          const pages = track.querySelectorAll('.home-widget-page');
+          const page = pages[idx];
+          homeWidgetPlayEnterAnim(page);
+          if (page && page.getAttribute('data-widget') === 'goodValue') {
+            homeWidgetReplayGvAnim();
+          }
+        }
+      };
+
+      if (!homeWidgetStackInited) {
+        let scrollRaf = null;
+        track.addEventListener('scroll', () => {
+          if (scrollRaf) cancelAnimationFrame(scrollRaf);
+          scrollRaf = requestAnimationFrame(() => {
+            updateDots();
+            showDotsTemporarily();
+          });
+          // スナップ確定後に高さ・入場アニメ
+          scheduleHomeWidgetHeight(140);
+          if (homeWidgetHeightTimer) {
+            /* scheduleHomeWidgetHeight already set */
+          }
+          // scroll end debounce for enter anim
+          if (window.__hwScrollEndTimer) clearTimeout(window.__hwScrollEndTimer);
+          window.__hwScrollEndTimer = setTimeout(onPageSettled, 150);
+        }, { passive: true });
+
+        track.addEventListener('touchstart', () => showDotsTemporarily(), { passive: true });
+
+        if (typeof track.onscrollend !== 'undefined') {
+          track.addEventListener('scrollend', () => {
+            onPageSettled();
+          }, { passive: true });
+        }
+
+        dots.forEach((d) => {
+          d.addEventListener('click', () => {
+            const i = parseInt(d.getAttribute('data-idx'), 10) || 0;
+            const w = track.clientWidth || 1;
+            track.scrollTo({ left: i * w, behavior: 'smooth' });
+            showDotsTemporarily();
+            scheduleHomeWidgetHeight(50);
+            scheduleHomeWidgetHeight(360);
+            setTimeout(onPageSettled, 380);
+          });
+        });
+
+        window.addEventListener('resize', () => {
+          scheduleHomeWidgetHeight(50);
+        }, { passive: true });
+
+        // プレイ状況：タップで折りたたみ（スワイプと区別・連打ガード）
+        const playPage = document.getElementById('homeWidgetPlay');
+        if (playPage && !playPage.dataset.toggleBound) {
+          let touchX = 0, touchY = 0, moved = false;
+          playPage.addEventListener('touchstart', (e) => {
+            if (e.touches.length !== 1) return;
+            touchX = e.touches[0].clientX;
+            touchY = e.touches[0].clientY;
+            moved = false;
+          }, { passive: true });
+          playPage.addEventListener('touchmove', (e) => {
+            if (!e.touches.length) return;
+            const dx = Math.abs(e.touches[0].clientX - touchX);
+            const dy = Math.abs(e.touches[0].clientY - touchY);
+            if (dx > 12 || dy > 12) moved = true;
+          }, { passive: true });
+          playPage.addEventListener('click', (e) => {
+            if (moved) return;
+            if (homePlayToggleLock) return;
+            homePlayToggleLock = true;
+            setTimeout(() => { homePlayToggleLock = false; }, 300);
+            playPage.classList.toggle('is-expanded');
+            requestAnimationFrame(() => {
+              updateHomeWidgetHeight();
+              setTimeout(updateHomeWidgetHeight, 50);
+              setTimeout(updateHomeWidgetHeight, 340);
+            });
+          });
+          playPage.dataset.toggleBound = '1';
+        }
+
+        homeWidgetStackInited = true;
+      }
+
+      // データ再描画時も毎回閉じる
+      const playPageReset = document.getElementById('homeWidgetPlay');
+      if (playPageReset) playPageReset.classList.remove('is-expanded');
+
+      updateDots();
+      homeWidgetLastPageIdx = getPageIdx();
+      requestAnimationFrame(() => {
+        updateHomeWidgetHeight();
+        setTimeout(updateHomeWidgetHeight, 80);
+      });
     }
 
     /* 💭 タイムカプセル機能：ちょうど○年前 / ○ヶ月前の今日の記録を探す */
@@ -7355,7 +8029,7 @@
       if(panel) panel.classList.toggle('open');
     }
 
-    /* ⭐ 五角形レーダー評価：平均スコア計算（プレイ記録があればその平均、無ければキャスト基本評価を使用） */
+    /* ⭐ 五角形レーダー評価：平均スコア計算（プレイ記録があればその平均、無ければ女の子基本評価を使用） */
     function computeCastScoreAverages(visits, baseScore) {
       const keys = ['looks', 'service', 'style', 'intimacy', 'value'];
       if ((!visits || visits.length === 0) && baseScore) {
@@ -7375,7 +8049,7 @@
       return avgs;
     }
 
-    /* ⏳ キャスト別 継続期間フリップ＆振動表示機能 */
+    /* ⏳ 女の子別 継続期間フリップ＆振動表示機能 */
     function computeCastDurationText(visits) {
       if (!visits || visits.length < 3) return '';
       const dates = visits.map(v => {
@@ -8116,12 +8790,12 @@
           </div>
 
           <div class="stat-section">
-            <div class="stat-section-title">🍩 分析（キャスト / 系統 / 店舗）</div>
+            <div class="stat-section-title">🍩 分析（女の子 / 系統 / 店舗）</div>
             <div class="carousel-wrapper">
               <div class="carousel-container" id="dashAnalysisCarousel">
                 
                 <div class="carousel-slide">
-                  <div style="text-align:center; font-size:0.75rem; font-weight:bold; margin-bottom:4px; color:var(--light-text);">👑 キャスト別利用比率</div>
+                  <div style="text-align:center; font-size:0.75rem; font-weight:bold; margin-bottom:4px; color:var(--light-text);">👑 女の子別利用比率</div>
                   <div class="chart-wrap donut"><canvas id="dashRankingChart"></canvas></div>
                   <div class="rank-list" id="dashRankList"></div>
                 </div>
@@ -8155,7 +8829,7 @@
         </div>
 
         <div class="stat-section" id="scoreRankingSection">
-          <div class="stat-section-title">⭐ 項目別NO.1キャスト</div>
+          <div class="stat-section-title">⭐ 項目別NO.1女の子</div>
           <div class="score-rank-list" id="scoreRankingGrid"></div>
         </div>
       `;
@@ -8340,7 +9014,7 @@
           </div>
           <div class="map-action-grid">
             <button type="button" class="map-action-btn" id="mapActionCast" onclick="showMapContent('cast')">
-              <span>🌸 キャスト一覧</span><span class="map-action-arrow">➔</span>
+              <span>🌸 女の子一覧</span><span class="map-action-arrow">➔</span>
             </button>
             <button type="button" class="map-action-btn" id="mapActionStore" onclick="showMapContent('store')">
               <span>🏬 店舗一覧</span><span class="map-action-arrow">➔</span>
@@ -8378,7 +9052,7 @@
 
       const list = Object.values(castMap).sort((a,b) => b.count - a.count);
       if (list.length === 0) {
-        area.innerHTML = '<div class="map-content-area"><div class="map-empty-note">キャストデータがありません。</div></div>';
+        area.innerHTML = '<div class="map-content-area"><div class="map-empty-note">女の子データがありません。</div></div>';
         return;
       }
 
@@ -8891,7 +9565,7 @@
       window.cumulativeData = { totalVisits, totalAmount, uniqueCasts, totalMinutes, uniqueStores, totalFavs, totalMemories, totalAmountDisplay, playTimeDisplay, durationDisplay };
     }
 
-    /* ⭐ 統計タブ：項目別NO.1キャスト */
+    /* ⭐ 統計タブ：項目別NO.1女の子 */
     function renderScoreRanking(records) {
       const section = document.getElementById('scoreRankingSection');
       const el = document.getElementById('scoreRankingGrid');
@@ -9147,7 +9821,7 @@
         if (item.visits && item.visits.length > 0) {
           visitSummary = `${item.visits.length}回利用の記録が含まれています`;
         } else {
-          visitSummary = '<span style="font-size:0.65rem; background:#fff3bf; color:#f59f00; border:1px solid #fcc419; padding:1px 6px; border-radius:8px; font-weight:bold;">⚠️ 履歴なし（キャスト基本情報のみ）</span>';
+          visitSummary = '<span style="font-size:0.65rem; background:#fff3bf; color:#f59f00; border:1px solid #fcc419; padding:1px 6px; border-radius:8px; font-weight:bold;">⚠️ 履歴なし（女の子基本情報のみ）</span>';
         }
         let infoText = item.info ? (item.info.notes || 'メモなし') : '情報なし';
 
@@ -9631,7 +10305,7 @@
         if (info && info.category) lowScoreCategoryCount[info.category] = (lowScoreCategoryCount[info.category] || 0) + 1;
       });
 
-      // 🕰️ 振り返り用データ：キャスト別・店舗別・時期別の集計
+      // 🕰️ 振り返り用データ：女の子別・店舗別・時期別の集計
       const castCount = {};
       const storeCount = {};
       const yearMonthCount = {};
@@ -9720,8 +10394,8 @@
 
 【集計データ】
 ・総利用回数: ${data.total}回（記録期間: ${data.firstDate || '?'} 〜 ${data.lastDate || '?'}）
-・利用したキャスト数: ${data.uniqueCastCount}人 / 利用した店舗数: ${data.uniqueStoreCount}店舗
-・最も多く指名したキャストTOP5: ${topCastText}
+・利用した女の子数: ${data.uniqueCastCount}人 / 利用した店舗数: ${data.uniqueStoreCount}店舗
+・最も多く指名した女の子TOP5: ${topCastText}
 ・最もよく通った店舗TOP5: ${topStoreText}
 ・最も利用回数が多かった月: ${peakMonthText}
 ・最も利用回数が多かった年: ${peakYearText}
@@ -9735,7 +10409,7 @@
 
 【出力形式】必ず以下の3つの見出しで、日本語で回答してください。
 【あなたの遊び方 振り返り】
-（一番よく指名したキャスト、一番通った店舗、一番利用が多かった時期などに触れながら、「こんな時期はこんな遊び方をしていたんだな」と思い出せるような、親しみやすい語り口の振り返り文章。数字を並べるだけでなく、ストーリーとして語ってください）
+（一番よく指名した女の子、一番通った店舗、一番利用が多かった時期などに触れながら、「こんな時期はこんな遊び方をしていたんだな」と思い出せるような、親しみやすい語り口の振り返り文章。数字を並べるだけでなく、ストーリーとして語ってください）
 
 【勝率・満足度インサイト】
 （アタリ率の評価と、利用傾向についての客観的なフィードバック。低評価パターンがあれば軽く触れる）
@@ -9770,14 +10444,14 @@
        KENJAはあくまで既存の入力フォームを事前入力するだけで、保存は必ず本人が行う。 */
     const FILL_ADD_RECORD_FUNCTION_DECLARATION = {
       name: 'fill_add_record_form',
-      description: 'ユーザーの発言から新しい利用記録の内容を抽出し、記録追加フォームに自動入力する。キャスト名と店舗名の両方が発言から分かっている場合のみ呼び出すこと。どちらかが不明な場合は、この関数を呼ばずにテキストで聞き返すこと。',
+      description: 'ユーザーの発言から新しい利用記録の内容を抽出し、記録追加フォームに自動入力する。女の子名と店舗名の両方が発言から分かっている場合のみ呼び出すこと。どちらかが不明な場合は、この関数を呼ばずにテキストで聞き返すこと。',
       parameters: {
         type: 'OBJECT',
         properties: {
           year: { type: 'STRING', description: '西暦年（例: 2025）。発言に無ければ省略してよい（今日の日付が使われる）' },
           month: { type: 'STRING', description: '月（1〜12の数字）。発言に無ければ省略してよい（今日の日付が使われる）' },
           day: { type: 'STRING', description: '日（1〜31の数字）。発言に無ければ省略してよい（今日の日付が使われる）' },
-          castName: { type: 'STRING', description: 'キャスト（女の子）の名前。必須' },
+          castName: { type: 'STRING', description: '女の子の名前。必須' },
           storeName: { type: 'STRING', description: '店舗名。必須' },
           amount: { type: 'STRING', description: '金額（数字のみ、例: 20000）。発言に無ければ省略' },
           typeTag: { type: 'STRING', description: '系統タグ（例: 清楚系、ギャル系など）。発言に無ければ省略' },
@@ -9924,7 +10598,7 @@
     }
 
     /* ==================================================================
-       🤖 キャスト別AIレポート
+       🤖 女の子別AIレポート
        ================================================================== */
     let currentCastReportName = null;
 
@@ -10004,14 +10678,14 @@
         ? `平均利用間隔: 約${castData_.avgInterval}日おき（直近は約${castData_.recentAvgInterval}日おき）`
         : '利用間隔を計算するには記録が不足しています';
       const noShowText = castData_.noShowCount > 0
-        ? `当欠（キャスト都合キャンセル）: ${castData_.noShowCount}回（当欠率${castData_.noShowRate}%）`
-        : '当欠（キャスト都合キャンセル）の記録なし';
+        ? `当欠（女の子都合キャンセル）: ${castData_.noShowCount}回（当欠率${castData_.noShowRate}%）`
+        : '当欠（女の子都合キャンセル）の記録なし';
       const intentLabelMap = { yes: 'あり', maybe: '機会があれば', consider: '要検討', no: 'なし', worst: '最悪' };
       const intentText = castData_.firstVisitIntent
         ? `初回訪問時のリピート意向: 「${intentLabelMap[castData_.firstVisitIntent] || castData_.firstVisitIntent}」`
         : '初回訪問時のリピート意向データなし';
 
-      return `あなたは利用者本人と一緒に思い出を振り返る、温かく親しみやすいトーンのパートナーAIです。以下は「${castData_.name}」さんという特定のキャスト1人に絞った利用記録データと、利用者全体の平均データです。このキャストとの関係性にフォーカスして振り返ってください。
+      return `あなたは利用者本人と一緒に思い出を振り返る、温かく親しみやすいトーンのパートナーAIです。以下は「${castData_.name}」さんという特定の女の子1人に絞った利用記録データと、利用者全体の平均データです。この女の子との関係性にフォーカスして振り返ってください。
 
 【${castData_.name}さんとの記録データ】
 ・総指名回数: ${castData_.total}回（${castData_.firstDate || '?'} 〜 ${castData_.lastDate || '?'}）
@@ -10189,7 +10863,7 @@
 
 【${startYM} 〜 ${endYM} の期間データ】
 ・この期間の利用回数: ${eraData.total}回
-・この期間によく指名したキャスト: ${topCastText}
+・この期間によく指名した女の子: ${topCastText}
 ・この期間によく通った店舗: ${topStoreText}
 ・この期間のアタリ率: ${eraData.atariRate}%（${eraData.atariCount}件）
 ・この期間の平均利用金額: ${eraData.avgAmount ? eraData.avgAmount.toLocaleString() + '円' : 'データ不足'}
@@ -10205,7 +10879,7 @@
 （この期間を一言で表す、思い出アルバムの表紙のような短いフレーズ。1行のみ）
 
 【あの頃の振り返り】
-（メインの振り返り文章。日記を読み返すような文体で、具体的なキャスト名・店舗名・印象的な記録に触れながら物語調に。全期間平均と比べて多かった/少なかった等のコントラストも軽く交える。この期間の記録が少ない場合はその旨を踏まえて短くまとめる）
+（メインの振り返り文章。日記を読み返すような文体で、具体的な女の子名・店舗名・印象的な記録に触れながら物語調に。全期間平均と比べて多かった/少なかった等のコントラストも軽く交える。この期間の記録が少ない場合はその旨を踏まえて短くまとめる）
 
 【この時期のハイライト】
 （箇条書きで3〜5個。印象的だった記録や特徴を挙げる）`;
@@ -10417,7 +11091,7 @@
       sendChatMessage();
     }
 
-    /* 🚫 当欠（キャスト都合キャンセル）率の計算 */
+    /* 🚫 当欠（女の子都合キャンセル）率の計算 */
     function computeCastNoShowStats(name) {
       const cancellations = (castData[name] && castData[name].cancellations) || [];
       const castFaultCount = cancellations.filter(c => c.reason === 'castFault').length;
@@ -10433,7 +11107,7 @@
         const info = storeInfoData[v.storeName] || {};
         const castStyle = (castData[v.name] && castData[v.name].style) || '-';
         const intentText = v.firstVisitIntent ? ` 初回リピート意向:${v.firstVisitIntent}` : '';
-        return `${v.year}/${v.month}/${v.day || ''} 系統:${v.typeTag || '-'} 店舗:${v.storeName || '-'}(${info.category || '-'}) キャスト:${v.name || '-'}(スタイル:${castStyle}) flags:${v.flags || '-'} 評価(ルックス/接客/スタイル/イチャ/コスパ):${v.looks || '-'}/${v.service || '-'}/${v.style || '-'}/${v.intimacy || '-'}/${v.value || '-'} 金額:${v.amount || '-'}${intentText}`;
+        return `${v.year}/${v.month}/${v.day || ''} 系統:${v.typeTag || '-'} 店舗:${v.storeName || '-'}(${info.category || '-'}) 女の子:${v.name || '-'}(スタイル:${castStyle}) flags:${v.flags || '-'} 評価(ルックス/接客/スタイル/イチャ/コスパ):${v.looks || '-'}/${v.service || '-'}/${v.style || '-'}/${v.intimacy || '-'}/${v.value || '-'} 金額:${v.amount || '-'}${intentText}`;
       }).join('\n');
 
       const castNames = Array.from(new Set(historyList.map(v => v.name).filter(Boolean).concat(Object.keys(castData))));
@@ -10446,7 +11120,7 @@
       return `【集計サマリー】
 総利用回数: ${overall.total}回 / アタリ率: ${overall.atariRate}% / ハズレ率: ${overall.hazureRate}% / 平均金額: ${overall.avgAmount ? overall.avgAmount.toLocaleString() + '円' : '-'}
 
-【当欠（キャスト都合キャンセル）データ】
+【当欠（女の子都合キャンセル）データ】
 ${noShowLines || '記録された当欠はありません'}
 
 【全記録データ（最新${capped.length}件、これより古い記録は含まれません）】
@@ -10457,7 +11131,7 @@ ${lines || 'データなし'}`;
 このアプリは、個人の風俗利用履歴を記録・管理するための単一ユーザー向けアプリです。主な機能は以下の通りです。
 
 ■ マイ図鑑タブ
-・「キャスト別」「店舗別」「月別」の3つの表示に切り替えられます
+・「女の子別」「店舗別」「月別」の3つの表示に切り替えられます
 ・右下の＋ボタン（FAB）から新しい記録を追加できます
 ・記録には、系統タグ・5軸評価（ルックス/接客/スタイル/イチャ度/コスパ）・フラグ（当たり/ハズレ/県外など標準15種類に加え、パステルカラーから選べるカスタムマークも自作可能）・金額・メモなどを登録できます
 
@@ -10471,7 +11145,7 @@ ${lines || 'データなし'}`;
 ■ 設定タブ
 ・プロフィール（アイコン・ユーザー名）の変更
 ・表示設定（日付・金額の表示/非表示）
-・キャスト評価機能のON/OFF
+・女の子評価機能のON/OFF
 ・カラーテーマとUI表示モード（オリジナル/スマート/通勤中）の切り替え
 ・クラウド同期（Supabaseへログインしてデータをバックアップ・同期）
 ・AI機能（Gemini APIキーの設定。AI好み診断とKENJAで共通利用）
@@ -10496,8 +11170,8 @@ ${lines || 'データなし'}`;
 
 【記録追加について（重要）】
 ユーザーが「今日◯◯ちゃんと△△店で遊んだ」のように新しい利用の報告をしてきた場合:
-・キャスト名と店舗名の両方が発言から明確に分かる場合のみ、fill_add_record_form関数を呼び出してください。
-・キャスト名か店舗名のどちらかが不明・曖昧な場合は、関数を呼ばずに「店舗名を教えてください」のようにテキストで聞き返してください。憶測で補完しないでください。
+・女の子名と店舗名の両方が発言から明確に分かる場合のみ、fill_add_record_form関数を呼び出してください。
+・女の子名か店舗名のどちらかが不明・曖昧な場合は、関数を呼ばずに「店舗名を教えてください」のようにテキストで聞き返してください。憶測で補完しないでください。
 ・あなたはこの関数を呼んでもデータを直接保存しません。呼び出すと、ユーザー本人が確認・修正して保存するための入力フォームが自動的に開くだけです。実際の保存は必ずユーザー自身が行います。
 ・記録の編集や削除の依頼には、現時点では対応できません。その場合は「今のところ記録の追加のみお手伝いできます。編集・削除はご自身でお願いします」と案内してください。
 
@@ -10534,13 +11208,13 @@ AIアシスタントやコンシェルジュ、分析官としては振る舞わ
 
 【データの使い方】
 - 渡される利用記録・集計・当欠・初回意向などは「会話の材料」であり、発表用の成績表ではない
-- キャスト名・店名・時期・当たり外れ・金額感に触れるときは、思い出話のように自然に
+- 女の子名・店名・時期・当たり外れ・金額感に触れるときは、思い出話のように自然に
 - 当欠率が高い場合は脅しにせず、「予備考えといた方が安心かも」程度
 - 初回の印象と後のリピートに差があれば、「初見とあとで印象変わった系かもな」と軽く触れる
 - 記録にない店・子・事実は作らない
 
 【記録追加について】
-- 相手が新しい利用の話をしたとき、キャスト名と店舗名の両方が明確なら、記録フォームの下書き用に function calling してよい
+- 相手が新しい利用の話をしたとき、女の子名と店舗名の両方が明確なら、記録フォームの下書き用に function calling してよい
 - どちらか不明なら、憶測で埋めず聞き返す
 - あなたは保存そのものはしない。保存は相手の操作が必要であることを、必要なら短く伝える
 - 編集・削除の代行はできない。方法の案内までに留める
@@ -11022,7 +11696,7 @@ ${question}`;
 
       area.addEventListener('touchstart', (e) => {
         if (e.touches.length !== 1) return;
-        if (e.target.closest('.xl-grid-wrap, .sheet-ad-carousel, .map-scroll-body, .ai-chat-chip-row')) { tracking = false; return; }
+        if (e.target.closest('.xl-grid-wrap, .sheet-ad-carousel, .home-widget-track, .map-scroll-body, .ai-chat-chip-row')) { tracking = false; return; }
         startX = e.touches[0].clientX;
         startY = e.touches[0].clientY;
         tracking = true;
@@ -11044,7 +11718,7 @@ ${question}`;
       }, { passive: true });
     })();
 
-    /* ② 長押しでコンテキストメニュー（キャストカード・店舗カード） */
+    /* ② 長押しでコンテキストメニュー（女の子カード・店舗カード） */
     let longPressTimer = null;
     let longPressMoved = false;
 
