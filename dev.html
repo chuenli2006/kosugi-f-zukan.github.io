@@ -48,12 +48,17 @@
     /* --- テーマ：SAKINA（静けさと華やぎのモダンナチュラル） --- */
     [data-theme="sakina"] { --bg-color: #faf8f6; --card-bg: #ffffff; --primary-pink: #e08b97; --soft-pink: #fcf0f2; --accent-pink: #b85c6c; --text-color: #3d3235; --light-text: #8c7b7e; --border-color: #f2e8e8; --shadow: 0 4px 16px rgba(184, 92, 108, 0.08); --badge-bg: var(--soft-pink); --badge-color: var(--accent-pink); --gold-bg-start: #fff9e6; --gold-bg-end: #fff0c2; --gold-border: #f3c642; --gold-text: #8a6200; --map-unvisited: #efe3e3; --map-stroke: #ffffff; }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    * {
+      box-sizing: border-box; margin: 0; padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    }
 
     body {
       background-color: var(--bg-color); color: var(--text-color);
       line-height: 1.6; padding: 0; margin: 0;
       transition: background-color 0.3s, color 0.3s; overflow-x: hidden;
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     }
 
     /* 📱 モバイルファーストのベースレイアウト */
@@ -1476,9 +1481,29 @@
       background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 12px;
       padding: 10px; margin-top: 10px; text-align: left;
     }
+    .letter-modal-img-wrap {
+      position: relative; width: 100%; margin-bottom: 6px;
+      border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color);
+      background: rgba(0,0,0,0.02);
+    }
     .letter-modal-img {
-      width: 100%; max-height: 350px; object-fit: contain; border-radius: 8px;
-      border: 1px solid var(--border-color); margin-bottom: 6px; background: rgba(0,0,0,0.02); display: block;
+      width: 100%; max-height: 350px; object-fit: contain; display: block;
+    }
+    .letter-modal-img-meta {
+      position: absolute; left: 0; right: 0; top: 0;
+      display: flex; justify-content: space-between; align-items: center; gap: 8px;
+      padding: 8px 10px;
+      background: linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.2) 70%, transparent 100%);
+      pointer-events: none;
+    }
+    .letter-modal-img-date {
+      font-size: 0.72rem; font-weight: bold; color: #fff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    }
+    .letter-modal-img-name {
+      font-size: 0.78rem; font-weight: 800; color: var(--accent-pink);
+      text-shadow: 0 0 4px rgba(255,255,255,0.9), 0 1px 2px rgba(0,0,0,0.35);
+      max-width: 55%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
     .letter-modal-text-box {
       font-size: 0.8rem; color: var(--text-color); background: var(--card-bg);
@@ -2089,21 +2114,150 @@
     .ctx-menu-item:last-child { border-bottom: none; }
     .ctx-menu-cancel { width: 100%; padding: 12px; border-radius: 10px; border: none; background: var(--bg-color); color: var(--light-text); font-weight: bold; font-size: 0.85rem; }
 
-    /* 📖 振り返りアルバム */
-    .album-tab-body { width: 100%; min-height: 70vh; background: var(--bg-color); border-radius: var(--radius); border: 1px solid var(--border-color); overflow: hidden; display: flex; flex-direction: column; animation: settingsFadeIn 0.4s ease both; }
-    .album-year-tabs { display: flex; gap: 6px; padding: 10px 12px; overflow-x: auto; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
-    .album-year-tab { flex-shrink: 0; padding: 7px 16px; border-radius: 999px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-color); font-size: 0.8rem; font-weight: bold; cursor: pointer; }
-    .album-year-tab.active { background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink)); color: #fff; border-color: transparent; }
+    /* 📖 振り返りアルバム（封筒カバー → 手紙めくり） */
+    .album-tab-body {
+      width: 100%; min-height: 70vh; background: var(--bg-color);
+      border-radius: var(--radius); border: 1px solid var(--border-color);
+      overflow: hidden; display: flex; flex-direction: column;
+      animation: settingsFadeIn 0.4s ease both; position: relative;
+    }
+    .album-year-tabs {
+      display: flex; gap: 6px; padding: 10px 12px; overflow-x: auto;
+      border-bottom: 1px solid var(--border-color); flex-shrink: 0;
+    }
+    .album-year-tab {
+      flex-shrink: 0; padding: 7px 16px; border-radius: 999px;
+      border: 1px solid var(--border-color); background: var(--card-bg);
+      color: var(--text-color); font-size: 0.8rem; font-weight: bold; cursor: pointer;
+    }
+    .album-year-tab.active {
+      background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink));
+      color: #fff; border-color: transparent;
+    }
     .album-scroll-body { flex: 1; overflow-y: auto; padding: 14px; }
-    .album-month-section { margin-bottom: 22px; animation: settingsSectionSlide 0.4s ease both; }
-    .album-month-title { font-size: 0.92rem; font-weight: bold; color: var(--accent-pink); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
-    .album-month-title::before { content: '●'; font-size: 0.6rem; }
-    .album-photo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 8px; }
-    .album-photo-item { position: relative; aspect-ratio: 1; border-radius: 10px; overflow: hidden; cursor: pointer; border: 1px solid var(--border-color); }
-    .album-photo-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .album-highlight-row { font-size: 0.74rem; color: var(--text-color); background: var(--soft-pink); border-radius: 10px; padding: 6px 10px; margin-bottom: 6px; }
-    .album-empty-month-card { font-size: 0.8rem; color: var(--light-text); background: var(--card-bg); border: 1px dashed var(--border-color); border-radius: 10px; padding: 12px; }
     .album-empty-note { text-align: center; color: var(--light-text); font-size: 0.85rem; padding: 40px 10px; }
+
+    /* 封筒カバーグリッド */
+    .album-cover-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+    }
+    .album-cover {
+      position: relative; border-radius: 14px; overflow: hidden; cursor: pointer;
+      border: 1px solid var(--border-color); background: var(--card-bg);
+      box-shadow: var(--shadow); aspect-ratio: 1.15 / 1;
+      display: flex; flex-direction: column;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .album-cover:active { transform: scale(0.97); }
+    .album-cover-thumb {
+      flex: 1; min-height: 0; position: relative; background: var(--soft-pink);
+    }
+    .album-cover-thumb img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      filter: brightness(0.92);
+    }
+    .album-cover-thumb-empty {
+      width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; opacity: 0.35;
+    }
+    .album-cover-body {
+      padding: 8px 10px 10px; background: var(--card-bg);
+      border-top: 1px solid var(--border-color);
+    }
+    .album-cover-month {
+      font-size: 0.88rem; font-weight: 800; color: var(--accent-pink);
+    }
+    .album-cover-meta {
+      font-size: 0.68rem; color: var(--light-text); font-weight: bold; margin-top: 2px;
+    }
+    .album-cover-badge {
+      position: absolute; top: 8px; right: 8px;
+      background: rgba(0,0,0,0.55); color: #fff; font-size: 0.65rem; font-weight: bold;
+      padding: 3px 8px; border-radius: 999px; backdrop-filter: blur(4px);
+    }
+
+    /* 手紙リーダー（めくり） */
+    .album-reader {
+      display: none; position: absolute; inset: 0; z-index: 5;
+      background: var(--bg-color); flex-direction: column;
+      animation: settingsFadeIn 0.28s ease both;
+    }
+    .album-reader.open { display: flex; }
+    .album-reader-bar {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      padding: 10px 12px; border-bottom: 1px solid var(--border-color); flex-shrink: 0;
+      background: var(--card-bg);
+    }
+    .album-reader-back {
+      border: none; background: var(--soft-pink); color: var(--accent-pink);
+      font-weight: bold; font-size: 0.8rem; padding: 6px 12px; border-radius: 999px; cursor: pointer;
+    }
+    .album-reader-title {
+      flex: 1; text-align: center; font-size: 0.9rem; font-weight: 800; color: var(--accent-pink);
+    }
+    .album-reader-count {
+      font-size: 0.72rem; font-weight: bold; color: var(--light-text); min-width: 52px; text-align: right;
+    }
+    .album-reader-track {
+      flex: 1; display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .album-reader-track::-webkit-scrollbar { display: none; }
+    .album-reader-page {
+      flex: 0 0 100%; width: 100%; scroll-snap-align: start;
+      padding: 14px 14px 20px; box-sizing: border-box; overflow-y: auto;
+    }
+    .album-letter-card {
+      background: var(--card-bg); border: 1px solid var(--border-color);
+      border-radius: 16px; overflow: hidden; box-shadow: var(--shadow);
+    }
+    .album-letter-img-wrap {
+      position: relative; width: 100%; background: rgba(0,0,0,0.03);
+      border-bottom: 1px solid var(--border-color);
+    }
+    .album-letter-img {
+      width: 100%; max-height: 52vh; object-fit: contain; display: block; margin: 0 auto;
+    }
+    .album-letter-meta {
+      position: absolute; left: 0; right: 0; top: 0;
+      display: flex; justify-content: space-between; align-items: center; gap: 8px;
+      padding: 10px 12px;
+      background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.15) 75%, transparent 100%);
+    }
+    .album-letter-date {
+      font-size: 0.72rem; font-weight: bold; color: #fff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.45);
+    }
+    .album-letter-name {
+      font-size: 0.8rem; font-weight: 800; color: var(--accent-pink);
+      text-shadow: 0 0 4px rgba(255,255,255,0.95), 0 1px 2px rgba(0,0,0,0.3);
+      max-width: 55%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .album-letter-note {
+      padding: 12px 14px 14px;
+    }
+    .album-letter-note-label {
+      font-size: 0.68rem; font-weight: bold; color: var(--light-text); margin-bottom: 4px;
+    }
+    .album-letter-note-body {
+      font-size: 0.84rem; color: var(--text-color); line-height: 1.55;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    .album-letter-note-empty {
+      font-size: 0.8rem; color: var(--light-text); font-style: normal;
+    }
+    .album-reader-dots {
+      display: flex; justify-content: center; gap: 5px; flex-wrap: wrap;
+      padding: 8px 12px 12px; flex-shrink: 0;
+    }
+    .album-reader-dot {
+      width: 6px; height: 6px; border-radius: 50%; background: var(--border-color);
+      transition: background 0.2s, transform 0.2s;
+    }
+    .album-reader-dot.active {
+      background: var(--accent-pink); transform: scale(1.3);
+    }
 
     .ai-chat-typing { display: flex; gap: 4px; align-items: center; padding: 12px 14px; }
     .ai-chat-typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--light-text); animation: chatTypingBounce 1s ease-in-out infinite; display: inline-block; }
@@ -3100,13 +3254,22 @@
 
       <!-- 10. 振り返りアルバムタブ -->
       <div id="viewAlbum" class="tab-content">
-        <div class="album-tab-body">
+        <div class="album-tab-body" id="albumTabBody">
           <div class="ai-chat-header">
             <h3>📖 振り返りアルバム</h3>
             <button type="button" class="map-modal-close-x" onclick="switchMainTab('home')">✕</button>
           </div>
           <div class="album-year-tabs" id="albumYearTabs"></div>
           <div class="album-scroll-body" id="albumScrollBody"></div>
+          <div class="album-reader" id="albumReader">
+            <div class="album-reader-bar">
+              <button type="button" class="album-reader-back" onclick="closeAlbumReader()">← 封筒</button>
+              <div class="album-reader-title" id="albumReaderTitle">手紙</div>
+              <div class="album-reader-count" id="albumReaderCount"></div>
+            </div>
+            <div class="album-reader-track" id="albumReaderTrack"></div>
+            <div class="album-reader-dots" id="albumReaderDots"></div>
+          </div>
         </div>
       </div>
 
@@ -6736,7 +6899,7 @@
         aiAnalysisView.style.display = 'none';
         aiChatView.style.display = 'none';
         aiTalkListView.style.display = 'none';
-        albumView.style.display = 'none';
+        albumView.style.display = 'none'; if (typeof closeAlbumReader === 'function') closeAlbumReader();
         if (goodValueView) goodValueView.style.display = 'none';
         startHomeAnimations();
       } else {
@@ -6753,7 +6916,7 @@
         aiAnalysisView.style.display = 'none';
         aiChatView.style.display = 'none';
         aiTalkListView.style.display = 'none';
-        albumView.style.display = 'none';
+        albumView.style.display = 'none'; if (typeof closeAlbumReader === 'function') closeAlbumReader();
         if (goodValueView) goodValueView.style.display = 'none';
 
         if(type === 'my') myView.style.display = 'block';
@@ -8001,11 +8164,11 @@
       
       const allLetters = [];
       if(info && info.letters) {
-        info.letters.forEach(l => { if(l.imageUrl) allLetters.push({ date: l.date || '思い出', img: l.imageUrl, text: l.text || '' }); });
+        info.letters.forEach(l => { if(l.imageUrl) allLetters.push({ date: l.date || '思い出', img: l.imageUrl, text: l.text || '', name }); });
       }
       castVisits.forEach(v => {
         if(v.chekiImg && !allLetters.some(l => l.img === v.chekiImg)) {
-          allLetters.push({ date: `${v.year}年${v.month}${(currentDateFormat === 'ymd' && v.day) ? v.day+'日' : ''}`, img: v.chekiImg, text: v.visitNote || '' });
+          allLetters.push({ date: `${v.year}年${v.month}${(currentDateFormat === 'ymd' && v.day) ? v.day+'日' : ''}`, img: v.chekiImg, text: v.visitNote || '', name: v.name || name });
         }
       });
 
@@ -8013,11 +8176,17 @@
 
       document.getElementById('letterModalTitle').innerText = `${name} の思い出ギャラリー (${allLetters.length}枚)`;
       const container = document.getElementById('letterModalContainer');
+      const esc = (s) => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
       container.innerHTML = allLetters.map(item => `
         <div class="letter-modal-card-item">
-          <div style="font-size:0.72rem; color:var(--light-text); font-weight:bold; margin-bottom:4px;">${item.date}</div>
-          <img src="${item.img}" class="letter-modal-img" alt="画像">
-          ${item.text ? `<div class="letter-modal-text-box">${item.text}</div>` : ''}
+          <div class="letter-modal-img-wrap">
+            <img src="${item.img}" class="letter-modal-img" alt="画像">
+            <div class="letter-modal-img-meta">
+              <span class="letter-modal-img-date">${esc(item.date)}</span>
+              <span class="letter-modal-img-name">${esc(item.name || name)}</span>
+            </div>
+          </div>
+          ${item.text ? `<div class="letter-modal-text-box">${esc(item.text)}</div>` : ''}
         </div>
       `).join('');
 
@@ -8197,14 +8366,14 @@
 
       const map = {};
       historyList.forEach((item, idx) => {
-        if (!map[item.name]) map[item.name] = { name: item.name, visits: [], lastIdx: idx, favCount: 0, hasNextNashi: false };
+        if (!map[item.name]) map[item.name] = { name: item.name, visits: [], firstIdx: idx, lastIdx: idx, favCount: 0, hasNextNashi: false };
         map[item.name].visits.push(item);
         map[item.name].lastIdx = idx;
         if (item.flags && item.flags.includes('🆂')) map[item.name].favCount++;
         if (item.flags && item.flags.includes('⚔')) map[item.name].hasNextNashi = true;
       });
       Object.keys(castData).forEach(cName => {
-        if (!map[cName]) map[cName] = { name: cName, visits: [], lastIdx: -1, favCount: 0, hasNextNashi: false };
+        if (!map[cName]) map[cName] = { name: cName, visits: [], firstIdx: 999999, lastIdx: -1, favCount: 0, hasNextNashi: false };
       });
       updateStats(map);
 
@@ -8249,13 +8418,20 @@
         );
       }
 
-      if (currentSort === 'count') list.sort((a,b) => b.visits.length - a.visits.length || b.lastIdx - a.lastIdx);
+      if (currentSort === 'count') list.sort((a,b) => b.visits.length - a.visits.length || (a.firstIdx ?? 0) - (b.firstIdx ?? 0));
       else if (currentSort === 'recent') list.sort((a,b) => b.lastIdx - a.lastIdx);
       else list.sort((a,b) => a.name.localeCompare(b.name, 'ja'));
 
       const grid = document.createElement('div');
       grid.className = 'grid';
       let radarCanvasCounter = 0;
+
+      const visitDateKey = (v) => {
+        const y = parseInt(v.year, 10) || 0;
+        const m = (typeof parseMonthNum === 'function' ? parseMonthNum(v.month) : parseInt(v.month, 10)) || 0;
+        const d = parseInt(v.day, 10) || 0;
+        return y * 10000 + m * 100 + d;
+      };
 
       list.forEach(c => {
         const details = document.createElement('details');
@@ -8318,7 +8494,8 @@
         }
 
         let rowsHtml = '';
-        c.visits.forEach(v => {
+        const visitsOrdered = c.visits.slice().sort((a, b) => visitDateKey(a) - visitDateKey(b));
+        visitsOrdered.forEach(v => {
           const reportBtn = v.reportUrl ? `<a href="${v.reportUrl}" target="_blank" class="report-badge">レポ</a>` : '';
           const { btn: infoBtn, panel: infoPanel } = buildRowDetailHTML(v);
           const dateStr = currentDateFormat === 'ymd' 
@@ -9179,10 +9356,14 @@
         bucket.recordCount++;
         if (v.name) bucket.castNames.add(v.name);
         if (v.chekiImg) {
-          bucket.photos.push({ img: v.chekiImg, date: `${v.year}年${monthNum}月${v.day ? v.day + '日' : ''}`, text: v.visitNote || '' });
-        }
-        if (v.flags && /[🈠❀🆂]/.test(v.flags)) {
-          bucket.highlights.push(`${v.name || '?'}(${v.flags})`);
+          const dayNum = parseInt(v.day, 10) || 0;
+          bucket.photos.push({
+            img: v.chekiImg,
+            date: `${v.year}年${monthNum}月${v.day ? v.day + '日' : ''}`,
+            text: v.visitNote || '',
+            name: v.name || '',
+            sortKey: (parseInt(v.year, 10) || 0) * 10000 + monthNum * 100 + dayNum
+          });
         }
       });
 
@@ -9197,12 +9378,24 @@
           const month = parseMonthNum(s.slice(4));
           const bucket = ensureBucket(year, month);
           if (!bucket.photos.some(p => p.img === l.imageUrl)) {
-            bucket.photos.push({ img: l.imageUrl, date: s || '思い出', text: l.text || '' });
+            const dayM = s.match(/(\d{1,2})日/);
+            const dayNum = dayM ? parseInt(dayM[1], 10) : 0;
+            bucket.photos.push({
+              img: l.imageUrl,
+              date: s || '思い出',
+              text: l.text || '',
+              name: name,
+              sortKey: (parseInt(year, 10) || 0) * 10000 + month * 100 + dayNum
+            });
           }
         });
       });
 
-      return Object.keys(buckets).sort().reverse().map(key => buckets[key]);
+      return Object.keys(buckets).sort().reverse().map(key => {
+        const b = buckets[key];
+        b.photos.sort((a, c) => (c.sortKey || 0) - (a.sortKey || 0));
+        return b;
+      });
     }
 
     function initAlbumView() {
@@ -9214,7 +9407,7 @@
 
       if (years.length === 0) {
         yearTabsEl.innerHTML = '';
-        document.getElementById('albumScrollBody').innerHTML = '<div class="album-empty-note">まだ思い出の記録がありません。</div>';
+        document.getElementById('albumScrollBody').innerHTML = '<div class="album-empty-note">まだ手紙の記録がありません。</div>';
         return;
       }
 
@@ -9234,42 +9427,116 @@
     }
 
     function renderAlbumMonths() {
+      closeAlbumReader();
       const data = (window._albumMonthData || []).filter(b => b.year === albumCurrentYear);
       const body = document.getElementById('albumScrollBody');
-      if (data.length === 0) { body.innerHTML = '<div class="album-empty-note">この年の記録はまだありません。</div>'; return; }
+      if (!body) return;
+      // 手紙がある月だけ封筒カバー表示（新しい月が上）
+      const withLetters = data.filter(b => b.photos && b.photos.length > 0);
+      if (withLetters.length === 0) {
+        body.innerHTML = '<div class="album-empty-note">この年の手紙はまだありません。</div>';
+        return;
+      }
 
-      body.innerHTML = data.map(bucket => {
-        const highlightHtml = bucket.highlights.length
-          ? `<div class="album-highlight-row">✨ ${bucket.highlights.slice(0, 5).map(escapeHTML).join(' ／ ')}</div>` : '';
+      const esc = (s) => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+      body.innerHTML = '<div class="album-cover-grid">' + withLetters.map(bucket => {
+        const key = bucket.year + '-' + bucket.month;
+        const cover = bucket.photos[0];
+        const n = bucket.photos.length;
+        const thumb = cover && cover.img
+          ? `<img src="${cover.img}" alt="" loading="lazy">`
+          : `<div class="album-cover-thumb-empty">✉️</div>`;
+        return `<div class="album-cover" onclick="openAlbumReader('${key}')">
+          <div class="album-cover-thumb">${thumb}</div>
+          <span class="album-cover-badge">${n}通</span>
+          <div class="album-cover-body">
+            <div class="album-cover-month">${bucket.year}年${bucket.month}月</div>
+            <div class="album-cover-meta">手紙をひらく</div>
+          </div>
+        </div>`;
+      }).join('') + '</div>';
+    }
 
-        if (bucket.photos.length === 0) {
-          const names = Array.from(bucket.castNames).slice(0, 3).map(escapeHTML).join('、');
-          return `<div class="album-month-section">
-            <div class="album-month-title">${bucket.year}年${bucket.month}月</div>
-            ${highlightHtml}
-            <div class="album-empty-month-card">この月は${bucket.recordCount}回${names ? '（' + names + '）' : ''}。写真はまだありません。</div>
-          </div>`;
-        }
+    function openAlbumReader(bucketKey, startIndex) {
+      const bucket = (window._albumMonthData || []).find(b => (b.year + '-' + b.month) === bucketKey);
+      if (!bucket || !bucket.photos || !bucket.photos.length) return;
+      const reader = document.getElementById('albumReader');
+      const track = document.getElementById('albumReaderTrack');
+      const dotsEl = document.getElementById('albumReaderDots');
+      const titleEl = document.getElementById('albumReaderTitle');
+      const countEl = document.getElementById('albumReaderCount');
+      if (!reader || !track) return;
 
-        const photosHtml = bucket.photos.map((p, i) =>
-          `<div class="album-photo-item" onclick="openAlbumLightbox('${bucket.year}-${bucket.month}', ${i})"><img src="${p.img}" alt="思い出" loading="lazy"></div>`
-        ).join('');
+      const esc = (s) => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+      const photos = bucket.photos;
+      if (titleEl) titleEl.textContent = `${bucket.year}年${bucket.month}月`;
+      if (countEl) countEl.textContent = `1 / ${photos.length}`;
 
-        return `<div class="album-month-section">
-          <div class="album-month-title">${bucket.year}年${bucket.month}月</div>
-          ${highlightHtml}
-          <div class="album-photo-grid">${photosHtml}</div>
+      track.innerHTML = photos.map((p, i) => {
+        const noteHtml = (p.text && String(p.text).trim())
+          ? `<div class="album-letter-note-body">${esc(p.text)}</div>`
+          : `<div class="album-letter-note-empty">当時の感想は記録されていません</div>`;
+        return `<div class="album-reader-page" data-idx="${i}">
+          <div class="album-letter-card">
+            <div class="album-letter-img-wrap">
+              <img class="album-letter-img" src="${p.img}" alt="手紙" loading="lazy">
+              <div class="album-letter-meta">
+                <span class="album-letter-date">${esc(p.date || '')}</span>
+                <span class="album-letter-name">${esc(p.name || '')}</span>
+              </div>
+            </div>
+            <div class="album-letter-note">
+              <div class="album-letter-note-label">📝 当時の感想</div>
+              ${noteHtml}
+            </div>
+          </div>
         </div>`;
       }).join('');
+
+      if (dotsEl) {
+        dotsEl.innerHTML = photos.map((_, i) =>
+          `<span class="album-reader-dot${i === 0 ? ' active' : ''}" data-idx="${i}"></span>`
+        ).join('');
+        dotsEl.querySelectorAll('.album-reader-dot').forEach(dot => {
+          dot.onclick = () => {
+            const i = parseInt(dot.getAttribute('data-idx'), 10) || 0;
+            const w = track.clientWidth || 1;
+            track.scrollTo({ left: i * w, behavior: 'smooth' });
+          };
+        });
+      }
+
+      const updateReaderUI = () => {
+        const w = track.clientWidth || 1;
+        const idx = Math.min(photos.length - 1, Math.max(0, Math.round(track.scrollLeft / w)));
+        if (countEl) countEl.textContent = `${idx + 1} / ${photos.length}`;
+        if (dotsEl) {
+          dotsEl.querySelectorAll('.album-reader-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+        }
+      };
+
+      track.onscroll = () => {
+        if (window.__albumReaderRaf) cancelAnimationFrame(window.__albumReaderRaf);
+        window.__albumReaderRaf = requestAnimationFrame(updateReaderUI);
+      };
+
+      reader.classList.add('open');
+      const start = Math.max(0, Math.min(photos.length - 1, startIndex || 0));
+      requestAnimationFrame(() => {
+        const w = track.clientWidth || 1;
+        track.scrollLeft = start * w;
+        updateReaderUI();
+      });
+    }
+
+    function closeAlbumReader() {
+      const reader = document.getElementById('albumReader');
+      if (reader) reader.classList.remove('open');
     }
 
     function openAlbumLightbox(bucketKey, index) {
-      const bucket = (window._albumMonthData || []).find(b => (b.year + '-' + b.month) === bucketKey);
-      if (!bucket) return;
-      const item = bucket.photos[index];
-      if (!item) return;
-      window._mapGalleryCache = bucket.photos;
-      openMapImageLightbox(index);
+      // 互換: 旧呼び出しはリーダーへ
+      openAlbumReader(bucketKey, index || 0);
     }
 
     function setDashPeriod(type) { dashPeriodType = type; renderDashboard(); }
