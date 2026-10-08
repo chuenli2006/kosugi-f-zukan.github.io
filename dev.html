@@ -29,10 +29,24 @@
       --rank-c1: #ff85a2; --rank-c2: #ffb347; --rank-c3: #63c7b2; --rank-c4: #a389d4; --rank-c5: #6fb1fc;
       --map-unvisited: #e0e0e0; --map-stroke: #ffffff;
       --glass-tint-rgb: 255,255,255; --glass-overlay-rgb: 0,0,0;
+      /* M3 ripple（ライト）: 白ハイライト + テーマ色 */
+      --m3-ripple-hi: rgba(255, 255, 255, 0.9);
+      --m3-ripple-hi2: rgba(255, 255, 255, 0.38);
+      --m3-ripple-mid: color-mix(in srgb, var(--accent-pink) 48%, transparent);
+      --m3-ripple-outer: color-mix(in srgb, var(--primary-pink) 28%, transparent);
+      --m3-ripple-glow: color-mix(in srgb, var(--accent-pink) 38%, transparent);
+      --m3-ripple-inset: rgba(255, 255, 255, 0.4);
     }
 
     [data-theme="midnight"], [data-theme="velvet"], [data-theme="cyber"], [data-theme="berry"], [data-theme="mocha"] {
       --glass-tint-rgb: 20,20,30; --glass-overlay-rgb: 0,0,0;
+      /* M3 ripple（ダーク）: 眩しすぎないハイライト + 強めのテーマ色 */
+      --m3-ripple-hi: rgba(255, 255, 255, 0.42);
+      --m3-ripple-hi2: rgba(255, 255, 255, 0.16);
+      --m3-ripple-mid: color-mix(in srgb, var(--accent-pink) 58%, transparent);
+      --m3-ripple-outer: color-mix(in srgb, var(--primary-pink) 36%, transparent);
+      --m3-ripple-glow: color-mix(in srgb, var(--accent-pink) 50%, transparent);
+      --m3-ripple-inset: rgba(255, 255, 255, 0.14);
     }
 
     [data-theme="midnight"] { --bg-color: #121218; --card-bg: #1a1a24; --primary-pink: #ff6b8b; --soft-pink: #2a1f2d; --accent-pink: #ff4081; --text-color: #e2e2e8; --light-text: #9a9aab; --border-color: #2e2e3d; --shadow: 0 4px 15px rgba(0, 0, 0, 0.5); --badge-bg: #3a2233; --badge-color: #ff6b8b; --gold-bg-start: #2e2612; --gold-bg-end: #1f190a; --gold-border: #d4af37; --gold-text: #ffd700; --map-unvisited: #2a2a36; --map-stroke: #121218; }
@@ -47,6 +61,31 @@
     [data-theme="jreast"] { --bg-color: #f4f5f7; --card-bg: #ffffff; --primary-pink: #008e43; --soft-pink: #e6f4ed; --accent-pink: #008040; --text-color: #1a1a1a; --light-text: #666666; --border-color: #dce1e6; --shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06); --radius: 6px; --badge-bg: #008e43; --badge-color: #ffffff; --gold-bg-start: #f4f5f7; --gold-bg-end: #ffffff; --gold-border: #008e43; --gold-text: #008040; --map-unvisited: #d0d5dd; --map-stroke: #f4f5f7; }
     /* --- テーマ：SAKINA（静けさと華やぎのモダンナチュラル） --- */
     [data-theme="sakina"] { --bg-color: #faf8f6; --card-bg: #ffffff; --primary-pink: #e08b97; --soft-pink: #fcf0f2; --accent-pink: #b85c6c; --text-color: #3d3235; --light-text: #8c7b7e; --border-color: #f2e8e8; --shadow: 0 4px 16px rgba(184, 92, 108, 0.08); --badge-bg: var(--soft-pink); --badge-color: var(--accent-pink); --gold-bg-start: #fff9e6; --gold-bg-end: #fff0c2; --gold-border: #f3c642; --gold-text: #8a6200; --map-unvisited: #efe3e3; --map-stroke: #ffffff; }
+
+    /* M3 ripple テーマ別微調整 */
+    [data-theme="cyber"] {
+      --m3-ripple-hi: rgba(180, 255, 255, 0.55);
+      --m3-ripple-hi2: rgba(0, 240, 255, 0.28);
+      --m3-ripple-mid: color-mix(in srgb, var(--primary-pink) 50%, transparent);
+      --m3-ripple-outer: color-mix(in srgb, var(--accent-pink) 32%, transparent);
+      --m3-ripple-glow: color-mix(in srgb, var(--primary-pink) 45%, transparent);
+      --m3-ripple-inset: rgba(0, 240, 255, 0.2);
+    }
+    [data-theme="jreast"] {
+      --m3-ripple-hi: rgba(255, 255, 255, 0.85);
+      --m3-ripple-hi2: rgba(255, 255, 255, 0.32);
+      --m3-ripple-mid: color-mix(in srgb, var(--accent-pink) 42%, transparent);
+      --m3-ripple-outer: color-mix(in srgb, var(--primary-pink) 26%, transparent);
+      --m3-ripple-glow: color-mix(in srgb, var(--accent-pink) 32%, transparent);
+    }
+    [data-theme="mocha"] {
+      --m3-ripple-hi: rgba(255, 236, 220, 0.4);
+      --m3-ripple-hi2: rgba(229, 152, 125, 0.22);
+    }
+    [data-theme="sakina"] {
+      --m3-ripple-mid: color-mix(in srgb, var(--accent-pink) 42%, transparent);
+      --m3-ripple-glow: color-mix(in srgb, var(--accent-pink) 30%, transparent);
+    }
 
     * {
       box-sizing: border-box; margin: 0; padding: 0;
@@ -138,16 +177,28 @@
       z-index: 20;
       transform: scale(0);
       will-change: transform, opacity;
+      /* fallback（color-mix非対応向け） */
       background:
         radial-gradient(circle at 35% 30%,
           rgba(255, 255, 255, 0.9) 0%,
-          rgba(255, 255, 255, 0.4) 16%,
-          rgba(255, 130, 170, 0.45) 40%,
-          rgba(255, 105, 150, 0.2) 62%,
+          rgba(255, 255, 255, 0.38) 16%,
+          rgba(247, 37, 133, 0.42) 40%,
+          rgba(255, 133, 162, 0.22) 62%,
           transparent 78%);
       box-shadow:
-        0 0 14px 3px rgba(255, 120, 165, 0.35),
-        inset 0 0 10px rgba(255, 255, 255, 0.4);
+        0 0 14px 3px rgba(247, 37, 133, 0.32),
+        inset 0 0 10px rgba(255, 255, 255, 0.35);
+      /* テーマ変数（対応ブラウザ） */
+      background:
+        radial-gradient(circle at 35% 30%,
+          var(--m3-ripple-hi) 0%,
+          var(--m3-ripple-hi2) 16%,
+          var(--m3-ripple-mid) 40%,
+          var(--m3-ripple-outer) 62%,
+          transparent 78%);
+      box-shadow:
+        0 0 14px 3px var(--m3-ripple-glow),
+        inset 0 0 10px var(--m3-ripple-inset);
       animation: m3RippleSpark 0.6s cubic-bezier(0.2, 0, 0, 1) forwards;
     }
     @keyframes m3RippleSpark {
@@ -12182,7 +12233,8 @@ ${question}`;
 
       area.addEventListener('touchstart', (e) => {
         if (e.touches.length !== 1) return;
-        if (e.target.closest('.xl-grid-wrap, .sheet-ad-carousel, .home-widget-track, .map-scroll-body, .ai-chat-chip-row')) { tracking = false; return; }
+        // 横スワイプ専用UIはタブ切替の対象外
+        if (e.target.closest('.xl-grid-wrap, .sheet-ad-carousel, .home-widget-track, .map-scroll-body, .ai-chat-chip-row, .album-reader, .album-reader-track, .album-cover-grid, .album-cover, .album-scroll-body')) { tracking = false; return; }
         startX = e.touches[0].clientX;
         startY = e.touches[0].clientY;
         tracking = true;
