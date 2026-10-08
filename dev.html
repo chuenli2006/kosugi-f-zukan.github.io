@@ -61,6 +61,126 @@
       -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     }
 
+    /* ── 押下フィードバック（役割別） ── */
+    .press-firm,
+    .close-btn,
+    .fab-add,
+    .fab-sub-btn,
+    button[type="submit"].close-btn {
+      transition: transform 0.12s cubic-bezier(0.4, 0, 0.2, 1),
+                  filter 0.12s cubic-bezier(0.4, 0, 0.2, 1),
+                  opacity 0.12s ease,
+                  box-shadow 0.12s ease;
+    }
+    .press-firm:active,
+    .close-btn:active {
+      transform: scale(0.97);
+      filter: brightness(0.94);
+    }
+    /* 副アクション（キャンセル系・灰色ボタン） */
+    .press-soft:active,
+    .close-btn[style*="#888"]:active,
+    .close-btn[style*="background:#888"]:active,
+    .close-btn[style*="background: #888"]:active,
+    .album-reader-back:active,
+    .settings-back-btn:active,
+    .map-modal-close-x:active {
+      transform: scale(0.98);
+      opacity: 0.78;
+      filter: none;
+    }
+    /* アイコンのみ */
+    .press-icon:active,
+    .edit-icon-btn:active,
+    .notif-bell-btn:active,
+    .cast-ai-report-btn:active,
+    .radar-slim-toggle:active,
+    .home-widget-dot:active,
+    .album-reader-dot:active {
+      transform: scale(0.9);
+      opacity: 0.75;
+      transition: transform 0.1s ease, opacity 0.1s ease;
+    }
+    /* トグル・セグメント：薄い反応のみ */
+    .btn-toggle:active,
+    .album-year-tab:active,
+    .gv-mode-btn:active,
+    .map-heatmap-tab:active {
+      opacity: 0.85;
+    }
+    /* ナビ */
+    .nav-item:active {
+      opacity: 0.72;
+    }
+    /* pill は既存 scale を維持しつつ transition 明示 */
+    .pill-btn {
+      transition: transform 0.12s cubic-bezier(0.4, 0, 0.2, 1), filter 0.12s ease;
+    }
+    .pill-btn:active {
+      transform: scale(0.95);
+      filter: brightness(0.96);
+    }
+
+    /* Material 3 風キラキラ波紋（リスト行・カード全体） */
+    .m3-ripple-host {
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+    }
+    details.cast-card.m3-ripple-host,
+    details.store-card.m3-ripple-host {
+      overflow: hidden;
+    }
+    .m3-ripple {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 20;
+      transform: scale(0);
+      will-change: transform, opacity;
+      background:
+        radial-gradient(circle at 35% 30%,
+          rgba(255, 255, 255, 0.9) 0%,
+          rgba(255, 255, 255, 0.4) 16%,
+          rgba(255, 130, 170, 0.45) 40%,
+          rgba(255, 105, 150, 0.2) 62%,
+          transparent 78%);
+      box-shadow:
+        0 0 14px 3px rgba(255, 120, 165, 0.35),
+        inset 0 0 10px rgba(255, 255, 255, 0.4);
+      animation: m3RippleSpark 0.6s cubic-bezier(0.2, 0, 0, 1) forwards;
+    }
+    @keyframes m3RippleSpark {
+      0% {
+        transform: scale(0);
+        opacity: 0.7;
+      }
+      40% {
+        opacity: 0.4;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 0;
+      }
+    }
+    summary.card-btn {
+      position: relative;
+      overflow: hidden;
+    }
+    /* 行・カード：背景のわずかな沈み＋波紋用 */
+    summary.card-btn,
+    .sheet-nav-item,
+    .ctx-menu-item,
+    .album-cover,
+    .notif-card,
+    .ai-talk-item,
+    .map-gallery-item,
+    .home-play-main,
+    .settings-summary-row {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+
     /* 📱 モバイルファーストのベースレイアウト */
     .app-layout {
       display: flex;
@@ -1139,7 +1259,11 @@
     
     .anim-inner { overflow: hidden; width: 100%; }
 
-    summary.card-btn { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; cursor: pointer; list-style: none; font-weight: bold; width: 100%; }
+    summary.card-btn {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 14px; cursor: pointer; list-style: none; font-weight: bold; width: 100%;
+      position: relative; overflow: hidden;
+    }
     summary.card-btn::-webkit-details-marker { display: none; }
     .arrow-icon { font-size: 0.75rem; color: var(--light-text); display: inline-block; transition: transform 0.3s; }
     details[open] summary .arrow-icon { transform: rotate(180deg); color: var(--accent-pink); }
@@ -8018,6 +8142,95 @@
       });
     }
 
+
+    /* Material 3 風キラキラ波紋（リスト行・カード全体タップ） */
+    const M3_RIPPLE_SELECTOR = [
+      'summary.card-btn',
+      '.sheet-nav-item',
+      '.ctx-menu-item',
+      '.album-cover',
+      '.notif-card',
+      '.ai-talk-item',
+      '.map-pref-item',
+      '.map-gallery-item',
+      '.settings-summary-row',
+      '.home-card-c'
+    ].join(',');
+
+    function spawnM3Ripple(el, clientX, clientY) {
+      if (!el || el.disabled) return;
+      // 女の子カードは summary 開閉リフローの影響を避けるため details に描画
+      let host = el;
+      if (el.matches && el.matches('summary.card-btn')) {
+        const details = el.closest('details.cast-card, details.store-card, details');
+        if (details) host = details;
+      }
+      const rect = host.getBoundingClientRect();
+      // Material 方式: タップ点から最遠角までの距離が半径
+      const localX = clientX - rect.left;
+      const localY = clientY - rect.top;
+      const r = Math.sqrt(
+        Math.pow(Math.max(localX, rect.width - localX), 2) +
+        Math.pow(Math.max(localY, rect.height - localY), 2)
+      );
+      const size = Math.max(48, r * 2);
+      const x = localX - size / 2;
+      const y = localY - size / 2;
+
+      const cs = getComputedStyle(host);
+      if (cs.position === 'static') host.style.position = 'relative';
+      host.classList.add('m3-ripple-host');
+
+      // 既存波紋を残しつつ新規追加（連打でも途中終了させない）
+      const wave = document.createElement('span');
+      wave.className = 'm3-ripple';
+      wave.setAttribute('aria-hidden', 'true');
+      wave.style.cssText = [
+        'position:absolute',
+        'width:' + size + 'px',
+        'height:' + size + 'px',
+        'left:' + x + 'px',
+        'top:' + y + 'px',
+        'pointer-events:none',
+        'border-radius:50%',
+        'z-index:20'
+      ].join(';');
+      host.appendChild(wave);
+
+      // animationend は複数プロパティで複数回飛ぶことがあるため timeout を主にする
+      let cleaned = false;
+      const cleanup = () => {
+        if (cleaned) return;
+        cleaned = true;
+        if (wave.parentNode) wave.parentNode.removeChild(wave);
+      };
+      wave.addEventListener('animationend', (ev) => {
+        if (ev.target === wave) cleanup();
+      });
+      setTimeout(cleanup, 650);
+    }
+
+    function initM3RippleDelegation() {
+      if (window.__m3RippleInited) return;
+      window.__m3RippleInited = true;
+      document.addEventListener('pointerdown', (e) => {
+        if (e.button != null && e.button !== 0) return;
+        const el = e.target.closest && e.target.closest(M3_RIPPLE_SELECTOR);
+        if (!el) return;
+        // 内側の実ボタン等は波紋対象外（二重反応防止）
+        const interactive = e.target.closest('button, a, input, select, textarea, .edit-icon-btn, .letter-btn, .copy-btn, .link-btn, .cast-ai-report-btn, .report-badge, .badge-count-flip-wrap');
+        if (interactive && interactive !== el) return;
+        spawnM3Ripple(el, e.clientX, e.clientY);
+      }, { passive: true });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initM3RippleDelegation);
+    } else {
+      initM3RippleDelegation();
+    }
+
+
     /* 💭 タイムカプセル機能：ちょうど○年前 / ○ヶ月前の今日の記録を探す */
     function getTimeCapsuleMatch() {
       const now = new Date();
@@ -11937,6 +12150,8 @@ ${question}`;
     document.addEventListener('click', function(e) {
       const summary = e.target.closest('.cast-card summary.card-btn');
       if (!summary) return;
+      // バッジ等の内部操作は開閉しない
+      if (e.target.closest('.badge-count-flip-wrap, button, a, .edit-icon-btn, .letter-btn, .copy-btn, .link-btn, .cast-ai-report-btn')) return;
       e.preventDefault();
       
       const details = summary.parentElement;
@@ -11945,8 +12160,12 @@ ${question}`;
         setTimeout(() => { details.removeAttribute('open'); }, 300);
       } else {
         details.setAttribute('open', '');
-        void details.offsetWidth; 
-        details.classList.add('is-open');
+        // 強制 reflow は波紋アニメを途中終了させるため、次フレームで is-open
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            details.classList.add('is-open');
+          });
+        });
       }
     });
 
