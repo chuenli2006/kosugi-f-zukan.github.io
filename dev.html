@@ -1463,7 +1463,7 @@
     .link-btn, .copy-btn, .letter-btn { font-size: 0.7rem; padding: 3px 8px; border-radius: 10px; cursor: pointer; border: 1px solid var(--primary-pink); background: var(--card-bg); color: var(--accent-pink); white-space: nowrap; }
     .letter-btn { background: var(--soft-pink); font-weight: bold; }
 
-    /* 🏬 【改修】店舗別カード（折りたたみ式デザイン） */
+    /* 🏬 【改修】店舗別カード（折りたたみ式デザイン＋アニメ） */
     details.store-card-fold {
       background: var(--card-bg);
       border-radius: 16px;
@@ -1471,8 +1471,25 @@
       box-shadow: 0 4px 15px rgba(247, 37, 133, 0.08);
       overflow: hidden;
       margin-bottom: 12px;
-      transition: all 0.3s ease;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
       width: 100%;
+      position: relative;
+    }
+    details.store-card-fold .store-anim-wrapper {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    details.store-card-fold.is-open .store-anim-wrapper {
+      grid-template-rows: 1fr;
+    }
+    details.store-card-fold .store-anim-inner {
+      overflow: hidden;
+      min-height: 0;
+    }
+    details.store-card-fold[open]:not(.is-open) summary .arrow-icon {
+      transform: rotate(0deg);
+      color: var(--light-text);
     }
     summary.store-fold-summary {
       padding: 12px 14px;
@@ -1484,6 +1501,7 @@
       background: linear-gradient(135deg, var(--soft-pink), var(--card-bg));
       position: relative;
       overflow: hidden;
+      -webkit-tap-highlight-color: transparent;
     }
     summary.store-fold-summary .store-web-preview-img {
       position: absolute; inset: 0; width: 100%; height: 100%;
@@ -1498,6 +1516,14 @@
       position: relative; z-index: 2;
     }
     summary.store-fold-summary::-webkit-details-marker { display: none; }
+    .store-card-body {
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border-top: 1px dashed var(--border-color);
+      background: var(--card-bg);
+    }
     
     .store-summary-head {
       display: flex;
@@ -1535,6 +1561,15 @@
       border: 1px solid var(--primary-pink);
       padding: 1px 7px;
       border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .store-badge-pref .store-pref-icon {
+      width: 0.85em;
+      height: 0.85em;
+      stroke: var(--accent-pink);
+      flex-shrink: 0;
     }
     .store-top-cast-badge {
       font-size: 0.72rem;
@@ -1547,6 +1582,38 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
+      max-width: 100%;
+      overflow: hidden;
+    }
+    .store-rotator {
+      display: block;
+      width: 100%;
+      min-height: 1.35em;
+      line-height: 1.35em;
+      position: relative;
+      overflow: hidden;
+    }
+    .store-rotator-view {
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .store-rotator-view.is-fading {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+    .store-rotator-view.is-enter {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    .store-rotator-label {
+      color: var(--accent-pink);
+      font-weight: 800;
+      margin-right: 4px;
     }
 
     .store-action-btns {
@@ -1583,12 +1650,150 @@
     .row-detail-panel.open { display: flex; flex-wrap: wrap; gap: 10px; }
     .row-detail-panel .rd-label { color: var(--light-text); margin-right: 2px; }
 
-    .month-section { margin-bottom: 16px; width: 100%; }
-    .month-title { font-size: 0.95rem; color: var(--accent-pink); margin-bottom: 6px; padding-left: 6px; border-left: 3px solid var(--primary-pink); font-weight: bold; }
-    details.timeline-item { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 6px; overflow: hidden; width: 100%; }
-    summary.timeline-summary { padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 0.85rem; list-style: none; width: 100%; }
+    .month-section { margin-bottom: 22px; width: 100%; }
+    .month-title {
+      font-size: 1.35rem;
+      color: var(--accent-pink);
+      margin: 4px 0 12px;
+      padding: 0 2px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      line-height: 1.2;
+    }
+    .month-title-sub {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: bold;
+      color: var(--light-text);
+      margin-top: 4px;
+      letter-spacing: 0;
+    }
+    details.timeline-item {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      margin-bottom: 8px;
+      overflow: hidden;
+      width: 100%;
+      box-shadow: var(--shadow);
+      transition: border-color 0.2s ease;
+    }
+    details.timeline-item.is-open {
+      border-color: var(--primary-pink);
+    }
+    details.timeline-item .tl-anim-wrapper {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    details.timeline-item.is-open .tl-anim-wrapper {
+      grid-template-rows: 1fr;
+    }
+    details.timeline-item .tl-anim-inner {
+      overflow: hidden;
+      min-height: 0;
+    }
+    summary.timeline-summary {
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      list-style: none;
+      width: 100%;
+      -webkit-tap-highlight-color: transparent;
+      position: relative;
+      overflow: hidden;
+    }
     summary.timeline-summary::-webkit-details-marker { display: none; }
-    .timeline-body { padding: 8px 12px 10px; border-top: 1px dashed var(--border-color); background: var(--bg-color); font-size: 0.78rem; display: flex; flex-direction: column; gap: 6px; width: 100%; }
+    .tl-day {
+      flex-shrink: 0;
+      width: 44px;
+      text-align: center;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--accent-pink);
+      line-height: 1.1;
+    }
+    .tl-day-unit {
+      display: block;
+      font-size: 0.62rem;
+      font-weight: bold;
+      color: var(--light-text);
+    }
+    .tl-main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .tl-name {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--text-color);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .tl-store {
+      font-size: 0.72rem;
+      font-weight: bold;
+      color: var(--light-text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .tl-arrow {
+      flex-shrink: 0;
+      font-size: 0.7rem;
+      color: var(--light-text);
+      transition: transform 0.3s ease, color 0.2s;
+    }
+    details.timeline-item.is-open .tl-arrow {
+      transform: rotate(180deg);
+      color: var(--accent-pink);
+    }
+    .timeline-body {
+      padding: 0 14px 12px;
+      background: var(--card-bg);
+      font-size: 0.78rem;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+    }
+    .tl-detail-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 12px;
+      font-size: 0.78rem;
+    }
+    .tl-detail-item {
+      color: var(--text-color);
+    }
+    .tl-detail-item .rd-label {
+      color: var(--light-text);
+      font-weight: bold;
+      margin-right: 4px;
+    }
+    .tl-memo {
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 0.8rem;
+      line-height: 1.5;
+      color: var(--text-color);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .tl-memo-empty { color: var(--light-text); }
+    .tl-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+    }
 
     .calendar-header { display: flex; justify-content: space-between; align-items: center; padding: 12px; font-weight: bold; color: var(--accent-pink); background: var(--card-bg); border-radius: var(--radius); border: 1px solid var(--border-color); margin-bottom: 12px; box-shadow: var(--shadow); }
     .calendar-header button { background: var(--soft-pink); border: 1px solid var(--primary-pink); color: var(--accent-pink); padding: 4px 10px; border-radius: 12px; cursor: pointer; font-weight: bold; }
@@ -1602,7 +1807,29 @@
     .cal-day-name { text-align: center; font-size: 0.75rem; font-weight: bold; color: var(--light-text); padding-bottom: 4px; }
     .cal-cell { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 2px; cursor: pointer; position: relative; }
     .cal-cell.today { border: 2px solid var(--accent-pink); background: var(--soft-pink); }
-    .cal-cell.selected { background: #e0f0ff; border-color: #339af0; }
+    .cal-cell.selected {
+      background: color-mix(in srgb, #339af0 18%, var(--card-bg));
+      border-color: #339af0;
+    }
+    /* ダークテーマ：選択日をテーマに合わせて見やすく */
+    [data-theme="midnight"] .cal-cell.selected,
+    [data-theme="velvet"] .cal-cell.selected,
+    [data-theme="cyber"] .cal-cell.selected,
+    [data-theme="berry"] .cal-cell.selected,
+    [data-theme="mocha"] .cal-cell.selected {
+      background: color-mix(in srgb, #4dabf7 28%, var(--card-bg));
+      border-color: #74c0fc;
+      box-shadow: inset 0 0 0 1px rgba(116, 192, 252, 0.25);
+    }
+    [data-theme="cyber"] .cal-cell.selected {
+      background: color-mix(in srgb, #00f0ff 22%, var(--card-bg));
+      border-color: #00f0ff;
+      box-shadow: inset 0 0 0 1px rgba(0, 240, 255, 0.3);
+    }
+    [data-theme="jreast"] .cal-cell.selected {
+      background: color-mix(in srgb, var(--accent-pink) 14%, var(--card-bg));
+      border-color: var(--accent-pink);
+    }
     .cal-cell.empty { background: transparent; border: none; pointer-events: none; }
     .cal-date { font-size: 0.8rem; font-weight: bold; color: var(--text-color); margin-top: 2px; }
     .cal-dots { display: flex; gap: 3px; flex-wrap: wrap; justify-content: center; margin-top: 2px; padding: 0 2px; width: 100%; }
@@ -3027,7 +3254,7 @@
               <div class="btn-group">
                 <button class="btn-toggle active" id="viewCast" onclick="changeView('cast')">女の子別図鑑</button>
                 <button class="btn-toggle" id="viewTimeline" onclick="changeView('timeline')">月別時系列</button>
-                <button class="btn-toggle" id="viewStore" onclick="changeView('store')">🏬 店舗別</button>
+                <button class="btn-toggle" id="viewStore" onclick="changeView('store')">店舗一覧</button>
               </div>
 
               <div class="btn-group" id="sortGroup">
@@ -8658,6 +8885,8 @@
     /* Material 3 風キラキラ波紋（リスト行・カード全体タップ） */
     const M3_RIPPLE_SELECTOR = [
       'summary.card-btn',
+      'summary.store-fold-summary',
+      'summary.timeline-summary',
       '.sheet-nav-item',
       '.ctx-menu-item',
       '.album-cover',
@@ -8673,8 +8902,8 @@
       if (!el || el.disabled) return;
       // 女の子カードは summary 開閉リフローの影響を避けるため details に描画
       let host = el;
-      if (el.matches && el.matches('summary.card-btn')) {
-        const details = el.closest('details.cast-card, details.store-card, details');
+      if (el.matches && el.matches('summary.card-btn, summary.store-fold-summary, summary.timeline-summary')) {
+        const details = el.closest('details.cast-card, details.store-card-fold, details.timeline-item, details.store-card, details');
         if (details) host = details;
       }
       const rect = host.getBoundingClientRect();
@@ -9287,43 +9516,116 @@
       if (window.lucide) lucide.createIcons();
     }
 
+    function timelineVisitDateKey(v) {
+      const y = parseInt(v.year, 10) || 0;
+      const m = (typeof parseMonthNum === 'function' ? parseMonthNum(v.month) : parseInt(String(v.month || '').replace(/\D/g, ''), 10)) || 0;
+      const d = parseInt(v.day, 10) || 0;
+      return y * 10000 + m * 100 + d;
+    }
+
     function renderTimelineView(target, keyword) {
       const groups = {};
       historyList.forEach((item) => {
-        const key = item.year + '年 ' + item.month;
+        const key = item.year + '年' + (item.month || '');
         if (!groups[key]) groups[key] = [];
         groups[key].push(item);
       });
 
-      Object.keys(groups).reverse().forEach(key => {
-        let items = groups[key];
-        if(activeTagFilter.type === 'type') {
+      // 月キーを年月の新しい順に
+      const monthKeys = Object.keys(groups).sort((a, b) => {
+        const itemsA = groups[a][0], itemsB = groups[b][0];
+        return timelineVisitDateKey(itemsB || {}) - timelineVisitDateKey(itemsA || {});
+      });
+
+      let any = false;
+      monthKeys.forEach(key => {
+        let items = groups[key].slice();
+        if (activeTagFilter.type === 'type') {
           items = items.filter(i => i.typeTag && i.typeTag.includes(activeTagFilter.value));
-        } else if(activeTagFilter.type === 'store') {
+        } else if (activeTagFilter.type === 'store') {
           items = items.filter(i => i.storeName && i.storeName.trim() === activeTagFilter.value);
         }
-
-        if(keyword) {
-          items = items.filter(i => i.name.toLowerCase().includes(keyword) || (i.visitNote||'').toLowerCase().includes(keyword) || (i.storeName||'').toLowerCase().includes(keyword) || (i.typeTag||'').toLowerCase().includes(keyword));
+        if (keyword) {
+          const kw = keyword.toLowerCase();
+          items = items.filter(i =>
+            (i.name || '').toLowerCase().includes(kw) ||
+            (i.visitNote || '').toLowerCase().includes(kw) ||
+            (i.storeName || '').toLowerCase().includes(kw) ||
+            (i.typeTag || '').toLowerCase().includes(kw)
+          );
         }
-        if(items.length === 0) return;
+        if (items.length === 0) return;
+        any = true;
 
-        const sec = document.createElement('div'); sec.className = 'month-section';
-        sec.innerHTML = `<div class="month-title">${key}</div>`;
+        // 月内は日付の新しい順
+        items.sort((a, b) => timelineVisitDateKey(b) - timelineVisitDateKey(a));
+
+        const totalAmt = items.reduce((s, v) => s + (Number(v.amount) || 0), 0);
+        const amtDisp = currentAmountHide === 'hide' ? '***' : '¥' + totalAmt.toLocaleString();
+        const sample = items[0] || {};
+        const yLabel = sample.year ? (sample.year + '年') : '';
+        const mRaw = sample.month || '';
+        const mNum = (typeof parseMonthNum === 'function' ? parseMonthNum(mRaw) : parseInt(String(mRaw).replace(/\D/g, ''), 10)) || 0;
+        const monthLabel = yLabel + (mNum ? mNum + '月' : mRaw);
+
+        const sec = document.createElement('div');
+        sec.className = 'month-section';
+        sec.innerHTML = `<div class="month-title">${monthLabel}<span class="month-title-sub">${items.length}回 · ${amtDisp}</span></div>`;
+
         items.forEach(i => {
-          const details = document.createElement('details'); details.className = 'timeline-item';
-          const { btn: infoBtn, panel: infoPanel } = buildRowDetailHTML(i);
-          const subDateStr = (currentDateFormat === 'ymd' && i.day) ? `${i.day}日` : '';
+          const dayNum = parseInt(i.day, 10) || 0;
+          const dayHtml = dayNum
+            ? `<div class="tl-day">${dayNum}<span class="tl-day-unit">日</span></div>`
+            : `<div class="tl-day">—<span class="tl-day-unit">日</span></div>`;
+          const storeName = (i.storeName || '').trim() || '店舗未設定';
+          const name = i.name || '（名前なし）';
+          const amount = Number(i.amount) || 0;
+          const amountDisp = currentAmountHide === 'hide' ? '***' : (amount ? '¥' + amount.toLocaleString() : '—');
+          const courseRaw = i.courseTime;
+          const courseDisp = (courseRaw !== undefined && courseRaw !== null && String(courseRaw).trim() !== '')
+            ? (String(courseRaw).replace(/分$/, '') + '分')
+            : '—';
+          const memo = (i.visitNote || '').trim();
+          const flagsHtml = (typeof buildFlagTagsHtml === 'function') ? buildFlagTagsHtml(i.flags) : '';
+          const typeTag = (i.typeTag || '').trim();
+
+          const details = document.createElement('details');
+          details.className = 'timeline-item';
           details.innerHTML = `
             <summary class="timeline-summary">
-              <div style="display:flex; align-items:center; gap:8px;"><span class="arrow-icon">▼</span><strong>${i.name}</strong> <span style="font-size:0.75rem; color:var(--light-text);">${subDateStr}</span><span>${i.flags||''}</span></div>
-              <div style="display:flex; align-items:center; gap:6px;">${infoBtn} <button class="edit-icon-btn" onclick="openEditRecordModal(event, ${i.originalIndex})"><svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button></div>
+              ${dayHtml}
+              <div class="tl-main">
+                <div class="tl-name">${name}</div>
+                <div class="tl-store">${storeName}</div>
+              </div>
+              <span class="tl-arrow">▼</span>
             </summary>
-            <div class="timeline-body">📝 ${i.visitNote || 'メモなし'} ${infoPanel}</div>`;
+            <div class="tl-anim-wrapper">
+              <div class="tl-anim-inner">
+                <div class="timeline-body">
+                  ${flagsHtml || ''}
+                  ${typeTag ? `<div class="tl-detail-row"><span class="tl-detail-item"><span class="rd-label">タイプ</span>${typeTag}</span></div>` : ''}
+                  <div class="tl-detail-row">
+                    <span class="tl-detail-item"><span class="rd-label">金額</span>${amountDisp}</span>
+                    <span class="tl-detail-item"><span class="rd-label">コース</span>${courseDisp}</span>
+                  </div>
+                  <div class="tl-memo ${memo ? '' : 'tl-memo-empty'}">${memo || 'メモなし'}</div>
+                  <div class="tl-actions">
+                    <button type="button" class="edit-icon-btn" onclick="openEditRecordModal(event, ${i.originalIndex})" title="編集">
+                      <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>`;
           sec.appendChild(details);
         });
         target.appendChild(sec);
       });
+
+      if (!any) {
+        target.innerHTML = '<div style="text-align:center; color:var(--light-text); padding:40px 10px; font-size:0.85rem;">該当する記録がありません。</div>';
+      }
     }
 
     /* 🏬 【機能改修】マイ図鑑：店舗別表示（折りたたみ式＋一番指名している子表示＋店舗情報編集モーダル） */
@@ -9434,17 +9736,63 @@
         const avgAmount = totalVisits > 0 ? Math.round(s.totalAmount / totalVisits) : 0;
         const avgAmountDisp = currentAmountHide === 'hide' ? '***' : `¥${avgAmount.toLocaleString()}`;
 
-        // 最も指名回数の多い女の子を算出
-        let topCastName = '';
-        let maxCastCount = 0;
+        // ローテ用指標: リピート / 最近 / 金額TOP / 人数
+        let topByCount = { name: '', count: 0 };
+        let topByAmount = { name: '', amount: 0 };
         s.castSet.forEach((stat, cName) => {
-          if (stat.count > maxCastCount) {
-            maxCastCount = stat.count;
-            topCastName = cName;
+          if (stat.count > topByCount.count) topByCount = { name: cName, count: stat.count };
+          if (stat.amount > topByAmount.amount) topByAmount = { name: cName, amount: stat.amount };
+        });
+        // 最近 = 追加順ではなく年月日の新しい記録
+        let recentCast = '';
+        let recentDate = '';
+        let recentKey = -1;
+        const visitDateKey = (v) => {
+          const y = parseInt(v.year, 10) || 0;
+          const m = (typeof parseMonthNum === 'function' ? parseMonthNum(v.month) : parseInt(String(v.month || '').replace(/\D/g, ''), 10)) || 0;
+          const d = parseInt(v.day, 10) || 0;
+          return y * 10000 + m * 100 + d;
+        };
+        s.visits.forEach(v => {
+          if (!v.name) return;
+          const key = visitDateKey(v);
+          if (key >= recentKey) {
+            recentKey = key;
+            recentCast = v.name;
+            const mNum = (typeof parseMonthNum === 'function' ? parseMonthNum(v.month) : parseInt(String(v.month || '').replace(/\D/g, ''), 10)) || 0;
+            const dNum = parseInt(v.day, 10) || 0;
+            recentDate = (mNum ? mNum + '月' : '') + (dNum ? dNum + '日' : '');
           }
         });
-
-        const topCastDisp = topCastName ? `最推し: 🌸 ${topCastName} (${maxCastCount}回)` : '指名履歴なし';
+        const castCount = s.castSet.size;
+        const amountTopDisp = currentAmountHide === 'hide'
+          ? (topByAmount.name ? topByAmount.name : '')
+          : (topByAmount.name ? topByAmount.name : '');
+        const rotItems = [];
+        if (topByCount.name) {
+          rotItems.push({ label: 'リピート', text: topByCount.name + ' (' + topByCount.count + '回)' });
+        }
+        if (recentCast) {
+          rotItems.push({ label: '最近', text: recentCast + (recentDate ? ' (' + recentDate + ')' : '') });
+        }
+        if (topByAmount.name) {
+          rotItems.push({
+            label: '金額TOP',
+            text: currentAmountHide === 'hide' ? topByAmount.name : (topByAmount.name + ' (¥' + Math.round(topByAmount.amount).toLocaleString() + ')')
+          });
+        }
+        rotItems.push({ label: '人数', text: castCount + '人' });
+        if (rotItems.length === 0) {
+          rotItems.push({ label: '', text: '指名履歴なし' });
+        }
+        const rotPayload = rotItems.map(it => ({
+          label: it.label || '',
+          text: it.text || ''
+        }));
+        const rot0 = rotPayload[0] || { label: '', text: '—' };
+        const rot0Html = (rot0.label ? `<span class="store-rotator-label">${rot0.label}</span>` : '') + (rot0.text || '');
+        const rotJson = JSON.stringify(rotPayload).replace(/"/g, '&quot;');
+        const rotHtml = `<span class="store-rotator" data-store-rotator data-rot-items="${rotJson}" data-rot-index="0"><span class="store-rotator-view">${rot0Html}</span></span>`;
 
         // 電話・Webリンクボタン
         let phoneBtnHtml = phoneNum ? `<a href="tel:${phoneNum}" class="store-contact-btn store-btn-phone">📞 電話をかける (${phoneNum})</a>` : '';
@@ -9458,7 +9806,7 @@
         let castsButtonsHtml = '';
         s.castSet.forEach((stat, cName) => {
           const safeCastAttr = cName.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-          castsButtonsHtml += `<button type="button" class="store-cast-btn" onclick="openStoreCastDetail(event, '${safeStoreAttr}', '${safeCastAttr}')">🌸 ${cName}</button>`;
+          castsButtonsHtml += `<button type="button" class="store-cast-btn" onclick="openStoreCastDetail(event, '${safeStoreAttr}', '${safeCastAttr}')">${cName}</button>`;
         });
 
         const details = document.createElement('details');
@@ -9475,35 +9823,39 @@
             ${webPreviewHtml}
             <div class="store-summary-head">
               <div class="store-summary-title">
-                <span class="arrow-icon">▼</span> 🏬 ${s.storeName}
+                <span class="arrow-icon">▼</span> ${s.storeName}
               </div>
               <span class="badge-count">${totalVisits}回</span>
             </div>
             
             <div class="store-summary-meta">
               <span class="store-badge-cat" style="background:${catStyle.bg}; color:${catStyle.color};">${categoryText}</span>
-              <span class="store-badge-pref">📍 ${prefText}</span>
-              <span class="store-top-cast-badge">${topCastDisp}</span>
+              <span class="store-badge-pref"><i data-lucide="map-pin" class="store-pref-icon"></i> ${prefText}</span>
+              <span class="store-top-cast-badge">${rotHtml}</span>
             </div>
           </summary>
 
-          <div style="padding:12px 14px; display:flex; flex-direction:column; gap:10px; border-top:1px dashed var(--border-color); background:var(--card-bg);">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <div style="font-size:0.78rem; font-weight:bold; color:var(--accent-pink);">店舗詳細・アクション</div>
-              <button class="store-btn-edit" onclick="openEditStoreInfoModal(event, '${s.storeName}')">⚙️ 店舗情報を編集</button>
-            </div>
+          <div class="store-anim-wrapper">
+            <div class="store-anim-inner">
+              <div class="store-card-body">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <div style="font-size:0.78rem; font-weight:bold; color:var(--accent-pink);">店舗詳細・アクション</div>
+                  <button class="store-btn-edit" onclick="openEditStoreInfoModal(event, '${s.storeName}')">⚙️ 店舗情報を編集</button>
+                </div>
 
-            ${(phoneBtnHtml || webBtnHtml) ? `<div class="store-action-btns">${phoneBtnHtml}${webBtnHtml}</div>` : ''}
+                ${(phoneBtnHtml || webBtnHtml) ? `<div class="store-action-btns">${phoneBtnHtml}${webBtnHtml}</div>` : ''}
 
-            <div style="display:flex; justify-content:space-between; background:var(--bg-color); padding:8px 12px; border-radius:10px; border:1px solid var(--border-color); font-size:0.78rem;">
-              <div><span style="color:var(--light-text); font-weight:bold;">店舗での総支出:</span> <strong style="color:var(--accent-pink);">${totalAmountDisp}</strong></div>
-              <div><span style="color:var(--light-text); font-weight:bold;">平均単価:</span> <strong>${avgAmountDisp}</strong></div>
-            </div>
+                <div style="display:flex; justify-content:space-between; background:var(--bg-color); padding:8px 12px; border-radius:10px; border:1px solid var(--border-color); font-size:0.78rem;">
+                  <div><span style="color:var(--light-text); font-weight:bold;">店舗での総支出:</span> <strong style="color:var(--accent-pink);">${totalAmountDisp}</strong></div>
+                  <div><span style="color:var(--light-text); font-weight:bold;">平均単価:</span> <strong>${avgAmountDisp}</strong></div>
+                </div>
 
-            <div>
-              <div style="font-size:0.75rem; font-weight:bold; color:var(--accent-pink); margin-bottom:4px;">💕 遊んだことある女の子</div>
-              <div class="store-cast-grid">
-                ${castsButtonsHtml}
+                <div>
+                  <div style="font-size:0.75rem; font-weight:bold; color:var(--accent-pink); margin-bottom:4px;">遊んだことある女の子</div>
+                  <div class="store-cast-grid">
+                    ${castsButtonsHtml}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -9514,27 +9866,70 @@
 
       target.appendChild(container);
       loadStoreWebPreviews();
+      if (window.lucide) lucide.createIcons();
+      initStoreRotators();
     }
 
-    /* 🌐 店舗サイトの画像を取得して背景に設置（og:image → 本文中の画像 → スクリーンショットの順に試行） */
-    function extractContentImage(doc, pageUrl) {
-      const imgs = Array.from(doc.querySelectorAll('img'));
-      const candidates = imgs.filter(img => {
-        const src = img.getAttribute('data-src') || img.getAttribute('data-original') || img.getAttribute('src') || '';
-        if (!src || src.startsWith('data:')) return false;
-        const lower = src.toLowerCase();
-        if (/logo|icon|favicon|spacer|blank|pixel|banner_ad|btn_/.test(lower)) return false;
-        if (lower.endsWith('.svg') || lower.endsWith('.gif')) return false;
-        const w = parseInt(img.getAttribute('width') || '0', 10);
-        const h = parseInt(img.getAttribute('height') || '0', 10);
-        if ((w && w < 100) || (h && h < 100)) return false;
-        return true;
+
+    /* 店舗カード指標ローテ（カードごとにタイムラグ） */
+    let storeRotatorTimer = null;
+    function formatStoreRotItem(it) {
+      if (!it) return '—';
+      const label = it.label ? `<span class="store-rotator-label">${it.label}</span>` : '';
+      return label + (it.text || '');
+    }
+    function initStoreRotators() {
+      if (storeRotatorTimer) {
+        clearInterval(storeRotatorTimer);
+        storeRotatorTimer = null;
+      }
+      const rotators = Array.from(document.querySelectorAll('[data-store-rotator]'));
+      if (!rotators.length) return;
+
+      const cycleSec = 5;
+      const n = rotators.length;
+      rotators.forEach((el, i) => {
+        el.dataset.rotPhase = String((i / Math.max(n, 1)) * cycleSec);
+        el.dataset.rotIndex = '0';
+        // items は data-rot-items から
+        let items = [];
+        try {
+          items = JSON.parse((el.getAttribute('data-rot-items') || '[]').replace(/&quot;/g, '"'));
+        } catch (_) { items = []; }
+        el._rotItems = Array.isArray(items) ? items : [];
+        const view = el.querySelector('.store-rotator-view');
+        if (view && el._rotItems[0]) view.innerHTML = formatStoreRotItem(el._rotItems[0]);
       });
-      if (candidates.length === 0) return null;
-      const src = candidates[0].getAttribute('data-src') || candidates[0].getAttribute('data-original') || candidates[0].getAttribute('src');
-      try { return new URL(src, pageUrl).href; } catch (e) { return null; }
+
+      const startedAt = Date.now();
+      storeRotatorTimer = setInterval(() => {
+        const elapsed = (Date.now() - startedAt) / 1000;
+        rotators.forEach((el) => {
+          const items = el._rotItems || [];
+          if (items.length <= 1) return;
+          const phase = parseFloat(el.dataset.rotPhase || '0') || 0;
+          const local = elapsed - phase;
+          if (local < 0) return;
+          const idx = Math.floor(local / cycleSec) % items.length;
+          const prev = parseInt(el.dataset.rotIndex || '0', 10);
+          if (idx === prev) return;
+          el.dataset.rotIndex = String(idx);
+          const view = el.querySelector('.store-rotator-view');
+          if (!view) return;
+          view.classList.add('is-fading');
+          setTimeout(() => {
+            view.innerHTML = formatStoreRotItem(items[idx]);
+            view.classList.remove('is-fading');
+            view.classList.add('is-enter');
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => view.classList.remove('is-enter'));
+            });
+          }, 200);
+        });
+      }, 200);
     }
 
+    /* 🌐 店舗サイト背景画像：OGP（og:image）のみ使用 */
     async function fetchOgImage(pageUrl) {
       const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(pageUrl);
       const controller = new AbortController();
@@ -9548,20 +9943,14 @@
 
         const ogTag = doc.querySelector('meta[property="og:image"]')
           || doc.querySelector('meta[property="og:image:url"]')
-          || doc.querySelector('meta[name="twitter:image"]');
-        const rawUrl = ogTag ? ogTag.getAttribute('content') : null;
-        if (rawUrl) {
-          try { return new URL(rawUrl, pageUrl).href; } catch (e) { /* フォールスルーして次を試す */ }
-        }
-
-        // og:image が無いサイト（アダルト系サイトに多い）向けに、本文中の画像を探す
-        const contentImage = extractContentImage(doc, pageUrl);
-        if (contentImage) return contentImage;
-
-        return null;
+          || doc.querySelector('meta[name="twitter:image"]')
+          || doc.querySelector('meta[name="twitter:image:src"]');
+        const rawUrl = ogTag ? (ogTag.getAttribute('content') || '').trim() : '';
+        if (!rawUrl) return null;
+        try { return new URL(rawUrl, pageUrl).href; } catch (e) { return null; }
       } catch (err) {
         clearTimeout(timeoutId);
-        console.log('店舗サイトの画像取得に失敗しました:', pageUrl, err);
+        console.log('店舗OGP画像の取得に失敗しました:', pageUrl, err);
         return null;
       }
     }
@@ -9571,29 +9960,15 @@
         if (imgEl.dataset.previewLoading) return;
         imgEl.dataset.previewLoading = 'true';
         const webUrl = imgEl.getAttribute('data-web-url');
-        const overlayEl = imgEl.nextElementSibling;
-
-        const showImage = (url) => {
-          imgEl.src = url;
-          imgEl.style.display = 'block';
-        };
-
-        const fallbackToScreenshot = () => {
-          // 最終手段：og:image も本文画像も見つからない場合は、ページ全体のスクリーンショットを表示
-          imgEl.onerror = () => {
-            imgEl.style.display = 'none';
-            if (overlayEl) overlayEl.style.background = '';
-          };
-          showImage('https://image.thum.io/get/width/500/noanimate/' + encodeURIComponent(webUrl));
-        };
 
         fetchOgImage(webUrl).then(imageUrl => {
-          if (imageUrl) {
-            imgEl.onerror = fallbackToScreenshot;
-            showImage(imageUrl);
-          } else {
-            fallbackToScreenshot();
+          if (!imageUrl) {
+            imgEl.style.display = 'none';
+            return;
           }
+          imgEl.onerror = () => { imgEl.style.display = 'none'; };
+          imgEl.src = imageUrl;
+          imgEl.style.display = 'block';
         });
       });
     }
@@ -12660,10 +13035,10 @@ ${question}`;
     }
 
     document.addEventListener('click', function(e) {
-      const summary = e.target.closest('.cast-card summary.card-btn');
+      const summary = e.target.closest('.cast-card summary.card-btn, .store-card-fold > summary.store-fold-summary, details.timeline-item > summary.timeline-summary');
       if (!summary) return;
-      // バッジ等の内部操作は開閉しない
-      if (e.target.closest('.badge-count-flip-wrap, button, a, .edit-icon-btn, .letter-btn, .copy-btn, .link-btn, .cast-ai-report-btn')) return;
+      // バッジ・ボタン等の内部操作は開閉しない
+      if (e.target.closest('.badge-count-flip-wrap, button, a, .edit-icon-btn, .letter-btn, .copy-btn, .link-btn, .cast-ai-report-btn, .store-btn-edit, .store-cast-btn')) return;
       e.preventDefault();
       
       const details = summary.parentElement;
