@@ -41,6 +41,89 @@
     .add-cast-mode-badge.mode-existing { background: var(--soft-pink); color: var(--accent-pink); }
     .add-cast-mode-badge.mode-new { background: #e7f5ff; color: #1971c2; }
     .add-section-label { font-size: 0.75rem; font-weight: 800; color: var(--accent-pink); margin: 4px 0 8px; }
+
+
+    /* プレイ内容ピッカー */
+    .play-entry-btn {
+      width: 100%; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--primary-pink);
+      background: var(--soft-pink); color: var(--accent-pink); font-weight: 800; font-size: 0.85rem;
+      cursor: pointer; font-family: inherit; text-align: left;
+      display: flex; justify-content: space-between; align-items: center; gap: 8px;
+    }
+    .play-entry-btn-count {
+      font-size: 0.72rem; background: var(--accent-pink); color: #fff; border-radius: 999px;
+      padding: 2px 8px; font-weight: bold; min-width: 1.5em; text-align: center;
+    }
+    .play-entry-btn-count.is-zero { background: var(--light-text); opacity: 0.5; }
+    .play-selected-preview {
+      display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px;
+    }
+    .play-selected-chip {
+      font-size: 0.68rem; font-weight: bold; padding: 2px 8px; border-radius: 999px;
+      background: color-mix(in srgb, var(--accent-pink) 18%, var(--card-bg));
+      color: var(--accent-pink); border: 1px solid var(--primary-pink);
+    }
+    .play-picker-modal .modal-content {
+      max-width: 440px; max-height: 88vh; display: flex; flex-direction: column; padding-bottom: 12px;
+    }
+    .play-picker-search {
+      width: 100%; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border-color);
+      background: var(--bg-color); color: var(--text-color); font-size: 0.85rem; margin-bottom: 8px;
+      box-sizing: border-box;
+    }
+    .play-picker-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+      overflow-y: auto; flex: 1; min-height: 0; padding: 2px; -webkit-overflow-scrolling: touch;
+    }
+    .play-card {
+      border: 1.5px solid var(--border-color); border-radius: 12px; padding: 10px 8px;
+      background: var(--card-bg); color: var(--text-color); cursor: pointer;
+      font-family: inherit; text-align: left; transition: border-color 0.15s, background 0.15s, transform 0.1s;
+      min-height: 72px; display: flex; flex-direction: column; gap: 4px;
+    }
+    .play-card:active { transform: scale(0.97); }
+    .play-card.is-selected {
+      border-color: var(--accent-pink);
+      background: color-mix(in srgb, var(--accent-pink) 16%, var(--card-bg));
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent-pink) 40%, transparent);
+    }
+    .play-card-title {
+      font-size: 0.82rem; font-weight: 800; line-height: 1.25; color: var(--text-color);
+    }
+    .play-card.is-selected .play-card-title { color: var(--accent-pink); }
+    .play-card-desc {
+      font-size: 0.65rem; line-height: 1.35; color: var(--light-text); font-weight: normal;
+    }
+    .play-card.is-custom { border-style: dashed; }
+    .play-picker-footer {
+      display: flex; gap: 8px; margin-top: 10px; flex-shrink: 0;
+    }
+    .play-cat-label {
+      grid-column: 1 / -1; font-size: 0.72rem; font-weight: 800; color: var(--accent-pink);
+      margin-top: 4px; padding-left: 2px;
+    }
+    .tl-play-pills {
+      display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 2px;
+    }
+    .tl-play-pill {
+      font-size: 0.65rem; font-weight: 800; padding: 2px 8px; border-radius: 6px;
+      background: color-mix(in srgb, var(--accent-pink) 12%, var(--bg-color));
+      color: var(--accent-pink);
+      border: 1px solid color-mix(in srgb, var(--accent-pink) 35%, var(--border-color));
+      letter-spacing: 0.02em;
+    }
+
+    .cv-prefill-summary {
+      background: var(--soft-pink);
+      border: 1px solid var(--primary-pink);
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+    }
+    .cv-prefill-name { font-size: 1.05rem; font-weight: 800; color: var(--accent-pink); }
+    .cv-prefill-store { font-size: 0.78rem; font-weight: bold; color: var(--text-color); margin-top: 2px; }
+    .cv-prefill-note { font-size: 0.68rem; color: var(--light-text); margin-top: 4px; }
+
     .add-letter-preview-wrap {
       border: 1px dashed var(--border-color); border-radius: 12px; background: var(--bg-color);
       min-height: 120px; display: flex; align-items: center; justify-content: center; overflow: hidden;
@@ -3473,6 +3556,19 @@
               <label style="font-size:0.8rem; display:flex; align-items:center; gap:8px; margin-top:8px;">
                 <input type="radio" name="amountHide" value="hide" onchange="saveAmountHide(this.value)"> 金額を非表示にする (***)
               </label>
+
+              <hr class="sec-divider">
+
+              <label style="font-size:0.8rem; font-weight:bold; color:var(--light-text);">プレイ内容の表示</label>
+              <div class="sec-toggle-row" style="margin-top:6px;">
+                <span style="font-size:0.8rem;">プレイ内容タグ
+                  <span class="sec-toggle-note">OFFにすると新規追加ボタン・月別時系列の表示を隠します</span>
+                </span>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="playContentEnabledToggle" onchange="savePlayContentEnabled(this.checked)">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
             </div>
           </details>
 
@@ -4167,6 +4263,11 @@
     <div class="modal-content">
       <h3>📝 記録を補完する</h3>
       <input type="hidden" id="cvHistoryId">
+      <div id="cvPrefillSummary" class="cv-prefill-summary">
+        <div class="cv-prefill-name" id="cvPrefillName">—</div>
+        <div class="cv-prefill-store" id="cvPrefillStore"></div>
+        <div class="cv-prefill-note">女の子名・店舗はイク予定から引き継ぎ済みです</div>
+      </div>
       <div class="form-group"><label>実際の総額</label><input type="text" id="cvAmount" placeholder="例: 20000"></div>
       <div class="form-group"><label>系統タグ</label><input type="text" id="cvTypeTag" placeholder="例: 清楚系"></div>
       <div class="form-group"><label>スリーサイズ（未登録の場合のみ）</label>
@@ -4401,7 +4502,34 @@
   </div>
 
   <!-- 記録追加モーダル -->
-    <div class="modal-overlay" id="addModal">
+    
+  <!-- プレイ内容ピッカー -->
+  <div class="modal-overlay play-picker-modal" id="playPickerModal" style="z-index:9200;">
+    <div class="modal-content">
+      <h3>プレイ内容を選択</h3>
+      <input type="search" class="play-picker-search" id="playPickerSearch" placeholder="検索（例: フェラ、素股…）" oninput="renderPlayPickerGrid()">
+      <div class="play-picker-grid" id="playPickerGrid"></div>
+      <div class="play-picker-footer">
+        <button type="button" class="close-btn" style="flex:1; background:#888;" onclick="closeModal('playPickerModal')">閉じる</button>
+        <button type="button" class="close-btn" style="flex:1.4;" onclick="confirmPlayPickerSelection()">決定（<span id="playPickerSelectedCount">0</span>）</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- カスタムプレイ追加 -->
+  <div class="modal-overlay" id="customPlayModal" style="z-index:9300;">
+    <div class="modal-content" style="max-width:340px;">
+      <h3>カスタムプレイを追加</h3>
+      <div class="form-group"><label>名前</label><input type="text" id="customPlayLabel" placeholder="例: ○○プレイ" maxlength="40"></div>
+      <div class="form-group"><label>短い説明（任意）</label><input type="text" id="customPlayDesc" placeholder="生々しめの一言" maxlength="80"></div>
+      <div style="display:flex; gap:8px;">
+        <button type="button" class="close-btn" style="flex:1; background:#888;" onclick="closeModal('customPlayModal')">取消</button>
+        <button type="button" class="close-btn" style="flex:1;" onclick="saveCustomPlayTag()">追加</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="addModal">
     <div class="modal-content add-modal-renewed">
       <h3>✨ 利用記録を追加</h3>
       <form class="add-form" onsubmit="saveNewRecord(event)">
@@ -4523,6 +4651,16 @@
             <button type="button" class="flag-btn flag-btn-add-custom" onclick="openCustomFlagModal()">+ 追加</button>
           </div>
           <input type="text" id="addFlags" placeholder="マーク">
+        </div>
+
+        <div class="form-group" id="addPlayContentGroup">
+          <label>プレイ内容</label>
+          <input type="hidden" id="addPlayTags" value="[]">
+          <button type="button" class="play-entry-btn" onclick="openPlayPickerModal()">
+            <span>プレイ内容を選ぶ</span>
+            <span class="play-entry-btn-count is-zero" id="addPlayTagsCount">0</span>
+          </button>
+          <div class="play-selected-preview" id="addPlayTagsPreview"></div>
         </div>
 
         <div class="form-group"><label>メモ・感想</label><input type="text" id="addVisitNote" placeholder="接客メモなど"></div>
@@ -4687,6 +4825,16 @@
             <div class="score-slider-row"><span class="score-slider-label">イチャ度</span><input type="range" id="editScoreIntimacy" min="1" max="5" value="3" oninput="document.getElementById('editScoreIntimacyVal').innerText=this.value"><span class="score-slider-val" id="editScoreIntimacyVal">3</span></div>
             <div class="score-slider-row"><span class="score-slider-label">コスパ</span><input type="range" id="editScoreValue" min="1" max="5" value="3" oninput="document.getElementById('editScoreValueVal').innerText=this.value"><span class="score-slider-val" id="editScoreValueVal">3</span></div>
           </div>
+        </div>
+
+        <div class="form-group" id="editPlayContentGroup">
+          <label>プレイ内容</label>
+          <input type="hidden" id="editPlayTags" value="[]">
+          <button type="button" class="play-entry-btn" onclick="openPlayPickerModal('edit')">
+            <span>プレイ内容を選ぶ</span>
+            <span class="play-entry-btn-count is-zero" id="editPlayTagsCount">0</span>
+          </button>
+          <div class="play-selected-preview" id="editPlayTagsPreview"></div>
         </div>
 
         <div class="form-group"><label>メモ</label><textarea id="editVisitNote" rows="2"></textarea></div>
@@ -5284,11 +5432,11 @@
         if(!h.day) h.day = "1";
       });
 
-      const rbs = document.getElementsByName('dateFormat');
-      rbs.forEach(rb => { if(rb.value === currentDateFormat) rb.checked = true; });
-
-      const amountRbs = document.getElementsByName('amountHide');
-      amountRbs.forEach(rb => { if(rb.value === currentAmountHide) rb.checked = true; });
+      const dateToggle = document.getElementById('dateFormatYmdToggle');
+      if (dateToggle) dateToggle.checked = currentDateFormat !== 'ym';
+      const amountToggle = document.getElementById('amountShowToggle');
+      if (amountToggle) amountToggle.checked = currentAmountHide !== 'hide';
+      if (typeof applyPlayContentVisibility === 'function') applyPlayContentVisibility();
 
       updateUIHeader();
       updateSearchDatalist();
@@ -8681,6 +8829,7 @@
         amount: '', flags: '', typeTag: '',
         looks: '', service: '', style: '', intimacy: '', value: '',
         visitNote: '', chekiImg: '',
+        courseTime: sch.courseMinutes ? String(sch.courseMinutes) : '',
         pendingCheckIn: true,
         checkInTime: now.getTime(),
         courseEndTime: now.getTime() + (sch.courseMinutes || 60) * 60000
@@ -8746,6 +8895,10 @@
       if (!rec) return;
       closeNotificationPanel();
       document.getElementById('cvHistoryId').value = historyId;
+      const nameEl = document.getElementById('cvPrefillName');
+      const storeEl = document.getElementById('cvPrefillStore');
+      if (nameEl) nameEl.textContent = rec.name || '（名前未設定）';
+      if (storeEl) storeEl.textContent = rec.storeName ? ('店舗: ' + rec.storeName) : '';
       document.getElementById('cvAmount').value = '';
       document.getElementById('cvTypeTag').value = '';
       document.getElementById('cvStyleT').value = '';
@@ -8804,7 +8957,7 @@
         if (!castData[rec.name].style) {
           const parts = [];
           if (t) parts.push(t.toLowerCase().startsWith('t') ? t : 'T:' + t + (t.includes('cm') ? '' : 'cm'));
-          if (b) parts.push(b.toLowerCase().startsWith('b') ? b : 'B:' + b);
+          if (b) parts.push(typeof normalizeBustStorage === 'function' ? normalizeBustStorage(b) : ('B:' + b));
           if (w) parts.push(w.toLowerCase().startsWith('w') ? w : 'W:' + w);
           if (h) parts.push(h.toLowerCase().startsWith('h') ? h : 'H:' + h);
           castData[rec.name].style = parts.join(' ');
@@ -10013,6 +10166,7 @@
                     <span class="tl-detail-item"><span class="rd-label">金額</span>${amountDisp}</span>
                     <span class="tl-detail-item"><span class="rd-label">コース</span>${courseDisp}</span>
                   </div>
+                  ${typeof buildPlayPillsHtml === 'function' ? buildPlayPillsHtml(i.playTags) : ''}
                   <div class="tl-memo ${memo ? '' : 'tl-memo-empty'}">${memo || 'メモなし'}</div>
                   <div class="tl-actions">
                     <button type="button" class="edit-icon-btn" onclick="openEditRecordModal(event, ${i.originalIndex})" title="編集">
@@ -11648,7 +11802,235 @@
       }).join('');
     }
 
-    function openAddModal() {
+
+    /* ========== プレイ内容タグ ========== */
+    let playContentEnabled = localStorage.getItem('app_play_content_enabled');
+    if (playContentEnabled === null) playContentEnabled = 'on';
+    let playPickerDraft = [];
+
+    const PLAY_CATALOG = [
+      // 1. 基本・導入
+      { cat: '基本・導入', label: 'キス', desc: '唇を重ねてゆっくり舌を絡める口づけ' },
+      { cat: '基本・導入', label: 'ディープキス', desc: '舌を深く入れて唾液まで交換する濃厚な口づけ' },
+      { cat: '基本・導入', label: 'タッチ（上半身）', desc: '胸やお腹を手で這わせて敏感なところを探る' },
+      { cat: '基本・導入', label: 'タッチ（下半身）', desc: '股間や太ももを執拗に撫でて熱を上げる' },
+      { cat: '基本・導入', label: 'おっぱい揉み', desc: '柔らかい胸を両手で掴んで形を変えるほど揉む' },
+      { cat: '基本・導入', label: '乳首責め', desc: '硬くなった乳首を指や舌で摘まみ舐め回す' },
+      { cat: '基本・導入', label: 'フェザータッチ', desc: '指先だけで肌をくすぐるように撫でる焦らし' },
+      { cat: '基本・導入', label: 'マッサージ', desc: '体をほぐしながら敏感帯へ誘導する下地作り' },
+      // 2. 口関連
+      { cat: '口・舌', label: 'フェラ', desc: '咥えて上下に動かし舌で裏筋を刺激する奉仕' },
+      { cat: '口・舌', label: 'イラマチオ', desc: '奥まで咥えさせ喉の奥で締め付ける深い口技' },
+      { cat: '口・舌', label: '玉舐め', desc: '袋を舌で転がし舐め上げて快感を底上げする' },
+      { cat: '口・舌', label: '69', desc: '互いの性器を同時に口で貪り合う体位' },
+      { cat: '口・舌', label: '顔面騎乗', desc: '顔に跨がり性器を押しつけてクンニさせる' },
+      { cat: '口・舌', label: 'クンニ', desc: '舌で割れ目を舐め分けクリを執拗に吸う' },
+      { cat: '口・舌', label: 'アナル舐め（男側）', desc: '尻穴を舌でほじるように舐められる羞恥快感' },
+      { cat: '口・舌', label: '唾液プレイ', desc: '糸を引く唾を垂らし塗り合う生々しい交換' },
+      { cat: '口・舌', label: '生唾液ごっくん(女の子から)', desc: '女の子の生唾を口移しや指で飲まされる' },
+      { cat: '口・舌', label: '生唾液ごっくん(お客さまから)', desc: '自分の唾を女の子に飲ませる支配的な行為' },
+      { cat: '口・舌', label: 'ごっくん', desc: '出された精液を喉を鳴らして飲み干す' },
+      { cat: '口・舌', label: '顔射', desc: '顔に精液を浴びせて白く汚す発射' },
+      { cat: '口・舌', label: '口内発射', desc: '咥えたまま口の中に熱い精を放つ' },
+      // 3. 挿入・素股（体位あり）
+      { cat: '素股・挿入', label: '素股', desc: '股の熱い溝で肉棒を挟み擦り上げる擬似挿入' },
+      { cat: '素股・挿入', label: '素股（正常位）', desc: '仰向けの股に挟み、正常位の形で腰を擦る' },
+      { cat: '素股・挿入', label: '素股（騎乗位）', desc: '跨がった股の隙間で上下に擦りつける素股' },
+      { cat: '素股・挿入', label: '素股（後背位）', desc: '後ろから尻の谷間・股に擦りつける素股' },
+      { cat: '素股・挿入', label: '挿入（正常位）', desc: '向き合って奥まで沈めて腰を打ちつける' },
+      { cat: '素股・挿入', label: '挿入（騎乗位）', desc: '跨がり自分のペースで奥を突くように腰を振る' },
+      { cat: '素股・挿入', label: '挿入（後背位）', desc: '後ろから掴んで深く突く獣のような結合' },
+      { cat: '素股・挿入', label: '挿入（側位）', desc: '横向きに密着したままゆっくり出し入れする' },
+      { cat: '素股・挿入', label: '立ちバック', desc: '立ったまま後ろから突き上げる激しい挿入' },
+      { cat: '素股・挿入', label: '連続イキ', desc: 'イった後も止めずに責め続け何度も絶頂させる' },
+      { cat: '素股・挿入', label: '中出し', desc: '中に出したまま熱い精を注ぎ込む' },
+      { cat: '素股・挿入', label: '外出し', desc: '抜いて体や外に精液を撒き散らす' },
+      { cat: '素股・挿入', label: '二回戦', desc: '一度出したあと再び硬くして続行する' },
+      { cat: '素股・挿入', label: '三回戦以上', desc: '何度も果てるまで腰を止めない持久戦' },
+      // 4. 手・道具
+      { cat: '手・道具', label: '手コキ', desc: '巧みな手つきで根元から先端まで扱く' },
+      { cat: '手・道具', label: 'パイズリ', desc: '柔らかな胸で挟み込み乳圧で射精へ導く' },
+      { cat: '手・道具', label: '足コキ', desc: '足裏や指の間で挟んで扱く倒錯的な刺激' },
+      { cat: '手・道具', label: 'オナニー見せ', desc: '目の前で指を入れ自らを慰す姿を見せる' },
+      { cat: '手・道具', label: 'ローター', desc: '振動をクリや先端に当てて跳ねるような快感' },
+      { cat: '手・道具', label: 'バイブ', desc: '棒状の振動を奥まで入れ抽送する' },
+      { cat: '手・道具', label: '電マ', desc: '強い振動を押し当てて一気にイカせる' },
+      { cat: '手・道具', label: 'プラグ／アナルグッズ', desc: '尻穴に異物を入れたまま感度を上げる' },
+      { cat: '手・道具', label: 'ローション多め', desc: 'ぬるぬるに塗りたくり滑りを過剰にする' },
+      // 5. コス・演出
+      { cat: 'コス・演出', label: 'コスプレ', desc: '衣装に身を包んだままの背徳的なプレイ' },
+      { cat: 'コス・演出', label: '制服', desc: '制服姿のまま乱れる学校系の興奮' },
+      { cat: 'コス・演出', label: '水着・下着', desc: '布越しに透ける身体を弄ぶ' },
+      { cat: 'コス・演出', label: '裸エプロン', desc: '後ろが丸見えのエプロンだけの奉仕' },
+      { cat: 'コス・演出', label: 'お風呂・シャワープレイ', desc: '湯気の中で体を洗い合い密着する' },
+      { cat: 'コス・演出', label: 'マットプレイ', desc: 'ローションマットで全身を滑らせる密着' },
+      { cat: 'コス・演出', label: 'ボディ洗い', desc: '泡と裸体で全身を擦り洗いする' },
+      { cat: 'コス・演出', label: '遊戯室・ミラー', desc: '鏡に映る結合を見せながらのプレイ' },
+      // 6. 責め・ロール
+      { cat: '責め・ロール', label: 'Ｍ受け', desc: '自分が責められ従う側に回る' },
+      { cat: '責め・ロール', label: 'Ｓ寄り', desc: '相手を言いなりにして主導する' },
+      { cat: '責め・ロール', label: '言葉責め', desc: '淫語や侮辱で耳から興奮を煽る' },
+      { cat: '責め・ロール', label: '甘々・いちゃいちゃ', desc: '恋人のように抱き合い甘い声を漏らす' },
+      { cat: '責め・ロール', label: '処女風・感度演出', desc: '初めてのような痛みと感度を演じる' },
+      { cat: '責め・ロール', label: '潮吹き', desc: '噴き出すほどイキ潮を漏らす' },
+      { cat: '責め・ロール', label: '拘束・軽め', desc: '動けない状態で一方的に弄ばれる' },
+      { cat: '責め・ロール', label: '鞭・軽SM', desc: '軽い痛みと支配で興奮を高める' }
+    ];
+
+    function getCustomPlayTags() {
+      try {
+        const raw = localStorage.getItem('custom_play_tags_' + (currentUserName || 'guest'));
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) { return []; }
+    }
+
+    function saveCustomPlayTagsList(list) {
+      localStorage.setItem('custom_play_tags_' + (currentUserName || 'guest'), JSON.stringify(list || []));
+    }
+
+    function getAllPlayCatalog() {
+      const custom = getCustomPlayTags().map(c => ({
+        cat: 'カスタム',
+        label: c.label,
+        desc: c.desc || '自分で追加したプレイ',
+        custom: true
+      }));
+      return PLAY_CATALOG.concat(custom);
+    }
+
+    function savePlayContentEnabled(on) {
+      playContentEnabled = on ? 'on' : 'off';
+      localStorage.setItem('app_play_content_enabled', playContentEnabled);
+      applyPlayContentVisibility();
+    }
+
+    function applyPlayContentVisibility() {
+      const on = playContentEnabled !== 'off';
+      const group = document.getElementById('addPlayContentGroup');
+      if (group) group.style.display = on ? 'block' : 'none';
+      const editGroup = document.getElementById('editPlayContentGroup');
+      if (editGroup) editGroup.style.display = on ? 'block' : 'none';
+      const toggle = document.getElementById('playContentEnabledToggle');
+      if (toggle) toggle.checked = on;
+    }
+
+    let playPickerTarget = 'add'; // 'add' | 'edit'
+
+    function getSelectedPlayTagsFromForm(target) {
+      target = target || playPickerTarget || 'add';
+      const id = target === 'edit' ? 'editPlayTags' : 'addPlayTags';
+      try {
+        const raw = (document.getElementById(id) || {}).value || '[]';
+        const arr = JSON.parse(raw);
+        return Array.isArray(arr) ? arr : [];
+      } catch (e) { return []; }
+    }
+
+    function setSelectedPlayTagsToForm(tags, target) {
+      target = target || playPickerTarget || 'add';
+      const arr = Array.isArray(tags) ? tags : [];
+      const prefix = target === 'edit' ? 'edit' : 'add';
+      const el = document.getElementById(prefix + 'PlayTags');
+      if (el) el.value = JSON.stringify(arr);
+      const count = document.getElementById(prefix + 'PlayTagsCount');
+      if (count) {
+        count.textContent = String(arr.length);
+        count.classList.toggle('is-zero', arr.length === 0);
+      }
+      const prev = document.getElementById(prefix + 'PlayTagsPreview');
+      if (prev) {
+        prev.innerHTML = arr.map(t => '<span class="play-selected-chip">' + escapeHTML(t) + '</span>').join('');
+      }
+    }
+
+    function openPlayPickerModal(target) {
+      playPickerTarget = target === 'edit' ? 'edit' : 'add';
+      playPickerDraft = getSelectedPlayTagsFromForm(playPickerTarget).slice();
+      const search = document.getElementById('playPickerSearch');
+      if (search) search.value = '';
+      renderPlayPickerGrid();
+      document.getElementById('playPickerModal').style.display = 'flex';
+    }
+
+    function togglePlayPickerTag(label) {
+      const i = playPickerDraft.indexOf(label);
+      if (i >= 0) playPickerDraft.splice(i, 1);
+      else playPickerDraft.push(label);
+      renderPlayPickerGrid();
+    }
+
+    function renderPlayPickerGrid() {
+      const grid = document.getElementById('playPickerGrid');
+      if (!grid) return;
+      const q = ((document.getElementById('playPickerSearch') || {}).value || '').trim().toLowerCase();
+      const all = getAllPlayCatalog();
+      const filtered = q
+        ? all.filter(p => (p.label + p.desc + (p.cat || '')).toLowerCase().includes(q))
+        : all;
+
+      let html = '';
+      // custom add card always first when no search or always
+      html += '<button type="button" class="play-card is-custom" onclick="openCustomPlayModal()">' +
+        '<span class="play-card-title">＋ カスタム</span>' +
+        '<span class="play-card-desc">自分だけのプレイ名を追加</span></button>';
+
+      let lastCat = '';
+      filtered.forEach(p => {
+        if (!q && p.cat && p.cat !== lastCat) {
+          lastCat = p.cat;
+          html += '<div class="play-cat-label">' + escapeHTML(p.cat) + '</div>';
+        }
+        const sel = playPickerDraft.indexOf(p.label) >= 0;
+        html += '<button type="button" class="play-card' + (sel ? ' is-selected' : '') + '" onclick=\'togglePlayPickerTag(' + JSON.stringify(p.label) + ')\'>' +
+          '<span class="play-card-title">' + escapeHTML(p.label) + '</span>' +
+          '<span class="play-card-desc">' + escapeHTML(p.desc || '') + '</span></button>';
+      });
+
+      if (filtered.length === 0) {
+        html += '<div class="play-cat-label" style="color:var(--light-text);">該当なし</div>';
+      }
+      grid.innerHTML = html;
+      const cnt = document.getElementById('playPickerSelectedCount');
+      if (cnt) cnt.textContent = String(playPickerDraft.length);
+    }
+
+    function confirmPlayPickerSelection() {
+      setSelectedPlayTagsToForm(playPickerDraft.slice());
+      closeModal('playPickerModal');
+    }
+
+    function openCustomPlayModal() {
+      document.getElementById('customPlayLabel').value = '';
+      document.getElementById('customPlayDesc').value = '';
+      document.getElementById('customPlayModal').style.display = 'flex';
+    }
+
+    function saveCustomPlayTag() {
+      const label = (document.getElementById('customPlayLabel').value || '').trim();
+      const desc = (document.getElementById('customPlayDesc').value || '').trim();
+      if (!label) { alert('名前を入力してください'); return; }
+      const list = getCustomPlayTags();
+      if (list.some(x => x.label === label) || PLAY_CATALOG.some(x => x.label === label)) {
+        alert('同じ名前が既にあります');
+        return;
+      }
+      list.push({ label: label, desc: desc });
+      saveCustomPlayTagsList(list);
+      if (playPickerDraft.indexOf(label) < 0) playPickerDraft.push(label);
+      closeModal('customPlayModal');
+      renderPlayPickerGrid();
+    }
+
+    function buildPlayPillsHtml(tags) {
+      if (playContentEnabled === 'off') return '';
+      if (!tags || !tags.length) return '';
+      return '<div class="tl-play-pills">' + tags.map(t =>
+        '<span class="tl-play-pill">' + escapeHTML(t) + '</span>'
+      ).join('') + '</div>';
+    }
+
+
+        function openAddModal() {
       const d = new Date();
       document.getElementById('addYear').value = d.getFullYear();
       document.getElementById('addMonth').value = (d.getMonth() + 1) + '月';
@@ -11666,6 +12048,7 @@
       const oldName = document.getElementById('addOldName'); if (oldName) oldName.value = '';
       const link = document.getElementById('addLink'); if (link) link.value = '';
       document.getElementById('addFlags').value = '';
+      if (typeof setSelectedPlayTagsToForm === 'function') setSelectedPlayTagsToForm([]);
       document.getElementById('addVisitNote').value = '';
       ['addStyleT','addStyleB','addStyleW','addStyleH'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
       const typeTag = document.getElementById('addTypeTag'); if (typeTag) typeTag.value = '';
@@ -11694,6 +12077,7 @@
       if (badge) { badge.style.display = 'none'; badge.textContent = ''; }
       const hint = document.getElementById('addStoreHint');
       if (hint) hint.textContent = '';
+      if (typeof applyPlayContentVisibility === 'function') applyPlayContentVisibility();
       document.getElementById('addModal').style.display = 'flex';
     }
 
@@ -11750,6 +12134,7 @@
         reportUrl: document.getElementById('addReportUrl').value || '',
         chekiImg: document.getElementById('addLetterImg').value || '',
         typeTag: document.getElementById('addTypeTag').value || '',
+        playTags: (typeof getSelectedPlayTagsFromForm === 'function') ? getSelectedPlayTagsFromForm() : [],
         looks: parseInt(document.getElementById('addScoreLooks').value, 10) || 3,
         service: parseInt(document.getElementById('addScoreService').value, 10) || 3,
         style: parseInt(document.getElementById('addScoreStyle').value, 10) || 3,
@@ -11796,6 +12181,10 @@
       document.getElementById('editDay').value = rec.day || '1';
       document.getElementById('editFlags').value = rec.flags || '';
       document.getElementById('editTypeTag').value = rec.typeTag || '';
+      if (typeof setSelectedPlayTagsToForm === 'function') {
+        setSelectedPlayTagsToForm(Array.isArray(rec.playTags) ? rec.playTags : [], 'edit');
+      }
+      if (typeof applyPlayContentVisibility === 'function') applyPlayContentVisibility();
       document.getElementById('editVisitNote').value = rec.visitNote || '';
       document.getElementById('editAmount').value = rec.amount || '';
       document.getElementById('editCourseTime').value = rec.courseTime || '';
@@ -11830,6 +12219,7 @@
         rec.day = document.getElementById('editDay').value || '1';
         rec.flags = document.getElementById('editFlags').value;
         rec.typeTag = document.getElementById('editTypeTag').value;
+        rec.playTags = (typeof getSelectedPlayTagsFromForm === 'function') ? getSelectedPlayTagsFromForm('edit') : (rec.playTags || []);
         rec.visitNote = document.getElementById('editVisitNote').value;
         rec.amount = document.getElementById('editAmount').value;
         rec.courseTime = document.getElementById('editCourseTime').value;
