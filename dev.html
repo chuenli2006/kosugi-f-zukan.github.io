@@ -19,6 +19,44 @@
   <link rel="icon" type="image/svg+xml" href="/icon.svg">
   
   <style>
+
+    /* 利用記録追加モーダル（リニューアル） */
+    .add-modal-renewed { max-height: 90vh; overflow-y: auto; }
+    .add-cast-suggest {
+      margin-top: 6px; border: 1px solid var(--border-color); border-radius: 10px;
+      background: var(--card-bg); overflow: hidden; max-height: 180px; overflow-y: auto;
+    }
+    .add-cast-suggest-item {
+      display: flex; justify-content: space-between; align-items: center; gap: 8px;
+      width: 100%; text-align: left; padding: 10px 12px; border: none; border-bottom: 1px solid var(--border-color);
+      background: none; color: var(--text-color); font-size: 0.82rem; font-family: inherit; cursor: pointer;
+    }
+    .add-cast-suggest-item:last-child { border-bottom: none; }
+    .add-cast-suggest-item:hover, .add-cast-suggest-item:active { background: var(--soft-pink); }
+    .add-cast-suggest-meta { font-size: 0.7rem; color: var(--light-text); font-weight: bold; white-space: nowrap; }
+    .add-cast-suggest-new { color: var(--accent-pink); font-weight: 800; border-top: 1px dashed var(--border-color); }
+    .add-cast-mode-badge {
+      margin-top: 6px; font-size: 0.72rem; font-weight: bold; padding: 4px 10px; border-radius: 999px; display: inline-block;
+    }
+    .add-cast-mode-badge.mode-existing { background: var(--soft-pink); color: var(--accent-pink); }
+    .add-cast-mode-badge.mode-new { background: #e7f5ff; color: #1971c2; }
+    .add-section-label { font-size: 0.75rem; font-weight: 800; color: var(--accent-pink); margin: 4px 0 8px; }
+    .add-letter-preview-wrap {
+      border: 1px dashed var(--border-color); border-radius: 12px; background: var(--bg-color);
+      min-height: 120px; display: flex; align-items: center; justify-content: center; overflow: hidden;
+    }
+    .add-letter-preview-wrap.has-image { border-style: solid; }
+    .add-letter-preview-empty { font-size: 0.78rem; color: var(--light-text); padding: 16px; text-align: center; }
+    .add-letter-preview-img { width: 100%; max-height: 220px; object-fit: contain; display: block; }
+    .add-letter-file-btn {
+      display: inline-block; padding: 6px 12px; border-radius: 999px; font-size: 0.75rem; font-weight: bold;
+      background: var(--soft-pink); color: var(--accent-pink); border: 1px solid var(--primary-pink); cursor: pointer;
+    }
+    .add-letter-clear-btn {
+      padding: 6px 10px; border-radius: 999px; font-size: 0.72rem; font-weight: bold;
+      background: var(--bg-color); color: var(--light-text); border: 1px solid var(--border-color); cursor: pointer;
+    }
+
     /* 🎨 CSS変数：テーマ10種類のカラー定義 */
     :root {
       --bg-color: #fdfbfb; --card-bg: #ffffff; --primary-pink: #ff85a2; --soft-pink: #ffe6ea;
@@ -4363,8 +4401,8 @@
   </div>
 
   <!-- 記録追加モーダル -->
-  <div class="modal-overlay" id="addModal">
-    <div class="modal-content">
+    <div class="modal-overlay" id="addModal">
+    <div class="modal-content add-modal-renewed">
       <h3>✨ 利用記録を追加</h3>
       <form class="add-form" onsubmit="saveNewRecord(event)">
         <div style="display:flex; gap:6px;">
@@ -4375,23 +4413,23 @@
 
         <div class="form-group">
           <label>女の子名</label>
-          <input type="text" id="addName" list="castDatalist" oninput="onCastNameInput(this.value)" required placeholder="例: ゆあ">
+          <input type="text" id="addName" autocomplete="off" required placeholder="名前を入力…" oninput="onAddCastNameInput(this.value)" onfocus="onAddCastNameInput(this.value)">
+          <input type="hidden" id="addCastMode" value="">
           <datalist id="castDatalist"></datalist>
+          <div class="add-cast-suggest" id="addCastSuggest" style="display:none;"></div>
+          <div class="add-cast-mode-badge" id="addCastModeBadge" style="display:none;"></div>
         </div>
 
-        <details class="detail-fold">
-          <summary>🏬 店舗情報（タップで入力・自動入力対応）</summary>
+        <div class="form-group">
+          <label>店舗名 <span id="addStoreHint" style="font-weight:normal;color:var(--light-text);font-size:0.72rem;"></span></label>
+          <input type="text" id="addStoreName" list="storeDatalist" oninput="onStoreNameInput(this.value)" placeholder="例: ○○ヘルス 渋谷店">
+          <datalist id="storeDatalist"></datalist>
+        </div>
+        <details class="detail-fold" id="addStoreDetailFold">
+          <summary>店舗の詳細（所在地・業種・連絡先）</summary>
           <div class="fold-body">
-            <div class="form-group">
-              <label>店舗名</label>
-              <input type="text" id="addStoreName" list="storeDatalist" oninput="onStoreNameInput(this.value)" placeholder="例: ○○ヘルス 渋谷店">
-              <datalist id="storeDatalist"></datalist>
-            </div>
-
             <div style="display:flex; gap:6px;">
-              <div class="form-group" style="flex:1;">
-                <label>店舗所在地</label>
-                <select id="addStorePref">
+              <div class="form-group" style="flex:1;"><label>所在地</label><select id="addStorePref">
                   <option value="">未選択</option>
                   <option value="北海道">北海道</option><option value="青森県">青森県</option><option value="岩手県">岩手県</option>
                   <option value="宮城県">宮城県</option><option value="秋田県">秋田県</option><option value="山形県">山形県</option>
@@ -4409,65 +4447,54 @@
                   <option value="福岡県">福岡県</option><option value="佐賀県">佐賀県</option><option value="長崎県">長崎県</option>
                   <option value="熊本県">熊本県</option><option value="大分県">大分県</option><option value="宮崎県">宮崎県</option>
                   <option value="鹿児島県">鹿児島県</option><option value="沖縄県">沖縄県</option><option value="海外">海外</option>
-                </select>
-              </div>
-              <div class="form-group" style="flex:1;">
-                <label>店舗業種</label>
-                <select id="addStoreCategory">
+                </select></div>
+              <div class="form-group" style="flex:1;"><label>業種</label><select id="addStoreCategory">
                   <option value="デリヘル">デリヘル</option>
                   <option value="ヘルス">ヘルス</option>
                   <option value="ソープ">ソープ</option>
                   <option value="エステ">エステ</option>
                   <option value="ピンサロ">ピンサロ</option>
                   <option value="その他">その他</option>
-                </select>
-              </div>
+                </select></div>
             </div>
-
             <div style="display:flex; gap:6px;">
-              <div class="form-group" style="flex:1;">
-                <label>店舗 電話番号</label>
-                <input type="tel" id="addStorePhone" placeholder="03-1234-5678">
-              </div>
-              <div class="form-group" style="flex:1;">
-                <label>店舗 Webリンク</label>
-                <input type="url" id="addStoreWeb" placeholder="https://...">
-              </div>
+              <div class="form-group" style="flex:1;"><label>電話</label><input type="tel" id="addStorePhone" placeholder="090-..."></div>
+              <div class="form-group" style="flex:1;"><label>Web</label><input type="url" id="addStoreWeb" placeholder="https://..."></div>
             </div>
           </div>
         </details>
 
-        <div class="form-group"><label>系統タグ（複数時はカンマ区切り）</label>
-          <div class="flag-picker">
-            <button type="button" class="flag-btn" onclick="setTypeChar('アイドル系')">アイドル</button>
-            <button type="button" class="flag-btn" onclick="setTypeChar('清楚系')">清楚</button>
-            <button type="button" class="flag-btn" onclick="setTypeChar('ギャル系')">ギャル</button>
-            <button type="button" class="flag-btn" onclick="setTypeChar('女子アナ系')">女子アナ</button>
-            <button type="button" class="flag-btn flag-btn-clear" onclick="clearTypeInput()">クリア</button>
+        <div style="display:flex; gap:6px;">
+          <div class="form-group" style="flex:1;">
+            <label>金額（円）<span style="color:#fa5252;">*</span></label>
+            <input type="number" id="addAmount" min="1" step="1" placeholder="例: 15000" required>
           </div>
-          <input type="text" id="addTypeTag" placeholder="例: アイドル系, 清楚系">
-        </div>
-
-        <div class="form-group"><label>スリーサイズ</label>
-          <div class="style-grid-compact">
-            <input type="text" id="addStyleT" placeholder="T" oninput="updateInputColor(this, 'T')">
-            <input type="text" id="addStyleB" placeholder="B" oninput="updateInputColor(this, 'B')">
-            <input type="text" id="addStyleW" placeholder="W" oninput="updateInputColor(this, 'W')">
-            <input type="text" id="addStyleH" placeholder="H" oninput="updateInputColor(this, 'H')">
+          <div class="form-group" style="flex:1;">
+            <label>コース時間（分）<span style="color:#fa5252;">*</span></label>
+            <input type="number" id="addCourseTime" min="1" step="1" placeholder="例: 60" required>
           </div>
         </div>
 
-        <div class="form-group" id="addScoreGroup"><label>⭐ 五角形レーダー評価（1〜5）</label>
-          <div class="score-slider-grid">
-            <div class="score-slider-row"><span class="score-slider-label">ルックス</span><input type="range" id="addScoreLooks" min="1" max="5" value="3" oninput="document.getElementById('addScoreLooksVal').innerText=this.value"><span class="score-slider-val" id="addScoreLooksVal">3</span></div>
-            <div class="score-slider-row"><span class="score-slider-label">接客</span><input type="range" id="addScoreService" min="1" max="5" value="3" oninput="document.getElementById('addScoreServiceVal').innerText=this.value"><span class="score-slider-val" id="addScoreServiceVal">3</span></div>
-            <div class="score-slider-row"><span class="score-slider-label">スタイル</span><input type="range" id="addScoreStyle" min="1" max="5" value="3" oninput="document.getElementById('addScoreStyleVal').innerText=this.value"><span class="score-slider-val" id="addScoreStyleVal">3</span></div>
-            <div class="score-slider-row"><span class="score-slider-label">イチャ度</span><input type="range" id="addScoreIntimacy" min="1" max="5" value="3" oninput="document.getElementById('addScoreIntimacyVal').innerText=this.value"><span class="score-slider-val" id="addScoreIntimacyVal">3</span></div>
-            <div class="score-slider-row"><span class="score-slider-label">コスパ</span><input type="range" id="addScoreValue" min="1" max="5" value="3" oninput="document.getElementById('addScoreValueVal').innerText=this.value"><span class="score-slider-val" id="addScoreValueVal">3</span></div>
+        <div id="addNewCastFields" style="display:none;">
+          <div class="add-section-label">新規登録の追加情報</div>
+          <div style="display:flex; gap:6px;">
+            <div class="form-group" style="flex:1;"><label>旧・源氏名</label><input type="text" id="addOldName" placeholder="任意"></div>
+            <div class="form-group" style="flex:1;"><label>プロフURL</label><input type="url" id="addLink" placeholder="https://..."></div>
+          </div>
+          <div class="form-group first-visit-intent-section" id="addFirstVisitSection" style="display:none;">
+          <label>いかがでしたか…？</label>
+          <div class="first-visit-intent-row">
+            <button type="button" class="fv-intent-btn fv-intent-yes" onclick="selectFirstVisitIntent(this,'yes')">あり</button>
+            <button type="button" class="fv-intent-btn fv-intent-maybe" onclick="selectFirstVisitIntent(this,'maybe')">機会があれば</button>
+            <button type="button" class="fv-intent-btn fv-intent-consider" onclick="selectFirstVisitIntent(this,'consider')">要検討</button>
+            <button type="button" class="fv-intent-btn fv-intent-no" onclick="selectFirstVisitIntent(this,'no')">なし</button>
+            <button type="button" class="fv-intent-btn fv-intent-worst" onclick="selectFirstVisitIntent(this,'worst')">最悪</button>
           </div>
         </div>
+        </div>
 
-        <div class="form-group"><label>マーク・フラグ</label>
+        <div class="form-group">
+          <label>フラグ</label>
           <div class="flag-picker">
             <button type="button" class="flag-btn" onclick="addFlagChar('🆂')">🆂 当たり</button>
             <button type="button" class="flag-btn" onclick="addFlagChar('⚔')">⚔ ハズレ</button>
@@ -4500,48 +4527,54 @@
 
         <div class="form-group"><label>メモ・感想</label><input type="text" id="addVisitNote" placeholder="接客メモなど"></div>
 
-        <div class="form-group first-visit-intent-section" id="addFirstVisitSection" style="display:none;">
-          <label>いかがでしたか…？</label>
-          <div class="first-visit-intent-row">
-            <button type="button" class="fv-intent-btn fv-intent-yes" onclick="selectFirstVisitIntent(this,'yes')">あり</button>
-            <button type="button" class="fv-intent-btn fv-intent-maybe" onclick="selectFirstVisitIntent(this,'maybe')">機会があれば</button>
-            <button type="button" class="fv-intent-btn fv-intent-consider" onclick="selectFirstVisitIntent(this,'consider')">要検討</button>
-            <button type="button" class="fv-intent-btn fv-intent-no" onclick="selectFirstVisitIntent(this,'no')">なし</button>
-            <button type="button" class="fv-intent-btn fv-intent-worst" onclick="selectFirstVisitIntent(this,'worst')">最悪</button>
-          </div>
-        </div>
-
         <details class="detail-fold">
-          <summary>💰 詳細（金額・コース時間・WEBレポート）</summary>
+          <summary>詳細（スタイル・評価・レポート）</summary>
           <div class="fold-body">
-            <div style="display:flex; gap:6px;">
-              <div class="form-group" style="flex:1;"><label>金額（円）</label><input type="number" id="addAmount" min="0" placeholder="例: 15000"></div>
-              <div class="form-group" style="flex:1;"><label>コース時間（分）</label><input type="number" id="addCourseTime" min="0" placeholder="例: 60"></div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <div class="form-group" style="flex:1; min-width:4.5em;"><label>T</label><input type="text" id="addStyleT" placeholder="158"></div>
+              <div class="form-group" style="flex:1; min-width:4.5em;"><label>B</label><input type="text" id="addStyleB" placeholder="B88"></div>
+              <div class="form-group" style="flex:1; min-width:4.5em;"><label>W</label><input type="text" id="addStyleW" placeholder="W58"></div>
+              <div class="form-group" style="flex:1; min-width:4.5em;"><label>H</label><input type="text" id="addStyleH" placeholder="H87"></div>
+            </div>
+            <div class="form-group"><label>タイプタグ</label><input type="text" id="addTypeTag" placeholder="例: 清楚系"></div>
+            <div id="addScoreGroup" style="display:flex; flex-direction:column; gap:6px;">
+              <label style="font-size:0.78rem; font-weight:bold;">評価（1〜5）</label>
+              <div style="display:flex; align-items:center; gap:6px;"><span style="width:3.5em;font-size:0.72rem;">ルックス</span><input type="range" id="addScoreLooks" min="1" max="5" value="3" oninput="document.getElementById('addScoreLooksVal').innerText=this.value"><span id="addScoreLooksVal">3</span></div>
+              <div style="display:flex; align-items:center; gap:6px;"><span style="width:3.5em;font-size:0.72rem;">接客</span><input type="range" id="addScoreService" min="1" max="5" value="3" oninput="document.getElementById('addScoreServiceVal').innerText=this.value"><span id="addScoreServiceVal">3</span></div>
+              <div style="display:flex; align-items:center; gap:6px;"><span style="width:3.5em;font-size:0.72rem;">スタイル</span><input type="range" id="addScoreStyle" min="1" max="5" value="3" oninput="document.getElementById('addScoreStyleVal').innerText=this.value"><span id="addScoreStyleVal">3</span></div>
+              <div style="display:flex; align-items:center; gap:6px;"><span style="width:3.5em;font-size:0.72rem;">密着</span><input type="range" id="addScoreIntimacy" min="1" max="5" value="3" oninput="document.getElementById('addScoreIntimacyVal').innerText=this.value"><span id="addScoreIntimacyVal">3</span></div>
+              <div style="display:flex; align-items:center; gap:6px;"><span style="width:3.5em;font-size:0.72rem;">コスパ</span><input type="range" id="addScoreValue" min="1" max="5" value="3" oninput="document.getElementById('addScoreValueVal').innerText=this.value"><span id="addScoreValueVal">3</span></div>
             </div>
             <div class="form-group"><label>WEBレポートURL</label><input type="url" id="addReportUrl" placeholder="https://note.com/..."></div>
           </div>
         </details>
 
-        <div style="display:flex; gap:6px;">
-          <div class="form-group" style="flex:1;"><label>旧・源氏名</label><input type="text" id="addOldName" placeholder="ここみ"></div>
-          <div class="form-group" style="flex:1;"><label>プロフURL</label><input type="url" id="addLink" placeholder="https://..."></div>
-        </div>
-
         <div class="form-group">
-          <label>手紙・カード画像 (自動Imgurアップロード)</label>
-          <div style="display:flex; gap:6px; align-items:center; margin-bottom:4px;">
-            <input type="file" accept="image/*" style="font-size:0.75rem; padding:4px; flex:1;" onchange="uploadImageToImgur(this, 'addLetterImg', 'addUploadStatus')">
-            <span id="addUploadStatus" style="font-size:0.7rem; color:var(--light-text); white-space:nowrap;">未選択</span>
+          <label>手紙・メッセージカード</label>
+          <div class="add-letter-preview-wrap" id="addLetterPreviewWrap">
+            <div class="add-letter-preview-empty" id="addLetterPreviewEmpty">画像を選ぶとここにプレビューされます</div>
+            <img class="add-letter-preview-img" id="addLetterPreviewImg" alt="手紙プレビュー" style="display:none;">
           </div>
-          <input type="url" id="addLetterImg" placeholder="https://i.imgur.com/...">
+          <div style="display:flex; gap:6px; align-items:center; margin-top:6px; flex-wrap:wrap;">
+            <label class="add-letter-file-btn">
+              写真を選ぶ
+              <input type="file" accept="image/*" style="display:none;" onchange="uploadImageToImgur(this, 'addLetterImg', 'addUploadStatus')">
+            </label>
+            <button type="button" class="add-letter-clear-btn" onclick="clearAddLetterPreview()">削除</button>
+            <span id="addUploadStatus" style="font-size:0.7rem; color:var(--light-text);">未選択</span>
+          </div>
+          <input type="url" id="addLetterImg" placeholder="または画像URLを貼り付け" style="margin-top:6px;" oninput="updateAddLetterPreview(this.value)" onchange="updateAddLetterPreview(this.value)">
         </div>
 
-        <div style="display:flex; gap:8px;"><button type="submit" class="close-btn" style="flex:1;">保存</button><button type="button" class="close-btn" onclick="closeModal('addModal')" style="background:#888; flex:1;">取消</button></div>
+        <div style="display:flex; gap:8px; margin-top:8px;">
+          <button type="submit" class="close-btn" style="flex:1;">保存</button>
+          <button type="button" class="close-btn" onclick="closeModal('addModal')" style="background:#888; flex:1;">取消</button>
+        </div>
       </form>
     </div>
   </div>
 
-  <!-- 記録編集モーダル -->
+<!-- 記録編集モーダル -->
   <div class="modal-overlay" id="editRecordModal">
     <div class="modal-content">
       <h3>✏️ 記録の編集</h3>
@@ -6082,6 +6115,150 @@
       datalist.innerHTML = Array.from(candidates).map(item => `<option value="${item}">`).join('');
     }
 
+
+    function getLastStoreForCast(name) {
+      let best = null, bestKey = -1;
+      historyList.forEach(h => {
+        if (!h || h.name !== name || !(h.storeName || '').trim()) return;
+        const y = parseInt(h.year, 10) || 0;
+        const m = (typeof parseMonthNum === 'function' ? parseMonthNum(h.month) : parseInt(String(h.month||'').replace(/\D/g,''), 10)) || 0;
+        const d = parseInt(h.day, 10) || 0;
+        const key = y * 10000 + m * 100 + d;
+        if (key >= bestKey) { bestKey = key; best = h.storeName.trim(); }
+      });
+      return best || '';
+    }
+
+    function getCastVisitStats(name) {
+      const visits = historyList.filter(h => h.name === name && !h.pendingCheckIn);
+      let lastKey = -1, lastLabel = '';
+      visits.forEach(h => {
+        const y = parseInt(h.year, 10) || 0;
+        const m = (typeof parseMonthNum === 'function' ? parseMonthNum(h.month) : parseInt(String(h.month||'').replace(/\D/g,''), 10)) || 0;
+        const d = parseInt(h.day, 10) || 0;
+        const key = y * 10000 + m * 100 + d;
+        if (key >= lastKey) {
+          lastKey = key;
+          lastLabel = (m ? m + '月' : '') + (d ? d + '日' : '');
+        }
+      });
+      return { count: visits.length, lastLabel };
+    }
+
+    function applyAddCastMode(mode, name) {
+      const modeEl = document.getElementById('addCastMode');
+      if (modeEl) modeEl.value = mode;
+      document.getElementById('addName').value = name;
+      const badge = document.getElementById('addCastModeBadge');
+      const newFields = document.getElementById('addNewCastFields');
+      const suggest = document.getElementById('addCastSuggest');
+      const hint = document.getElementById('addStoreHint');
+      if (suggest) suggest.style.display = 'none';
+      if (mode === 'existing') {
+        if (badge) {
+          badge.style.display = 'inline-block';
+          badge.className = 'add-cast-mode-badge mode-existing';
+          const st = getCastVisitStats(name);
+          badge.textContent = '既存 · ' + st.count + '回' + (st.lastLabel ? ' · 最終 ' + st.lastLabel : '');
+        }
+        if (newFields) newFields.style.display = 'none';
+        const lastStore = getLastStoreForCast(name);
+        if (lastStore) {
+          document.getElementById('addStoreName').value = lastStore;
+          if (typeof onStoreNameInput === 'function') onStoreNameInput(lastStore);
+          if (hint) hint.textContent = '（前回の店を入力済み）';
+        } else if (hint) hint.textContent = '';
+        if (typeof onCastNameInput === 'function') onCastNameInput(name);
+      } else {
+        if (badge) {
+          badge.style.display = 'inline-block';
+          badge.className = 'add-cast-mode-badge mode-new';
+          badge.textContent = '新規として登録';
+        }
+        if (newFields) newFields.style.display = 'block';
+        const fv = document.getElementById('addFirstVisitSection');
+        if (fv) fv.style.display = 'block';
+        if (hint) hint.textContent = '';
+      }
+    }
+
+    function onAddCastNameInput(val) {
+      const q = (val || '').trim();
+      const suggest = document.getElementById('addCastSuggest');
+      const badge = document.getElementById('addCastModeBadge');
+      if (!suggest) return;
+      if (!q) {
+        suggest.style.display = 'none';
+        suggest.innerHTML = '';
+        const modeEl = document.getElementById('addCastMode');
+        if (modeEl) modeEl.value = '';
+        if (badge) badge.style.display = 'none';
+        const nf = document.getElementById('addNewCastFields');
+        if (nf) nf.style.display = 'none';
+        return;
+      }
+      const names = new Set();
+      Object.keys(castData || {}).forEach(n => names.add(n));
+      historyList.forEach(h => { if (h.name) names.add(h.name); });
+      const ql = q.toLowerCase();
+      const matches = Array.from(names).filter(n => n.toLowerCase().includes(ql)).sort((a, b) => {
+        const as = a.toLowerCase().startsWith(ql) ? 0 : 1;
+        const bs = b.toLowerCase().startsWith(ql) ? 0 : 1;
+        if (as !== bs) return as - bs;
+        return a.localeCompare(b, 'ja');
+      }).slice(0, 8);
+      let html = matches.map(n => {
+        const st = getCastVisitStats(n);
+        const safe = String(n).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+        return '<button type="button" class="add-cast-suggest-item" onclick="applyAddCastMode(\'existing\', this.dataset.name)" data-name="' + safe + '">' +
+          '<span>' + safe + '</span><span class="add-cast-suggest-meta">' + st.count + '回' + (st.lastLabel ? ' · ' + st.lastLabel : '') + '</span></button>';
+      }).join('');
+      const exact = Array.from(names).some(n => n === q);
+      if (!exact) {
+        const safe = q.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+        html += '<button type="button" class="add-cast-suggest-item add-cast-suggest-new" onclick="applyAddCastMode(\'new\', this.dataset.name)" data-name="' + safe + '">新規「' + safe + '」として登録</button>';
+      }
+      suggest.innerHTML = html;
+      suggest.style.display = html ? 'block' : 'none';
+      if (typeof onCastNameInput === 'function') onCastNameInput(q);
+    }
+
+    function updateAddLetterPreview(url) {
+      const img = document.getElementById('addLetterPreviewImg');
+      const empty = document.getElementById('addLetterPreviewEmpty');
+      const wrap = document.getElementById('addLetterPreviewWrap');
+      const u = (url || '').trim();
+      if (!img || !empty || !wrap) return;
+      if (!u) {
+        img.style.display = 'none';
+        img.removeAttribute('src');
+        empty.style.display = 'block';
+        empty.textContent = '画像を選ぶとここにプレビューされます';
+        wrap.classList.remove('has-image');
+        return;
+      }
+      img.onload = function() {
+        empty.style.display = 'none';
+        img.style.display = 'block';
+        wrap.classList.add('has-image');
+      };
+      img.onerror = function() {
+        img.style.display = 'none';
+        empty.style.display = 'block';
+        empty.textContent = 'プレビューを表示できません';
+        wrap.classList.remove('has-image');
+      };
+      img.src = u;
+    }
+
+    function clearAddLetterPreview(silent) {
+      const input = document.getElementById('addLetterImg');
+      if (input) input.value = '';
+      const st = document.getElementById('addUploadStatus');
+      if (st) { st.innerText = '未選択'; st.style.color = 'var(--light-text)'; }
+      updateAddLetterPreview('');
+    }
+
     function onCastNameInput(nameVal) {
       const name = nameVal.trim();
       if (!name) return;
@@ -6095,15 +6272,11 @@
       }
 
       if (foundStyle) {
-        const tMatch = foundStyle.match(/T\s*:?\s*(\d+)/i);
-        const bMatch = foundStyle.match(/B\s*:?\s*(\d+)\s*(\([A-Z\+]+\))?/i);
-        const wMatch = foundStyle.match(/W\s*:?\s*(\d+)/i);
-        const hMatch = foundStyle.match(/H\s*:?\s*(\d+)/i);
-
-        if (tMatch) document.getElementById('addStyleT').value = tMatch[1];
-        if (bMatch) document.getElementById('addStyleB').value = bMatch[1] + (bMatch[2] ? bMatch[2].replace(/[()]/g,'') : '');
-        if (wMatch) document.getElementById('addStyleW').value = wMatch[1];
-        if (hMatch) document.getElementById('addStyleH').value = hMatch[1];
+        const parts = parseStyleParts(foundStyle);
+        if (parts.t) document.getElementById('addStyleT').value = parts.t;
+        if (parts.b) document.getElementById('addStyleB').value = formatBustInput(parts.b, parts.bCup);
+        if (parts.w) document.getElementById('addStyleW').value = parts.w;
+        if (parts.h) document.getElementById('addStyleH').value = parts.h;
         
         ['addStyleT', 'addStyleB', 'addStyleW', 'addStyleH'].forEach(id => {
           const el = document.getElementById(id);
@@ -6163,6 +6336,9 @@
           document.getElementById(targetUrlInputId).value = data.data.link;
           statusSpan.innerText = "✅ 完了！";
           statusSpan.style.color = "#0ca678";
+          if (targetUrlInputId === 'addLetterImg' && typeof updateAddLetterPreview === 'function') {
+            updateAddLetterPreview(data.data.link);
+          }
         } else {
           statusSpan.innerText = "❌ 失敗";
           statusSpan.style.color = "#fa5252";
@@ -6198,45 +6374,78 @@
       }
     }
 
+
+    /** スタイル文字列を T/B/W/H に分解。Bは数値とカップを分離（82(C) / 82C 両対応） */
+    function parseStyleParts(styleStr) {
+      const empty = { t: '', b: '', bCup: '', w: '', h: '' };
+      if (!styleStr || !String(styleStr).trim()) return empty;
+      const str = String(styleStr);
+      const tMatch = str.match(/T\s*:?\s*(\d+)/i);
+      const bMatch = str.match(/B\s*:?\s*(\d+)\s*(?:\(\s*([A-Za-z][A-Za-z+]*)\s*\)|([A-Za-z][A-Za-z+]*))?/i);
+      const wMatch = str.match(/W\s*:?\s*(\d+)/i);
+      const hMatch = str.match(/H\s*:?\s*(\d+)/i);
+      const cup = bMatch ? (bMatch[2] || bMatch[3] || '').toUpperCase() : '';
+      return {
+        t: tMatch ? tMatch[1] : '',
+        b: bMatch ? bMatch[1] : '',
+        bCup: cup,
+        w: wMatch ? wMatch[1] : '',
+        h: hMatch ? hMatch[1] : ''
+      };
+    }
+
+    /** 入力欄用: 常に 82(C) 形式 */
+    function formatBustInput(num, cup) {
+      if (!num) return '';
+      const c = (cup || '').toUpperCase().replace(/[^A-Z+]/g, '');
+      return c ? (String(num) + '(' + c + ')') : String(num);
+    }
+
+    /** 保存用: B:82(C) に正規化 */
+    function normalizeBustStorage(rawB) {
+      if (!rawB || !String(rawB).trim()) return '';
+      let s = String(rawB).trim().replace(/^b\s*:?\s*/i, '');
+      const m = s.match(/^(\d+)\s*(?:\(\s*([A-Za-z][A-Za-z+]*)\s*\)|([A-Za-z][A-Za-z+]*))?/);
+      if (!m) return 'B:' + s;
+      const cup = (m[2] || m[3] || '').toUpperCase().replace(/[^A-Z+]/g, '');
+      return 'B:' + m[1] + (cup ? '(' + cup + ')' : '');
+    }
+
     function renderStyleTags(styleStr) {
       if (!styleStr || !styleStr.trim()) {
         return '<div class="style-row"><span class="style-none">スタイルデータなし</span></div>';
       }
-      
-      const str = styleStr.toUpperCase();
-      const tMatch = str.match(/T\s*:?\s*(\d+)/i);
-      const bMatch = str.match(/B\s*:?\s*(\d+)\s*(\([A-Z\+]+\))?/i);
-      const wMatch = str.match(/W\s*:?\s*(\d+)/i);
-      const hMatch = str.match(/H\s*:?\s*(\d+)/i);
 
+      const parts = parseStyleParts(styleStr);
       let tagsHtml = '<div class="style-row">';
-      if (tMatch) {
-        const h = parseInt(tMatch[1], 10);
+      if (parts.t) {
+        const h = parseInt(parts.t, 10);
         let col = "p-blue";
         if (h >= 150 && h < 155) col = "p-green";
         else if (h >= 155 && h < 160) col = "p-yellow";
         else if (h >= 160) col = "p-purple";
         tagsHtml += `<div class="style-pill ${col}"><span class="style-pill-label">T</span><span class="style-pill-val">${h}cm</span></div>`;
       }
-      if (bMatch) {
-        const b = parseInt(bMatch[1], 10);
-        const cup = bMatch[2] ? bMatch[2].replace(/[\(\)]/g, '') : '';
+      if (parts.b) {
+        const b = parseInt(parts.b, 10);
+        const cup = parts.bCup || '';
         let col = "p-pink1";
         if (b >= 85) col = "p-pink2";
         if (b >= 90) col = "p-pink3";
-        tagsHtml += `<div class="style-pill ${col}"><span class="style-pill-label">B</span><span class="style-pill-val">${b}${cup?'('+cup+')':''}</span></div>`;
+        tagsHtml += `<div class="style-pill ${col}"><span class="style-pill-label">B</span><span class="style-pill-val">${b}${cup ? '(' + cup + ')' : ''}</span></div>`;
       }
-      if (wMatch) {
-        const w = parseInt(wMatch[1], 10);
+      if (parts.w) {
+        const w = parseInt(parts.w, 10);
         tagsHtml += `<div class="style-pill ${w<=55?'p-green':'p-yellow'}"><span class="style-pill-label">W</span><span class="style-pill-val">${w}</span></div>`;
       }
-      if (hMatch) {
-        const hip = parseInt(hMatch[1], 10);
+      if (parts.h) {
+        const hip = parseInt(parts.h, 10);
         tagsHtml += `<div class="style-pill ${hip<=85?'p-green':'p-yellow'}"><span class="style-pill-label">H</span><span class="style-pill-val">${hip}</span></div>`;
       }
       tagsHtml += '</div>';
       return tagsHtml;
     }
+
 
     /* 🌸 女の子別設定タブ：呼び出し・編集・保存ロジック */
     function resetCastSettingsForm() {
@@ -6282,10 +6491,11 @@
       const bEl = document.getElementById('csStyleB');
       const wEl = document.getElementById('csStyleW');
       const hEl = document.getElementById('csStyleH');
-      tEl.value = tMatch ? tMatch[1] : '';
-      bEl.value = bMatch ? (bMatch[1] + (bMatch[2] ? bMatch[2].replace(/[()]/g, '') : '')) : '';
-      wEl.value = wMatch ? wMatch[1] : '';
-      hEl.value = hMatch ? hMatch[1] : '';
+      const styleParts = parseStyleParts((info && info.style) || '');
+      tEl.value = styleParts.t || '';
+      bEl.value = formatBustInput(styleParts.b, styleParts.bCup);
+      wEl.value = styleParts.w || '';
+      hEl.value = styleParts.h || '';
       [['T', tEl], ['B', bEl], ['W', wEl], ['H', hEl]].forEach(([t, el]) => updateInputColor(el, t));
 
       const baseScore = info.baseScore || {};
@@ -6315,7 +6525,7 @@
       const rawH = document.getElementById('csStyleH').value.trim();
       const parts = [];
       if (rawT) parts.push(rawT.toLowerCase().startsWith('t') ? rawT : 'T:' + rawT + (rawT.includes('cm') ? '' : 'cm'));
-      if (rawB) parts.push(rawB.toLowerCase().startsWith('b') ? rawB : 'B:' + rawB);
+      if (rawB) parts.push(normalizeBustStorage(rawB));
       if (rawW) parts.push(rawW.toLowerCase().startsWith('w') ? rawW : 'W:' + rawW);
       if (rawH) parts.push(rawH.toLowerCase().startsWith('h') ? rawH : 'H:' + rawH);
 
@@ -11443,30 +11653,63 @@
       document.getElementById('addYear').value = d.getFullYear();
       document.getElementById('addMonth').value = (d.getMonth() + 1) + '月';
       document.getElementById('addDay').value = d.getDate();
+      document.getElementById('addName').value = '';
+      const modeEl = document.getElementById('addCastMode');
+      if (modeEl) modeEl.value = '';
       document.getElementById('addStoreName').value = '';
       document.getElementById('addStorePref').value = '';
       document.getElementById('addStoreCategory').value = 'ヘルス';
       document.getElementById('addStorePhone').value = '';
       document.getElementById('addStoreWeb').value = '';
+      document.getElementById('addAmount').value = '';
+      document.getElementById('addCourseTime').value = '';
+      const oldName = document.getElementById('addOldName'); if (oldName) oldName.value = '';
+      const link = document.getElementById('addLink'); if (link) link.value = '';
+      document.getElementById('addFlags').value = '';
+      document.getElementById('addVisitNote').value = '';
+      ['addStyleT','addStyleB','addStyleW','addStyleH'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+      const typeTag = document.getElementById('addTypeTag'); if (typeTag) typeTag.value = '';
+      const report = document.getElementById('addReportUrl'); if (report) report.value = '';
+      document.getElementById('addLetterImg').value = '';
+      if (typeof clearAddLetterPreview === 'function') clearAddLetterPreview(true);
       ['addScoreLooks','addScoreService','addScoreStyle','addScoreIntimacy','addScoreValue'].forEach(id => {
-        document.getElementById(id).value = 3;
-        document.getElementById(id + 'Val').innerText = 3;
+        const el = document.getElementById(id);
+        if (el) { el.value = 3; const v = document.getElementById(id + 'Val'); if (v) v.innerText = 3; }
       });
-      document.getElementById('addScoreGroup').style.display = ratingEnabled ? 'flex' : 'none';
+      const scoreGroup = document.getElementById('addScoreGroup');
+      if (scoreGroup) scoreGroup.style.display = ratingEnabled ? 'flex' : 'none';
       updateStoreDatalist();
       updateCastDatalist();
-
       const addFvSection = document.getElementById('addFirstVisitSection');
-      delete addFvSection.dataset.selectedIntent;
-      addFvSection.querySelectorAll('.fv-intent-btn').forEach(b => b.classList.remove('selected'));
-      addFvSection.style.display = 'none';
-
+      if (addFvSection) {
+        delete addFvSection.dataset.selectedIntent;
+        addFvSection.querySelectorAll('.fv-intent-btn').forEach(b => b.classList.remove('selected'));
+        addFvSection.style.display = 'none';
+      }
+      const newFields = document.getElementById('addNewCastFields');
+      if (newFields) newFields.style.display = 'none';
+      const suggest = document.getElementById('addCastSuggest');
+      if (suggest) { suggest.style.display = 'none'; suggest.innerHTML = ''; }
+      const badge = document.getElementById('addCastModeBadge');
+      if (badge) { badge.style.display = 'none'; badge.textContent = ''; }
+      const hint = document.getElementById('addStoreHint');
+      if (hint) hint.textContent = '';
       document.getElementById('addModal').style.display = 'flex';
     }
+
 
     function saveNewRecord(e) {
       e.preventDefault();
       const name = document.getElementById('addName').value.trim();
+      const amountVal = document.getElementById('addAmount').value;
+      const courseVal = document.getElementById('addCourseTime').value;
+      if (!name) { alert('女の子名を入力してください。'); return; }
+      if (amountVal === '' || Number(amountVal) <= 0) { alert('金額を入力してください。'); document.getElementById('addAmount').focus(); return; }
+      if (courseVal === '' || Number(courseVal) <= 0) { alert('コース時間を入力してください。'); document.getElementById('addCourseTime').focus(); return; }
+      let mode = (document.getElementById('addCastMode') || {}).value || '';
+      if (!mode) {
+        mode = (castData[name] || historyList.some(h => h.name === name)) ? 'existing' : 'new';
+      }
       const storeName = document.getElementById('addStoreName').value.trim();
       const storePref = document.getElementById('addStorePref').value;
       const storeCategory = document.getElementById('addStoreCategory').value;
@@ -11489,7 +11732,7 @@
 
       const parts = [];
       if (rawT) parts.push(rawT.toLowerCase().startsWith('t') ? rawT : 'T:' + rawT + (rawT.includes('cm') ? '' : 'cm'));
-      if (rawB) parts.push(rawB.toLowerCase().startsWith('b') ? rawB : 'B:' + rawB);
+      if (rawB) parts.push(normalizeBustStorage(rawB));
       if (rawW) parts.push(rawW.toLowerCase().startsWith('w') ? rawW : 'W:' + rawW);
       if (rawH) parts.push(rawH.toLowerCase().startsWith('h') ? rawH : 'H:' + rawH);
       const style = parts.join(' ');
