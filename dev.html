@@ -1721,6 +1721,8 @@
       font-weight: bold;
       color: var(--light-text);
     }
+    .tl-day.tl-sun .tl-day-unit { color: #e03131; }
+    .tl-day.tl-sat .tl-day-unit { color: #1c7ed6; }
     .tl-main {
       flex: 1;
       min-width: 0;
@@ -9574,9 +9576,22 @@
 
         items.forEach(i => {
           const dayNum = parseInt(i.day, 10) || 0;
+          const yNum = parseInt(i.year, 10) || 0;
+          const mNumTl = (typeof parseMonthNum === 'function' ? parseMonthNum(i.month) : parseInt(String(i.month || '').replace(/\D/g, ''), 10)) || 0;
+          const weekdayNames = ['日', '月', '火', '水', '木', '金', '土'];
+          let weekdayLabel = '';
+          if (yNum && mNumTl && dayNum) {
+            const dt = new Date(yNum, mNumTl - 1, dayNum);
+            if (!isNaN(dt.getTime()) && dt.getFullYear() === yNum && dt.getMonth() === mNumTl - 1 && dt.getDate() === dayNum) {
+              weekdayLabel = weekdayNames[dt.getDay()];
+            }
+          }
+          let dayClass = 'tl-day';
+          if (weekdayLabel === '日') dayClass += ' tl-sun';
+          if (weekdayLabel === '土') dayClass += ' tl-sat';
           const dayHtml = dayNum
-            ? `<div class="tl-day">${dayNum}<span class="tl-day-unit">日</span></div>`
-            : `<div class="tl-day">—<span class="tl-day-unit">日</span></div>`;
+            ? `<div class="${dayClass}">${dayNum}<span class="tl-day-unit">${weekdayLabel || '日'}</span></div>`
+            : `<div class="tl-day">—<span class="tl-day-unit"></span></div>`;
           const storeName = (i.storeName || '').trim() || '店舗未設定';
           const name = i.name || '（名前なし）';
           const amount = Number(i.amount) || 0;
