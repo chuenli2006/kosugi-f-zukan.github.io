@@ -7122,27 +7122,28 @@
           }
         }
       } else if (mode === 'year') {
+        // 月ごとのスコアは本体と同じ総合式（aggregate の overall）を使う
         for (let m = 1; m <= 12; m++) {
           trendLabels.push(m + '月');
           if (monthMap[m] && monthMap[m].scores.length) {
-            trendValues.push(Math.round(monthMap[m].scores.reduce((a, b) => a + b, 0) / monthMap[m].scores.length));
+            const mData = aggregateGoodValue('month', new Date(cursor.getFullYear(), m - 1, 1));
+            trendValues.push(mData.score != null ? mData.score : null);
           } else {
             trendValues.push(null);
           }
         }
       } else {
-        // 全期間: 年ごと
-        const yearMap = {};
+        // 全期間: 年ごと（総合式の年スコア）
+        const yearSet = {};
         visits.forEach(v => {
           const y = parseInt(v.year, 10);
-          const s = computeVisitGoodValue(v);
-          if (!y || s == null) return;
-          if (!yearMap[y]) yearMap[y] = [];
-          yearMap[y].push(s);
+          if (!y) return;
+          yearSet[y] = true;
         });
-        Object.keys(yearMap).sort().forEach(y => {
+        Object.keys(yearSet).sort().forEach(y => {
           trendLabels.push(y + '年');
-          trendValues.push(Math.round(yearMap[y].reduce((a, b) => a + b, 0) / yearMap[y].length));
+          const yData = aggregateGoodValue('year', new Date(parseInt(y, 10), 0, 1));
+          trendValues.push(yData.score != null ? yData.score : null);
         });
       }
 
@@ -7436,7 +7437,9 @@
           let cls = '', label = '—';
           if (entry && entry.scores.length) {
             hasCount++;
-            const avg = Math.round(entry.scores.reduce((a, b) => a + b, 0) / entry.scores.length);
+            // ユーザー式を含む本体スコアと同じ（月別表示の総合スコア）
+            const mData = aggregateGoodValue('month', new Date(cursor.getFullYear(), m - 1, 1));
+            const avg = mData.score != null ? mData.score : Math.round(entry.scores.reduce((a, b) => a + b, 0) / entry.scores.length);
             label = String(avg);
             if (avg >= goal) { cls = 'ok'; okCount++; }
             else cls = 'has';
@@ -9944,8 +9947,36 @@
       }, 200);
     }
 
-    /* 🌐 店舗サイト背景画像：OGP（og:image）のみ使用 */
-    async function fetchOgImage(pageUrl) {
+    /* 🌐 店舗サイト背景画像：OGP優先 → 本文 img フォールバック */
+    function extractContentImage(doc, pageUrl) {
+      const imgs = Array.from(doc.querySelectorAll('img'));
+      const scored = [];
+      imgs.forEach((img, order) => {
+        const src = img.getAttribute('data-src')
+          || img.getAttribute('data-original')
+          || img.getAttribute('data-lazy-src')
+          || img.getAttribute('src')
+          || '';
+        if (!src || src.startsWith('data:')) return;
+        const lower = src.toLowerCase();
+        if (/logo|icon|favicon|sprite|spacer|blank|pixel|tracking|1x1|btn_|button|banner_ad|sns_|share_|arrow|nav_/.test(lower)) return;
+        if (lower.endsWith('.svg') || lower.endsWith('.gif')) return;
+        const w = parseInt(img.getAttribute('width') || '0', 10);
+        const h = parseInt(img.getAttribute('height') || '0', 10);
+        if ((w && w < 80) || (h && h < 80)) return;
+        let abs = null;
+        try { abs = new URL(src, pageUrl).href; } catch (e) { return; }
+        // 面積ヒント + 先頭の方をやや優先
+        const area = (w && h) ? w * h : 0;
+        const score = area + Math.max(0, 500 - order * 5);
+        scored.push({ url: abs, score });
+      });
+      if (!scored.length) return null;
+      scored.sort((a, b) => b.score - a.score);
+      return scored[0].url;
+    }
+
+    async function fetchStorePreviewImage(pageUrl) {
       const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(pageUrl);
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 8000);
@@ -9956,16 +9987,21 @@
         const html = await res.text();
         const doc = new DOMParser().parseFromString(html, 'text/html');
 
+        // 1) OGP / Twitter Card
         const ogTag = doc.querySelector('meta[property="og:image"]')
           || doc.querySelector('meta[property="og:image:url"]')
           || doc.querySelector('meta[name="twitter:image"]')
           || doc.querySelector('meta[name="twitter:image:src"]');
-        const rawUrl = ogTag ? (ogTag.getAttribute('content') || '').trim() : '';
-        if (!rawUrl) return null;
-        try { return new URL(rawUrl, pageUrl).href; } catch (e) { return null; }
+        const rawOg = ogTag ? (ogTag.getAttribute('content') || '').trim() : '';
+        if (rawOg) {
+          try { return new URL(rawOg, pageUrl).href; } catch (e) { /* fall through */ }
+        }
+
+        // 2) 本文 img
+        return extractContentImage(doc, pageUrl);
       } catch (err) {
         clearTimeout(timeoutId);
-        console.log('店舗OGP画像の取得に失敗しました:', pageUrl, err);
+        console.log('店舗プレビュー画像の取得に失敗しました:', pageUrl, err);
         return null;
       }
     }
@@ -9976,7 +10012,7 @@
         imgEl.dataset.previewLoading = 'true';
         const webUrl = imgEl.getAttribute('data-web-url');
 
-        fetchOgImage(webUrl).then(imageUrl => {
+        fetchStorePreviewImage(webUrl).then(imageUrl => {
           if (!imageUrl) {
             imgEl.style.display = 'none';
             return;
