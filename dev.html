@@ -7864,7 +7864,7 @@
           dotsHtml += `<div class="cal-dot dot-history"${dotStyle}></div>`;
         }
         
-        const matchedSchedules = scheduleList.filter(s => s.date === dateStr && !s.cancelled && !s.hiddenFromCalendar);
+        const matchedSchedules = scheduleList.filter(s => s.date === dateStr && !s.cancelled && !s.hiddenFromCalendar && !(s.type === 'reservation' && s.reservationResult));
         matchedSchedules.forEach(sch => {
           if (sch.type === 'plan') dotsHtml += `<div class="cal-dot dot-plan"></div>`;
           if (sch.type === 'reservation') dotsHtml += `<div class="cal-dot dot-res"></div>`;
@@ -7942,6 +7942,43 @@
               </div>
             `;
             return;
+          }
+
+          // 予約開始日：処理済み
+          if (s.type === 'reservation' && s.reservationResult) {
+            const who = (s.castName || s.title || '予約').trim();
+            const ok = s.reservationResult === 'success';
+            detailsPanel.innerHTML += `
+              <div class="cal-detail-item" style="opacity:0.85;">
+                <div class="cal-detail-title">
+                  <div style="color:var(--light-text); font-weight:bold;">${who} - ${ok ? '予約できた' : '予約できなかった'}</div>
+                  <button type="button" onclick="hideCancelledSchedule('${s.id}')" style="background:none; border:none; color:var(--light-text); text-decoration:underline; cursor:pointer; font-size:0.7rem;">非表示</button>
+                </div>
+                <div class="cal-detail-sub">${ok ? 'イク予定の作成へ連携済み（または作成可能）' : '結果のみ記録'}${s.storeName ? ' · ' + s.storeName : ''}</div>
+              </div>
+            `;
+            return;
+          }
+
+          // 予約開始日：開始時刻超過・未処理 → 結果ボタン
+          if (s.type === 'reservation' && !s.reservationResult) {
+            const endAt = s.time ? new Date(s.date + 'T' + s.time + ':00') : new Date(s.date + 'T23:59:59');
+            if (!isNaN(endAt.getTime()) && Date.now() > endAt.getTime()) {
+              const who = (s.castName || s.title || '予約').trim();
+              detailsPanel.innerHTML += `
+                <div class="cal-detail-item">
+                  <div class="cal-detail-title">
+                    <div><span style="color:#ff922b;">🎫 予約開始日</span> - ${who}</div>
+                  </div>
+                  <div class="cal-detail-sub">開始時刻を過ぎています。結果を選んでください。</div>
+                  <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
+                    <button type="button" class="close-btn" style="flex:1; margin:0; background:linear-gradient(135deg,#20c997,#12b886);" onclick="openPlanFromReservation('${s.id}')">✅ 予約できた</button>
+                    <button type="button" class="close-btn" style="flex:1; margin:0; background:#868e96;" onclick="markReservationFailed('${s.id}')">予約できなかった</button>
+                  </div>
+                </div>
+              `;
+              return;
+            }
           }
 
           const typeIcon = s.type === 'plan' ? '<span style="color:#20c997;">⚔️ イク予定</span>' : '<span style="color:#ff922b;">🎫 予約開始日</span>';
@@ -8023,12 +8060,64 @@
       toggleEditBookingType();
     }
 
-    function openAddScheduleModal() {
+    function openAddScheduleModal(prefill) {
       updateCastDatalist();
       updateStoreDatalist();
-      if(selectedCalDateStr) document.getElementById('schDate').value = selectedCalDateStr;
+      const form = document.getElementById('addScheduleModal');
+      // reset defaults
+      const typeEl = document.getElementById('schType');
+      if (typeEl) typeEl.value = (prefill && prefill.type) || 'plan';
+      if (document.getElementById('schCastName')) document.getElementById('schCastName').value = (prefill && prefill.castName) || '';
+      if (document.getElementById('schStoreName')) document.getElementById('schStoreName').value = (prefill && prefill.storeName) || '';
+      if (document.getElementById('schTitle')) document.getElementById('schTitle').value = (prefill && prefill.title) || '';
+      if (document.getElementById('schTime')) document.getElementById('schTime').value = (prefill && prefill.time) || '';
+      if (document.getElementById('schBookingType')) document.getElementById('schBookingType').value = (prefill && prefill.bookingType) || 'none';
+      if (document.getElementById('schPhoneNumber')) document.getElementById('schPhoneNumber').value = (prefill && prefill.phoneNumber) || '';
+      if (document.getElementById('schBookingUrl')) document.getElementById('schBookingUrl').value = (prefill && prefill.bookingUrl) || '';
+      if (document.getElementById('schDate')) {
+        document.getElementById('schDate').value = (prefill && prefill.date) || selectedCalDateStr || '';
+      }
+      window._linkFromReservationId = (prefill && prefill.fromReservationId) || null;
       togglePhoneConfirm();
-      document.getElementById('addScheduleModal').style.display = 'flex';
+      form.style.display = 'flex';
+    }
+
+    function openPlanFromReservation(resId) {
+      const sch = scheduleList.find(s => s.id === resId);
+      if (!sch) return;
+      if (typeof closeNotificationPanel === 'function') {
+        try { closeNotificationPanel(); } catch (e) {}
+      }
+      // 予約できた → 結果を success にしてからイク予定フォーム
+      sch.reservationResult = 'success';
+      saveData();
+      openAddScheduleModal({
+        type: 'plan',
+        castName: sch.castName || '',
+        storeName: sch.storeName || '',
+        title: sch.title || ((sch.castName || '') + ' 予約済み').trim(),
+        phoneNumber: sch.phoneNumber || '',
+        bookingUrl: sch.bookingUrl || '',
+        bookingType: sch.bookingType || 'none',
+        fromReservationId: sch.id
+        // date/time は行く日をユーザーが入力
+      });
+      renderCalendar();
+      renderNotificationPanel();
+      renderHomeMetrics();
+    }
+
+    function markReservationFailed(resId) {
+      const sch = scheduleList.find(s => s.id === resId);
+      if (!sch) return;
+      sch.reservationResult = 'failed';
+      saveData();
+      if (typeof closeNotificationPanel === 'function') {
+        try { closeNotificationPanel(); } catch (e) {}
+      }
+      renderCalendar();
+      renderNotificationPanel();
+      renderHomeMetrics();
     }
 
     function openEditScheduleModal(id) {
@@ -8082,9 +8171,20 @@
         checkInTime: null,
         linkedHistoryId: null,
         cancelled: false,
-        cancelReason: null
+        cancelReason: null,
+        reservationResult: null,
+        linkedPlanId: null
       };
       
+            if (window._linkFromReservationId) {
+        sch.linkedFromReservationId = window._linkFromReservationId;
+        const res = scheduleList.find(s => s.id === window._linkFromReservationId);
+        if (res) {
+          res.reservationResult = 'success';
+          res.linkedPlanId = sch.id;
+        }
+        window._linkFromReservationId = null;
+      }
       scheduleList.push(sch);
       saveData();
       
@@ -8263,7 +8363,8 @@
       }
 
       scheduleList.forEach(sch => {
-        if (sch.cancelled || sch.checkedIn || !sch.time) return;
+        if (sch.cancelled || sch.checkedIn || sch.hiddenFromCalendar || !sch.time) return;
+        if (sch.type === 'reservation' && sch.reservationResult) return;
         const schDateTime = new Date(`${sch.date}T${sch.time}:00`);
         const diffMs = schDateTime.getTime() - now.getTime();
 
@@ -8282,30 +8383,48 @@
         }
 
         const notifyStartMs = (sch.notifyMinutes > 0 ? sch.notifyMinutes : 15) * 60000;
+        const nameStoreText = `${escapeHTML(sch.title||'')} ${sch.castName ? '('+escapeHTML(sch.castName)+')' : ''} ${sch.storeName ? '['+escapeHTML(sch.storeName)+']' : ''}`;
+
+        // 予約開始日：開始超過・未処理は最大14日まで通知に残す
+        if (sch.type === 'reservation' && !sch.reservationResult && diffMs < 0 && diffMs >= -14 * 24 * 3600000) {
+          activeCount++;
+          cardsHtml += `<div class="notif-glass-card">
+            <div class="notif-card-title">🎫 予約は取れましたか？</div>
+            <div class="notif-card-sub">${nameStoreText}<br><span style="opacity:0.85;">開始時刻を過ぎています。結果を記録してください。</span></div>
+            <div class="notif-card-btn-row">
+              <button type="button" class="notif-card-btn notif-btn-checkin" onclick="openPlanFromReservation('${sch.id}')">✅ 予約できた</button>
+              <button type="button" class="notif-card-btn notif-btn-cancel" onclick="markReservationFailed('${sch.id}')">予約できなかった</button>
+            </div>
+          </div>`;
+          return;
+        }
+
         if (diffMs <= notifyStartMs && diffMs >= -10800000) {
           activeCount++;
-          const nameStoreText = `${escapeHTML(sch.title||'')} ${sch.castName ? '('+escapeHTML(sch.castName)+')' : ''} ${sch.storeName ? '['+escapeHTML(sch.storeName)+']' : ''}`;
 
           if (sch.type === 'reservation') {
-            // 🎫 予約開始時の通知：予約方法（電話／ネット）へ誘導するのみ。チェックインはしない。
-            let actionBtnHtml;
-            if (sch.bookingType === 'phone') {
-              const phoneNum = sch.phoneNumber || '';
-              actionBtnHtml = phoneNum
-                ? `<a href="tel:${phoneNum}" class="notif-card-btn notif-btn-default">📞 電話する (${phoneNum})</a>`
-                : `<button type="button" class="notif-card-btn notif-btn-default" onclick="alert('電話番号が登録されていません');">📞 電話する</button>`;
-            } else if (sch.bookingType === 'web') {
-              actionBtnHtml = sch.bookingUrl
-                ? `<a href="${sch.bookingUrl}" target="_blank" rel="noopener noreferrer" class="notif-card-btn notif-btn-default">🌐 ネット予約する</a>`
-                : `<button type="button" class="notif-card-btn notif-btn-default" onclick="alert('予約URLが登録されていません');">🌐 ネット予約する</button>`;
-            } else {
-              actionBtnHtml = `<button type="button" class="notif-card-btn notif-btn-default" onclick="switchMainTab('calendar'); closeNotificationPanel();">📅 カレンダーで確認</button>`;
+            if (sch.reservationResult) return;
+            if (diffMs >= 0) {
+              // 🎫 予約開始時：電話／ネットへ誘導
+              let actionBtnHtml;
+              if (sch.bookingType === 'phone') {
+                const phoneNum = sch.phoneNumber || '';
+                actionBtnHtml = phoneNum
+                  ? `<a href="tel:${phoneNum}" class="notif-card-btn notif-btn-default">📞 電話する (${phoneNum})</a>`
+                  : `<button type="button" class="notif-card-btn notif-btn-default" onclick="alert('電話番号が登録されていません');">📞 電話する</button>`;
+              } else if (sch.bookingType === 'web') {
+                actionBtnHtml = sch.bookingUrl
+                  ? `<a href="${sch.bookingUrl}" target="_blank" rel="noopener noreferrer" class="notif-card-btn notif-btn-default">🌐 ネット予約する</a>`
+                  : `<button type="button" class="notif-card-btn notif-btn-default" onclick="alert('予約URLが登録されていません');">🌐 ネット予約する</button>`;
+              } else {
+                actionBtnHtml = `<button type="button" class="notif-card-btn notif-btn-default" onclick="switchMainTab('calendar'); closeNotificationPanel();">📅 カレンダーで確認</button>`;
+              }
+              cardsHtml += `<div class="notif-glass-card">
+                <div class="notif-card-title">🎫 予約開始の時間です</div>
+                <div class="notif-card-sub">${nameStoreText}</div>
+                <div class="notif-card-btn-row">${actionBtnHtml}</div>
+              </div>`;
             }
-            cardsHtml += `<div class="notif-glass-card">
-              <div class="notif-card-title">🎫 予約開始の時間です</div>
-              <div class="notif-card-sub">${nameStoreText}</div>
-              <div class="notif-card-btn-row">${actionBtnHtml}</div>
-            </div>`;
           } else {
             // 📍 来店予定の通知：チェックイン・当日キャンセル
             cardsHtml += `<div class="notif-glass-card">
