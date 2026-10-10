@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap" rel="stylesheet">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title id="pageTitle">童貞の風俗履歴図鑑</title>
@@ -216,6 +219,7 @@
     }
 
     body {
+      font-family: "Kosugi Maru", "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
       background-color: var(--bg-color); color: var(--text-color);
       line-height: 1.6; padding: 0; margin: 0;
       transition: background-color 0.3s, color 0.3s; overflow-x: hidden;
@@ -10116,16 +10120,16 @@
     let notesMarqueeRaf = null;
 
     function buildNotesMarqueeHtml(text) {
-      const raw = (text || '').trim() || 'メモなし';
       const empty = !(text || '').trim();
+      const raw = empty ? 'メモなし' : String(text).trim();
       const safe = escapeHTML(raw);
+      // 空メモは1セグメントのみ（二重表示防止）
+      const segs = empty
+        ? '<span class="notes-box-seg">' + safe + '</span>'
+        : '<span class="notes-box-seg">' + safe + '</span><span class="notes-box-seg" aria-hidden="true">' + safe + '</span>';
       return '<div class="notes-box' + (empty ? ' is-static' : '') + '" data-notes-marquee="' + (empty ? '0' : '1') + '">' +
-        '<div class="notes-box-fade notes-box-fade-left"></div>' +
-        '<div class="notes-box-fade notes-box-fade-right"></div>' +
-        '<div class="notes-box-viewport"><div class="notes-box-track">' +
-        '<span class="notes-box-seg">' + safe + '</span>' +
-        '<span class="notes-box-seg" aria-hidden="true">' + safe + '</span>' +
-        '</div></div></div>';
+        (empty ? '' : '<div class="notes-box-fade notes-box-fade-left"></div><div class="notes-box-fade notes-box-fade-right"></div>') +
+        '<div class="notes-box-viewport"><div class="notes-box-track">' + segs + '</div></div></div>';
     }
 
     function initNotesMarquees(root) {
@@ -10188,6 +10192,45 @@
       notesMarqueeRaf = requestAnimationFrame(tick);
     }
 
+
+
+    function navigateToCastCard(castName, event) {
+      if (event) { event.preventDefault(); event.stopPropagation(); }
+      const name = (castName || '').trim();
+      if (!name) return;
+      // 女の子別ビューへ
+      if (typeof changeView === 'function') changeView('cast');
+      // フィルター解除して見つけやすく
+      try {
+        if (typeof activeTagFilter !== 'undefined') {
+          activeTagFilter = { type: null, value: null };
+          const badge = document.getElementById('selectedTypeBadge');
+          if (badge) badge.style.display = 'none';
+        }
+        if (typeof currentFilter !== 'undefined') currentFilter = 'all';
+        const search = document.getElementById('searchInput');
+        if (search) search.value = name;
+        if (typeof render === 'function') render();
+      } catch (e) {}
+      const tryFocus = (attempt) => {
+        const cards = document.querySelectorAll('details.cast-card');
+        let target = null;
+        cards.forEach(el => {
+          if ((el.dataset.castName || '') === name) target = el;
+        });
+        if (!target) {
+          if (attempt < 12) setTimeout(() => tryFocus(attempt + 1), 50);
+          return;
+        }
+        cards.forEach(el => el.classList.remove('cast-flash-target'));
+        target.classList.add('cast-flash-target');
+        try { target.open = true; } catch (e) {}
+        try { target.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+        catch (e) { target.scrollIntoView(); }
+        setTimeout(() => target.classList.remove('cast-flash-target'), 1600);
+      };
+      setTimeout(() => tryFocus(0), 80);
+    }
 
     function navigateToStoreCard(storeName, event) {
       if (event) { event.preventDefault(); event.stopPropagation(); }
@@ -10852,32 +10895,11 @@ ${sideActionsHtml}
     }
 
     /* 🌸 店舗別ビュー：遊んだ女の子の詳細（指名回数・使った金額・過去履歴） */
-    function openStoreCastDetail(event, storeName, castName) {
-      if(event) { event.preventDefault(); event.stopPropagation(); }
-
-      const visits = historyList.filter(v => v.storeName === storeName && v.name === castName);
-      const count = visits.length;
-      const amount = visits.reduce((s,v) => s + (Number(v.amount) || 0), 0);
-      const amountDisp = currentAmountHide === 'hide' ? '***' : `¥${amount.toLocaleString()}`;
-
-      const sorted = visits.slice().sort((a,b) => (b.originalIndex||0) - (a.originalIndex||0));
-      const historyHtml = sorted.map(v => {
-        const dt = `${v.year}年${v.month}月${v.day || '?'}日`;
-        const amt = currentAmountHide === 'hide' ? '***' : `¥${(Number(v.amount)||0).toLocaleString()}`;
-        return `
-          <div style="display:flex; justify-content:space-between; align-items:center; background:var(--bg-color); border:1px solid var(--border-color); padding:6px 10px; border-radius:8px; font-size:0.78rem;">
-            <span>${dt}</span>
-            <span style="font-weight:bold; color:var(--accent-pink);">${amt}</span>
-          </div>`;
-      }).join('');
-
-      document.getElementById('storeCastDetailTitle').innerText = `🌸 ${castName}（${storeName}）`;
-      document.getElementById('storeCastDetailCount').innerText = `${count}回`;
-      document.getElementById('storeCastDetailAmount').innerText = amountDisp;
-      document.getElementById('storeCastDetailHistory').innerHTML = historyHtml || '<div style="text-align:center; color:var(--light-text); font-size:0.8rem; padding:10px 0;">履歴がありません</div>';
-
-      document.getElementById('storeCastDetailModal').style.display = 'flex';
+        function openStoreCastDetail(event, storeName, castName) {
+      // 店舗内の女の子名タップ → 女の子別カードへ誘導（旧モーダル廃止）
+      navigateToCastCard(castName, event);
     }
+
 
     function renderStoreView(target, keyword) {
       const storeMap = {};
@@ -12709,11 +12731,13 @@ ${sideActionsHtml}
       { cat: '下半身', label: '巨尻', desc: '両手でも余るほどの大きな尻' },
       { cat: '下半身', label: '桃尻', desc: '桃のように丸く上向きに張った尻' },
       { cat: '下半身', label: '美脚', desc: 'スラッと伸びた、ラインの綺麗な脚' },
-      { cat: '処理・局部', label: 'パイパン', desc: '毛が完全になく、肌が露出した状態' },
-      { cat: '処理・局部', label: 'ほぼパイパン', desc: '残毛がごく少ない、ほぼ無毛の処理' },
-      { cat: '処理・局部', label: '形が綺麗', desc: '見た目のバランスが整った局部' },
-      { cat: '処理・局部', label: 'ピンク', desc: '色味が薄く、若い印象の局部' },
-      { cat: '処理・局部', label: '濡れやすい', desc: 'すぐに愛液が溢れ、ぬるぬるになりやすい' },
+      { cat: 'まんこ', label: 'パイパン', desc: '毛が完全になく、肌が露出した状態' },
+      { cat: 'まんこ', label: 'ほぼパイパン', desc: '残毛がごく少ない、ほぼ無毛の処理' },
+      { cat: 'まんこ', label: '剛毛', desc: '濃くて量の多い剛毛。指を通すとざらつき、匂いも濃いめ' },
+      { cat: 'まんこ', label: '整ってる', desc: '毛はあるが整えられていて、見映えも舌触りもきれいな状態' },
+      { cat: 'まんこ', label: '形が綺麗', desc: '見た目のバランスが整った局部' },
+      { cat: 'まんこ', label: 'ピンク', desc: '色味が薄く、若い印象の局部' },
+      { cat: 'まんこ', label: '濡れやすい', desc: 'すぐに愛液が溢れ、ぬるぬるになりやすい' },
       { cat: '顔・雰囲気', label: '童顔', desc: '幼さが残る、あどけない顔立ち' },
       { cat: '顔・雰囲気', label: '美人系', desc: '整った顔立ちで見惚れる美人タイプ' },
       { cat: '顔・雰囲気', label: '清楚', desc: '上品で落ち着いた、清楚な雰囲気' },
