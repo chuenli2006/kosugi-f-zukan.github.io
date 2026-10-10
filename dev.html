@@ -151,7 +151,7 @@
 
     /* 🎨 CSS変数：テーマ10種類のカラー定義 */
     :root {
-      --app-font-family: system-ui, -apple-system, "Hiragino Sans", Meiryo, sans-serif;
+      --app-font-family: "Kosugi Maru", sans-serif;
       --bg-color: #fdfbfb; --card-bg: #ffffff; --primary-pink: #ff85a2; --soft-pink: #ffe6ea;
       --accent-pink: #f72585; --text-color: #4a4a4a; --light-text: #8d8d8d; --border-color: #f0e6e8;
       --shadow: 0 4px 15px rgba(255, 133, 162, 0.1); --radius: 12px;
@@ -220,12 +220,28 @@
 
     * {
       box-sizing: border-box; margin: 0; padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    }
+    html {
+      font-family: "Kosugi Maru", sans-serif;
+      font-weight: 400;
+      font-style: normal;
+    }
+
+    
+    .kosugi-maru-regular {
+      font-family: "Kosugi Maru", sans-serif;
+      font-weight: 400;
+      font-style: normal;
+    }
+    html, body, button, input, select, textarea {
+      font-family: "Kosugi Maru", sans-serif;
+      font-weight: 400;
+      font-style: normal;
     }
 
     body {
-      font-family: var(--app-font-family, system-ui, -apple-system, "Hiragino Sans", Meiryo, sans-serif);
+      font-family: "Kosugi Maru", sans-serif;
       background-color: var(--bg-color); color: var(--text-color);
       line-height: 1.6; padding: 0; margin: 0;
       transition: background-color 0.3s, color 0.3s; overflow-x: hidden;
@@ -14730,9 +14746,9 @@ ${question}`;
     /* フォント選択（拡張可能なカタログ） */
     const FONT_CATALOG = [
       { id: 'system', label: 'システム', css: 'system-ui, -apple-system, "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif', href: null },
-      { id: 'kosugi-maru', label: 'Kosugi Maru', css: '"Kosugi Maru", "Hiragino Sans", Meiryo, sans-serif', href: 'https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap' }
+      { id: 'kosugi-maru', label: 'Kosugi Maru', css: '"Kosugi Maru", sans-serif', href: 'https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap' }
     ];
-    let currentFontId = localStorage.getItem('app_font') || 'system';
+    let currentFontId = 'kosugi-maru'; // 設定UI非表示中は Kosugi Maru 固定
 
     function ensureFontStylesheet(font) {
       if (!font || !font.href) return;
@@ -14746,12 +14762,14 @@ ${question}`;
     }
 
     function applyFont(fontId) {
-      const font = FONT_CATALOG.find(f => f.id === fontId) || FONT_CATALOG[0];
+      const font = FONT_CATALOG.find(f => f.id === fontId) || FONT_CATALOG.find(f => f.id === 'kosugi-maru') || FONT_CATALOG[0];
       currentFontId = font.id;
       localStorage.setItem('app_font', font.id);
       ensureFontStylesheet(font);
       document.documentElement.style.setProperty('--app-font-family', font.css);
+      document.documentElement.style.fontFamily = font.css;
       document.body.style.fontFamily = font.css;
+      document.body.classList.toggle('kosugi-maru-regular', font.id === 'kosugi-maru');
       // 設定UIの選択状態
       const row = document.getElementById('fontSelectRow');
       if (row) {
