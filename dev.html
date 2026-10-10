@@ -79,10 +79,12 @@
       overflow-y: auto; flex: 1; min-height: 0; padding: 2px; -webkit-overflow-scrolling: touch;
     }
     .play-card {
-      border: 1.5px solid var(--border-color); border-radius: 12px; padding: 10px 8px;
+      border: 1.5px solid var(--border-color); border-radius: 12px; padding: 12px 10px;
       background: var(--card-bg); color: var(--text-color); cursor: pointer;
-      font-family: inherit; text-align: left; transition: border-color 0.15s, background 0.15s, transform 0.1s;
-      min-height: 72px; display: flex; flex-direction: column; gap: 4px;
+      min-height: 5.8rem;
+      display: flex; flex-direction: column; justify-content: flex-start; gap: 5px;
+      font-family: inherit; text-align: left;
+      transition: border-color 0.15s, background 0.15s, transform 0.1s;
     }
     .play-card:active { transform: scale(0.97); }
     .play-card.is-selected {
@@ -95,7 +97,10 @@
     }
     .play-card.is-selected .play-card-title { color: var(--accent-pink); }
     .play-card-desc {
-      font-size: 0.65rem; line-height: 1.35; color: var(--light-text); font-weight: normal;
+      font-size: 0.65rem; line-height: 1.4; color: var(--light-text); font-weight: normal;
+      display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3;
+      overflow: hidden;
+      min-height: calc(0.65rem * 1.4 * 3);
     }
     .play-card.is-custom { border-style: dashed; }
     .play-card.is-custom-item { border-style: dashed; border-color: color-mix(in srgb, var(--accent-pink) 40%, var(--border-color)); }
@@ -146,6 +151,7 @@
 
     /* 🎨 CSS変数：テーマ10種類のカラー定義 */
     :root {
+      --app-font-family: system-ui, -apple-system, "Hiragino Sans", Meiryo, sans-serif;
       --bg-color: #fdfbfb; --card-bg: #ffffff; --primary-pink: #ff85a2; --soft-pink: #ffe6ea;
       --accent-pink: #f72585; --text-color: #4a4a4a; --light-text: #8d8d8d; --border-color: #f0e6e8;
       --shadow: 0 4px 15px rgba(255, 133, 162, 0.1); --radius: 12px;
@@ -219,7 +225,7 @@
     }
 
     body {
-      font-family: "Kosugi Maru", "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      font-family: var(--app-font-family, system-ui, -apple-system, "Hiragino Sans", Meiryo, sans-serif);
       background-color: var(--bg-color); color: var(--text-color);
       line-height: 1.6; padding: 0; margin: 0;
       transition: background-color 0.3s, color 0.3s; overflow-x: hidden;
@@ -1646,6 +1652,18 @@
     }
     .cast-store-chip svg { width: 14px; height: 14px; flex-shrink: 0; stroke-width: 2.2; }
     .cast-store-chip-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .cast-card.cast-flash-target {
+      animation: castFlashGuide 1.4s ease !important;
+      outline: 2px solid var(--accent-pink);
+      outline-offset: 2px;
+      z-index: 2;
+      position: relative;
+    }
+    @keyframes castFlashGuide {
+      0% { transform: scale(1); box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-pink) 55%, transparent); }
+      35% { transform: scale(1.02); box-shadow: 0 0 0 8px color-mix(in srgb, var(--accent-pink) 28%, transparent); }
+      100% { transform: scale(1); box-shadow: 0 4px 15px rgba(247, 37, 133, 0.08); }
+    }
     .store-card-fold.store-flash-target {
       animation: storeFlashGuide 1.4s ease;
       outline: 2px solid var(--accent-pink);
@@ -3866,6 +3884,11 @@
                 <button class="theme-item-btn" onclick="setTheme('jreast')">🚃 JR東日本風</button>
                 <button class="theme-item-btn" onclick="setTheme('sakina')"><span class="theme-swatch-dot" style="background:linear-gradient(135deg, #e08b97, #b85c6c);"></span>SAKINA</button>
               </div>
+              <div class="form-group" style="margin-top:14px; display:none;" aria-hidden="true">
+                <label>フォント</label>
+                <div class="font-select-row" id="fontSelectRow"></div>
+                <div class="sec-status-note">デフォルトはシステムフォント。追加フォントは名前で選択できます。</div>
+              </div>
             </div>
           </details>
 
@@ -5697,6 +5720,8 @@
     function initUserData() {
       applyTheme(currentTheme);
       applyUIMode(currentUIMode);
+      if (typeof applyFont === 'function') applyFont(currentFontId);
+      if (typeof renderFontSelectButtons === 'function') renderFontSelectButtons();
       const savedHist = localStorage.getItem('user_hist_' + currentUserName);
       const savedCast = localStorage.getItem('user_cast_' + currentUserName);
       const savedStoreInfo = localStorage.getItem('user_store_info_' + currentUserName);
@@ -10194,13 +10219,11 @@
 
 
 
-    function navigateToCastCard(castName, event) {
+        function navigateToCastCard(castName, event) {
       if (event) { event.preventDefault(); event.stopPropagation(); }
       const name = (castName || '').trim();
       if (!name) return;
-      // 女の子別ビューへ
       if (typeof changeView === 'function') changeView('cast');
-      // フィルター解除して見つけやすく
       try {
         if (typeof activeTagFilter !== 'undefined') {
           activeTagFilter = { type: null, value: null };
@@ -10219,20 +10242,22 @@
           if ((el.dataset.castName || '') === name) target = el;
         });
         if (!target) {
-          if (attempt < 12) setTimeout(() => tryFocus(attempt + 1), 50);
+          if (attempt < 15) setTimeout(() => tryFocus(attempt + 1), 60);
           return;
         }
-        cards.forEach(el => el.classList.remove('cast-flash-target'));
+        document.querySelectorAll('.cast-flash-target').forEach(el => el.classList.remove('cast-flash-target'));
+        // アニメ再発火のため一旦外して付け直す
+        void target.offsetWidth;
         target.classList.add('cast-flash-target');
         try { target.open = true; } catch (e) {}
         try { target.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
         catch (e) { target.scrollIntoView(); }
-        setTimeout(() => target.classList.remove('cast-flash-target'), 1600);
+        setTimeout(() => target.classList.remove('cast-flash-target'), 1800);
       };
-      setTimeout(() => tryFocus(0), 80);
+      setTimeout(() => tryFocus(0), 120);
     }
 
-    function navigateToStoreCard(storeName, event) {
+function navigateToStoreCard(storeName, event) {
       if (event) { event.preventDefault(); event.stopPropagation(); }
       const name = (storeName || '').trim();
       if (!name) return;
@@ -12707,19 +12732,19 @@ ${sideActionsHtml}
 
     
     const STYLE_FEATURE_CATALOG = [
-      { cat: '体型・バスト', label: '巨乳', desc: '手から溢れるほどボリュームのある大きい胸' },
-      { cat: '体型・バスト', label: '爆乳', desc: '視界を埋めるほど圧倒的な胸の大きさ' },
-      { cat: '体型・バスト', label: '美乳', desc: '形も張りも整った、見て触って美しい胸' },
-      { cat: '体型・バスト', label: '貧乳', desc: '控えめサイズの胸。隙間や感度を楽しむ' },
-      { cat: '体型・バスト', label: '微乳', desc: 'ほとんど平坦に近い、小さな膨らみ' },
-      { cat: '体型・バスト', label: '垂れ乳', desc: '重みで下に落ちる、柔らかい垂れた胸' },
-      { cat: '体型・バスト', label: '張りのある胸', desc: '上向きで弾力があり、触ると跳ね返す胸' },
-      { cat: '体型・バスト', label: '軟乳', desc: '指が沈み込むほど柔らかい胸の質感' },
-      { cat: '体型・バスト', label: 'スリム', desc: '全体に細く、線の綺麗な体' },
-      { cat: '体型・バスト', label: 'グラマー', desc: '胸と腰の差が強く、凹凸の目立つ体' },
-      { cat: '体型・バスト', label: 'ぽっちゃり', desc: '肉付きが良く、抱き心地の柔らかい体' },
-      { cat: '体型・バスト', label: '小柄', desc: '身長が低く、手元に収まるサイズ感' },
-      { cat: '体型・バスト', label: '高身長', desc: '脚が長く、モデルのような高さ' },
+      { cat: 'おっぱい・体型', label: '巨乳', desc: '手から溢れるほどボリュームのある大きい胸' },
+      { cat: 'おっぱい・体型', label: '爆乳', desc: '視界を埋めるほど圧倒的な胸の大きさ' },
+      { cat: 'おっぱい・体型', label: '美乳', desc: '形も張りも整った、見て触って美しい胸' },
+      { cat: 'おっぱい・体型', label: '貧乳', desc: '控えめサイズの胸。隙間や感度を楽しむ' },
+      { cat: 'おっぱい・体型', label: '微乳', desc: 'ほとんど平坦に近い、小さな膨らみ' },
+      { cat: 'おっぱい・体型', label: '垂れ乳', desc: '重みで下に落ちる、柔らかい垂れた胸' },
+      { cat: 'おっぱい・体型', label: '張りのある胸', desc: '上向きで弾力があり、触ると跳ね返す胸' },
+      { cat: 'おっぱい・体型', label: '軟乳', desc: '指が沈み込むほど柔らかい胸の質感' },
+      { cat: 'おっぱい・体型', label: 'スリム', desc: '全体に細く、線の綺麗な体' },
+      { cat: 'おっぱい・体型', label: 'グラマー', desc: '胸と腰の差が強く、凹凸の目立つ体' },
+      { cat: 'おっぱい・体型', label: 'ぽっちゃり', desc: '肉付きが良く、抱き心地の柔らかい体' },
+      { cat: 'おっぱい・体型', label: '小柄', desc: '身長が低く、手元に収まるサイズ感' },
+      { cat: 'おっぱい・体型', label: '高身長', desc: '脚が長く、モデルのような高さ' },
       { cat: '乳首・乳輪', label: 'ピンク乳首', desc: '薄くて若い印象の、淡いピンクの乳首' },
       { cat: '乳首・乳輪', label: '茶色乳首', desc: '色味の濃い、落ち着いた茶色の乳首' },
       { cat: '乳首・乳輪', label: '小さい乳首', desc: '粒が小さく、摘まむと指に沈む乳首' },
@@ -12731,8 +12756,8 @@ ${sideActionsHtml}
       { cat: '下半身', label: '巨尻', desc: '両手でも余るほどの大きな尻' },
       { cat: '下半身', label: '桃尻', desc: '桃のように丸く上向きに張った尻' },
       { cat: '下半身', label: '美脚', desc: 'スラッと伸びた、ラインの綺麗な脚' },
-      { cat: 'まんこ', label: 'パイパン', desc: '毛が完全になく、肌が露出した状態' },
-      { cat: 'まんこ', label: 'ほぼパイパン', desc: '残毛がごく少ない、ほぼ無毛の処理' },
+      { cat: 'まんこ', label: 'パイパン', desc: '毛が完全になく、ツルッツルのまんこ。見た目もなめるにも触り心地も最高。' },
+      { cat: 'まんこ', label: 'ほぼパイパン', desc: 'パイパンへ努力のは感じるがなぜかそれもそれでえろい。剃り残しカナ⁉️それともあえてわざと…⁉️' },
       { cat: 'まんこ', label: '剛毛', desc: '濃くて量の多い剛毛。指を通すとざらつき、匂いも濃いめ' },
       { cat: 'まんこ', label: '整ってる', desc: '毛はあるが整えられていて、見映えも舌触りもきれいな状態' },
       { cat: 'まんこ', label: '形が綺麗', desc: '見た目のバランスが整った局部' },
@@ -14701,6 +14726,56 @@ ${question}`;
     }
 
     
+
+    /* フォント選択（拡張可能なカタログ） */
+    const FONT_CATALOG = [
+      { id: 'system', label: 'システム', css: 'system-ui, -apple-system, "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif', href: null },
+      { id: 'kosugi-maru', label: 'Kosugi Maru', css: '"Kosugi Maru", "Hiragino Sans", Meiryo, sans-serif', href: 'https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap' }
+    ];
+    let currentFontId = localStorage.getItem('app_font') || 'system';
+
+    function ensureFontStylesheet(font) {
+      if (!font || !font.href) return;
+      const id = 'app-font-' + font.id;
+      if (document.getElementById(id)) return;
+      const link = document.createElement('link');
+      link.id = id;
+      link.rel = 'stylesheet';
+      link.href = font.href;
+      document.head.appendChild(link);
+    }
+
+    function applyFont(fontId) {
+      const font = FONT_CATALOG.find(f => f.id === fontId) || FONT_CATALOG[0];
+      currentFontId = font.id;
+      localStorage.setItem('app_font', font.id);
+      ensureFontStylesheet(font);
+      document.documentElement.style.setProperty('--app-font-family', font.css);
+      document.body.style.fontFamily = font.css;
+      // 設定UIの選択状態
+      const row = document.getElementById('fontSelectRow');
+      if (row) {
+        row.querySelectorAll('.font-item-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.fontId === font.id);
+        });
+      }
+    }
+
+    function setFont(fontId) {
+      applyFont(fontId);
+    }
+
+    function renderFontSelectButtons() {
+      const row = document.getElementById('fontSelectRow');
+      if (!row) return;
+      row.innerHTML = FONT_CATALOG.map(f =>
+        '<button type="button" class="font-item-btn' + (f.id === currentFontId ? ' active' : '') +
+        '" data-font-id="' + f.id + '" onclick="setFont(\'' + f.id + '\')">' +
+        escapeHTML(f.label) + '</button>'
+      ).join('');
+    }
+
+
     function applyTheme(t) {
       currentTheme = t;
       if(t==='default') document.documentElement.removeAttribute('data-theme');
