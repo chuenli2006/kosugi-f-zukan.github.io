@@ -1402,8 +1402,138 @@
     }
 
     .filter-tags { display: flex; gap: 4px; overflow-x: auto; padding-bottom: 2px; width: 100%; }
+
+    .filter-presets { display: flex; flex-wrap: nowrap; gap: 6px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    .filter-presets::-webkit-scrollbar { display: none; }
+    .ftag-more-count {
+      display: inline-block; margin-left: 4px; min-width: 1.1em; padding: 0 5px;
+      border-radius: 999px; background: #fff; color: var(--accent-pink);
+      font-size: 0.65rem; font-weight: 800; line-height: 1.4;
+    }
+    .ftag-more.has-tags {
+      background: color-mix(in srgb, var(--accent-pink) 18%, var(--card-bg));
+      border-color: var(--accent-pink); color: var(--accent-pink); font-weight: 800;
+    }
+    .ftag-more.has-tags .ftag-more-count { display: inline-block !important; background: var(--accent-pink); color: #fff; }
+    .more-filter-sheet .modal-content { max-width: 420px; max-height: 85vh; display: flex; flex-direction: column; }
+    .more-filter-search {
+      width: 100%; box-sizing: border-box; padding: 8px 12px; border-radius: 10px;
+      border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color);
+      font-size: 0.85rem; margin-bottom: 8px;
+    }
+    .more-filter-section-label { font-size: 0.72rem; font-weight: 800; color: var(--accent-pink); margin: 8px 0 6px; }
+    .more-filter-chips { display: flex; flex-wrap: wrap; gap: 6px; max-height: 28vh; overflow-y: auto; }
+    .more-filter-chip {
+      font-size: 0.75rem; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--border-color);
+      background: var(--bg-color); color: var(--text-color); cursor: pointer; font-family: inherit;
+    }
+    .more-filter-chip.is-selected {
+      background: color-mix(in srgb, var(--accent-pink) 16%, var(--card-bg));
+      border-color: var(--accent-pink); color: var(--accent-pink); font-weight: 800;
+    }
+    .more-filter-chip.is-play { border-style: dashed; }
+    .more-filter-chip.is-play.is-selected { border-style: solid; }
+    .more-filter-empty { font-size: 0.78rem; color: var(--light-text); padding: 8px 0; }
+
     .ftag { font-size: 0.75rem; padding: 3px 10px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); cursor: pointer; white-space: nowrap; }
     .ftag.active { background: var(--accent-pink); color: #fff; border-color: var(--accent-pink); }
+
+    .style-feat-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 6px; }
+    .style-feat-pill {
+      font-size: 0.72rem; font-weight: 700; padding: 4px 10px; border-radius: 999px;
+      border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color);
+      cursor: pointer; font-family: inherit;
+    }
+    .style-feat-pill.is-selected {
+      background: color-mix(in srgb, var(--accent-pink) 16%, var(--card-bg));
+      border-color: var(--accent-pink); color: var(--accent-pink); font-weight: 800;
+    }
+    .style-feat-pill.is-suggest { border-style: dashed; opacity: 0.92; }
+    .style-feat-open-btn {
+      font-size: 0.72rem; font-weight: 800; padding: 4px 10px; border-radius: 999px;
+      border: 1px solid var(--primary-pink); background: var(--soft-pink); color: var(--accent-pink);
+      cursor: pointer; font-family: inherit;
+    }
+    .style-feat-hint { font-size: 0.68rem; color: var(--light-text); margin-top: 4px; width: 100%; }
+    .cast-style-block {
+      flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px;
+    }
+    .cast-feat-fold {
+      display: flex; align-items: center; min-width: 0; width: 100%;
+    }
+    .cast-feat-track {
+      display: flex; flex-wrap: nowrap; align-items: center; gap: 4px;
+      width: 100%; min-width: 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      touch-action: pan-x;
+    }
+    .cast-feat-track::-webkit-scrollbar { display: none; }
+    .cast-style-feat-pill {
+      flex: 0 0 auto;
+      font-size: 0.65rem; font-weight: 800; padding: 2px 8px; border-radius: 6px;
+      background: color-mix(in srgb, #9c36b5 12%, var(--bg-color));
+      color: #9c36b5; border: 1px solid color-mix(in srgb, #9c36b5 30%, var(--border-color));
+      white-space: nowrap;
+      box-sizing: border-box;
+      transition: opacity 0.22s ease, transform 0.22s ease, max-width 0.28s ease, padding 0.28s ease, border-width 0.2s ease;
+    }
+    .cast-style-feat-pill.is-tail {
+      max-width: 0 !important;
+      opacity: 0;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+      margin: 0 !important;
+      border-width: 0 !important;
+      overflow: hidden;
+      transform: scale(0.85);
+      pointer-events: none;
+    }
+    .cast-feat-fold.is-open .cast-style-feat-pill.is-tail {
+      max-width: 20em !important;
+      opacity: 1;
+      padding-left: 8px !important;
+      padding-right: 8px !important;
+      border-width: 1px !important;
+      transform: scale(1);
+      pointer-events: auto;
+      overflow: visible;
+    }
+    .cast-feat-toggle {
+      flex: 0 0 auto;
+      height: 24px; min-width: 24px; padding: 0 8px; border-radius: 999px;
+      border: 1px solid var(--border-color); background: var(--bg-color); color: var(--accent-pink);
+      font-size: 0.65rem; font-weight: 800; cursor: pointer; font-family: inherit;
+      display: inline-flex; align-items: center; justify-content: center; gap: 3px;
+      line-height: 1; white-space: nowrap;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+    .cast-feat-toggle:active { transform: scale(0.94); }
+    .cast-feat-fold.is-open .cast-feat-toggle {
+      background: color-mix(in srgb, var(--accent-pink) 14%, var(--card-bg));
+      border-color: var(--accent-pink);
+    }
+    .cast-feat-toggle .feat-arrow {
+      display: inline-block;
+      transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .cast-feat-fold.is-open .cast-feat-toggle .feat-arrow {
+      transform: rotate(180deg);
+    }
+    .cast-feat-toggle .feat-rest { font-variant-numeric: tabular-nums; }
+    .cast-feat-toggle.is-closing { animation: featTogglePulse 0.35s ease; }
+    @keyframes featTogglePulse {
+      0% { transform: scale(1); }
+      40% { transform: scale(0.9); }
+      100% { transform: scale(1); }
+    }
+
+
+
+
+
 
     .btn-group { display: flex; gap: 6px; width: 100%; }
     .btn-toggle { flex: 1; padding: 5px 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); border-radius: 16px; font-size: 0.75rem; font-weight: bold; cursor: pointer; text-align: center; }
@@ -3366,12 +3496,13 @@
 
           <div class="options-fold-wrapper" id="optionsFoldWrapper">
             <div class="options-fold-inner">
-              <div class="filter-tags" style="margin-top: 4px;">
+              <div class="filter-tags filter-presets" style="margin-top: 4px;">
                 <div class="ftag active" id="ftAll" onclick="setFilter('all')">すべて</div>
-                <div class="ftag" id="ftActive" onclick="setFilter('active')">🟢 在籍のみ</div>
-                <div class="ftag" id="ftFav" onclick="setFilter('fav')">🆂 当たり</div>
-                <div class="ftag" id="ftSuper" onclick="setFilter('super')">⭐️ オキニ</div>
-                <div class="ftag" id="ftBad" onclick="setFilter('bad')">🚨 ハズレ</div>
+                <div class="ftag" id="ftActive" onclick="setFilter('active')">在籍</div>
+                <div class="ftag" id="ftMonth_atari" onclick="setFilter('month_atari')">今月当たり</div>
+                <div class="ftag" id="ftSuper" onclick="setFilter('super')">オキニ</div>
+                <div class="ftag" id="ftBad" onclick="setFilter('bad')">ハズレ</div>
+                <div class="ftag ftag-more" id="ftMore" onclick="openMoreFilterSheet()">もっと<span class="ftag-more-count" id="ftMoreCount" style="display:none;">0</span></div>
               </div>
 
               <div class="btn-group">
@@ -3486,6 +3617,19 @@
               <input type="text" id="csStyleW" placeholder="W" oninput="updateInputColor(this, 'W')">
               <input type="text" id="csStyleH" placeholder="H" oninput="updateInputColor(this, 'H')">
             </div>
+          </div>
+
+          
+          <div class="form-group" id="csStyleFeatureGroup">
+            <label>スタイル特徴</label>
+            <input type="hidden" id="csStyleFeatures" value="[]">
+            <div class="style-feat-row" id="csStyleFeaturePills"></div>
+            <div class="style-feat-hint">タップでON/OFF。一覧から追加もできます</div>
+            <button type="button" class="style-feat-open-btn" style="margin-top:6px;" onclick="openStyleFeaturePicker('cs')">一覧から選ぶ・追加</button>
+          </div>
+
+          <div class="form-group"><label>タイプタグ（系統）</label>
+            <input type="text" id="csTypeTag" placeholder="例: 清楚系">
           </div>
 
           <div class="form-group" id="csScoreGroup"><label>⭐ 女の子基本評価（1〜5・プレイ記録の平均とは別に保存されます）</label>
@@ -4529,6 +4673,48 @@
     </div>
   </div>
 
+  
+  <div class="modal-overlay more-filter-sheet" id="moreFilterSheet" style="z-index:9100;">
+    <div class="modal-content">
+      <h3>詳細フィルター</h3>
+      <input type="search" class="more-filter-search" id="moreFilterSearch" placeholder="系統・プレイを検索" oninput="renderMoreFilterSheet()">
+      <div style="overflow-y:auto; flex:1; min-height:0;">
+        <div class="more-filter-section-label">系統タグ</div>
+        <div class="more-filter-chips" id="moreFilterTypeChips"></div>
+        <div class="more-filter-section-label">プレイ内容</div>
+        <div class="more-filter-chips" id="moreFilterPlayChips"></div>
+      </div>
+      <div style="display:flex; gap:8px; margin-top:12px; flex-shrink:0;">
+        <button type="button" class="close-btn" style="flex:1; background:#888;" onclick="clearMoreFilterDraft()">クリア</button>
+        <button type="button" class="close-btn" style="flex:1.4;" onclick="applyMoreFilterSheet()">適用</button>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="modal-overlay play-picker-modal" id="styleFeaturePickerModal" style="z-index:9200;">
+    <div class="modal-content">
+      <h3>スタイル特徴を選択</h3>
+      <input type="search" class="play-picker-search" id="styleFeatureSearch" placeholder="検索（例: 巨乳、パイパン…）" oninput="renderStyleFeaturePickerGrid()">
+      <div class="play-picker-grid" id="styleFeaturePickerGrid"></div>
+      <div class="play-picker-footer">
+        <button type="button" class="close-btn" style="flex:1; background:#888;" onclick="closeModal('styleFeaturePickerModal')">閉じる</button>
+        <button type="button" class="close-btn" style="flex:1.4;" onclick="confirmStyleFeaturePicker()">決定（<span id="styleFeaturePickerCount">0</span>）</button>
+      </div>
+    </div>
+  </div>
+  <div class="modal-overlay" id="customStyleFeatureModal" style="z-index:9300;">
+    <div class="modal-content" style="max-width:340px;">
+      <h3>カスタム特徴を追加</h3>
+      <div class="form-group"><label>名前</label><input type="text" id="customStyleFeatureLabel" placeholder="例: 柔らかおっぱい" maxlength="40"></div>
+      <div class="form-group"><label>短い説明（任意）</label><input type="text" id="customStyleFeatureDesc" placeholder="生々しめの一言" maxlength="80"></div>
+      <div style="display:flex; gap:8px;">
+        <button type="button" class="close-btn" style="flex:1; background:#888;" onclick="closeModal('customStyleFeatureModal')">取消</button>
+        <button type="button" class="close-btn" style="flex:1;" onclick="saveCustomStyleFeature()">追加</button>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-overlay" id="addModal">
     <div class="modal-content add-modal-renewed">
       <h3>✨ 利用記録を追加</h3>
@@ -4669,12 +4855,19 @@
           <summary>詳細（スタイル・評価・レポート）</summary>
           <div class="fold-body">
             <div style="display:flex; gap:6px; flex-wrap:wrap;">
-              <div class="form-group" style="flex:1; min-width:4.5em;"><label>T</label><input type="text" id="addStyleT" placeholder="158"></div>
-              <div class="form-group" style="flex:1; min-width:4.5em;"><label>B</label><input type="text" id="addStyleB" placeholder="B88"></div>
-              <div class="form-group" style="flex:1; min-width:4.5em;"><label>W</label><input type="text" id="addStyleW" placeholder="W58"></div>
-              <div class="form-group" style="flex:1; min-width:4.5em;"><label>H</label><input type="text" id="addStyleH" placeholder="H87"></div>
+              <div class="form-group" style="flex:1; min-width:4.5em;"><label>T</label><input type="text" id="addStyleT" placeholder="158" oninput="refreshStyleFeatureSuggestions()"></div>
+              <div class="form-group" style="flex:1; min-width:4.5em;"><label>B</label><input type="text" id="addStyleB" placeholder="82(C)" oninput="refreshStyleFeatureSuggestions()"></div>
+              <div class="form-group" style="flex:1; min-width:4.5em;"><label>W</label><input type="text" id="addStyleW" placeholder="W58" oninput="refreshStyleFeatureSuggestions()"></div>
+              <div class="form-group" style="flex:1; min-width:4.5em;"><label>H</label><input type="text" id="addStyleH" placeholder="H87" oninput="refreshStyleFeatureSuggestions()"></div>
             </div>
-            <div class="form-group"><label>タイプタグ</label><input type="text" id="addTypeTag" placeholder="例: 清楚系"></div>
+            <div class="form-group" id="addStyleFeatureGroup">
+              <label>スタイル特徴 <span style="font-weight:normal;color:var(--light-text);font-size:0.7rem;">（女の子に紐付く）</span></label>
+              <input type="hidden" id="addStyleFeatures" value="[]">
+              <div class="style-feat-row" id="addStyleFeaturePills"></div>
+              <div class="style-feat-hint" id="addStyleFeatureHint">よく使う特徴、またはスリーサイズからの提案</div>
+              <button type="button" class="style-feat-open-btn" style="margin-top:6px;" onclick="openStyleFeaturePicker('add')">一覧から選ぶ・追加</button>
+            </div>
+            <div class="form-group"><label>タイプタグ（女の子に紐付く）</label><input type="text" id="addTypeTag" placeholder="例: 清楚系"></div>
             <div id="addScoreGroup" style="display:flex; flex-direction:column; gap:6px;">
               <label style="font-size:0.78rem; font-weight:bold;">評価（1〜5）</label>
               <div style="display:flex; align-items:center; gap:6px;"><span style="width:3.5em;font-size:0.72rem;">ルックス</span><input type="range" id="addScoreLooks" min="1" max="5" value="3" oninput="document.getElementById('addScoreLooksVal').innerText=this.value"><span id="addScoreLooksVal">3</span></div>
@@ -6293,6 +6486,25 @@
       return { count: visits.length, lastLabel };
     }
 
+
+    function updateAddStyleFieldsVisibility(mode) {
+      // 既存の子は女の子別設定で管理するため、追加モーダルではスタイル系を隠す
+      const hide = mode === 'existing';
+      const group = document.getElementById('addStyleFeatureGroup');
+      if (group) group.style.display = hide ? 'none' : 'block';
+      const typeTag = document.getElementById('addTypeTag');
+      if (typeTag) {
+        const wrap = typeTag.closest('.form-group');
+        if (wrap) wrap.style.display = hide ? 'none' : 'block';
+      }
+      // スリーサイズ行
+      const tInput = document.getElementById('addStyleT');
+      if (tInput) {
+        const row = tInput.closest('div[style*="display:flex"]');
+        if (row) row.style.display = hide ? 'none' : 'flex';
+      }
+    }
+
     function applyAddCastMode(mode, name) {
       const modeEl = document.getElementById('addCastMode');
       if (modeEl) modeEl.value = mode;
@@ -6317,7 +6529,10 @@
           if (hint) hint.textContent = '（前回の店を入力済み）';
         } else if (hint) hint.textContent = '';
         if (typeof onCastNameInput === 'function') onCastNameInput(name);
+        if (typeof updateAddStyleFieldsVisibility === 'function') updateAddStyleFieldsVisibility('existing');
       } else {
+        if (typeof setSelectedStyleFeatures === 'function') setSelectedStyleFeatures([], 'add');
+        if (typeof updateAddStyleFieldsVisibility === 'function') updateAddStyleFieldsVisibility('new');
         if (badge) {
           badge.style.display = 'inline-block';
           badge.className = 'add-cast-mode-badge mode-new';
@@ -6645,6 +6860,11 @@
       wEl.value = styleParts.w || '';
       hEl.value = styleParts.h || '';
       [['T', tEl], ['B', bEl], ['W', wEl], ['H', hEl]].forEach(([t, el]) => updateInputColor(el, t));
+      if (typeof setSelectedStyleFeatures === 'function') {
+        setSelectedStyleFeatures(Array.isArray(info.styleFeatures) ? info.styleFeatures.slice() : [], 'cs');
+      }
+      const csType = document.getElementById('csTypeTag');
+      if (csType) csType.value = (info && info.typeTag) || '';
 
       const baseScore = info.baseScore || {};
       document.getElementById('csScoreGroup').style.display = ratingEnabled ? 'flex' : 'none';
@@ -6684,6 +6904,16 @@
       castData[name].oldName = document.getElementById('csOldName').value.trim();
       castData[name].link = document.getElementById('csLink').value.trim();
       castData[name].notes = document.getElementById('csNotes').value;
+      if (typeof getSelectedStyleFeatures === 'function') {
+        castData[name].styleFeatures = getSelectedStyleFeatures('cs').slice();
+      }
+      const csTypeTagEl = document.getElementById('csTypeTag');
+      if (csTypeTagEl) castData[name].typeTag = csTypeTagEl.value.trim();
+      if (typeof getSelectedStyleFeatures === 'function') {
+        castData[name].styleFeatures = getSelectedStyleFeatures('cs').slice();
+      }
+      const csTypeTag = document.getElementById('csTypeTag');
+      if (csTypeTag) castData[name].typeTag = csTypeTag.value.trim();
       castData[name].baseScore = {
         looks: parseInt(document.getElementById('csScoreLooks').value, 10) || 3,
         service: parseInt(document.getElementById('csScoreService').value, 10) || 3,
@@ -9781,6 +10011,11 @@
     }
 
     let currentView = 'cast', currentSort = 'count', currentFilter = 'all';
+    let moreFilterTypeTags = [];
+    let moreFilterPlayTags = [];
+    let moreFilterDraftType = [];
+    let moreFilterDraftPlay = [];
+
     function changeView(mode) { 
       currentView = mode; 
       document.getElementById('viewCast').className = 'btn-toggle' + (mode === 'cast' ? ' active' : ''); 
@@ -9790,7 +10025,195 @@
       render(); 
     }
     function changeSort(sort) { currentSort = sort; document.getElementById('sortCount').className = 'btn-toggle' + (sort === 'count' ? ' active' : ''); document.getElementById('sortRecent').className = 'btn-toggle' + (sort === 'recent' ? ' active' : ''); document.getElementById('sortName').className = 'btn-toggle' + (sort === 'name' ? ' active' : ''); render(); }
-    function setFilter(filter) { currentFilter = filter; document.querySelectorAll('.ftag').forEach(el => el.classList.remove('active')); document.getElementById('ft' + filter.charAt(0).toUpperCase() + filter.slice(1)).classList.add('active'); render(); }
+    function setFilter(filter) {
+      currentFilter = filter;
+      document.querySelectorAll('.filter-presets .ftag').forEach(el => {
+        if (el.id === 'ftMore') return;
+        el.classList.remove('active');
+      });
+      const idMap = { all: 'ftAll', active: 'ftActive', month_atari: 'ftMonth_atari', super: 'ftSuper', bad: 'ftBad', fav: 'ftFav' };
+      const el = document.getElementById(idMap[filter] || ('ft' + filter.charAt(0).toUpperCase() + filter.slice(1)));
+      if (el) el.classList.add('active');
+      if (filter === 'all') { moreFilterTypeTags = []; moreFilterPlayTags = []; }
+      updateMoreFilterBadge();
+      render();
+    }
+
+    function updateMoreFilterBadge() {
+      const n = moreFilterTypeTags.length + moreFilterPlayTags.length;
+      const btn = document.getElementById('ftMore');
+      const cnt = document.getElementById('ftMoreCount');
+      if (btn) btn.classList.toggle('has-tags', n > 0);
+      if (cnt) { cnt.textContent = String(n); cnt.style.display = n > 0 ? 'inline-block' : 'none'; }
+    }
+
+    function isVisitThisMonth(v) {
+      const now = new Date();
+      const y = parseInt(v.year, 10);
+      const m = (typeof parseMonthNum === 'function' ? parseMonthNum(v.month) : parseInt(String(v.month || '').replace(/\D/g, ''), 10));
+      return y === now.getFullYear() && m === (now.getMonth() + 1);
+    }
+
+    function visitHasTypeTag(v, tag) {
+      if (!tag) return true;
+      const t = (v.typeTag || '').trim();
+      if (!t) return false;
+      return t === tag || t.split(/[,、\/]/).map(s => s.trim()).includes(tag) || t.includes(tag);
+    }
+
+    function visitHasPlayTag(v, tag) {
+      if (!tag) return true;
+      return (Array.isArray(v.playTags) ? v.playTags : []).indexOf(tag) >= 0;
+    }
+
+    function visitMatchesMoreFilters(v) {
+      if (moreFilterTypeTags.length && !moreFilterTypeTags.every(t => visitHasTypeTag(v, t))) return false;
+      if (moreFilterPlayTags.length && !moreFilterPlayTags.every(t => visitHasPlayTag(v, t))) return false;
+      return true;
+    }
+
+    function castMatchesMoreFilters(c) {
+      if (!moreFilterTypeTags.length && !moreFilterPlayTags.length) return true;
+      for (const t of moreFilterTypeTags) { if (!c.visits.some(v => visitHasTypeTag(v, t))) return false; }
+      for (const t of moreFilterPlayTags) { if (!c.visits.some(v => visitHasPlayTag(v, t))) return false; }
+      return true;
+    }
+
+    function collectUsedTypeAndPlayTags() {
+      const typeMap = {}, playMap = {};
+      historyList.forEach(v => {
+        if (!v || v.pendingCheckIn) return;
+        const tt = (v.typeTag || '').trim();
+        if (tt) {
+          const parts = tt.split(/[,、\/]/).map(s => s.trim()).filter(Boolean);
+          (parts.length ? parts : [tt]).forEach(t => { typeMap[t] = (typeMap[t] || 0) + 1; });
+        }
+        (Array.isArray(v.playTags) ? v.playTags : []).forEach(p => { if (p) playMap[p] = (playMap[p] || 0) + 1; });
+      });
+      return {
+        types: Object.entries(typeMap).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'ja')),
+        plays: Object.entries(playMap).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'ja'))
+      };
+    }
+
+    function openMoreFilterSheet() {
+      moreFilterDraftType = moreFilterTypeTags.slice();
+      moreFilterDraftPlay = moreFilterPlayTags.slice();
+      const search = document.getElementById('moreFilterSearch');
+      if (search) search.value = '';
+      renderMoreFilterSheet();
+      document.getElementById('moreFilterSheet').style.display = 'flex';
+    }
+
+    function renderMoreFilterSheet() {
+      const q = ((document.getElementById('moreFilterSearch') || {}).value || '').trim().toLowerCase();
+      const { types, plays } = collectUsedTypeAndPlayTags();
+      const typeBox = document.getElementById('moreFilterTypeChips');
+      const playBox = document.getElementById('moreFilterPlayChips');
+      if (!typeBox || !playBox) return;
+      const typeList = types.filter(([t]) => !q || t.toLowerCase().includes(q));
+      const playList = plays.filter(([t]) => !q || t.toLowerCase().includes(q));
+      typeBox.innerHTML = typeList.length ? typeList.map(([t, n]) => {
+        const sel = moreFilterDraftType.indexOf(t) >= 0;
+        return '<button type="button" class="more-filter-chip' + (sel ? ' is-selected' : '') + '" onclick=\'toggleMoreFilterDraft("type",' + JSON.stringify(t) + ')\'>' +
+          escapeHTML(t) + ' <span style="opacity:0.65;font-size:0.65rem;">' + n + '</span></button>';
+      }).join('') : '<div class="more-filter-empty">まだ系統タグ付きの記録がありません</div>';
+      playBox.innerHTML = playList.length ? playList.map(([t, n]) => {
+        const sel = moreFilterDraftPlay.indexOf(t) >= 0;
+        return '<button type="button" class="more-filter-chip is-play' + (sel ? ' is-selected' : '') + '" onclick=\'toggleMoreFilterDraft("play",' + JSON.stringify(t) + ')\'>' +
+          escapeHTML(t) + ' <span style="opacity:0.65;font-size:0.65rem;">' + n + '</span></button>';
+      }).join('') : '<div class="more-filter-empty">まだプレイ内容付きの記録がありません</div>';
+    }
+
+    function toggleMoreFilterDraft(kind, tag) {
+      const arr = kind === 'play' ? moreFilterDraftPlay : moreFilterDraftType;
+      const i = arr.indexOf(tag);
+      if (i >= 0) arr.splice(i, 1); else arr.push(tag);
+      renderMoreFilterSheet();
+    }
+
+    function clearMoreFilterDraft() {
+      moreFilterDraftType = [];
+      moreFilterDraftPlay = [];
+      renderMoreFilterSheet();
+    }
+
+    function applyMoreFilterSheet() {
+      moreFilterTypeTags = moreFilterDraftType.slice();
+      moreFilterPlayTags = moreFilterDraftPlay.slice();
+      updateMoreFilterBadge();
+      closeModal('moreFilterSheet');
+      render();
+    }
+
+    function applyPresetFilterToCastList(list) {
+      if (currentFilter === 'active') {
+        list = list.filter(c => {
+          const info = castData[c.name];
+          if (!info) return false;
+          return info.status ? info.status === 'active' : !!info.link;
+        });
+      } else if (currentFilter === 'fav') {
+        list = list.filter(c => c.favCount >= 1);
+      } else if (currentFilter === 'super') {
+        list = list.filter(c => c.favCount >= 5);
+      } else if (currentFilter === 'bad') {
+        list = list.filter(c => c.hasNextNashi);
+      } else if (currentFilter === 'month_atari') {
+        list = list.filter(c => c.visits.some(v => isVisitThisMonth(v) && v.flags && String(v.flags).includes('🆂')));
+      }
+      return list.filter(c => castMatchesMoreFilters(c));
+    }
+
+    function applyPresetFilterToVisit(v) {
+      if (currentFilter === 'active') {
+        const info = castData[v.name];
+        if (!info) return false;
+        if (!(info.status ? info.status === 'active' : !!info.link)) return false;
+      } else if (currentFilter === 'fav') {
+        if (!(v.flags && String(v.flags).includes('🆂'))) return false;
+      } else if (currentFilter === 'super') {
+        let cnt = 0;
+        historyList.forEach(h => { if (h.name === v.name && h.flags && String(h.flags).includes('🆂')) cnt++; });
+        if (cnt < 5) return false;
+      } else if (currentFilter === 'bad') {
+        if (!(v.flags && String(v.flags).includes('⚔'))) return false;
+      } else if (currentFilter === 'month_atari') {
+        if (!(isVisitThisMonth(v) && v.flags && String(v.flags).includes('🆂'))) return false;
+      }
+      return visitMatchesMoreFilters(v);
+    }
+
+    function applyPresetFilterToStoreList(list) {
+      if (currentFilter === 'active') {
+        list = list.filter(s => s.visits.some(v => {
+          const info = castData[v.name];
+          if (!info) return false;
+          return info.status ? info.status === 'active' : !!info.link;
+        }));
+      } else if (currentFilter === 'fav') {
+        list = list.filter(s => s.visits.some(v => v.flags && String(v.flags).includes('🆂')));
+      } else if (currentFilter === 'super') {
+        list = list.filter(s => {
+          const byCast = {};
+          s.visits.forEach(v => { if (v.flags && String(v.flags).includes('🆂')) byCast[v.name] = (byCast[v.name] || 0) + 1; });
+          return Object.values(byCast).reduce((a, b) => a + b, 0) >= 5 || Object.values(byCast).some(n => n >= 5);
+        });
+      } else if (currentFilter === 'bad') {
+        list = list.filter(s => s.visits.some(v => v.flags && String(v.flags).includes('⚔')));
+      } else if (currentFilter === 'month_atari') {
+        list = list.filter(s => s.visits.some(v => isVisitThisMonth(v) && v.flags && String(v.flags).includes('🆂')));
+      }
+      if (moreFilterTypeTags.length || moreFilterPlayTags.length) {
+        list = list.filter(s => {
+          for (const t of moreFilterTypeTags) { if (!s.visits.some(v => visitHasTypeTag(v, t))) return false; }
+          for (const t of moreFilterPlayTags) { if (!s.visits.some(v => visitHasPlayTag(v, t))) return false; }
+          return true;
+        });
+      }
+      return list;
+    }
+
 
     /* 🏷️ 系統・店舗タグの選択設定 */
     function setTagFilter(type, value) {
@@ -9891,13 +10314,7 @@
 
     function renderCastView(target, map, keyword) {
       let list = Object.values(map);
-      if(currentFilter === 'active') list = list.filter(c => {
-        const info = castData[c.name];
-        if (!info) return false;
-        return info.status ? info.status === 'active' : !!info.link;
-      });
-      if(currentFilter === 'fav') list = list.filter(c => c.favCount >= 1);
-      if(currentFilter === 'super') list = list.filter(c => c.favCount >= 5);
+      list = applyPresetFilterToCastList(list);
 
       if(activeTagFilter.type === 'type') {
         list = list.filter(c => c.visits.some(v => v.typeTag && v.typeTag.includes(activeTagFilter.value)));
@@ -10037,7 +10454,10 @@
           </summary>
           <div class="anim-wrapper"><div class="anim-inner"><div class="card-body">
             <div class="style-row-with-ai">
-              ${renderStyleTags(info.style)}
+              <div class="cast-style-block">
+                ${renderStyleTags(info.style)}
+                ${typeof buildCastStyleFeaturePillsHtml === 'function' ? buildCastStyleFeaturePillsHtml(c.name) : ''}
+              </div>
               <button type="button" class="cast-ai-report-btn" onclick="openCastReportModal(event, '${c.name}')" title="AIレポート">
                 <i data-lucide="sparkles" class="cast-ai-report-icon"></i>
               </button>
@@ -10084,6 +10504,7 @@
       let any = false;
       monthKeys.forEach(key => {
         let items = groups[key].slice();
+        items = items.filter(i => !i.pendingCheckIn && applyPresetFilterToVisit(i));
         if (activeTagFilter.type === 'type') {
           items = items.filter(i => i.typeTag && i.typeTag.includes(activeTagFilter.value));
         } else if (activeTagFilter.type === 'store') {
@@ -10259,9 +10680,8 @@
 
       let list = Object.values(storeMap);
 
-      if (currentFilter === 'fav') list = list.filter(s => s.visits.some(v => v.flags && v.flags.includes('🆂')));
-      if (currentFilter === 'super') list = list.filter(s => s.visits.filter(v => v.flags && v.flags.includes('🆂')).length >= 5);
-      
+      list = applyPresetFilterToStoreList(list);
+
       if (activeTagFilter.type === 'type') {
         list = list.filter(s => s.visits.some(v => v.typeTag && v.typeTag.includes(activeTagFilter.value)));
       } else if (activeTagFilter.type === 'store') {
@@ -12030,7 +12450,258 @@
     }
 
 
-        function openAddModal() {
+    
+    const STYLE_FEATURE_CATALOG = [
+      { cat: '体型・バスト', label: '巨乳', desc: '手から溢れるほどボリュームのある大きい胸' },
+      { cat: '体型・バスト', label: '爆乳', desc: '視界を埋めるほど圧倒的な胸の大きさ' },
+      { cat: '体型・バスト', label: '美乳', desc: '形も張りも整った、見て触って美しい胸' },
+      { cat: '体型・バスト', label: '貧乳', desc: '控えめサイズの胸。隙間や感度を楽しむ' },
+      { cat: '体型・バスト', label: '微乳', desc: 'ほとんど平坦に近い、小さな膨らみ' },
+      { cat: '体型・バスト', label: '垂れ乳', desc: '重みで下に落ちる、柔らかい垂れた胸' },
+      { cat: '体型・バスト', label: '張りのある胸', desc: '上向きで弾力があり、触ると跳ね返す胸' },
+      { cat: '体型・バスト', label: '軟乳', desc: '指が沈み込むほど柔らかい胸の質感' },
+      { cat: '体型・バスト', label: 'スリム', desc: '全体に細く、線の綺麗な体' },
+      { cat: '体型・バスト', label: 'グラマー', desc: '胸と腰の差が強く、凹凸の目立つ体' },
+      { cat: '体型・バスト', label: 'ぽっちゃり', desc: '肉付きが良く、抱き心地の柔らかい体' },
+      { cat: '体型・バスト', label: '小柄', desc: '身長が低く、手元に収まるサイズ感' },
+      { cat: '体型・バスト', label: '高身長', desc: '脚が長く、モデルのような高さ' },
+      { cat: '乳首・乳輪', label: 'ピンク乳首', desc: '薄くて若い印象の、淡いピンクの乳首' },
+      { cat: '乳首・乳輪', label: '茶色乳首', desc: '色味の濃い、落ち着いた茶色の乳首' },
+      { cat: '乳首・乳輪', label: '小さい乳首', desc: '粒が小さく、摘まむと指に沈む乳首' },
+      { cat: '乳首・乳輪', label: '大きい乳首', desc: '存在感のある大きな乳首。舐め応えがある' },
+      { cat: '乳首・乳輪', label: '勃起しやすい乳首', desc: '触れるとすぐに硬く尖る敏感な乳首' },
+      { cat: '乳首・乳輪', label: '乳輪でかい', desc: '乳首の周りが大きく広がった目立つ乳輪' },
+      { cat: '乳首・乳輪', label: '乳輪ちいさい', desc: '乳首に沿った小さめの引き締まった乳輪' },
+      { cat: '下半身', label: '美尻', desc: '丸みとハリのバランスが良い、美しい尻' },
+      { cat: '下半身', label: '巨尻', desc: '両手でも余るほどの大きな尻' },
+      { cat: '下半身', label: '桃尻', desc: '桃のように丸く上向きに張った尻' },
+      { cat: '下半身', label: '美脚', desc: 'スラッと伸びた、ラインの綺麗な脚' },
+      { cat: '処理・局部', label: 'パイパン', desc: '毛が完全になく、肌が露出した状態' },
+      { cat: '処理・局部', label: 'ほぼパイパン', desc: '残毛がごく少ない、ほぼ無毛の処理' },
+      { cat: '処理・局部', label: '形が綺麗', desc: '見た目のバランスが整った局部' },
+      { cat: '処理・局部', label: 'ピンク', desc: '色味が薄く、若い印象の局部' },
+      { cat: '処理・局部', label: '濡れやすい', desc: 'すぐに愛液が溢れ、ぬるぬるになりやすい' },
+      { cat: '顔・雰囲気', label: '童顔', desc: '幼さが残る、あどけない顔立ち' },
+      { cat: '顔・雰囲気', label: '美人系', desc: '整った顔立ちで見惚れる美人タイプ' },
+      { cat: '顔・雰囲気', label: '清楚', desc: '上品で落ち着いた、清楚な雰囲気' },
+      { cat: '顔・雰囲気', label: 'ギャル', desc: '派手め・元気なギャル系の雰囲気' },
+      { cat: '顔・雰囲気', label: 'お姉さん系', desc: '余裕と色気のあるお姉さんタイプ' },
+      { cat: '顔・雰囲気', label: '妹系', desc: '年下っぽく甘えたくなる妹タイプ' },
+      { cat: '顔・雰囲気', label: '人妻・主婦系', desc: '生活感と色気のある人妻風' },
+      { cat: '顔・雰囲気', label: '癒し系', desc: '穏やかで、一緒にいるとホッとする' },
+      { cat: '顔・雰囲気', label: '色気・色っぽい', desc: '仕草や声に色気が滲む' },
+      { cat: '肌・その他', label: '色白', desc: '白く透明感のある肌' },
+      { cat: '肌・その他', label: '小麦肌', desc: '焼けた健康的な褐色の肌' },
+      { cat: '肌・その他', label: '美肌', desc: 'きめが細かく触り心地の良い肌' },
+      { cat: '肌・その他', label: '敏感', desc: '少し触れただけで声や反応が出やすい' },
+      { cat: '向き・印象', label: 'キスが上手い', desc: '舌の使い方が巧く、深く長いキスが得意' },
+      { cat: '向き・印象', label: 'フェラが上手い', desc: '咥え方・舌使いが上手く射精に導く' },
+      { cat: '向き・印象', label: '腰使いが良い', desc: '騎乗やグラインドの腰の動きが巧い' },
+      { cat: '向き・印象', label: '甘々', desc: '恋人みたいに甘い声と密着が得意' },
+      { cat: '向き・印象', label: '言葉責め上手', desc: '淫語で耳から興奮を煽るのが上手い' }
+    ];
+    let styleFeaturePickerTarget = 'add';
+    let styleFeaturePickerDraft = [];
+    function getCustomStyleFeatures() {
+      try { const raw = localStorage.getItem('custom_style_features_' + (currentUserName || 'guest')); return raw ? JSON.parse(raw) : []; } catch (e) { return []; }
+    }
+    function saveCustomStyleFeaturesList(list) {
+      localStorage.setItem('custom_style_features_' + (currentUserName || 'guest'), JSON.stringify(list || []));
+    }
+    function getAllStyleFeatureCatalog() {
+      return STYLE_FEATURE_CATALOG.concat(getCustomStyleFeatures().map(c => ({ cat: 'カスタム', label: c.label, desc: c.desc || '自分で追加した特徴', custom: true })));
+    }
+    function styleFeatureInputId(target) {
+      if (target === 'cs') return 'csStyleFeatures';
+      if (target === 'edit') return 'editStyleFeatures';
+      return 'addStyleFeatures';
+    }
+    function getSelectedStyleFeatures(target) {
+      const id = styleFeatureInputId(target || 'add');
+      try { const arr = JSON.parse((document.getElementById(id) || {}).value || '[]'); return Array.isArray(arr) ? arr : []; } catch (e) { return []; }
+    }
+    function setSelectedStyleFeatures(tags, target) {
+      target = target || 'add';
+      const arr = Array.isArray(tags) ? tags : [];
+      const el = document.getElementById(styleFeatureInputId(target));
+      if (el) el.value = JSON.stringify(arr);
+      if (target === 'add') renderAddStyleFeaturePills();
+      if (target === 'cs') renderCsStyleFeaturePills();
+    }
+    function renderCsStyleFeaturePills() {
+      const wrap = document.getElementById('csStyleFeaturePills');
+      if (!wrap) return;
+      const selected = getSelectedStyleFeatures('cs');
+      wrap.innerHTML = selected.length
+        ? selected.map(label => '<button type="button" class="style-feat-pill is-selected" onclick=\'toggleCsStyleFeature(' + JSON.stringify(label) + ')\'>' + escapeHTML(label) + '</button>').join('')
+        : '<span style="font-size:0.72rem;color:var(--light-text);">未設定（一覧から追加）</span>';
+    }
+    function toggleCsStyleFeature(label) {
+      const arr = getSelectedStyleFeatures('cs').slice();
+      const i = arr.indexOf(label);
+      if (i >= 0) arr.splice(i, 1); else arr.push(label);
+      setSelectedStyleFeatures(arr, 'cs');
+    }
+    function getGlobalStyleFeatureFrequency() {
+      const freq = {};
+      Object.keys(castData || {}).forEach(name => {
+        ((castData[name] && castData[name].styleFeatures) || []).forEach(f => { if (f) freq[f] = (freq[f] || 0) + 1; });
+      });
+      return Object.entries(freq).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'ja'));
+    }
+    function inferStyleFeaturesFromSizes() {
+      const inferred = [];
+      const bRaw = ((document.getElementById('addStyleB') || {}).value || '').trim();
+      const tRaw = ((document.getElementById('addStyleT') || {}).value || '').trim();
+      const wRaw = ((document.getElementById('addStyleW') || {}).value || '').trim();
+      const bm = bRaw.match(/(\d+)/), tm = tRaw.match(/(\d+)/), wm = wRaw.match(/(\d+)/);
+      if (bm) { const b = parseInt(bm[1], 10); if (b >= 95) inferred.push('爆乳'); else if (b >= 88) inferred.push('巨乳'); else if (b >= 83) inferred.push('美乳'); else if (b <= 75) inferred.push('貧乳'); }
+      if (tm) { const t = parseInt(tm[1], 10); if (t > 0 && t < 155) inferred.push('小柄'); if (t >= 165) inferred.push('高身長'); }
+      if (wm) { const w = parseInt(wm[1], 10); if (w > 0 && w <= 56) inferred.push('スリム'); if (w >= 65) inferred.push('ぽっちゃり'); }
+      return inferred;
+    }
+    const STYLE_FEATURE_DEFAULT_SUGGEST = ['巨乳', 'パイパン', '清楚', '色白', '敏感', 'ピンク乳首'];
+    function getStyleFeatureSuggestions() {
+      const selected = new Set(getSelectedStyleFeatures('add'));
+      const freq = getGlobalStyleFeatureFrequency().map(([k]) => k).filter(k => !selected.has(k));
+      if (freq.length) return freq.slice(0, 8);
+      const base = [];
+      inferStyleFeaturesFromSizes().forEach(k => { if (!selected.has(k) && base.indexOf(k) < 0) base.push(k); });
+      STYLE_FEATURE_DEFAULT_SUGGEST.forEach(k => { if (!selected.has(k) && base.indexOf(k) < 0) base.push(k); });
+      return base.slice(0, 8);
+    }
+    function renderAddStyleFeaturePills() {
+      const wrap = document.getElementById('addStyleFeaturePills');
+      const hint = document.getElementById('addStyleFeatureHint');
+      if (!wrap) return;
+      const selected = getSelectedStyleFeatures('add');
+      const freq = getGlobalStyleFeatureFrequency();
+      if (hint) {
+        if (freq.length) hint.textContent = 'よく付けている特徴を表示中';
+        else if (inferStyleFeaturesFromSizes().length) hint.textContent = 'スリーサイズから提案中';
+        else hint.textContent = 'おすすめの特徴を表示中';
+      }
+      const show = [];
+      selected.forEach(s => show.push({ label: s, selected: true }));
+      getStyleFeatureSuggestions().forEach(s => { if (selected.indexOf(s) < 0) show.push({ label: s, selected: false, suggest: true }); });
+      wrap.innerHTML = show.map(item => {
+        const cls = 'style-feat-pill' + (item.selected ? ' is-selected' : '') + (item.suggest ? ' is-suggest' : '');
+        return '<button type="button" class="' + cls + '" onclick=\'toggleAddStyleFeature(' + JSON.stringify(item.label) + ')\'>' + escapeHTML(item.label) + '</button>';
+      }).join('') || '<span style="font-size:0.72rem;color:var(--light-text);">特徴未選択</span>';
+    }
+    function toggleAddStyleFeature(label) {
+      const arr = getSelectedStyleFeatures('add').slice();
+      const i = arr.indexOf(label);
+      if (i >= 0) arr.splice(i, 1); else arr.push(label);
+      setSelectedStyleFeatures(arr, 'add');
+    }
+    function refreshStyleFeatureSuggestions() { renderAddStyleFeaturePills(); }
+    function openStyleFeaturePicker(target) {
+      styleFeaturePickerTarget = (target === 'edit' || target === 'cs') ? target : 'add';
+      styleFeaturePickerDraft = getSelectedStyleFeatures(styleFeaturePickerTarget).slice();
+      const search = document.getElementById('styleFeatureSearch');
+      if (search) search.value = '';
+      renderStyleFeaturePickerGrid();
+      document.getElementById('styleFeaturePickerModal').style.display = 'flex';
+    }
+    function renderStyleFeaturePickerGrid() {
+      const grid = document.getElementById('styleFeaturePickerGrid');
+      if (!grid) return;
+      const q = ((document.getElementById('styleFeatureSearch') || {}).value || '').trim().toLowerCase();
+      const all = getAllStyleFeatureCatalog();
+      const filtered = q ? all.filter(p => (p.label + p.desc + (p.cat || '')).toLowerCase().includes(q)) : all;
+      let html = '<button type="button" class="play-card is-custom" onclick="openCustomStyleFeatureModal()"><span class="play-card-title">＋ カスタム</span><span class="play-card-desc">自分だけの特徴を追加</span></button>';
+      let lastCat = '';
+      filtered.forEach(p => {
+        if (!q && p.cat && p.cat !== lastCat) { lastCat = p.cat; html += '<div class="play-cat-label">' + escapeHTML(p.cat) + '</div>'; }
+        const sel = styleFeaturePickerDraft.indexOf(p.label) >= 0;
+        html += '<button type="button" class="play-card' + (sel ? ' is-selected' : '') + '" onclick=\'toggleStyleFeaturePickerTag(' + JSON.stringify(p.label) + ')\'><span class="play-card-title">' + escapeHTML(p.label) + '</span><span class="play-card-desc">' + escapeHTML(p.desc || '') + '</span></button>';
+      });
+      grid.innerHTML = html;
+      const cnt = document.getElementById('styleFeaturePickerCount');
+      if (cnt) cnt.textContent = String(styleFeaturePickerDraft.length);
+    }
+    function toggleStyleFeaturePickerTag(label) {
+      const i = styleFeaturePickerDraft.indexOf(label);
+      if (i >= 0) styleFeaturePickerDraft.splice(i, 1); else styleFeaturePickerDraft.push(label);
+      renderStyleFeaturePickerGrid();
+    }
+    function confirmStyleFeaturePicker() {
+      setSelectedStyleFeatures(styleFeaturePickerDraft.slice(), styleFeaturePickerTarget);
+      closeModal('styleFeaturePickerModal');
+    }
+    function openCustomStyleFeatureModal() {
+      document.getElementById('customStyleFeatureLabel').value = '';
+      document.getElementById('customStyleFeatureDesc').value = '';
+      document.getElementById('customStyleFeatureModal').style.display = 'flex';
+    }
+    function saveCustomStyleFeature() {
+      const label = (document.getElementById('customStyleFeatureLabel').value || '').trim();
+      const desc = (document.getElementById('customStyleFeatureDesc').value || '').trim();
+      if (!label) { alert('名前を入力してください'); return; }
+      const list = getCustomStyleFeatures();
+      if (list.some(x => x.label === label) || STYLE_FEATURE_CATALOG.some(x => x.label === label)) { alert('同じ名前が既にあります'); return; }
+      list.push({ label: label, desc: desc });
+      saveCustomStyleFeaturesList(list);
+      if (styleFeaturePickerDraft.indexOf(label) < 0) styleFeaturePickerDraft.push(label);
+      closeModal('customStyleFeatureModal');
+      renderStyleFeaturePickerGrid();
+    }
+                function buildCastStyleFeaturePillsHtml(name) {
+      const feats = (castData[name] && castData[name].styleFeatures) || [];
+      if (!feats.length) return '';
+      const maxShow = 3;
+      const pills = feats.map((f, idx) => {
+        const tail = idx >= maxShow ? ' is-tail' : '';
+        return '<span class="cast-style-feat-pill' + tail + '">' + escapeHTML(f) + '</span>';
+      }).join('');
+      const restCount = Math.max(0, feats.length - maxShow);
+      if (!restCount) {
+        return '<div class="cast-feat-fold" data-cast-feat="' + escapeHTML(name).replace(/"/g, '') + '">' +
+          '<div class="cast-feat-track">' + pills + '</div></div>';
+      }
+      // ボタンは特徴の「最後」に置き、トラック内で自動的に末尾へ
+      return '<div class="cast-feat-fold" data-cast-feat="' + escapeHTML(name).replace(/"/g, '') + '">' +
+        '<div class="cast-feat-track">' + pills +
+        '<button type="button" class="cast-feat-toggle" onclick="toggleCastFeatFold(event, this)" title="スタイル特徴を展開">' +
+        '<span class="feat-arrow">▶</span><span class="feat-rest">' + restCount + '</span></button>' +
+        '</div></div>';
+    }
+
+    function toggleCastFeatFold(event, btn) {
+      if (event) { event.preventDefault(); event.stopPropagation(); }
+      const fold = btn && btn.closest ? btn.closest('.cast-feat-fold') : null;
+      if (!fold) return;
+      const willOpen = !fold.classList.contains('is-open');
+      fold.classList.toggle('is-open', willOpen);
+      const arrow = btn.querySelector('.feat-arrow');
+      const rest = btn.querySelector('.feat-rest');
+      const track = fold.querySelector('.cast-feat-track');
+      if (willOpen) {
+        if (arrow) arrow.textContent = '◀';
+        if (rest) rest.textContent = '閉じる';
+        btn.setAttribute('title', '閉じる');
+        // 展開後、末尾の閉じるボタンが見える位置へ
+        if (track) {
+          requestAnimationFrame(() => {
+            try { btn.scrollIntoView({ inline: 'nearest', block: 'nearest', behavior: 'smooth' }); } catch (e) {}
+          });
+        }
+      } else {
+        btn.classList.remove('is-closing');
+        void btn.offsetWidth;
+        btn.classList.add('is-closing');
+        if (arrow) arrow.textContent = '▶';
+        const tails = fold.querySelectorAll('.cast-style-feat-pill.is-tail');
+        if (rest) rest.textContent = String(tails.length);
+        btn.setAttribute('title', 'スタイル特徴を展開');
+        if (track) track.scrollLeft = 0;
+        setTimeout(() => btn.classList.remove('is-closing'), 360);
+      }
+    }
+
+
+    function openAddModal() {
       const d = new Date();
       document.getElementById('addYear').value = d.getFullYear();
       document.getElementById('addMonth').value = (d.getMonth() + 1) + '月';
@@ -12078,6 +12749,9 @@
       const hint = document.getElementById('addStoreHint');
       if (hint) hint.textContent = '';
       if (typeof applyPlayContentVisibility === 'function') applyPlayContentVisibility();
+      if (typeof setSelectedStyleFeatures === 'function') setSelectedStyleFeatures([], 'add');
+      if (typeof renderAddStyleFeaturePills === 'function') renderAddStyleFeaturePills();
+      if (typeof updateAddStyleFieldsVisibility === 'function') updateAddStyleFieldsVisibility('new');
       document.getElementById('addModal').style.display = 'flex';
     }
 
@@ -12151,12 +12825,17 @@
 
       const oldName = document.getElementById('addOldName').value;
       const link = document.getElementById('addLink').value;
+      const styleFeatures = (typeof getSelectedStyleFeatures === 'function') ? getSelectedStyleFeatures('add') : [];
+      const typeTagVal = (document.getElementById('addTypeTag') || {}).value || '';
       if (!castData[name]) {
-        castData[name] = { link: link, notes: '', oldName: oldName, style: style, letters: [] };
+        castData[name] = { link: link, notes: '', oldName: oldName, style: style, letters: [], styleFeatures: styleFeatures.slice(), typeTag: typeTagVal.trim() };
       } else {
         if(link) castData[name].link = link;
         if(oldName) castData[name].oldName = oldName;
         if(style) castData[name].style = style;
+        // 女の子別: スタイル特徴・系統は上書き（今回選んだ内容を本に）
+        if (styleFeatures.length) castData[name].styleFeatures = styleFeatures.slice();
+        if (typeTagVal.trim()) castData[name].typeTag = typeTagVal.trim();
       }
 
       if (rec.chekiImg) {
@@ -13930,7 +14609,7 @@ ${question}`;
       area.addEventListener('touchstart', (e) => {
         if (e.touches.length !== 1) return;
         // 横スワイプ専用UIはタブ切替の対象外
-        if (e.target.closest('.xl-grid-wrap, .sheet-ad-carousel, .home-widget-track, .map-scroll-body, .ai-chat-chip-row, .album-reader, .album-reader-track, .album-cover-grid, .album-cover, .album-scroll-body')) { tracking = false; return; }
+        if (e.target.closest('.xl-grid-wrap, .sheet-ad-carousel, .home-widget-track, .map-scroll-body, .ai-chat-chip-row, .album-reader, .album-reader-track, .album-cover-grid, .album-cover, .album-scroll-body, .cast-feat-fold, .cast-feat-track, .cast-feat-toggle')) { tracking = false; return; }
         startX = e.touches[0].clientX;
         startY = e.touches[0].clientY;
         tracking = true;
