@@ -1457,13 +1457,13 @@
     }
     .style-feat-hint { font-size: 0.68rem; color: var(--light-text); margin-top: 4px; width: 100%; }
     .cast-style-block {
-      flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px;
+      flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px;
     }
     .cast-feat-fold {
       display: flex; align-items: center; min-width: 0; width: 100%;
     }
     .cast-feat-track {
-      display: flex; flex-wrap: nowrap; align-items: center; gap: 4px;
+      display: flex; flex-wrap: nowrap; align-items: center; gap: 6px;
       width: 100%; min-width: 0;
       overflow-x: auto;
       overflow-y: hidden;
@@ -1474,11 +1474,13 @@
     .cast-feat-track::-webkit-scrollbar { display: none; }
     .cast-style-feat-pill {
       flex: 0 0 auto;
-      font-size: 0.65rem; font-weight: 800; padding: 2px 8px; border-radius: 6px;
+      display: inline-flex; align-items: center;
+      font-size: 0.7rem; font-weight: bold; padding: 2px 8px; border-radius: 8px;
       background: color-mix(in srgb, #9c36b5 12%, var(--bg-color));
-      color: #9c36b5; border: 1px solid color-mix(in srgb, #9c36b5 30%, var(--border-color));
+      color: #9c36b5; border: 1px solid color-mix(in srgb, #9c36b5 28%, var(--border-color));
       white-space: nowrap;
       box-sizing: border-box;
+      line-height: 1.35;
       transition: opacity 0.22s ease, transform 0.22s ease, max-width 0.28s ease, padding 0.28s ease, border-width 0.2s ease;
     }
     .cast-style-feat-pill.is-tail {
@@ -1504,7 +1506,7 @@
     }
     .cast-feat-toggle {
       flex: 0 0 auto;
-      height: 24px; min-width: 24px; padding: 0 8px; border-radius: 999px;
+      height: auto; min-height: 22px; min-width: 24px; padding: 2px 8px; border-radius: 8px;
       border: 1px solid var(--border-color); background: var(--bg-color); color: var(--accent-pink);
       font-size: 0.65rem; font-weight: 800; cursor: pointer; font-family: inherit;
       display: inline-flex; align-items: center; justify-content: center; gap: 3px;
@@ -1607,9 +1609,50 @@
     }
 
 
-    .card-body { padding: 10px 14px 12px; border-top: 1px dashed var(--border-color); background-color: var(--card-bg); display: flex; flex-direction: column; gap: 8px; width: 100%; }
+    .card-body { padding: 6px 14px 10px; border-top: 1px dashed var(--border-color); background-color: var(--card-bg); display: flex; flex-direction: column; gap: 6px; width: 100%; }
     
     .style-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 2px; }
+    
+    .cast-side-actions {
+      display: flex; flex-direction: column; align-items: center; gap: 5px;
+      flex-shrink: 0; padding-top: 0; align-self: flex-start;
+    }
+    .cast-side-btn {
+      width: 30px; height: 30px; border-radius: 50%;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg); color: var(--accent-pink);
+      display: inline-flex; align-items: center; justify-content: center;
+      cursor: pointer; padding: 0; font-family: inherit;
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+    .cast-side-btn:active { transform: scale(0.9); }
+    .cast-side-btn svg { width: 15px; height: 15px; stroke-width: 2; }
+    .cast-side-btn.is-empty { font-size: 0.75rem; }
+    .cast-side-btn.is-empty {
+      color: var(--light-text); border-style: dashed; cursor: default; opacity: 0.75;
+      font-size: 0.85rem; font-weight: 800;
+    }
+    .cast-side-btn.is-disabled { opacity: 0.4; cursor: not-allowed; }
+    .cast-store-chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 700;
+      color: var(--accent-pink); background: var(--soft-pink);
+      border: 1px solid var(--primary-pink); cursor: pointer; font-family: inherit;
+      max-width: 100%;
+    }
+    .cast-store-chip svg { width: 14px; height: 14px; flex-shrink: 0; stroke-width: 2.2; }
+    .cast-store-chip-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .store-card-fold.store-flash-target {
+      animation: storeFlashGuide 1.4s ease;
+      outline: 2px solid var(--accent-pink);
+      outline-offset: 2px;
+    }
+    @keyframes storeFlashGuide {
+      0% { transform: scale(1); box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-pink) 50%, transparent); }
+      30% { transform: scale(1.02); box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent-pink) 25%, transparent); }
+      100% { transform: scale(1); box-shadow: 0 4px 15px rgba(247, 37, 133, 0.08); }
+    }
+
     .style-row-with-ai { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; margin-bottom: 2px; }
     .style-row-with-ai .style-row { flex: 1; margin-bottom: 0; }
     .cast-ai-report-btn {
@@ -1709,8 +1752,62 @@
     .p-pink2 .style-pill-label { background-color: #f72585; } .p-pink2 .style-pill-val { background-color: #ffdeeb; color: #c2255c; }
     .p-pink3 .style-pill-label { background-color: #b5179e; } .p-pink3 .style-pill-val { background-color: #fcc2d7; color: #a61e4d; }
 
-    .card-middle-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; width: 100%; }
-    .notes-box { font-size: 0.75rem; color: var(--text-color); background: var(--bg-color); padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border-color); flex: 1; }
+    .card-middle-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; width: 100%; margin-top: 2px; }
+    .card-middle-row .cast-store-chip { flex-shrink: 0; margin-left: auto; }
+    
+    .notes-box {
+      position: relative;
+      flex: 1; min-width: 0; max-width: 100%;
+      font-size: 0.75rem; color: var(--text-color);
+      background: var(--bg-color); padding: 6px 0; border-radius: 8px;
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+      line-height: 1.45;
+      cursor: default;
+      -webkit-user-select: none; user-select: none;
+    }
+    .notes-box-viewport {
+      overflow: hidden;
+      width: 100%;
+      mask-image: linear-gradient(to right, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%);
+    }
+    .notes-box-track {
+      display: inline-flex;
+      align-items: center;
+      white-space: nowrap;
+      will-change: transform;
+      padding: 0 12px;
+    }
+    .notes-box-track .notes-box-seg {
+      display: inline-block;
+      padding-right: 48px;
+    }
+    .notes-box.is-static .notes-box-viewport {
+      mask-image: none;
+      -webkit-mask-image: none;
+    }
+    .notes-box.is-static .notes-box-track {
+      transform: none !important;
+      padding: 0 10px;
+    }
+    .notes-box.is-static .notes-box-seg {
+      padding-right: 0;
+    }
+    .notes-box-fade {
+      pointer-events: none;
+      position: absolute; top: 0; bottom: 0; width: 16px; z-index: 2;
+    }
+    .notes-box-fade-left {
+      left: 0;
+      background: linear-gradient(to right, var(--bg-color) 0%, color-mix(in srgb, var(--bg-color) 70%, transparent) 55%, transparent 100%);
+    }
+    .notes-box-fade-right {
+      right: 0;
+      background: linear-gradient(to left, var(--bg-color) 0%, color-mix(in srgb, var(--bg-color) 70%, transparent) 55%, transparent 100%);
+    }
+    .notes-box.is-static .notes-box-fade { display: none; }
+
     .btn-action-group { display: flex; gap: 4px; }
     .link-btn, .copy-btn, .letter-btn { font-size: 0.7rem; padding: 3px 8px; border-radius: 10px; cursor: pointer; border: 1px solid var(--primary-pink); background: var(--card-bg); color: var(--accent-pink); white-space: nowrap; }
     .letter-btn { background: var(--soft-pink); font-weight: bold; }
@@ -10012,6 +10109,115 @@
     let moreFilterDraftType = [];
     let moreFilterDraftPlay = [];
 
+
+
+    /* メモ LED風マーキー */
+    const notesMarqueeStates = new WeakMap();
+    let notesMarqueeRaf = null;
+
+    function buildNotesMarqueeHtml(text) {
+      const raw = (text || '').trim() || 'メモなし';
+      const empty = !(text || '').trim();
+      const safe = escapeHTML(raw);
+      return '<div class="notes-box' + (empty ? ' is-static' : '') + '" data-notes-marquee="' + (empty ? '0' : '1') + '">' +
+        '<div class="notes-box-fade notes-box-fade-left"></div>' +
+        '<div class="notes-box-fade notes-box-fade-right"></div>' +
+        '<div class="notes-box-viewport"><div class="notes-box-track">' +
+        '<span class="notes-box-seg">' + safe + '</span>' +
+        '<span class="notes-box-seg" aria-hidden="true">' + safe + '</span>' +
+        '</div></div></div>';
+    }
+
+    function initNotesMarquees(root) {
+      const scope = root || document;
+      scope.querySelectorAll('.notes-box[data-notes-marquee="1"]').forEach(box => {
+        if (notesMarqueeStates.has(box)) return;
+        const track = box.querySelector('.notes-box-track');
+        const segs = box.querySelectorAll('.notes-box-seg');
+        if (!track || segs.length < 1) return;
+        // 短いメモはスクロール不要
+        const viewport = box.querySelector('.notes-box-viewport');
+        const need = segs[0].scrollWidth > (viewport ? viewport.clientWidth - 8 : box.clientWidth);
+        if (!need) {
+          box.classList.add('is-static');
+          if (segs[1]) segs[1].style.display = 'none';
+          return;
+        }
+        const state = { x: 0, speed: 28, baseSpeed: 28, fastSpeed: 90, pressing: false, segW: segs[0].scrollWidth + 48 };
+        notesMarqueeStates.set(box, state);
+        const onStart = (e) => {
+          if (e.type === 'mousedown' || e.type === 'touchstart') {
+            state.pressing = true;
+            state.speed = state.fastSpeed;
+          }
+        };
+        const onEnd = () => {
+          state.pressing = false;
+          state.speed = state.baseSpeed;
+        };
+        box.addEventListener('mousedown', onStart);
+        box.addEventListener('mouseup', onEnd);
+        box.addEventListener('mouseleave', onEnd);
+        box.addEventListener('touchstart', onStart, { passive: true });
+        box.addEventListener('touchend', onEnd);
+        box.addEventListener('touchcancel', onEnd);
+        box.addEventListener('contextmenu', e => e.preventDefault());
+      });
+      startNotesMarqueeLoop();
+    }
+
+    function startNotesMarqueeLoop() {
+      if (notesMarqueeRaf) return;
+      let last = performance.now();
+      const tick = (now) => {
+        const dt = Math.min(0.05, (now - last) / 1000);
+        last = now;
+        document.querySelectorAll('.notes-box[data-notes-marquee="1"]:not(.is-static)').forEach(box => {
+          const state = notesMarqueeStates.get(box);
+          const track = box.querySelector('.notes-box-track');
+          if (!state || !track) return;
+          const seg = box.querySelector('.notes-box-seg');
+          if (seg) state.segW = seg.scrollWidth + 48;
+          if (state.segW <= 0) return;
+          state.x -= state.speed * dt;
+          if (state.x <= -state.segW) state.x += state.segW;
+          track.style.transform = 'translateX(' + state.x + 'px)';
+        });
+        notesMarqueeRaf = requestAnimationFrame(tick);
+      };
+      notesMarqueeRaf = requestAnimationFrame(tick);
+    }
+
+
+    function navigateToStoreCard(storeName, event) {
+      if (event) { event.preventDefault(); event.stopPropagation(); }
+      const name = (storeName || '').trim();
+      if (!name) return;
+      if (typeof changeView === 'function') changeView('store');
+      const fold = document.getElementById('optionsFoldWrapper');
+      if (fold && fold.classList.contains('is-closed')) {
+        try { toggleOptionsFold(); } catch (e) {}
+      }
+      const tryFocus = (attempt) => {
+        const cards = document.querySelectorAll('details.store-card-fold');
+        let target = null;
+        cards.forEach(el => {
+          if ((el.dataset.storeName || '') === name) target = el;
+        });
+        if (!target) {
+          if (attempt < 10) setTimeout(() => tryFocus(attempt + 1), 50);
+          return;
+        }
+        cards.forEach(el => el.classList.remove('store-flash-target'));
+        target.classList.add('store-flash-target');
+        try { target.open = true; } catch (e) {}
+        try { target.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+        catch (e) { target.scrollIntoView(); }
+        setTimeout(() => target.classList.remove('store-flash-target'), 1600);
+      };
+      setTimeout(() => tryFocus(0), 80);
+    }
+
     function changeView(mode) { 
       currentView = mode; 
       document.getElementById('viewCast').className = 'btn-toggle' + (mode === 'cast' ? ' active' : ''); 
@@ -10386,20 +10592,25 @@
           if(!latestType && c.visits[i].typeTag) latestType = c.visits[i].typeTag;
         }
         
-        const storeBadgeHtml = latestStore ? `<div onclick="setTagFilter('store', '${latestStore}')" style="display:inline-flex; align-items:center; gap:4px; padding:3px 8px; font-size:0.75rem; font-weight:bold; color:var(--accent-pink); background:var(--soft-pink); border-radius:12px; border:1px solid var(--primary-pink); cursor:pointer;" title="この店舗で絞り込み">🏬 ${latestStore}</div>` : '';
-        
-        let typeBadgesHtml = '';
-        // 系統はスタイル特徴に統合済み — カード上は特徴ピル側で表示。重複バッジは出さない
-        typeBadgesHtml = '';
-
-        const tagsRowHtml = (storeBadgeHtml || typeBadgesHtml) ? `<div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;">${storeBadgeHtml}${typeBadgesHtml}</div>` : '';
-
-        const validLettersCount = (info.letters || []).filter(l => l.imageUrl).length + c.visits.filter(v => v.chekiImg).length;
-        const letterBtnHtml = validLettersCount > 0 
-          ? `<button class="letter-btn" onclick="openLetterListModal(event, '${c.name}')">💌 手紙 (${validLettersCount})</button>` 
+                const storeBadgeHtml = latestStore
+          ? `<button type="button" class="cast-store-chip" onclick="navigateToStoreCard('${String(latestStore).replace(/\\/g,'\\\\').replace(/'/g,"\\'")}', event)" title="店舗一覧で表示">
+              <i data-lucide="map-pin"></i>
+              <span class="cast-store-chip-name">${String(latestStore).replace(/</g,'&lt;')}</span>
+            </button>`
           : '';
+        const tagsRowHtml = '';
 
-        const copyBtnHtml = `<button class="copy-btn" onclick="openExportCastModal(event, '${c.name}')">📤 友だちへ共有</button>`;
+        const validLettersCount = ((info.letters || []).filter(l => l.imageUrl).length + c.visits.filter(v => v.chekiImg).length);
+        const safeName = String(c.name).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+        const letterSideHtml = validLettersCount > 0
+          ? `<button type="button" class="cast-side-btn" onclick="openLetterListModal(event, '${safeName}')" title="手紙"><i data-lucide="mail"></i></button>`
+          : `<button type="button" class="cast-side-btn is-empty" title="手紙なし" disabled>0</button>`;
+        const profUrl = (info.link || '').trim();
+        const safeProf = profUrl.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+        const profileSideHtml = profUrl
+          ? `<button type="button" class="cast-side-btn" onclick="event.preventDefault();event.stopPropagation();window.open('${safeProf}','_blank')" title="プロフ"><i data-lucide="external-link"></i></button>`
+          : `<button type="button" class="cast-side-btn is-disabled" title="プロフ未設定" disabled><i data-lucide="external-link"></i></button>`;
+        const sideActionsHtml = `<div class="cast-side-actions">${letterSideHtml}${profileSideHtml}</div>`;
 
         const countColorClass = c.favCount>=5 ? 'badge-count-gold' : (c.hasNextNashi ? 'badge-count-gray' : '');
         const durationText = computeCastDurationText(c.visits);
@@ -10480,18 +10691,11 @@
                 ${renderStyleTags(info.style)}
                 ${typeof buildCastStyleFeaturePillsHtml === 'function' ? buildCastStyleFeaturePillsHtml(c.name) : ''}
               </div>
-              <button type="button" class="cast-ai-report-btn" onclick="openCastReportModal(event, '${c.name}')" title="AIレポート">
-                <i data-lucide="sparkles" class="cast-ai-report-icon"></i>
-              </button>
+${sideActionsHtml}
             </div>
-            ${tagsRowHtml}
             <div class="card-middle-row">
-              <div class="notes-box">${info.notes || 'メモなし'}</div>
-              <div class="btn-action-group">
-                ${letterBtnHtml}
-                ${copyBtnHtml}
-                ${isActive?`<button class="link-btn" onclick="window.open('${info.link}','_blank')">プロフ</button>`:''}
-              </div>
+              ${typeof buildNotesMarqueeHtml === 'function' ? buildNotesMarqueeHtml(info.notes) : `<div class="notes-box">${info.notes || 'メモなし'}</div>`}
+              ${storeBadgeHtml || ''}
             </div>
             ${radarBlockHtml}
             ${rowsHtml}
@@ -10499,7 +10703,8 @@
         grid.appendChild(details);
       });
       target.appendChild(grid);
-      if (window.lucide) lucide.createIcons();
+      if (window.lucide) if (typeof initNotesMarquees === 'function') initNotesMarquees(target);
+      lucide.createIcons();
     }
 
     function timelineVisitDateKey(v) {
@@ -14838,7 +15043,7 @@ ${question}`;
       area.addEventListener('touchstart', (e) => {
         if (e.touches.length !== 1) return;
         // 横スワイプ専用UIはタブ切替の対象外
-        if (e.target.closest('.xl-grid-wrap, .sheet-ad-carousel, .home-widget-track, .map-scroll-body, .ai-chat-chip-row, .album-reader, .album-reader-track, .album-cover-grid, .album-cover, .album-scroll-body, .cast-feat-fold, .cast-feat-track, .cast-feat-toggle')) { tracking = false; return; }
+        if (e.target.closest('.xl-grid-wrap, .sheet-ad-carousel, .home-widget-track, .map-scroll-body, .ai-chat-chip-row, .album-reader, .album-reader-track, .album-cover-grid, .album-cover, .album-scroll-body, .cast-feat-fold, .cast-feat-track, .cast-feat-toggle, .notes-box')) { tracking = false; return; }
         startX = e.touches[0].clientX;
         startY = e.touches[0].clientY;
         tracking = true;
