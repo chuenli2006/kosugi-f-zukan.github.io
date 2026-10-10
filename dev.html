@@ -95,6 +95,7 @@
       font-size: 0.65rem; line-height: 1.35; color: var(--light-text); font-weight: normal;
     }
     .play-card.is-custom { border-style: dashed; }
+    .play-card.is-custom-item { border-style: dashed; border-color: color-mix(in srgb, var(--accent-pink) 40%, var(--border-color)); }
     .play-picker-footer {
       display: flex; gap: 8px; margin-top: 10px; flex-shrink: 0;
     }
@@ -3628,7 +3629,7 @@
             <button type="button" class="style-feat-open-btn" style="margin-top:6px;" onclick="openStyleFeaturePicker('cs')">一覧から選ぶ・追加</button>
           </div>
 
-          <div class="form-group"><label>タイプタグ（系統）</label>
+          <div class="form-group" style="display:none;" aria-hidden="true"><label>タイプタグ（系統）</label>
             <input type="text" id="csTypeTag" placeholder="例: 清楚系">
           </div>
 
@@ -4413,7 +4414,7 @@
         <div class="cv-prefill-note">女の子名・店舗はイク予定から引き継ぎ済みです</div>
       </div>
       <div class="form-group"><label>実際の総額</label><input type="text" id="cvAmount" placeholder="例: 20000"></div>
-      <div class="form-group"><label>系統タグ</label><input type="text" id="cvTypeTag" placeholder="例: 清楚系"></div>
+      <div class="form-group" style="display:none;" aria-hidden="true"><label>系統タグ</label><input type="text" id="cvTypeTag"></div>
       <div class="form-group"><label>スリーサイズ（未登録の場合のみ）</label>
         <div style="display:flex; gap:6px;">
           <input type="text" id="cvStyleT" placeholder="T">
@@ -4679,7 +4680,7 @@
       <h3>詳細フィルター</h3>
       <input type="search" class="more-filter-search" id="moreFilterSearch" placeholder="系統・プレイを検索" oninput="renderMoreFilterSheet()">
       <div style="overflow-y:auto; flex:1; min-height:0;">
-        <div class="more-filter-section-label">系統タグ</div>
+        <div class="more-filter-section-label">スタイル特徴</div>
         <div class="more-filter-chips" id="moreFilterTypeChips"></div>
         <div class="more-filter-section-label">プレイ内容</div>
         <div class="more-filter-chips" id="moreFilterPlayChips"></div>
@@ -4867,7 +4868,7 @@
               <div class="style-feat-hint" id="addStyleFeatureHint">よく使う特徴、またはスリーサイズからの提案</div>
               <button type="button" class="style-feat-open-btn" style="margin-top:6px;" onclick="openStyleFeaturePicker('add')">一覧から選ぶ・追加</button>
             </div>
-            <div class="form-group"><label>タイプタグ（女の子に紐付く）</label><input type="text" id="addTypeTag" placeholder="例: 清楚系"></div>
+            <div class="form-group" style="display:none;" aria-hidden="true"><label>タイプタグ（統合済み）</label><input type="text" id="addTypeTag" placeholder=""></div>
             <div id="addScoreGroup" style="display:flex; flex-direction:column; gap:6px;">
               <label style="font-size:0.78rem; font-weight:bold;">評価（1〜5）</label>
               <div style="display:flex; align-items:center; gap:6px;"><span style="width:3.5em;font-size:0.72rem;">ルックス</span><input type="range" id="addScoreLooks" min="1" max="5" value="3" oninput="document.getElementById('addScoreLooksVal').innerText=this.value"><span id="addScoreLooksVal">3</span></div>
@@ -4999,15 +5000,8 @@
           <input type="text" id="editFlags">
         </div>
 
-        <div class="form-group"><label>系統タグ（複数時はカンマ区切り）</label>
-          <div class="flag-picker">
-            <button type="button" class="flag-btn" onclick="setEditTypeChar('アイドル系')">アイドル</button>
-            <button type="button" class="flag-btn" onclick="setEditTypeChar('清楚系')">清楚</button>
-            <button type="button" class="flag-btn" onclick="setEditTypeChar('ギャル系')">ギャル</button>
-            <button type="button" class="flag-btn" onclick="setEditTypeChar('女子アナ系')">女子アナ</button>
-            <button type="button" class="flag-btn flag-btn-clear" onclick="clearEditTypeInput()">クリア</button>
-          </div>
-          <input type="text" id="editTypeTag" placeholder="例: アイドル系, 清楚系">
+        <div class="form-group" style="display:none;" aria-hidden="true"><label>系統タグ（スタイル特徴に統合済み）</label>
+          <input type="text" id="editTypeTag" placeholder="">
         </div>
 
         <div class="form-group" id="editScoreGroup"><label>⭐ 五角形レーダー評価（1〜5）</label>
@@ -5615,6 +5609,8 @@
       scheduleList = savedSchedules ? JSON.parse(savedSchedules) : [];
       keepsList = savedKeeps ? JSON.parse(savedKeeps) : [];
       customFlags = savedCustomFlags ? JSON.parse(savedCustomFlags) : [];
+      if (typeof migrateTypeTagsToStyleFeatures === 'function') migrateTypeTagsToStyleFeatures();
+      if (typeof syncCustomStyleFeaturesFromCasts === 'function') syncCustomStyleFeaturesFromCasts();
       renderFlagFullLists();
       
       const savedShared = localStorage.getItem('user_shared_list_' + currentUserName);
@@ -10067,26 +10063,48 @@
     }
 
     function visitMatchesMoreFilters(v) {
-      if (moreFilterTypeTags.length && !moreFilterTypeTags.every(t => visitHasTypeTag(v, t))) return false;
+      if (moreFilterTypeTags.length) {
+        const ok = moreFilterTypeTags.every(t => {
+          if (visitHasTypeTag(v, t)) return true;
+          const feats = (castData[v.name] && castData[v.name].styleFeatures) || [];
+          return feats.indexOf(t) >= 0;
+        });
+        if (!ok) return false;
+      }
       if (moreFilterPlayTags.length && !moreFilterPlayTags.every(t => visitHasPlayTag(v, t))) return false;
       return true;
     }
 
+    function castHasStyleFeature(c, tag) {
+      if (!tag) return true;
+      const feats = (castData[c.name] && castData[c.name].styleFeatures) || [];
+      if (feats.indexOf(tag) >= 0) return true;
+      return c.visits.some(v => visitHasTypeTag(v, tag));
+    }
+
     function castMatchesMoreFilters(c) {
       if (!moreFilterTypeTags.length && !moreFilterPlayTags.length) return true;
-      for (const t of moreFilterTypeTags) { if (!c.visits.some(v => visitHasTypeTag(v, t))) return false; }
+      for (const t of moreFilterTypeTags) { if (!castHasStyleFeature(c, t)) return false; }
       for (const t of moreFilterPlayTags) { if (!c.visits.some(v => visitHasPlayTag(v, t))) return false; }
       return true;
     }
 
-    function collectUsedTypeAndPlayTags() {
+        function collectUsedTypeAndPlayTags() {
       const typeMap = {}, playMap = {};
+      // スタイル特徴（女の子別）をフィルター候補に
+      Object.keys(castData || {}).forEach(name => {
+        const feats = (castData[name] && castData[name].styleFeatures) || [];
+        feats.forEach(f => { if (f) typeMap[f] = (typeMap[f] || 0) + 1; });
+      });
+      // 互換: 未移行の typeTag も拾う
       historyList.forEach(v => {
         if (!v || v.pendingCheckIn) return;
         const tt = (v.typeTag || '').trim();
         if (tt) {
-          const parts = tt.split(/[,、\/]/).map(s => s.trim()).filter(Boolean);
-          (parts.length ? parts : [tt]).forEach(t => { typeMap[t] = (typeMap[t] || 0) + 1; });
+          String(tt).split(/[,、\/]/).map(s => s.trim()).filter(Boolean).forEach(p => {
+            const label = (typeof normalizeTypeTagToFeatureLabel === 'function') ? normalizeTypeTagToFeatureLabel(p) : p;
+            if (label) typeMap[label] = (typeMap[label] || 0) + 1;
+          });
         }
         (Array.isArray(v.playTags) ? v.playTags : []).forEach(p => { if (p) playMap[p] = (playMap[p] || 0) + 1; });
       });
@@ -10117,7 +10135,7 @@
         const sel = moreFilterDraftType.indexOf(t) >= 0;
         return '<button type="button" class="more-filter-chip' + (sel ? ' is-selected' : '') + '" onclick=\'toggleMoreFilterDraft("type",' + JSON.stringify(t) + ')\'>' +
           escapeHTML(t) + ' <span style="opacity:0.65;font-size:0.65rem;">' + n + '</span></button>';
-      }).join('') : '<div class="more-filter-empty">まだ系統タグ付きの記録がありません</div>';
+      }).join('') : '<div class="more-filter-empty">まだスタイル特徴がありません</div>';
       playBox.innerHTML = playList.length ? playList.map(([t, n]) => {
         const sel = moreFilterDraftPlay.indexOf(t) >= 0;
         return '<button type="button" class="more-filter-chip is-play' + (sel ? ' is-selected' : '') + '" onclick=\'toggleMoreFilterDraft("play",' + JSON.stringify(t) + ')\'>' +
@@ -10206,7 +10224,13 @@
       }
       if (moreFilterTypeTags.length || moreFilterPlayTags.length) {
         list = list.filter(s => {
-          for (const t of moreFilterTypeTags) { if (!s.visits.some(v => visitHasTypeTag(v, t))) return false; }
+          for (const t of moreFilterTypeTags) {
+            const ok = s.visits.some(v => {
+              const feats = (castData[v.name] && castData[v.name].styleFeatures) || [];
+              return feats.indexOf(t) >= 0 || visitHasTypeTag(v, t);
+            });
+            if (!ok) return false;
+          }
           for (const t of moreFilterPlayTags) { if (!s.visits.some(v => visitHasPlayTag(v, t))) return false; }
           return true;
         });
@@ -10317,7 +10341,7 @@
       list = applyPresetFilterToCastList(list);
 
       if(activeTagFilter.type === 'type') {
-        list = list.filter(c => c.visits.some(v => v.typeTag && v.typeTag.includes(activeTagFilter.value)));
+        list = list.filter(c => castHasStyleFeature(c, activeTagFilter.value));
       } else if(activeTagFilter.type === 'store') {
         list = list.filter(c => c.visits.some(v => v.storeName && v.storeName.trim() === activeTagFilter.value));
       }
@@ -10365,10 +10389,8 @@
         const storeBadgeHtml = latestStore ? `<div onclick="setTagFilter('store', '${latestStore}')" style="display:inline-flex; align-items:center; gap:4px; padding:3px 8px; font-size:0.75rem; font-weight:bold; color:var(--accent-pink); background:var(--soft-pink); border-radius:12px; border:1px solid var(--primary-pink); cursor:pointer;" title="この店舗で絞り込み">🏬 ${latestStore}</div>` : '';
         
         let typeBadgesHtml = '';
-        if (latestType) {
-          const types = latestType.split(',').map(t => t.trim()).filter(t => t);
-          typeBadgesHtml = types.map(t => `<div onclick="setTagFilter('type', '${t}')" style="display:inline-flex; align-items:center; gap:4px; padding:3px 8px; font-size:0.75rem; font-weight:bold; color:#f76707; background:#fff4e6; border-radius:12px; border:1px solid #ff922b; cursor:pointer;" title="この系統で絞り込み">${t}</div>`).join('');
-        }
+        // 系統はスタイル特徴に統合済み — カード上は特徴ピル側で表示。重複バッジは出さない
+        typeBadgesHtml = '';
 
         const tagsRowHtml = (storeBadgeHtml || typeBadgesHtml) ? `<div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;">${storeBadgeHtml}${typeBadgesHtml}</div>` : '';
 
@@ -10506,7 +10528,10 @@
         let items = groups[key].slice();
         items = items.filter(i => !i.pendingCheckIn && applyPresetFilterToVisit(i));
         if (activeTagFilter.type === 'type') {
-          items = items.filter(i => i.typeTag && i.typeTag.includes(activeTagFilter.value));
+          items = items.filter(i => {
+          const feats = (castData[i.name] && castData[i.name].styleFeatures) || [];
+          return feats.indexOf(activeTagFilter.value) >= 0 || (i.typeTag && i.typeTag.includes(activeTagFilter.value));
+        });
         } else if (activeTagFilter.type === 'store') {
           items = items.filter(i => i.storeName && i.storeName.trim() === activeTagFilter.value);
         }
@@ -10683,7 +10708,10 @@
       list = applyPresetFilterToStoreList(list);
 
       if (activeTagFilter.type === 'type') {
-        list = list.filter(s => s.visits.some(v => v.typeTag && v.typeTag.includes(activeTagFilter.value)));
+        list = list.filter(s => s.visits.some(v => {
+          const c = { name: v.name, visits: s.visits.filter(x => x.name === v.name) };
+          return castHasStyleFeature({ name: v.name, visits: [v] }, activeTagFilter.value) || visitHasTypeTag(v, activeTagFilter.value);
+        }));
       } else if (activeTagFilter.type === 'store') {
         list = list.filter(s => s.storeName === activeTagFilter.value);
       }
@@ -12502,7 +12530,82 @@
     ];
     let styleFeaturePickerTarget = 'add';
     let styleFeaturePickerDraft = [];
-    function getCustomStyleFeatures() {
+
+    function normalizeTypeTagToFeatureLabel(raw) {
+      let t = String(raw || '').trim();
+      if (!t) return '';
+      const stripped = t.replace(/系$/u, '');
+      const catalog = (typeof STYLE_FEATURE_CATALOG !== 'undefined') ? STYLE_FEATURE_CATALOG : [];
+      const hit = catalog.find(c => c.label === t || c.label === stripped);
+      if (hit) return hit.label;
+      return t;
+    }
+
+    function ensureCustomStyleFeature(label, desc) {
+      if (!label) return;
+      const catalog = (typeof STYLE_FEATURE_CATALOG !== 'undefined') ? STYLE_FEATURE_CATALOG : [];
+      if (catalog.some(c => c.label === label)) return;
+      const list = getCustomStyleFeatures();
+      if (list.some(x => x.label === label)) return;
+      list.push({ label: label, desc: desc || '旧系統タグから移行' });
+      saveCustomStyleFeaturesList(list);
+    }
+
+    /** 女の子の styleFeatures にだけあってカスタム一覧に無いものを同期 */
+    function syncCustomStyleFeaturesFromCasts() {
+      const catalog = (typeof STYLE_FEATURE_CATALOG !== 'undefined') ? STYLE_FEATURE_CATALOG : [];
+      const catalogSet = new Set(catalog.map(c => c.label));
+      Object.keys(castData || {}).forEach(name => {
+        const feats = (castData[name] && castData[name].styleFeatures) || [];
+        feats.forEach(f => {
+          if (!f || catalogSet.has(f)) return;
+          ensureCustomStyleFeature(f, '女の子データから同期');
+        });
+      });
+    }
+
+    function migrateTypeTagsToStyleFeatures() {
+      let changed = false;
+      historyList.forEach(v => {
+        if (!v || !v.name || !v.typeTag) return;
+        const parts = String(v.typeTag).split(/[,、\/]/).map(s => s.trim()).filter(Boolean);
+        if (!parts.length) return;
+        if (!castData[v.name]) castData[v.name] = { letters: [] };
+        if (!Array.isArray(castData[v.name].styleFeatures)) castData[v.name].styleFeatures = [];
+        parts.forEach(p => {
+          const label = normalizeTypeTagToFeatureLabel(p);
+          if (!label) return;
+          ensureCustomStyleFeature(label, '旧系統タグから移行');
+          if (castData[v.name].styleFeatures.indexOf(label) < 0) {
+            castData[v.name].styleFeatures.push(label);
+            changed = true;
+          }
+        });
+      });
+      Object.keys(castData || {}).forEach(name => {
+        const info = castData[name];
+        if (!info || !info.typeTag) return;
+        const parts = String(info.typeTag).split(/[,、\/]/).map(s => s.trim()).filter(Boolean);
+        if (!Array.isArray(info.styleFeatures)) info.styleFeatures = [];
+        parts.forEach(p => {
+          const label = normalizeTypeTagToFeatureLabel(p);
+          if (!label) return;
+          ensureCustomStyleFeature(label, '旧系統タグから移行');
+          if (info.styleFeatures.indexOf(label) < 0) {
+            info.styleFeatures.push(label);
+            changed = true;
+          }
+        });
+      });
+      // カスタム一覧に必ず載せる
+      syncCustomStyleFeaturesFromCasts();
+      if (changed && typeof saveData === 'function') {
+        try { saveData(); } catch (e) {}
+      }
+    }
+
+
+        function getCustomStyleFeatures() {
       try { const raw = localStorage.getItem('custom_style_features_' + (currentUserName || 'guest')); return raw ? JSON.parse(raw) : []; } catch (e) { return []; }
     }
     function saveCustomStyleFeaturesList(list) {
@@ -12598,13 +12701,14 @@
     function refreshStyleFeatureSuggestions() { renderAddStyleFeaturePills(); }
     function openStyleFeaturePicker(target) {
       styleFeaturePickerTarget = (target === 'edit' || target === 'cs') ? target : 'add';
+      if (typeof syncCustomStyleFeaturesFromCasts === 'function') syncCustomStyleFeaturesFromCasts();
       styleFeaturePickerDraft = getSelectedStyleFeatures(styleFeaturePickerTarget).slice();
       const search = document.getElementById('styleFeatureSearch');
       if (search) search.value = '';
       renderStyleFeaturePickerGrid();
       document.getElementById('styleFeaturePickerModal').style.display = 'flex';
     }
-    function renderStyleFeaturePickerGrid() {
+        function renderStyleFeaturePickerGrid() {
       const grid = document.getElementById('styleFeaturePickerGrid');
       if (!grid) return;
       const q = ((document.getElementById('styleFeatureSearch') || {}).value || '').trim().toLowerCase();
@@ -12613,15 +12717,156 @@
       let html = '<button type="button" class="play-card is-custom" onclick="openCustomStyleFeatureModal()"><span class="play-card-title">＋ カスタム</span><span class="play-card-desc">自分だけの特徴を追加</span></button>';
       let lastCat = '';
       filtered.forEach(p => {
-        if (!q && p.cat && p.cat !== lastCat) { lastCat = p.cat; html += '<div class="play-cat-label">' + escapeHTML(p.cat) + '</div>'; }
+        if (!q && p.cat && p.cat !== lastCat) {
+          lastCat = p.cat;
+          html += '<div class="play-cat-label">' + escapeHTML(p.cat) + '</div>';
+        }
         const sel = styleFeaturePickerDraft.indexOf(p.label) >= 0;
-        html += '<button type="button" class="play-card' + (sel ? ' is-selected' : '') + '" onclick=\'toggleStyleFeaturePickerTag(' + JSON.stringify(p.label) + ')\'><span class="play-card-title">' + escapeHTML(p.label) + '</span><span class="play-card-desc">' + escapeHTML(p.desc || '') + '</span></button>';
+        const isCustom = !!p.custom;
+        const longPress = isCustom
+          ? ' data-custom="1" oncontextmenu="event.preventDefault(); editCustomStyleFeature(' + JSON.stringify(p.label) + ');" ontouchstart="styleFeatLongPressStart(event, ' + JSON.stringify(p.label) + ')" ontouchend="styleFeatLongPressEnd()" ontouchmove="styleFeatLongPressEnd()" ontouchcancel="styleFeatLongPressEnd()"'
+          : '';
+        html += '<button type="button" class="play-card' + (sel ? ' is-selected' : '') + (isCustom ? ' is-custom-item' : '') + '" onclick=\'toggleStyleFeaturePickerTag(' + JSON.stringify(p.label) + ')\'' + longPress + '>' +
+          '<span class="play-card-title">' + escapeHTML(p.label) + (isCustom ? ' <span style="font-size:0.6rem;opacity:0.7;">カスタム</span>' : '') + '</span>' +
+          '<span class="play-card-desc">' + escapeHTML(p.desc || '') + '</span></button>';
       });
       grid.innerHTML = html;
       const cnt = document.getElementById('styleFeaturePickerCount');
       if (cnt) cnt.textContent = String(styleFeaturePickerDraft.length);
     }
+
+    let _styleFeatLPTimer = null;
+    let _styleFeatLPFired = false;
+    function styleFeatLongPressStart(event, label) {
+      _styleFeatLPFired = false;
+      if (_styleFeatLPTimer) clearTimeout(_styleFeatLPTimer);
+      _styleFeatLPTimer = setTimeout(() => {
+        _styleFeatLPFired = true;
+        if (navigator.vibrate) try { navigator.vibrate(20); } catch (e) {}
+        editCustomStyleFeature(label);
+      }, 520);
+    }
+    function styleFeatLongPressEnd() {
+      if (_styleFeatLPTimer) { clearTimeout(_styleFeatLPTimer); _styleFeatLPTimer = null; }
+    }
+
+    function editCustomStyleFeature(label) {
+      const list = getCustomStyleFeatures();
+      const item = list.find(x => x.label === label);
+      if (!item) return;
+      document.getElementById('customStyleFeatureLabel').value = item.label;
+      document.getElementById('customStyleFeatureDesc').value = item.desc || '';
+      document.getElementById('customStyleFeatureModal').dataset.editOriginal = item.label;
+      const title = document.querySelector('#customStyleFeatureModal h3');
+      if (title) title.textContent = 'カスタム特徴を編集';
+      const saveBtn = document.querySelector('#customStyleFeatureModal .close-btn:last-child');
+      // footer buttons
+      const body = document.querySelector('#customStyleFeatureModal .modal-content');
+      if (body && !document.getElementById('customStyleFeatureDeleteBtn')) {
+        // inject delete if editing - handled in open
+      }
+      ensureCustomStyleFeatureEditUI(true);
+      document.getElementById('customStyleFeatureModal').style.display = 'flex';
+    }
+
+    function ensureCustomStyleFeatureEditUI(isEdit) {
+      let del = document.getElementById('customStyleFeatureDeleteBtn');
+      const footer = document.querySelector('#customStyleFeatureModal .modal-content > div:last-child');
+      if (isEdit) {
+        if (!del && footer) {
+          del = document.createElement('button');
+          del.type = 'button';
+          del.id = 'customStyleFeatureDeleteBtn';
+          del.className = 'close-btn';
+          del.style.cssText = 'flex:1; background:#c92a2a;';
+          del.textContent = '削除';
+          del.onclick = function() { deleteCustomStyleFeature(); };
+          footer.insertBefore(del, footer.firstChild);
+        }
+        if (del) del.style.display = '';
+      } else if (del) {
+        del.style.display = 'none';
+      }
+    }
+
+    function openCustomStyleFeatureModal() {
+      document.getElementById('customStyleFeatureLabel').value = '';
+      document.getElementById('customStyleFeatureDesc').value = '';
+      delete document.getElementById('customStyleFeatureModal').dataset.editOriginal;
+      const title = document.querySelector('#customStyleFeatureModal h3');
+      if (title) title.textContent = 'カスタム特徴を追加';
+      ensureCustomStyleFeatureEditUI(false);
+      document.getElementById('customStyleFeatureModal').style.display = 'flex';
+    }
+
+    function deleteCustomStyleFeature() {
+      const orig = document.getElementById('customStyleFeatureModal').dataset.editOriginal;
+      if (!orig) return;
+      if (!confirm('「' + orig + '」を削除しますか？\n（女の子に付いている特徴からも外れます）')) return;
+      let list = getCustomStyleFeatures().filter(x => x.label !== orig);
+      saveCustomStyleFeaturesList(list);
+      Object.keys(castData || {}).forEach(name => {
+        const feats = (castData[name] && castData[name].styleFeatures) || [];
+        const next = feats.filter(f => f !== orig);
+        if (next.length !== feats.length) castData[name].styleFeatures = next;
+      });
+      styleFeaturePickerDraft = styleFeaturePickerDraft.filter(x => x !== orig);
+      if (typeof saveData === 'function') saveData();
+      closeModal('customStyleFeatureModal');
+      renderStyleFeaturePickerGrid();
+      if (typeof renderCsStyleFeaturePills === 'function') renderCsStyleFeaturePills();
+      if (typeof renderAddStyleFeaturePills === 'function') renderAddStyleFeaturePills();
+      if (typeof render === 'function') render();
+    }
+
+    function saveCustomStyleFeature() {
+      const label = (document.getElementById('customStyleFeatureLabel').value || '').trim();
+      const desc = (document.getElementById('customStyleFeatureDesc').value || '').trim();
+      if (!label) { alert('名前を入力してください'); return; }
+      const orig = document.getElementById('customStyleFeatureModal').dataset.editOriginal;
+      const list = getCustomStyleFeatures();
+      const catalog = (typeof STYLE_FEATURE_CATALOG !== 'undefined') ? STYLE_FEATURE_CATALOG : [];
+      if (orig) {
+        // 編集
+        if (label !== orig && (list.some(x => x.label === label) || catalog.some(x => x.label === label))) {
+          alert('同じ名前が既にあります'); return;
+        }
+        const idx = list.findIndex(x => x.label === orig);
+        if (idx >= 0) {
+          list[idx] = { label: label, desc: desc };
+        }
+        saveCustomStyleFeaturesList(list);
+        if (label !== orig) {
+          Object.keys(castData || {}).forEach(name => {
+            const feats = (castData[name] && castData[name].styleFeatures) || [];
+            const i = feats.indexOf(orig);
+            if (i >= 0) feats[i] = label;
+          });
+          const di = styleFeaturePickerDraft.indexOf(orig);
+          if (di >= 0) styleFeaturePickerDraft[di] = label;
+          if (typeof saveData === 'function') saveData();
+        }
+      } else {
+        if (list.some(x => x.label === label) || catalog.some(x => x.label === label)) {
+          alert('同じ名前が既にあります'); return;
+        }
+        list.push({ label: label, desc: desc });
+        saveCustomStyleFeaturesList(list);
+        if (styleFeaturePickerDraft.indexOf(label) < 0) styleFeaturePickerDraft.push(label);
+      }
+      closeModal('customStyleFeatureModal');
+      renderStyleFeaturePickerGrid();
+      if (typeof setSelectedStyleFeatures === 'function') {
+        setSelectedStyleFeatures(styleFeaturePickerDraft.slice(), styleFeaturePickerTarget);
+      }
+    }
+
+
+    function getAllStyleFeatureCatalog() {
+      return STYLE_FEATURE_CATALOG.concat(getCustomStyleFeatures().map(c => ({ cat: 'カスタム', label: c.label, desc: c.desc || '自分で追加した特徴', custom: true })));
+    }
     function toggleStyleFeaturePickerTag(label) {
+      if (_styleFeatLPFired) { _styleFeatLPFired = false; return; }
       const i = styleFeaturePickerDraft.indexOf(label);
       if (i >= 0) styleFeaturePickerDraft.splice(i, 1); else styleFeaturePickerDraft.push(label);
       renderStyleFeaturePickerGrid();
@@ -12630,24 +12875,9 @@
       setSelectedStyleFeatures(styleFeaturePickerDraft.slice(), styleFeaturePickerTarget);
       closeModal('styleFeaturePickerModal');
     }
-    function openCustomStyleFeatureModal() {
-      document.getElementById('customStyleFeatureLabel').value = '';
-      document.getElementById('customStyleFeatureDesc').value = '';
-      document.getElementById('customStyleFeatureModal').style.display = 'flex';
-    }
-    function saveCustomStyleFeature() {
-      const label = (document.getElementById('customStyleFeatureLabel').value || '').trim();
-      const desc = (document.getElementById('customStyleFeatureDesc').value || '').trim();
-      if (!label) { alert('名前を入力してください'); return; }
-      const list = getCustomStyleFeatures();
-      if (list.some(x => x.label === label) || STYLE_FEATURE_CATALOG.some(x => x.label === label)) { alert('同じ名前が既にあります'); return; }
-      list.push({ label: label, desc: desc });
-      saveCustomStyleFeaturesList(list);
-      if (styleFeaturePickerDraft.indexOf(label) < 0) styleFeaturePickerDraft.push(label);
-      closeModal('customStyleFeatureModal');
-      renderStyleFeaturePickerGrid();
-    }
-                function buildCastStyleFeaturePillsHtml(name) {
+    
+
+    function buildCastStyleFeaturePillsHtml(name) {
       const feats = (castData[name] && castData[name].styleFeatures) || [];
       if (!feats.length) return '';
       const maxShow = 3;
@@ -12660,7 +12890,6 @@
         return '<div class="cast-feat-fold" data-cast-feat="' + escapeHTML(name).replace(/"/g, '') + '">' +
           '<div class="cast-feat-track">' + pills + '</div></div>';
       }
-      // ボタンは特徴の「最後」に置き、トラック内で自動的に末尾へ
       return '<div class="cast-feat-fold" data-cast-feat="' + escapeHTML(name).replace(/"/g, '') + '">' +
         '<div class="cast-feat-track">' + pills +
         '<button type="button" class="cast-feat-toggle" onclick="toggleCastFeatFold(event, this)" title="スタイル特徴を展開">' +
