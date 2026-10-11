@@ -391,6 +391,85 @@
     .notes-box-seg .note-purple { color: #9c36b5; font-weight: 700; }
     .notes-box-seg .note-muted { color: var(--light-text); }
 
+    
+    /* ===== PC閲覧モード（案A） ===== */
+    body.pc-view-mode .header-btn-row .pill-btn:not(.pc-login-ok) {
+      display: none !important;
+    }
+    body.pc-view-mode .fab-container,
+    body.pc-view-mode #fabContainer {
+      display: none !important;
+    }
+    body.pc-view-mode .nav-item:not(.pc-nav-allowed) {
+      display: none !important;
+    }
+    body.pc-view-mode .floating-nav {
+      justify-content: center;
+      gap: 12px;
+      max-width: 360px;
+    }
+    body.pc-view-mode .pc-nav-allowed {
+      display: flex !important;
+      flex: 1;
+    }
+    /* マイ図鑑内：月別以外の切替を隠す */
+    body.pc-view-mode #viewCast,
+    body.pc-view-mode #viewStore,
+    body.pc-view-mode #viewMap,
+    body.pc-view-mode .view-toggle-row .btn-toggle:not(#viewTimeline) {
+      display: none !important;
+    }
+    body.pc-view-mode .filter-bar,
+    body.pc-view-mode .search-sort-row,
+    body.pc-view-mode #selectedTypeBadge,
+    body.pc-view-mode .style-filter-row,
+    body.pc-view-mode .more-filter-btn {
+      display: none !important;
+    }
+    /* 設定はログイン関連以外は後でJSでもガード */
+    body.pc-view-mode .pc-guide-banner {
+      display: flex !important;
+    }
+    .pc-guide-banner {
+      display: none;
+      align-items: flex-start;
+      gap: 12px;
+      margin: 0 0 14px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid var(--border-color);
+      background: color-mix(in srgb, var(--soft-pink) 55%, var(--card-bg));
+      box-shadow: var(--shadow);
+    }
+    .pc-guide-banner-text {
+      flex: 1;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      color: var(--text-color);
+    }
+    .pc-guide-banner-text strong {
+      color: var(--accent-pink);
+      font-weight: 800;
+    }
+    .pc-guide-banner-note {
+      font-size: 0.72rem;
+      color: var(--light-text);
+      margin-top: 4px;
+    }
+    body.pc-view-mode .sidebar-area .pill-btn:not(.pc-login-ok) {
+      /* トーク等は隠す場合がある */
+    }
+    body:not(.pc-view-mode) .pc-only-nav-label {
+      display: none !important;
+    }
+
+    body.pc-view-mode .mobile-only-nav-label { display: none !important; }
+    body.pc-view-mode .pc-only-nav-label { display: inline !important; }
+    body:not(.pc-view-mode) .pc-only-nav-label { display: none !important; }
+    body:not(.pc-view-mode) .mobile-only-nav-label { display: inline !important; }
+    body:not(.pc-view-mode) #nav-albumMain { display: none !important; }
+
+
     .kosugi-maru-regular {
       font-family: "Kosugi Maru", sans-serif;
       font-weight: 400;
@@ -476,6 +555,19 @@
       overflow: hidden;
       isolation: isolate;
     }
+    
+    .grid > details.cast-card,
+    .grid > .cast-card,
+    #sharedContent > details.cast-card {
+      align-self: start;
+      height: auto;
+      max-height: none;
+    }
+    .grid > details.cast-card:not([open]),
+    .grid > details.cast-card:not([open]) {
+      /* 閉じたカードはヘッダー高さのみ */
+    }
+
     details.cast-card.m3-ripple-host,
     details.store-card.m3-ripple-host {
       overflow: hidden;
@@ -1081,7 +1173,28 @@
       transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
     .fab-container.open .fab-add { transform: rotate(45deg); }
+    @media (min-width: 768px) {
+      .fab-container.open .fab-add { transform: none !important; }
+    }
     
+
+    @media (min-width: 768px) {
+      details.cast-card .style-row-with-ai {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px 14px;
+        align-items: start;
+      }
+      details.cast-card .cast-style-block { min-width: 0; }
+      details.cast-card .card-middle-row .cast-store-chip {
+        align-self: center;
+      }
+      /* ホバーでカードを軽く */
+      details.cast-card:hover {
+        box-shadow: 0 6px 20px rgba(247, 37, 133, 0.12);
+      }
+    }
+
     @media (max-width: 767px) {
       .fab-container.hide-on-mobile { display: none !important; }
     }
@@ -1796,6 +1909,15 @@
       font-weight: 700;
     }
 
+
+    /* カード展開時に同一行の他カードが引き伸ばされない */
+    .grid, #sharedContent {
+      align-items: start;
+    }
+    .grid > *, #sharedContent > * {
+      align-self: start;
+      height: fit-content;
+    }
 
     .card-body { padding: 6px 14px 10px; border-top: 1px dashed var(--border-color); background-color: var(--card-bg); display: flex; flex-direction: column; gap: 6px; width: 100%; }
     
@@ -2575,46 +2697,57 @@
     @keyframes settingsSectionSlide { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes avatarPop { from { transform: scale(0.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-    .settings-profile-card {
+        .settings-profile-card {
+      position: relative;
       display: flex; flex-direction: column; align-items: center; gap: 12px;
-      padding: 26px 16px; margin-bottom: 16px; width: 100%; box-sizing: border-box;
-      background: linear-gradient(135deg, var(--soft-pink), var(--card-bg));
+      padding: 28px 16px 22px; margin-bottom: 16px; width: 100%; box-sizing: border-box;
+      background: linear-gradient(135deg, color-mix(in srgb, var(--accent-pink) 18%, var(--card-bg)), var(--card-bg));
       border-radius: 20px; border: 1px solid var(--border-color); box-shadow: var(--shadow);
       animation: settingsFadeIn 0.4s ease both;
       transition: background 0.4s ease, border-color 0.3s ease;
     }
     .settings-profile-card[data-gv-type="cost_crafter"] {
-      background: linear-gradient(135deg, #e6fcf5, var(--card-bg));
-      border-color: #96f2d7;
+      background: linear-gradient(135deg, color-mix(in srgb, #0ca678 22%, var(--card-bg)), var(--card-bg));
+      border-color: color-mix(in srgb, #0ca678 40%, var(--border-color));
     }
     .settings-profile-card[data-gv-type="self_saver"] {
-      background: linear-gradient(135deg, #e7f5ff, var(--card-bg));
-      border-color: #a5d8ff;
+      background: linear-gradient(135deg, color-mix(in srgb, #339af0 22%, var(--card-bg)), var(--card-bg));
+      border-color: color-mix(in srgb, #339af0 40%, var(--border-color));
     }
     .settings-profile-card[data-gv-type="balanced"] {
-      background: linear-gradient(135deg, var(--soft-pink), var(--card-bg));
-      border-color: var(--primary-pink);
+      background: linear-gradient(135deg, color-mix(in srgb, var(--accent-pink) 22%, var(--card-bg)), var(--card-bg));
+      border-color: color-mix(in srgb, var(--accent-pink) 45%, var(--border-color));
     }
     .settings-profile-card[data-gv-type="loyal_fan"] {
-      background: linear-gradient(135deg, #f3f0ff, var(--card-bg));
-      border-color: #d0bfff;
+      background: linear-gradient(135deg, color-mix(in srgb, #7950f2 24%, var(--card-bg)), var(--card-bg));
+      border-color: color-mix(in srgb, #7950f2 42%, var(--border-color));
     }
     .settings-profile-card[data-gv-type="careful_reviewer"] {
-      background: linear-gradient(135deg, #f1f3f5, var(--card-bg));
-      border-color: #ced4da;
+      background: linear-gradient(135deg, color-mix(in srgb, #868e96 20%, var(--card-bg)), var(--card-bg));
+      border-color: color-mix(in srgb, #868e96 40%, var(--border-color));
     }
     .settings-gv-type-row {
       display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%;
     }
     .settings-gv-type-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 2;
       display: inline-flex; align-items: center; gap: 6px;
-      font-size: 0.78rem; font-weight: bold; padding: 5px 12px; border-radius: 999px;
-      background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-color);
+      font-size: 0.72rem; font-weight: 800; padding: 5px 11px; border-radius: 999px;
+      background: color-mix(in srgb, var(--card-bg) 88%, transparent);
+      border: 1px solid var(--border-color); color: var(--text-color);
+      cursor: pointer;
+      font-family: inherit;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      transition: transform 0.12s ease, border-color 0.15s ease;
     }
-    .settings-gv-type-badge .gv-type-dot {
-      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+    .settings-gv-type-badge:active { transform: scale(0.96); }
+    .settings-gv-type-badge:hover {
+      border-color: var(--accent-pink);
     }
-    .settings-gv-type-desc {
+.settings-gv-type-desc {
       font-size: 0.68rem; color: var(--light-text); text-align: center; line-height: 1.4;
       max-width: 280px;
     }
@@ -2789,17 +2922,38 @@
 
     /* 🖼️ スマートモード：円形アイコンバッジシステム（Android設定画面風） */
     .icon-badge { display: inline-flex; align-items: center; justify-content: center; }
-    .icon-badge .smart-icon { display: none; width: 18px; height: 18px; }
+    .icon-badge .smart-icon { display: none; width: 18px; height: 18px; stroke: currentColor; }
+    /* スマート：ライト＝明るい後ろ × 暗いアイコン */
+    [data-ui-mode="smart"] {
+      --icon-bg: #F1F5F9;
+      --icon-color: #475569;
+    }
+    /* ダーク：ライト時と逆（暗い後ろ × 明るいアイコン）で視認性確保 */
+    html[data-ui-mode="smart"][data-theme="midnight"],
+    html[data-ui-mode="smart"][data-theme="velvet"],
+    html[data-ui-mode="smart"][data-theme="cyber"],
+    html[data-ui-mode="smart"][data-theme="berry"],
+    html[data-ui-mode="smart"][data-theme="mocha"] {
+      --icon-bg: #475569;
+      --icon-color: #F1F5F9;
+    }
     [data-ui-mode="smart"] .icon-badge {
       width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
       background: var(--icon-bg, #F1F5F9); color: var(--icon-color, #475569);
     }
     [data-ui-mode="smart"] .icon-badge .emoji-icon { display: none; }
-    [data-ui-mode="smart"] .icon-badge .smart-icon { display: block; }
+    [data-ui-mode="smart"] .icon-badge .smart-icon {
+      display: block;
+      color: var(--icon-color, #475569);
+      stroke: currentColor;
+    }
     [data-ui-mode="smart"] .icon-badge.icon-badge-sm { width: 22px; height: 22px; }
     [data-ui-mode="smart"] .icon-badge.icon-badge-sm .smart-icon { width: 12px; height: 12px; }
-
-    .icon-cat-home      { --icon-bg: #FFE6EA; --icon-color: #F72585; }
+    [data-ui-mode="smart"] .smart-icon {
+      color: var(--icon-color, #475569);
+      stroke: currentColor;
+    }
+.icon-cat-home      { --icon-bg: #FFE6EA; --icon-color: #F72585; }
     .icon-cat-catalog   { --icon-bg: #F3E8FF; --icon-color: #7E22CE; }
     .icon-cat-calendar  { --icon-bg: #E0F2FE; --icon-color: #0284C7; }
     .icon-cat-analytics { --icon-bg: #DCFCE7; --icon-color: #15803D; }
@@ -2823,7 +2977,119 @@
     .icon-cat-cloud     { --icon-bg: #DBEAFE; --icon-color: #1D4ED8; }
     .icon-cat-goodvalue { --icon-bg: #ECFDF5; --icon-color: #059669; }
 
-    /* ⭐ ステータスタグ：スマートモード時はピルバッジ形式に統一 */
+            /* ダークモード：外(浅い)と中(深い)を入れ替え（emerald/violetはライト扱い） */
+    html[data-theme="midnight"] .icon-cat-home,
+    html[data-theme="velvet"] .icon-cat-home,
+    html[data-theme="cyber"] .icon-cat-home,
+    html[data-theme="berry"] .icon-cat-home,
+    html[data-theme="mocha"] .icon-cat-home { --icon-bg: #F72585; --icon-color: #FFE6EA; }
+    html[data-theme="midnight"] .icon-cat-catalog,
+    html[data-theme="velvet"] .icon-cat-catalog,
+    html[data-theme="cyber"] .icon-cat-catalog,
+    html[data-theme="berry"] .icon-cat-catalog,
+    html[data-theme="mocha"] .icon-cat-catalog { --icon-bg: #7E22CE; --icon-color: #F3E8FF; }
+    html[data-theme="midnight"] .icon-cat-calendar,
+    html[data-theme="velvet"] .icon-cat-calendar,
+    html[data-theme="cyber"] .icon-cat-calendar,
+    html[data-theme="berry"] .icon-cat-calendar,
+    html[data-theme="mocha"] .icon-cat-calendar { --icon-bg: #0284C7; --icon-color: #E0F2FE; }
+    html[data-theme="midnight"] .icon-cat-analytics,
+    html[data-theme="velvet"] .icon-cat-analytics,
+    html[data-theme="cyber"] .icon-cat-analytics,
+    html[data-theme="berry"] .icon-cat-analytics,
+    html[data-theme="mocha"] .icon-cat-analytics { --icon-bg: #15803D; --icon-color: #DCFCE7; }
+    html[data-theme="midnight"] .icon-cat-menu,
+    html[data-theme="velvet"] .icon-cat-menu,
+    html[data-theme="cyber"] .icon-cat-menu,
+    html[data-theme="berry"] .icon-cat-menu,
+    html[data-theme="mocha"] .icon-cat-menu { --icon-bg: #475569; --icon-color: #F1F5F9; }
+    html[data-theme="midnight"] .icon-cat-add,
+    html[data-theme="velvet"] .icon-cat-add,
+    html[data-theme="cyber"] .icon-cat-add,
+    html[data-theme="berry"] .icon-cat-add,
+    html[data-theme="mocha"] .icon-cat-add { --icon-bg: #DB2777; --icon-color: #FCE7F3; }
+    html[data-theme="midnight"] .icon-cat-share,
+    html[data-theme="velvet"] .icon-cat-share,
+    html[data-theme="cyber"] .icon-cat-share,
+    html[data-theme="berry"] .icon-cat-share,
+    html[data-theme="mocha"] .icon-cat-share { --icon-bg: #C2410C; --icon-color: #FFEDD5; }
+    html[data-theme="midnight"] .icon-cat-cast,
+    html[data-theme="velvet"] .icon-cat-cast,
+    html[data-theme="cyber"] .icon-cat-cast,
+    html[data-theme="berry"] .icon-cat-cast,
+    html[data-theme="mocha"] .icon-cat-cast { --icon-bg: #E11D48; --icon-color: #FFE4E6; }
+    html[data-theme="midnight"] .icon-cat-map,
+    html[data-theme="velvet"] .icon-cat-map,
+    html[data-theme="cyber"] .icon-cat-map,
+    html[data-theme="berry"] .icon-cat-map,
+    html[data-theme="mocha"] .icon-cat-map { --icon-bg: #0F766E; --icon-color: #CCFBF1; }
+    html[data-theme="midnight"] .icon-cat-store,
+    html[data-theme="velvet"] .icon-cat-store,
+    html[data-theme="cyber"] .icon-cat-store,
+    html[data-theme="berry"] .icon-cat-store,
+    html[data-theme="mocha"] .icon-cat-store { --icon-bg: #A16207; --icon-color: #FEF08A; }
+    html[data-theme="midnight"] .icon-cat-keep,
+    html[data-theme="velvet"] .icon-cat-keep,
+    html[data-theme="cyber"] .icon-cat-keep,
+    html[data-theme="berry"] .icon-cat-keep,
+    html[data-theme="mocha"] .icon-cat-keep { --icon-bg: #A16207; --icon-color: #FEF08A; }
+    html[data-theme="midnight"] .icon-cat-security,
+    html[data-theme="velvet"] .icon-cat-security,
+    html[data-theme="cyber"] .icon-cat-security,
+    html[data-theme="berry"] .icon-cat-security,
+    html[data-theme="mocha"] .icon-cat-security { --icon-bg: #334155; --icon-color: #E2E8F0; }
+    html[data-theme="midnight"] .icon-cat-settings,
+    html[data-theme="velvet"] .icon-cat-settings,
+    html[data-theme="cyber"] .icon-cat-settings,
+    html[data-theme="berry"] .icon-cat-settings,
+    html[data-theme="mocha"] .icon-cat-settings { --icon-bg: #374151; --icon-color: #F3F4F6; }
+    html[data-theme="midnight"] .icon-cat-help,
+    html[data-theme="velvet"] .icon-cat-help,
+    html[data-theme="cyber"] .icon-cat-help,
+    html[data-theme="berry"] .icon-cat-help,
+    html[data-theme="mocha"] .icon-cat-help { --icon-bg: #4338CA; --icon-color: #E0E7FF; }
+    html[data-theme="midnight"] .icon-cat-theme,
+    html[data-theme="velvet"] .icon-cat-theme,
+    html[data-theme="cyber"] .icon-cat-theme,
+    html[data-theme="berry"] .icon-cat-theme,
+    html[data-theme="mocha"] .icon-cat-theme { --icon-bg: #BE185D; --icon-color: #FDF2F8; }
+    html[data-theme="midnight"] .icon-cat-devlock,
+    html[data-theme="velvet"] .icon-cat-devlock,
+    html[data-theme="cyber"] .icon-cat-devlock,
+    html[data-theme="berry"] .icon-cat-devlock,
+    html[data-theme="mocha"] .icon-cat-devlock { --icon-bg: #78716C; --icon-color: #F5F5F4; }
+    html[data-theme="midnight"] .icon-cat-ai,
+    html[data-theme="velvet"] .icon-cat-ai,
+    html[data-theme="cyber"] .icon-cat-ai,
+    html[data-theme="berry"] .icon-cat-ai,
+    html[data-theme="mocha"] .icon-cat-ai { --icon-bg: #7C3AED; --icon-color: #EDE9FE; }
+    html[data-theme="midnight"] .icon-cat-aichat,
+    html[data-theme="velvet"] .icon-cat-aichat,
+    html[data-theme="cyber"] .icon-cat-aichat,
+    html[data-theme="berry"] .icon-cat-aichat,
+    html[data-theme="mocha"] .icon-cat-aichat { --icon-bg: #2563EB; --icon-color: #DBEAFE; }
+    html[data-theme="midnight"] .icon-cat-album,
+    html[data-theme="velvet"] .icon-cat-album,
+    html[data-theme="cyber"] .icon-cat-album,
+    html[data-theme="berry"] .icon-cat-album,
+    html[data-theme="mocha"] .icon-cat-album { --icon-bg: #D9480F; --icon-color: #FFE8CC; }
+    html[data-theme="midnight"] .icon-cat-visibility,
+    html[data-theme="velvet"] .icon-cat-visibility,
+    html[data-theme="cyber"] .icon-cat-visibility,
+    html[data-theme="berry"] .icon-cat-visibility,
+    html[data-theme="mocha"] .icon-cat-visibility { --icon-bg: #0369A1; --icon-color: #F0F9FF; }
+    html[data-theme="midnight"] .icon-cat-cloud,
+    html[data-theme="velvet"] .icon-cat-cloud,
+    html[data-theme="cyber"] .icon-cat-cloud,
+    html[data-theme="berry"] .icon-cat-cloud,
+    html[data-theme="mocha"] .icon-cat-cloud { --icon-bg: #1D4ED8; --icon-color: #DBEAFE; }
+    html[data-theme="midnight"] .icon-cat-goodvalue,
+    html[data-theme="velvet"] .icon-cat-goodvalue,
+    html[data-theme="cyber"] .icon-cat-goodvalue,
+    html[data-theme="berry"] .icon-cat-goodvalue,
+    html[data-theme="mocha"] .icon-cat-goodvalue { --icon-bg: #059669; --icon-color: #ECFDF5; }
+
+/* ⭐ ステータスタグ：スマートモード時はピルバッジ形式に統一 */
     [data-ui-mode="smart"] .status-badge,
     [data-ui-mode="smart"] .super-tag,
     [data-ui-mode="smart"] .ftag {
@@ -3318,29 +3584,144 @@
 
     @media (min-width: 768px) {
       .app-layout { padding: 24px; max-width: 1200px; flex-direction: row; gap: 24px; align-items: flex-start; }
-      .sidebar-area { width: 260px; flex-shrink: 0; position: sticky; top: 24px; height: calc(100vh - 48px); gap: 16px; }
+      .sidebar-area {
+        width: 260px; flex-shrink: 0; position: sticky; top: 24px;
+        height: calc(100vh - 48px); gap: 16px;
+        display: flex; flex-direction: column;
+      }
       header { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 20px 14px; box-shadow: var(--shadow); margin-bottom: 0; }
       header h1.hidden { opacity: 1; transform: none; height: auto; margin-bottom: 2px; pointer-events: auto; }
       .floating-nav { position: static; transform: none; flex-direction: column; width: 100%; padding: 12px; border-radius: var(--radius); gap: 4px; align-items: stretch; }
-      .nav-item { flex-direction: row; justify-content: flex-start; padding: 12px 16px; font-size: 0.95rem; border-radius: 10px; gap: 12px; white-space: normal; }
+      .nav-item { flex-direction: row; justify-content: flex-start; padding: 12px 16px; font-size: 0.95rem; border-radius: 10px; gap: 12px; white-space: normal; min-height: 44px; }
       .nav-item:hover { background: var(--bg-color); }
       .nav-item.active { background: var(--soft-pink); transform: none; }
       .nav-icon { font-size: 1.2rem; width: 24px; text-align: center; }
-      .fab-container { position: static; width: 100%; }
-      .fab-menu { position: absolute; bottom: 65px; right: 0; align-items: flex-end; }
-      .fab-add { width: 100%; height: 52px; border-radius: 26px; font-size: 1.05rem; gap: 6px; }
+
+      /* FAB: 元の右下位置＋カード式折りたたみ（45°回転なし） */
+      .fab-container {
+        position: fixed !important;
+        bottom: 28px; right: 28px;
+        width: auto; margin-top: 0;
+        display: flex !important;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 10px;
+        z-index: 900;
+      }
       .fab-container.hide-on-mobile { display: flex !important; }
-      .fab-text { display: inline; }
+      .fab-container.open .fab-add {
+        transform: none !important; /* PCは＋のまま */
+      }
+      .fab-menu {
+        position: absolute;
+        right: 0;
+        bottom: calc(100% + 12px);
+        left: auto;
+        width: 220px;
+        padding: 10px;
+        border-radius: 16px;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        box-shadow: 0 10px 28px rgba(0,0,0,0.14);
+        align-items: stretch;
+        gap: 6px;
+        transform-origin: bottom right;
+        opacity: 0;
+        transform: translateY(8px) scale(0.96);
+        pointer-events: none;
+        transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      .fab-container.open .fab-menu {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        pointer-events: auto;
+      }
+      .fab-sub-btn {
+        width: 100%;
+        justify-content: flex-start;
+        border-radius: 12px;
+        padding: 11px 12px;
+        box-shadow: none;
+        border: 1px solid transparent;
+      }
+      .fab-sub-btn:hover {
+        background: var(--soft-pink);
+        border-color: var(--primary-pink);
+      }
+      .fab-add {
+        width: 56px; height: 56px; min-width: 56px;
+        border-radius: 28px;
+        font-size: 1.5rem;
+      }
+      .fab-text { display: none; }
+
       .content-area { flex: 1; min-width: 0; }
-      .modal-content { max-width: 500px; padding: 24px; }
-      .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
-      #sharedContent { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
+      .modal-content { max-width: 560px; padding: 24px; }
+      .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: start; }
+      #sharedContent { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: start; }
       .shared-card { margin-bottom: 0; }
+
+      /* 女の子カード PC 2カラム */
+      details.cast-card .card-body {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px 16px;
+        align-items: start;
+        padding: 12px 16px 14px;
+      }
+      details.cast-card .style-row-with-ai {
+        grid-column: 1;
+        grid-row: 1;
+        margin-bottom: 0;
+      }
+      details.cast-card .style-row-with-ai .cast-side-actions {
+        /* 右カラムへ移動風：absoluteではなくグリッド再配置は構造上難しいので横並び最適化 */
+      }
+      details.cast-card .card-middle-row {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        align-items: center;
+      }
+      details.cast-card .notes-box {
+        max-height: 36px;
+        min-height: 34px;
+      }
+      details.cast-card .cast-side-actions {
+        flex-direction: column;
+        gap: 8px;
+        padding-top: 0;
+      }
+      details.cast-card .cast-side-btn {
+        width: 36px; height: 36px; min-width: 36px; min-height: 36px;
+      }
+      details.cast-card .cast-side-btn svg { width: 17px; height: 17px; }
+      details.cast-card .radar-block,
+      details.cast-card .visit-rows,
+      details.cast-card .card-body > .radar-wrap,
+      details.cast-card .card-body > div:not(.style-row-with-ai):not(.card-middle-row) {
+        grid-column: 1 / -1;
+      }
+
+      /* タブ切替は短いフェードのみ */
+      .tab-content {
+        animation: tabFadeSoft 0.18s ease forwards !important;
+      }
+      @keyframes tabFadeSoft {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
+      /* PCマウスではリップル非表示 */
+      .m3-ripple { display: none !important; }
+
       .home-top-panel { flex-direction: row; max-width: 100%; }
       .home-widget-stack, .home-card-a, .home-card-b, .home-card-c { flex: 1; }
       #viewHome.active { height: auto; min-height: 70vh; }
       .dash-charts-row { flex-direction: row; gap: 14px; }
       .dash-charts-row > .stat-section { flex: 1; margin-bottom: 14px; }
+
     }
 
     /* --- 🔒 セキュリティ・画面ロック --- */
@@ -3376,10 +3757,74 @@
     .lock-dots { display: flex; gap: 14px; margin: 4px 0 6px; }
     .lock-dot { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.8); background: transparent; transition: background 0.15s, transform 0.15s; }
     .lock-dot.filled { background: #fff; transform: scale(1.15); }
-    .lock-keypad { display: grid; grid-template-columns: repeat(3, 64px); gap: 14px; }
-    .lock-key { width: 64px; height: 64px; border-radius: 50%; border: none; background: rgba(255,255,255,0.14); color: #fff; font-size: 1.3rem; font-weight: bold; cursor: pointer; backdrop-filter: blur(4px); }
-    .lock-key:active { background: rgba(255,255,255,0.3); }
-    .lock-key.lock-key-empty { background: transparent; cursor: default; }
+    .lock-keypad { display: grid; grid-template-columns: repeat(3, 64px); gap: 14px; position: relative; z-index: 3; }
+    .lock-key {
+      position: relative; overflow: hidden;
+      width: 64px; height: 64px; border-radius: 50%; border: none;
+      background: rgba(255,255,255,0.14); color: #fff; font-size: 1.3rem; font-weight: bold;
+      cursor: pointer; backdrop-filter: blur(4px);
+      font-family: inherit;
+      transition: transform 0.1s cubic-bezier(0.22, 1, 0.36, 1), background 0.1s ease;
+      -webkit-tap-highlight-color: transparent;
+      z-index: 3;
+    }
+    .lock-key:active { background: rgba(255,255,255,0.28); }
+    .lock-key.is-press {
+      transform: scale(0.92);
+      background: rgba(255, 180, 200, 0.28);
+    }
+    .lock-key.lock-key-empty { background: transparent !important; cursor: default; overflow: visible; }
+    .lock-key.lock-key-empty:active,
+    .lock-key.lock-key-empty.is-press { transform: none; background: transparent !important; }
+    .lock-key-ripple {
+      position: absolute; left: 50%; top: 50%;
+      width: 12px; height: 12px; margin: -6px 0 0 -6px;
+      border-radius: 50%;
+      pointer-events: none;
+      background: radial-gradient(circle, rgba(255,150,180,0.8) 0%, rgba(255,120,160,0.35) 42%, transparent 70%);
+      animation: lockHeartRipple 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    @keyframes lockHeartRipple {
+      0% { transform: scale(0.55); opacity: 0.8; }
+      100% { transform: scale(2.8); opacity: 0; }
+    }
+    #appLockScreen.lock-unlocking {
+      pointer-events: none !important;
+      animation: lockWarmRise 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    #appLockScreen.lock-unlocking::after {
+      content: '';
+      position: absolute; left: 0; right: 0; bottom: 0;
+      height: 140%;
+      pointer-events: none;
+      z-index: 1;
+      background: linear-gradient(
+        to top,
+        rgba(255, 200, 220, 0.55) 0%,
+        rgba(255, 230, 240, 0.35) 35%,
+        rgba(255, 250, 252, 0.12) 65%,
+        transparent 100%
+      );
+      animation: lockLightFill 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    #appLockScreen.lock-unlocking > * {
+      position: relative; z-index: 2;
+      animation: lockContentMelt 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    @keyframes lockWarmRise {
+      0% { opacity: 1; filter: blur(0); }
+      70% { opacity: 0.55; filter: blur(2px); }
+      100% { opacity: 0; filter: blur(5px); }
+    }
+    @keyframes lockLightFill {
+      0% { transform: translateY(32%); opacity: 0.2; }
+      50% { opacity: 0.65; }
+      100% { transform: translateY(-10%); opacity: 0; }
+    }
+    @keyframes lockContentMelt {
+      0% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+      100% { opacity: 0; transform: translateY(-8px) scale(1.015); filter: blur(4px); }
+    }
     .lock-biometric-btn { margin-top: 6px; background: rgba(255,255,255,0.14); color: #fff; border: 1px solid rgba(255,255,255,0.5); padding: 10px 18px; border-radius: 22px; font-size: 0.85rem; font-weight: bold; cursor: pointer; }
     .lock-biometric-btn:active { transform: scale(0.96); }
     .lock-error-msg { color: #ffa8a8; font-size: 0.75rem; min-height: 1em; }
@@ -3493,17 +3938,17 @@
     </div>
     <div class="lock-error-msg" id="lockErrorMsg"></div>
     <div class="lock-keypad">
-      <button type="button" class="lock-key" onclick="lockKeyPress('1')">1</button>
-      <button type="button" class="lock-key" onclick="lockKeyPress('2')">2</button>
-      <button type="button" class="lock-key" onclick="lockKeyPress('3')">3</button>
-      <button type="button" class="lock-key" onclick="lockKeyPress('4')">4</button>
-      <button type="button" class="lock-key" onclick="lockKeyPress('5')">5</button>
-      <button type="button" class="lock-key" onclick="lockKeyPress('6')">6</button>
-      <button type="button" class="lock-key" onclick="lockKeyPress('7')">7</button>
-      <button type="button" class="lock-key" onclick="lockKeyPress('8')">8</button>
-      <button type="button" class="lock-key" onclick="lockKeyPress('9')">9</button>
+      <button type="button" class="lock-key" onclick="lockKeyPress('1', event)">1</button>
+      <button type="button" class="lock-key" onclick="lockKeyPress('2', event)">2</button>
+      <button type="button" class="lock-key" onclick="lockKeyPress('3', event)">3</button>
+      <button type="button" class="lock-key" onclick="lockKeyPress('4', event)">4</button>
+      <button type="button" class="lock-key" onclick="lockKeyPress('5', event)">5</button>
+      <button type="button" class="lock-key" onclick="lockKeyPress('6', event)">6</button>
+      <button type="button" class="lock-key" onclick="lockKeyPress('7', event)">7</button>
+      <button type="button" class="lock-key" onclick="lockKeyPress('8', event)">8</button>
+      <button type="button" class="lock-key" onclick="lockKeyPress('9', event)">9</button>
       <button type="button" class="lock-key lock-key-question" id="lockQuestionBtn">？</button>
-      <button type="button" class="lock-key" onclick="lockKeyPress('0')">0</button>
+      <button type="button" class="lock-key" onclick="lockKeyPress('0', event)">0</button>
       <button type="button" class="lock-key" onclick="lockKeyBackspace()">⌫</button>
     </div>
     <button type="button" class="lock-biometric-btn" id="lockBiometricBtn" style="display:none;" onclick="attemptBiometricUnlock()">👆 生体認証で解除</button>
@@ -3632,7 +4077,7 @@
         <h1 id="headerTitle">童貞の風俗履歴図鑑</h1>
         <div class="header-sub">マイガールノートブック</div>
         <div class="header-btn-row">
-          <button class="pill-btn" onclick="switchMainTab('settings')" title="ユーザー設定・テーマ変更">
+          <button class="pill-btn pc-login-ok" onclick="switchMainTab('settings')" title="ユーザー設定・テーマ変更">
             <span class="icon-badge icon-cat-settings icon-badge-sm"><span class="emoji-icon">👤</span><i data-lucide="user" class="smart-icon"></i></span>
             <span>ユーザー: <span id="currentUserNameDisplay">童貞</span></span>
           </button>
@@ -3651,8 +4096,11 @@
         <button class="nav-item active" id="nav-home" onclick="switchMainTab('home')">
           <span class="nav-icon icon-badge icon-cat-home"><span class="emoji-icon">💭</span><i data-lucide="home" class="smart-icon"></i></span><span>ホーム</span>
         </button>
-        <button class="nav-item" id="nav-my" onclick="switchMainTab('my')">
-          <span class="nav-icon icon-badge icon-cat-catalog"><span class="emoji-icon">📖</span><i data-lucide="book-open" class="smart-icon"></i></span><span>マイ図鑑</span>
+        <button class="nav-item pc-nav-allowed" id="nav-my" onclick="switchMainTab('my')">
+          <span class="nav-icon icon-badge icon-cat-catalog"><span class="emoji-icon">📖</span><i data-lucide="book-open" class="smart-icon"></i></span><span class="pc-only-nav-label">月別時系列</span><span class="mobile-only-nav-label">マイ図鑑</span>
+        </button>
+        <button class="nav-item pc-nav-allowed" id="nav-albumMain" onclick="openAlbumTab()">
+          <span class="nav-icon icon-badge icon-cat-album"><span class="emoji-icon">🖼️</span><i data-lucide="images" class="smart-icon"></i></span><span>アルバム</span>
         </button>
         <button class="nav-item" id="nav-calendar" onclick="switchMainTab('calendar')">
           <span class="nav-icon icon-badge icon-cat-calendar"><span class="emoji-icon">📅</span><i data-lucide="calendar" class="smart-icon"></i></span><span>予定</span>
@@ -3677,6 +4125,12 @@
     </aside>
 
     <main class="content-area">
+      <div class="pc-guide-banner" id="pcGuideBanner" role="status">
+        <div class="pc-guide-banner-text">
+          <strong>PCは閲覧専用モードです</strong>
+          <div class="pc-guide-banner-note">月別時系列・アルバムの閲覧とログインが利用できます。記録の追加や設定など、その他の機能はスマートフォンでお使いください。</div>
+        </div>
+      </div>
       <!-- 1. ホーム画面 -->
       <div id="viewHome" class="active">
         <div class="floating-container" id="homeFloatingArea"></div>
@@ -3993,12 +4447,11 @@
             <button type="submit" class="settings-username-save-btn">保存</button>
           </form>
           <div class="settings-gv-type-row" id="settingsGvTypeRow">
-            <span class="settings-gv-type-badge" id="settingsGvTypeBadge">
+            <button type="button" class="settings-gv-type-badge" id="settingsGvTypeBadge" onclick="openGvScoreQuiz(true)" title="タップで再診断">
               <span class="gv-type-dot" id="settingsGvTypeDot" style="background:var(--light-text)"></span>
               <span id="settingsGvTypeLabel">スコアタイプ未診断</span>
-            </span>
-            <div class="settings-gv-type-desc" id="settingsGvTypeDesc">いい値ぇースコアの考え方を診断すると、あなた向けの式とカード色が設定されます。</div>
-            <button type="button" class="settings-gv-rediag-btn" onclick="openGvScoreQuiz(true)">診断する</button>
+            </button>
+            <div class="settings-gv-type-desc" id="settingsGvTypeDesc">いい値ぇースコアの考え方を診断すると、あなた向けの式とカード色が設定されます。バッジをタップで再診断できます。</div>
           </div>
         </div>
 
@@ -5564,7 +6017,7 @@
 
     let currentUserName = localStorage.getItem('app_user_name') || '童貞';
     let currentTheme = localStorage.getItem('app_theme') || 'default';
-    let currentUIMode = localStorage.getItem('app_ui_mode') || 'original';
+    let currentUIMode = localStorage.getItem('app_ui_mode') || 'smart';
     let currentDateFormat = localStorage.getItem('app_date_format') || 'ymd';
     let currentAmountHide = localStorage.getItem('app_amount_hide') || 'show';
     let ratingEnabled = localStorage.getItem('app_rating_enabled') !== 'false';
@@ -5628,6 +6081,11 @@
 
     function showLockScreen(autoBiometric) {
       const screen = document.getElementById('appLockScreen');
+      if (!screen) return;
+      screen.classList.remove('lock-unlocking', 'shake');
+      screen.style.display = '';
+      screen.style.pointerEvents = '';
+      screen.style.opacity = '';
       lockInputBuffer = '';
       updateLockDots();
       document.getElementById('lockErrorMsg').innerText = '';
@@ -5639,27 +6097,72 @@
       }
     }
 
-    function hideLockScreen() {
+        function hideLockScreen() {
       const screen = document.getElementById('appLockScreen');
+      if (!screen) return;
       lockUnlockedThisSession = true;
       lockVisibilityArmed = false;
-      screen.classList.remove('visible');
-      setTimeout(() => { screen.classList.remove('open'); }, 350);
-      // ロック解除後に広告ポップアップを表示
-      setTimeout(() => tryShowStartupAdPopup(), 400);
+      lockInputBuffer = '';
+      try {
+        screen.classList.add('lock-unlocking');
+        // アニメ中は操作不可（透明オーバーレイでアプリを塞がないよう終了後に必ず外す）
+        screen.style.pointerEvents = 'none';
+        setTimeout(() => {
+          try {
+            screen.classList.remove('visible', 'open', 'lock-unlocking', 'shake');
+            screen.style.pointerEvents = '';
+            screen.style.display = '';
+            screen.style.opacity = '';
+          } catch (e) {}
+        }, 680);
+      } catch (e) {
+        screen.classList.remove('visible', 'open', 'lock-unlocking');
+        screen.style.pointerEvents = '';
+      }
+      setTimeout(() => {
+        if (typeof tryShowStartupAdPopup === 'function') tryShowStartupAdPopup();
+      }, 720);
     }
 
-    function updateLockDots() {
+function updateLockDots() {
       const dots = document.querySelectorAll('#lockDots .lock-dot');
       dots.forEach((d, i) => d.classList.toggle('filled', i < lockInputBuffer.length));
     }
 
-    function lockKeyPress(digit) {
-      if (lockInputBuffer.length >= 4) return;
-      lockInputBuffer += digit;
-      updateLockDots();
-      if (lockInputBuffer.length === 4) {
-        setTimeout(() => verifyLockPasscode(), 120);
+        function lockKeyHeartRipple(btn) {
+      try {
+        if (!btn || !btn.classList || btn.classList.contains('lock-key-empty')) return;
+        btn.classList.add('is-press');
+        const ripple = document.createElement('span');
+        ripple.className = 'lock-key-ripple';
+        btn.appendChild(ripple);
+        setTimeout(() => {
+          try {
+            btn.classList.remove('is-press');
+            if (ripple.parentNode) ripple.parentNode.removeChild(ripple);
+          } catch (e) {}
+        }, 280);
+        if (navigator.vibrate) navigator.vibrate(12);
+      } catch (e) {}
+    }
+
+    function lockKeyPress(digit, event) {
+      try {
+        if (typeof lockInputBuffer !== 'string') lockInputBuffer = '';
+        if (lockInputBuffer.length >= 4) return;
+        let btn = null;
+        if (event && event.currentTarget) btn = event.currentTarget;
+        else if (typeof event === 'object' && event && event.target) btn = event.target.closest ? event.target.closest('.lock-key') : null;
+        if (btn) lockKeyHeartRipple(btn);
+        lockInputBuffer += String(digit);
+        if (typeof updateLockDots === 'function') updateLockDots();
+        if (lockInputBuffer.length === 4) {
+          setTimeout(() => {
+            if (typeof verifyLockPasscode === 'function') verifyLockPasscode();
+          }, 140);
+        }
+      } catch (e) {
+        console.error('lockKeyPress', e);
       }
     }
 
@@ -5668,22 +6171,32 @@
       updateLockDots();
     }
 
-    async function verifyLockPasscode() {
-      const savedHash = localStorage.getItem('app_lock_passcode_hash') || '';
-      const inputHash = await sha256Hex(lockInputBuffer);
-      if (savedHash && inputHash === savedHash) {
-        hideLockScreen();
-      } else {
-        const screen = document.getElementById('appLockScreen');
+        async function verifyLockPasscode() {
+      const screen = document.getElementById('appLockScreen');
+      try {
+        const savedHash = localStorage.getItem('app_lock_passcode_hash') || '';
+        const inputHash = await sha256Hex(lockInputBuffer);
+        if (savedHash && inputHash === savedHash) {
+          lockInputBuffer = '';
+          if (typeof updateLockDots === 'function') updateLockDots();
+          hideLockScreen();
+          return;
+        }
         document.getElementById('lockErrorMsg').innerText = 'パスコードが違います';
-        screen.classList.add('shake');
-        setTimeout(() => screen.classList.remove('shake'), 400);
-        lockInputBuffer = '';
-        updateLockDots();
+        if (screen) {
+          screen.classList.add('shake');
+          setTimeout(() => screen.classList.remove('shake'), 400);
+        }
+      } catch (e) {
+        console.error('verifyLockPasscode', e);
+        const el = document.getElementById('lockErrorMsg');
+        if (el) el.innerText = '認証エラー';
       }
+      lockInputBuffer = '';
+      if (typeof updateLockDots === 'function') updateLockDots();
     }
 
-    async function attemptBiometricUnlock() {
+async function attemptBiometricUnlock() {
       if (!appLockBiometric || !isWebAuthnSupported() || !appLockCredentialId) return;
       try {
         const credentialIdBytes = Uint8Array.from(atob(appLockCredentialId), c => c.charCodeAt(0));
@@ -7212,6 +7725,7 @@
     }
 
     function saveCastSettingsForm() {
+      if (typeof isPcViewMode === 'function' && isPcViewMode()) { showPcGuideModal('女の子別設定'); return; }
       const name = document.getElementById('csTargetName').value.trim();
       if (!name || !castData[name]) { alert('データが呼び出されていません。'); return; }
 
@@ -7266,6 +7780,7 @@
 
     /* 📱 拡張メニュー：ボトムシートの開閉 */
     function openMoreMenu() {
+      if (typeof isPcViewMode === 'function' && isPcViewMode()) { showPcGuideModal('その他メニュー'); return; }
       buildSheetAdCarousel(true); // 毎回ランダム順で再構築
       document.getElementById('moreMenuOverlay').classList.add('open');
       document.getElementById('moreMenuSheet').classList.add('open');
@@ -7425,7 +7940,7 @@
         short: '対数コスパ型'
       },
       loyal_fan: {
-        label: '固定ファン',
+        label: '推し活中',
         desc: '同じ子への再訪を「本当に良かった当たり」の証拠として厚めに見ます。',
         formula: 'loyal_fan',
         color: '#7950f2',
@@ -7501,7 +8016,7 @@
     function resolveGvTypeFromAnswers(ans) {
       // ans: ['A'|'B'|'C', ...] length 4
       const [q1, q2, q3, q4] = ans;
-      // 優先: 固定ファン
+      // 優先: 推し活中
       if (q3 === 'C' && (q1 === 'C' || q2 === 'C')) return 'loyal_fan';
       // 慎重レビュアー
       if (q4 === 'A' && (q2 === 'C' || q1 === 'B')) return 'careful_reviewer';
@@ -7750,7 +8265,7 @@
         return Math.max(0, Math.min(100, 0.50 * Sbase + 0.50 * Crel));
       }
 
-      // --- 案4: 固定ファン ---
+      // --- 案4: 推し活中 ---
       if (formulaId === 'loyal_fan') {
         const Sloy = flagOnly ? gvFlagBaseS(rec, 'loyal_fan') : (() => {
           let S = gvRatedBaseS(rec);
@@ -8645,9 +9160,63 @@
     }
 
 
+
+    /* ===== PC閲覧モード（案A） ===== */
+    const PC_VIEW_ALLOWED_TABS = ['my', 'album', 'settings'];
+
+    function isPcViewMode() {
+      try {
+        return window.matchMedia && window.matchMedia('(min-width: 768px)').matches;
+      } catch (e) {
+        return window.innerWidth >= 768;
+      }
+    }
+
+    function showPcGuideModal(featureName) {
+      const name = featureName || 'この機能';
+      alert(name + 'はスマートフォン専用です。\n\nPCでは「月別時系列」「アルバム」の閲覧とログインのみ利用できます。');
+    }
+
+    function applyPcViewMode() {
+      const on = isPcViewMode();
+      document.body.classList.toggle('pc-view-mode', on);
+      const banner = document.getElementById('pcGuideBanner');
+      if (banner) banner.style.display = on ? 'flex' : 'none';
+
+      // ナビ active 調整
+      if (on) {
+        // アルバム用ナビを表示
+        const albumNav = document.getElementById('nav-albumMain');
+        if (albumNav) albumNav.style.display = '';
+        // ホーム等を非表示はCSS
+        // 現在禁止タブにいたら月別へ
+        const active = document.querySelector('.nav-item.active');
+        const activeId = active && active.id ? active.id.replace('nav-', '') : '';
+        if (activeId && activeId !== 'my' && activeId !== 'albumMain' && activeId !== 'album' && activeId !== 'settings') {
+          // 初回やリサイズ時
+          try { switchMainTab('my'); } catch (e) {}
+        }
+        // マイ図鑑は時系列固定
+        try {
+          if (typeof currentView !== 'undefined' && currentView !== 'timeline') {
+            if (typeof changeView === 'function') changeView('timeline');
+          }
+        } catch (e) {}
+      }
+      if (typeof lucide !== 'undefined' && lucide.createIcons) {
+        try { lucide.createIcons(); } catch (e) {}
+      }
+    }
+
+
     function switchMainTab(type) {
+      if (isPcViewMode() && PC_VIEW_ALLOWED_TABS.indexOf(type) < 0) {
+        showPcGuideModal(type === 'home' ? 'ホーム' : type === 'calendar' ? 'カレンダー' : type === 'dashboard' ? '統計' : type === 'goodValue' ? 'いい値ぇースコア' : type === 'castSettings' ? '女の子別設定' : 'この機能');
+        return;
+      }
       document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-      const targetNav = document.getElementById('nav-' + type);
+      let targetNav = document.getElementById('nav-' + type);
+      if (type === 'album') targetNav = document.getElementById('nav-albumMain') || document.getElementById('nav-album') || targetNav;
       if(targetNav) targetNav.classList.add('active');
 
       const homeView = document.getElementById('viewHome');
@@ -8704,7 +9273,12 @@
         albumView.style.display = 'none'; if (typeof closeAlbumReader === 'function') closeAlbumReader();
         if (goodValueView) goodValueView.style.display = 'none';
 
-        if(type === 'my') myView.style.display = 'block';
+        if(type === 'my') {
+          myView.style.display = 'block';
+          if (typeof isPcViewMode === 'function' && isPcViewMode() && typeof changeView === 'function') {
+            try { changeView('timeline'); } catch(e) {}
+          }
+        }
         else if (type === 'calendar') { calendarView.style.display = 'block'; renderCalendar(); }
         else if (type === 'shared') { sharedView.style.display = 'block'; renderSharedArea(); }
         else if (type === 'dashboard') { dashView.style.display = 'block'; renderDashboard(); }
@@ -8978,6 +9552,7 @@
     }
 
     function openAddScheduleModal(prefill) {
+      if (typeof isPcViewMode === 'function' && isPcViewMode()) { showPcGuideModal('予定の追加'); return; }
       updateCastDatalist();
       updateStoreDatalist();
       const form = document.getElementById('addScheduleModal');
@@ -10059,6 +10634,8 @@
       window.__m3RippleInited = true;
       document.addEventListener('pointerdown', (e) => {
         if (e.button != null && e.button !== 0) return;
+        // PC（マウス・広い画面）ではリップル抑制
+        if (e.pointerType === 'mouse' && window.matchMedia && window.matchMedia('(min-width: 768px)').matches) return;
         const el = e.target.closest && e.target.closest(M3_RIPPLE_SELECTOR);
         if (!el) return;
         // 内側の実ボタン等は波紋対象外（二重反応防止）
@@ -10665,7 +11242,11 @@ function navigateToStoreCard(storeName, event) {
       setTimeout(() => tryFocus(0), 80);
     }
 
-    function changeView(mode) { 
+    function changeView(mode) {
+      if (typeof isPcViewMode === 'function' && isPcViewMode() && mode !== 'timeline') {
+        showPcGuideModal('女の子別・店舗別など');
+        mode = 'timeline';
+      } 
       currentView = mode; 
       document.getElementById('viewCast').className = 'btn-toggle' + (mode === 'cast' ? ' active' : ''); 
       document.getElementById('viewTimeline').className = 'btn-toggle' + (mode === 'timeline' ? ' active' : ''); 
@@ -12097,6 +12678,9 @@ ${sideActionsHtml}
     let albumCurrentYear = null;
 
     function openAlbumTab() {
+      if (typeof isPcViewMode === 'function' && isPcViewMode()) {
+        /* allowed */
+      }
       switchMainTab('album');
     }
 
@@ -13554,6 +14138,7 @@ ${sideActionsHtml}
 
 
     function openAddModal() {
+      if (typeof isPcViewMode === 'function' && isPcViewMode()) { showPcGuideModal('記録の追加'); return; }
       const d = new Date();
       document.getElementById('addYear').value = d.getFullYear();
       document.getElementById('addMonth').value = (d.getMonth() + 1) + '月';
@@ -15556,6 +16141,7 @@ ${question}`;
 
     
     function openCastSettingsForName(castName) {
+      if (typeof isPcViewMode === 'function' && isPcViewMode()) { showPcGuideModal('女の子別設定'); return; }
       const name = (castName || '').trim();
       if (!name) return;
       if (typeof closeContextMenu === 'function') closeContextMenu();
@@ -15654,6 +16240,10 @@ ${question}`;
     })();
 
     initAppLock();
+    if (typeof applyPcViewMode === 'function') applyPcViewMode();
+    window.addEventListener('resize', function () {
+      if (typeof applyPcViewMode === 'function') applyPcViewMode();
+    });
     initUserData();
     initCloudAuth();
     buildSheetAdCarousel(false);
