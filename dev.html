@@ -229,6 +229,96 @@
     }
 
     
+    
+    /* フォント変更後も縦幅が崩れないよう固定寄りに */
+    html {
+      font-size: 16px;
+    }
+    .nav-item {
+      min-height: 48px;
+      justify-content: center;
+      gap: 3px;
+    }
+    .nav-item .nav-icon,
+    .nav-item .icon-badge {
+      width: 22px; height: 22px;
+      min-width: 22px; min-height: 22px;
+    }
+    /* ナビ文言の縦幅固定（フォント差で潰れないように） */
+    .nav-item > span:not(.nav-icon):not(.icon-badge) {
+      min-height: 14px;
+      height: 14px;
+      line-height: 14px;
+      font-size: 0.65rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+    }
+    .badge-count {
+      min-height: 22px;
+      line-height: 18px;
+      display: inline-flex; align-items: center; justify-content: center;
+      box-sizing: border-box;
+    }
+    .status-badge {
+      min-height: 18px;
+      line-height: 16px;
+      display: inline-flex; align-items: center;
+      box-sizing: border-box;
+    }
+    .style-pill {
+      min-height: 22px;
+    }
+    .style-pill-label,
+    .style-pill-val {
+      line-height: 18px;
+      display: inline-flex; align-items: center;
+    }
+    .cast-style-feat-pill {
+      min-height: 22px;
+      line-height: 18px;
+    }
+    .cast-side-btn {
+      width: 30px; height: 30px; min-width: 30px; min-height: 30px;
+    }
+    .cast-store-chip {
+      min-height: 26px;
+      line-height: 20px;
+      box-sizing: border-box;
+    }
+    .notes-box {
+      min-height: 32px;
+      box-sizing: border-box;
+    }
+    .play-card {
+      min-height: 96px !important;
+    }
+    .play-card-title {
+      min-height: 1.25em;
+      line-height: 1.25;
+    }
+    .play-card-desc {
+      min-height: calc(0.65rem * 1.4 * 3);
+    }
+    summary.card-btn {
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+    }
+    .store-fold-summary {
+      min-height: 72px;
+    }
+    .pill-btn, .btn-toggle {
+      min-height: 32px;
+      line-height: 1.2;
+      display: inline-flex; align-items: center; justify-content: center;
+      box-sizing: border-box;
+    }
+    .theme-item-btn {
+      min-height: 36px;
+    }
+
     .kosugi-maru-regular {
       font-family: "Kosugi Maru", sans-serif;
       font-weight: 400;
@@ -1287,7 +1377,7 @@
 
     /* 🚃 JR東日本風テーマ：店舗別カード（駅名標風レイアウト） */
     [data-theme="jreast"] summary.store-fold-summary {
-      background: #ffffff;
+      background: var(--card-bg, #ffffff);
       border-top: 6px solid #008e43;
       border-bottom: 1px solid var(--border-color);
     }
@@ -1896,7 +1986,13 @@
     }
     summary.store-fold-summary .store-preview-overlay {
       position: absolute; inset: 0; z-index: 1;
-      background: linear-gradient(135deg, var(--soft-pink) 0%, var(--soft-pink) 32%, rgba(255,255,255,0.55) 58%, rgba(255,255,255,0.3) 100%);
+      background: linear-gradient(
+        135deg,
+        var(--soft-pink) 0%,
+        var(--soft-pink) 28%,
+        color-mix(in srgb, var(--card-bg) 72%, transparent) 55%,
+        color-mix(in srgb, var(--card-bg) 88%, transparent) 100%
+      );
     }
     summary.store-fold-summary > .store-summary-head,
     summary.store-fold-summary > .store-summary-meta {
@@ -11243,17 +11339,7 @@ ${sideActionsHtml}
         const html = await res.text();
         const doc = new DOMParser().parseFromString(html, 'text/html');
 
-        // 1) OGP / Twitter Card
-        const ogTag = doc.querySelector('meta[property="og:image"]')
-          || doc.querySelector('meta[property="og:image:url"]')
-          || doc.querySelector('meta[name="twitter:image"]')
-          || doc.querySelector('meta[name="twitter:image:src"]');
-        const rawOg = ogTag ? (ogTag.getAttribute('content') || '').trim() : '';
-        if (rawOg) {
-          try { return new URL(rawOg, pageUrl).href; } catch (e) { /* fall through */ }
-        }
-
-        // 2) 本文 img
+        // OGPは不安定なため当面オフ — 本文 <img> のみ
         return extractContentImage(doc, pageUrl);
       } catch (err) {
         clearTimeout(timeoutId);
