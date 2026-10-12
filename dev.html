@@ -74,6 +74,45 @@
       background: var(--bg-color); color: var(--text-color); font-size: 0.85rem; margin-bottom: 8px;
       box-sizing: border-box;
     }
+
+    /* MBTI選択（プレイ内容ピッカー同様） */
+    .mbti-picker-lead {
+      font-size: 0.78rem; line-height: 1.45; color: var(--text-color);
+      background: color-mix(in srgb, var(--soft-pink) 40%, var(--card-bg));
+      border: 1px solid var(--border-color); border-radius: 12px;
+      padding: 10px 12px; margin-bottom: 10px;
+    }
+    .mbti-picker-lead a {
+      color: var(--accent-pink); font-weight: 800; text-decoration: underline;
+    }
+    .mbti-picker-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+      overflow-y: auto; flex: 1; min-height: 0; max-height: 55vh;
+      padding: 2px; -webkit-overflow-scrolling: touch;
+    }
+    .mbti-card {
+      border: 1.5px solid var(--border-color); border-radius: 12px; padding: 12px 10px;
+      background: var(--card-bg); color: var(--text-color); cursor: pointer;
+      font-family: inherit; text-align: left;
+      min-height: 5.2rem; display: flex; flex-direction: column; gap: 4px;
+      transition: border-color 0.15s, background 0.15s, transform 0.1s;
+    }
+    .mbti-card:active { transform: scale(0.97); }
+    .mbti-card.is-selected {
+      border-color: var(--accent-pink);
+      background: color-mix(in srgb, var(--accent-pink) 12%, var(--card-bg));
+    }
+    .mbti-card-code {
+      font-size: 0.88rem; font-weight: 800; line-height: 1.25; color: var(--accent-pink);
+    }
+    .mbti-card-desc {
+      font-size: 0.65rem; line-height: 1.4; color: var(--light-text); font-weight: normal;
+      display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden;
+    }
+    .mbti-card-parent {
+      font-size: 0.62rem; color: var(--light-text); margin-top: auto; opacity: 0.9;
+    }
+
     .play-picker-grid {
       display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
       overflow-y: auto; flex: 1; min-height: 0; padding: 2px; -webkit-overflow-scrolling: touch;
@@ -4914,12 +4953,17 @@
 
   <!-- 💰 いい値ぇー スコータイプ診断アンケート -->
   <div class="modal-overlay" id="gvQuizModal">
-    <div class="modal-content" style="max-width:420px;">
-      <h3 id="gvQuizTitle">スコアの考え方診断</h3>
-      <div class="gv-quiz-progress"><div class="gv-quiz-progress-fill" id="gvQuizProgressFill"></div></div>
-      <div id="gvQuizStep"></div>
-      <div style="display:flex; gap:8px; margin-top:14px;">
+    <div class="modal-content" style="max-width:440px; max-height:88vh; display:flex; flex-direction:column;">
+      <h3 id="gvQuizTitle">MBTIからスコア式を選ぶ</h3>
+      <div class="mbti-picker-lead">
+        まだ診断していない場合は、先に外部サイトでMBTIを確認してください。<br>
+        <a href="https://www.16personalities.com/ja/" target="_blank" rel="noopener noreferrer">16Personalitiesで診断する ↗</a>
+      </div>
+      <input type="search" class="play-picker-search" id="mbtiPickerSearch" placeholder="検索（例: INFP、建築家…）" oninput="renderMbtiPickerGrid()">
+      <div class="mbti-picker-grid" id="mbtiPickerGrid"></div>
+      <div style="display:flex; gap:8px; margin-top:12px;">
         <button type="button" class="close-btn" style="background:#888; flex:1;" id="gvQuizSkipBtn" onclick="skipGvScoreQuiz()">あとで</button>
+        <button type="button" class="close-btn" style="flex:1;" onclick="closeModal('gvQuizModal')">閉じる</button>
       </div>
     </div>
   </div>
@@ -7955,6 +7999,43 @@ async function attemptBiometricUnlock() {
       }
     };
 
+
+    /* MBTI 16 → 現行5式（Phase 1） */
+    const MBTI_TYPE_META = {
+      INTJ: { code: 'INTJ', label: 'INTJ（建築家）', desc: '長期の効率と計画を重視。無駄な出費より戦略的なコスパを見るタイプ。', formula: 'cost_crafter', parentLabel: 'コスパ職人',
+        tweaks: { costWS: 0.50, costWC: 0.50, noRepeatBonus: true, budgetDeltaMax: 5 } },
+      INTP: { code: 'INTP', label: 'INTP（論理学者）', desc: '仕組みとしてきれいなコスパを好む。数値のバランスと納得感を大切にする。', formula: 'balanced', parentLabel: 'バランス型',
+        tweaks: { logCoeff: 22 } },
+      ENTJ: { code: 'ENTJ', label: 'ENTJ（指揮官）', desc: '成果と生産性を重視。当たりの密度や時間あたりの価値を強く見る。', formula: 'cost_crafter', parentLabel: 'コスパ職人',
+        tweaks: { costWS: 0.50, costWC: 0.50, atariDensityBoost: true } },
+      ENTP: { code: 'ENTP', label: 'ENTP（討論者）', desc: '新しい体験も許容しつつ、過去の自分と比べて得したかを見る。', formula: 'self_saver', parentLabel: '自分基準の節約家',
+        tweaks: { relSens: 40, relPreferStore: true, relFirstHalfPenalty: true } },
+      INFJ: { code: 'INFJ', label: 'INFJ（提唱者）', desc: '少数の深い関係を大切に。同じ子への再訪や相性を厚く評価する。', formula: 'loyal_fan', parentLabel: '推し活中',
+        tweaks: { loyalWS: 0.70, loyalWC: 0.30, repeatStaged: true, deepRepeatExtra: 2 } },
+      INFP: { code: 'INFP', label: 'INFP（仲介者）', desc: '価値観と「また会いたいか」を最優先。金額より気持ちのマッチを重視。', formula: 'loyal_fan', parentLabel: '推し活中',
+        tweaks: { loyalWS: 0.72, loyalWC: 0.28, repeatStaged: true } },
+      ENFJ: { code: 'ENFJ', label: 'ENFJ（主人公）', desc: '満足・安定・コスパの調和。場の体験全体のバランスで評価する。', formula: 'balanced', parentLabel: 'バランス型',
+        tweaks: { logCoeff: 25, hazureExtra: 3 } },
+      ENFP: { code: 'ENFP', label: 'ENFP（広報運動家）', desc: 'ワクワクした回を相対的に高く見る。単価の厳しさより高揚感を優先。', formula: 'self_saver', parentLabel: '自分基準の節約家',
+        tweaks: { relSens: 40, relAtariBoost: 1.1, relPreferStore: true } },
+      ISTJ: { code: 'ISTJ', label: 'ISTJ（管理者）', desc: '事実ベースの金額・時間・予算。実務的なコスパをきちんと見る。', formula: 'cost_crafter', parentLabel: 'コスパ職人',
+        tweaks: { costWS: 0.50, costWC: 0.50, missingDataCap: 70 } },
+      ISFJ: { code: 'ISFJ', label: 'ISFJ（擁護者）', desc: '安心できる遊び方を評価。ハズレやブレを厳しめに見て安定を重視。', formula: 'careful_reviewer', parentLabel: '慎重レビュアー',
+        tweaks: { carefulRecentN: 10, carefulStreakBonus: true, carefulStorePenalty: 7 } },
+      ESTJ: { code: 'ESTJ', label: 'ESTJ（幹部）', desc: '基準と達成を意識したコスパ。予算や目標に沿った評価向き。', formula: 'cost_crafter', parentLabel: 'コスパ職人',
+        tweaks: { costWS: 0.50, costWC: 0.50, budgetOverPenalty: 6 } },
+      ESFJ: { code: 'ESFJ', label: 'ESFJ（領事）', desc: '場の満足と安定を大切に。極端な安さより全体の心地よさを見る。', formula: 'balanced', parentLabel: 'バランス型',
+        tweaks: { logCoeff: 25, cheapBoostCap: true } },
+      ISTP: { code: 'ISTP', label: 'ISTP（巨匠）', desc: '実測の金額と時間を優先。短時間で満足できたかを冷静に見る。', formula: 'cost_crafter', parentLabel: 'コスパ職人',
+        tweaks: { costWS: 0.50, costWC: 0.50, shortCourseBonus: 3 } },
+      ISFP: { code: 'ISFP', label: 'ISFP（冒険家）', desc: '感覚と推しを大切に。大損は避けつつ、相性の良さを厚く見る。', formula: 'loyal_fan', parentLabel: '推し活中',
+        tweaks: { loyalWS: 0.70, loyalWC: 0.30, repeatStaged: true, bigLossPenalty: 5 } },
+      ESTP: { code: 'ESTP', label: 'ESTP（起業家）', desc: '直近の現場感を重視。過去数回と比べて得したかを強く見る。', formula: 'self_saver', parentLabel: '自分基準の節約家',
+        tweaks: { relSens: 45, relRecentN: 5, relPreferStore: true } },
+      ESFP: { code: 'ESFP', label: 'ESFP（エンターテイナー）', desc: '楽しさ・当たり感を優先。大ハズレは減点しつつ、体験の満足を厚く。', formula: 'balanced', parentLabel: 'バランス型',
+        tweaks: { logCoeff: 25, balancedFlagMid: 55, balancedAtariSBoost: 5 } }
+    };
+
     const GV_QUIZ_QUESTIONS = [
       {
         q: '記録でいちばん残したいのは？',
@@ -8039,9 +8120,17 @@ async function attemptBiometricUnlock() {
       if (!card) return;
       if (p && p.type && GV_TYPE_META[p.type]) {
         const m = GV_TYPE_META[p.type];
+        // グラデーションは親式色のまま
         card.setAttribute('data-gv-type', p.type);
-        if (badge) badge.textContent = m.label;
-        if (desc) desc.textContent = m.desc + '（' + m.short + '）';
+        if (p.mbti && typeof MBTI_TYPE_META !== 'undefined' && MBTI_TYPE_META[p.mbti]) {
+          const mb = MBTI_TYPE_META[p.mbti];
+          if (badge) badge.textContent = mb.label;
+          if (desc) desc.textContent = mb.desc;
+        } else {
+          // 旧プロファイル（アンケート式）: 式名は出さず中立表示
+          if (badge) badge.textContent = 'タイプ設定済み';
+          if (desc) desc.textContent = 'MBTIを選ぶと、あなた向けの表示とスコア配分に切り替わります。バッジから再設定できます。';
+        }
         if (dot) dot.style.background = m.color.indexOf('var(') === 0 ? '' : m.color;
         if (dot && m.color.indexOf('var(') === 0) dot.style.background = 'var(--accent-pink)';
         if (btn) btn.textContent = '再診断';
@@ -8056,14 +8145,68 @@ async function attemptBiometricUnlock() {
 
     function openGvScoreQuiz(fromSettings) {
       gvQuizFromSettings = !!fromSettings;
-      gvQuizAnswers = [];
-      gvQuizIndex = 0;
       const skip = document.getElementById('gvQuizSkipBtn');
       if (skip) skip.style.display = fromSettings ? 'none' : 'block';
-      document.getElementById('gvQuizTitle').textContent = 'スコアの考え方診断';
-      renderGvQuizStep();
+      const title = document.getElementById('gvQuizTitle');
+      if (title) title.textContent = 'MBTIからスコア式を選ぶ';
+      const search = document.getElementById('mbtiPickerSearch');
+      if (search) search.value = '';
+      renderMbtiPickerGrid();
       document.getElementById('gvQuizModal').style.display = 'flex';
     }
+
+    function renderMbtiPickerGrid() {
+      const grid = document.getElementById('mbtiPickerGrid');
+      if (!grid || typeof MBTI_TYPE_META === 'undefined') return;
+      const q = ((document.getElementById('mbtiPickerSearch') || {}).value || '').trim().toLowerCase();
+      const profile = (typeof getGvProfile === 'function') ? getGvProfile() : null;
+      const selected = profile && profile.mbti ? profile.mbti : null;
+      const parts = [];
+      Object.keys(MBTI_TYPE_META).forEach(function(code) {
+        const m = MBTI_TYPE_META[code];
+        const hay = (m.code + ' ' + m.label + ' ' + m.desc + ' ' + m.parentLabel).toLowerCase();
+        if (q && hay.indexOf(q) < 0) return;
+        const sel = selected === code ? ' is-selected' : '';
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'mbti-card' + sel;
+        btn.setAttribute('data-mbti', code);
+        btn.innerHTML =
+          '<div class="mbti-card-code"></div>' +
+          '<div class="mbti-card-desc"></div>' +
+          '<div class="mbti-card-parent"></div>';
+        btn.querySelector('.mbti-card-code').textContent = m.label;
+        btn.querySelector('.mbti-card-desc').textContent = m.desc;
+        btn.querySelector('.mbti-card-parent').textContent = 'スコア式: ' + m.parentLabel;
+        btn.addEventListener('click', function() { selectMbtiType(code); });
+        parts.push(btn);
+      });
+      grid.innerHTML = '';
+      if (!parts.length) {
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--light-text);font-size:0.8rem;padding:16px;">該当なし</div>';
+        return;
+      }
+      parts.forEach(function(b) { grid.appendChild(b); });
+    }
+
+    function selectMbtiType(code) {
+      const m = MBTI_TYPE_META[code];
+      if (!m || !GV_TYPE_META[m.formula]) return;
+      saveGvProfile({
+        mbti: code,
+        type: m.formula,
+        formula: m.formula,
+        source: 'mbti',
+        diagnosedAt: new Date().toISOString()
+      });
+      try { sessionStorage.removeItem('gv_quiz_skipped'); } catch (e) {}
+      closeModal('gvQuizModal');
+      if (typeof renderGoodValueView === 'function') {
+        try { renderGoodValueView(); } catch (e) {}
+      }
+      if (typeof applyGvProfileToUi === 'function') applyGvProfileToUi();
+    }
+
 
     function skipGvScoreQuiz() {
       // 未診断のままデフォルト式。再表示は次回いい値ぇーでも可（フラグは立てない＝また聞ける）
@@ -8231,22 +8374,187 @@ async function attemptBiometricUnlock() {
     }
 
     /** 1回あたりのいい値ぇー指数 0〜100。対象外は null */
+
+    function getGvMbtiCode() {
+      const p = getGvProfile();
+      return (p && p.mbti) ? p.mbti : null;
+    }
+
+    function getGvTweaks() {
+      const base = {
+        costWS: 0.50, costWC: 0.50,
+        relSens: 40, relRecentN: 0, relAtariBoost: 1, relPreferStore: true, relFirstHalfPenalty: false,
+        loyalWS: 0.70, loyalWC: 0.30, repeatStaged: true, deepRepeatExtra: 0, noRepeatBonus: false,
+        logCoeff: 25, hazureExtra: 0, cheapBoostCap: false, balancedFlagMid: 50, balancedAtariSBoost: 0,
+        carefulRecentN: 10, carefulStreakBonus: true, carefulStorePenalty: 5,
+        missingDataCap: null, budgetOverPenalty: 0, budgetDeltaMax: 0, atariDensityBoost: false,
+        shortCourseBonus: 0, bigLossPenalty: 0
+      };
+      const code = getGvMbtiCode();
+      if (code && MBTI_TYPE_META[code] && MBTI_TYPE_META[code].tweaks) {
+        return Object.assign({}, base, MBTI_TYPE_META[code].tweaks);
+      }
+      return base;
+    }
+
+    function gvCastVisitCount(rec) {
+      const name = (rec.name || '').trim().toLowerCase();
+      if (!name) return 0;
+      let count = 0;
+      for (let i = 0; i < historyList.length; i++) {
+        const v = historyList[i];
+        if (!v || v.pendingCheckIn) continue;
+        if ((v.name || '').trim().toLowerCase() === name) count++;
+      }
+      return count;
+    }
+
+    function gvRepeatBonusPoints(rec, tw) {
+      if (tw.noRepeatBonus) return 0;
+      const n = gvCastVisitCount(rec);
+      if (n < 2) return 0;
+      if (tw.repeatStaged) {
+        let b = (n === 2) ? 6 : 10;
+        if (n >= 3 && tw.deepRepeatExtra) b += tw.deepRepeatExtra;
+        return b;
+      }
+      return 8;
+    }
+
+    function gvIsFirstCastOrStore(rec) {
+      const name = (rec.name || '').trim().toLowerCase();
+      const store = (rec.store || '').trim().toLowerCase();
+      let nameCount = 0, storeCount = 0;
+      historyList.forEach(v => {
+        if (!v || v.pendingCheckIn) return;
+        if (name && (v.name || '').trim().toLowerCase() === name) nameCount++;
+        if (store && (v.store || '').trim().toLowerCase() === store) storeCount++;
+      });
+      return (name && nameCount <= 1) || (store && storeCount <= 1);
+    }
+
+    function gvRecentVisits(n) {
+      const arr = historyList.filter(v => v && !v.pendingCheckIn);
+      if (!n || n <= 0 || arr.length <= n) return arr;
+      // 末尾を新しいと仮定。日付ソートできればする
+      const sorted = arr.slice().sort(function(a, b) {
+        const ya = parseInt(a.year, 10) || 0, yb = parseInt(b.year, 10) || 0;
+        if (ya !== yb) return yb - ya;
+        const ma = parseMonthNum(a.month) || 0, mb = parseMonthNum(b.month) || 0;
+        if (ma !== mb) return mb - ma;
+        const da = parseInt(a.day, 10) || 0, db = parseInt(b.day, 10) || 0;
+        return db - da;
+      });
+      return sorted.slice(0, n);
+    }
+
+    function gvYpmMedianForBandStore(band, store, recentN) {
+      const storeKey = (store || '').trim().toLowerCase();
+      const pool = (recentN && recentN > 0) ? gvRecentVisits(recentN) : historyList;
+      const arrStore = [];
+      const arrBand = [];
+      pool.forEach(v => {
+        if (!v || v.pendingCheckIn) return;
+        const C = gvParseAmount(v);
+        if (C == null) return;
+        if (gvSatisfactionBand(v) !== band) return;
+        const ypm = C / gvParseCourseMinutes(v);
+        arrBand.push(ypm);
+        if (storeKey && (v.store || '').trim().toLowerCase() === storeKey) arrStore.push(ypm);
+      });
+      if (arrStore.length >= 2) return gvMedian(arrStore);
+      if (arrBand.length >= 2) return gvMedian(arrBand);
+      return gvYpmMedianForBand(band);
+    }
+
+    function gvGetDynamicR0() {
+      // D6: ユーザー実績の raw 中央値に寄せる
+      const arr = [];
+      historyList.forEach(v => {
+        if (!v || v.pendingCheckIn) return;
+        const C = gvParseAmount(v);
+        if (C == null || C <= 0) return;
+        const T = gvParseCourseMinutes(v);
+        let S;
+        try {
+          S = gvIsFlagOnlyMode(v) ? 50 : gvRatedBaseS(v);
+        } catch (e) { S = 50; }
+        if (!(S > 0)) S = 50;
+        arr.push((S * Math.pow(T, 0.4)) / C);
+      });
+      const med = gvMedian(arr);
+      if (med != null && med > 0) return med;
+      return GV_R0;
+    }
+
+    function gvAtariDensityDelta() {
+      const recent = gvRecentVisits(10);
+      if (recent.length < 3) return 0;
+      let atari = 0;
+      recent.forEach(v => { if (gvHasFlag(v, '🆂') && !gvHasFlag(v, '⚔')) atari++; });
+      const rate = atari / recent.length;
+      if (rate >= 0.5) return 4;
+      if (rate <= 0.15) return -3;
+      return 0;
+    }
+
+    function gvRecentHazureRate(n) {
+      const recent = gvRecentVisits(n || 10);
+      if (recent.length < 3) return 0;
+      let h = 0;
+      recent.forEach(v => { if (gvHasFlag(v, '⚔')) h++; });
+      return h / recent.length;
+    }
+
+    function gvAtariStreakBonus() {
+      const recent = gvRecentVisits(5);
+      let streak = 0;
+      for (let i = 0; i < recent.length; i++) {
+        if (gvHasFlag(recent[i], '🆂') && !gvHasFlag(recent[i], '⚔')) streak++;
+        else break;
+      }
+      if (streak >= 3) return 3;
+      if (streak >= 2) return 2;
+      return 0;
+    }
+
+
     function computeVisitGoodValue(rec) {
       if (!rec || rec.pendingCheckIn) return null;
       const formulaId = getGvFormulaId();
       const flagOnly = gvIsFlagOnlyMode(rec);
 
-      // --- 案1: コスパ職人 ---
+      const tw = getGvTweaks();
+      const atari = gvHasFlag(rec, '🆂');
+      const hazure = gvHasFlag(rec, '⚔');
+
+      // --- 案1: コスパ職人（A1: 0.50/0.50 + MBTI） ---
       if (formulaId === 'cost_crafter') {
-        const Sbase = flagOnly ? gvFlagBaseS(rec, formulaId) : gvRatedBaseS(rec);
+        let Sbase = flagOnly ? gvFlagBaseS(rec, formulaId) : gvRatedBaseS(rec);
+        if (!tw.noRepeatBonus && gvIsRepeatCast(rec)) {
+          Sbase = Math.min(100, Sbase + Math.min(5, gvRepeatBonusPoints(rec, tw) * 0.4));
+        }
         const C = gvParseAmount(rec);
-        if (C == null) return Math.max(0, Math.min(100, Sbase));
         const T = gvParseCourseMinutes(rec);
+        if (C == null) {
+          let s = Math.max(0, Math.min(100, Sbase));
+          if (tw.missingDataCap != null) s = Math.min(s, tw.missingDataCap);
+          return s;
+        }
         const Ccost = gvCostFromYpm(C, T);
-        return Math.max(0, Math.min(100, 0.55 * Sbase + 0.45 * Ccost));
+        let score = (tw.costWS || 0.5) * Sbase + (tw.costWC || 0.5) * Ccost;
+        if (tw.atariDensityBoost) score += gvAtariDensityDelta();
+        if (tw.shortCourseBonus && T > 0 && T <= 45 && Sbase >= 70) score += tw.shortCourseBonus;
+        if (tw.budgetOverPenalty && typeof getGvMonthBudget === 'function') {
+          try {
+            /* 予算超過は月次側で見るため、単回は軽めにしない（将来拡張用） */
+          } catch (e) {}
+        }
+        if (C == null && tw.missingDataCap != null) score = Math.min(score, tw.missingDataCap);
+        return Math.max(0, Math.min(100, score));
       }
 
-      // --- 案3: 自分基準の節約家 ---
+      // --- 案3: 自分基準の節約家（B3母集団 + B1/B4/B5 by MBTI） ---
       if (formulaId === 'self_saver') {
         const Sbase = flagOnly ? gvFlagBaseS(rec, formulaId) : gvRatedBaseS(rec);
         const C = gvParseAmount(rec);
@@ -8254,60 +8562,86 @@ async function attemptBiometricUnlock() {
         const T = gvParseCourseMinutes(rec);
         const y = C / T;
         const band = gvSatisfactionBand(rec);
-        const yb = gvYpmMedianForBand(band);
+        const yb = tw.relPreferStore
+          ? gvYpmMedianForBandStore(band, rec.store, tw.relRecentN || 0)
+          : gvYpmMedianForBand(band);
         let Crel;
         if (yb == null || yb <= 0) {
-          Crel = gvCostFromYpm(C, T); // 母数不足時は案1へフォールバック
+          Crel = gvCostFromYpm(C, T);
         } else {
-          const delta = (yb - y) / (yb + 1e-6);
-          Crel = Math.max(0, Math.min(100, 50 + 40 * delta));
+          let delta = (yb - y) / (yb + 1e-6);
+          if (tw.relFirstHalfPenalty && gvIsFirstCastOrStore(rec) && delta < 0) delta *= 0.5;
+          const sens = tw.relSens != null ? tw.relSens : 40;
+          Crel = Math.max(0, Math.min(100, 50 + sens * delta));
         }
+        if (tw.relAtariBoost && atari && !hazure) Crel = Math.min(100, Crel * tw.relAtariBoost);
         return Math.max(0, Math.min(100, 0.50 * Sbase + 0.50 * Crel));
       }
 
-      // --- 案4: 推し活中 ---
+      // --- 案4: 推し活中（C2段階再訪 + C3 0.70/0.30 + MBTI） ---
       if (formulaId === 'loyal_fan') {
-        const Sloy = flagOnly ? gvFlagBaseS(rec, 'loyal_fan') : (() => {
-          let S = gvRatedBaseS(rec);
-          if (gvIsRepeatCast(rec)) S = Math.min(100, S + 8);
-          return S;
-        })();
+        let Sloy;
+        if (flagOnly) {
+          Sloy = gvFlagBaseS(rec, 'loyal_fan');
+          // 段階ボーナスをフラグベースにも反映
+          if (!hazure) {
+            const bonus = gvRepeatBonusPoints(rec, tw);
+            if (bonus) Sloy = Math.min(100, (atari ? 70 : 48) + bonus);
+            if (atari && gvCastVisitCount(rec) >= 2) Sloy = Math.min(100, Math.max(Sloy, 70 + gvRepeatBonusPoints(rec, tw)));
+          }
+        } else {
+          Sloy = gvRatedBaseS(rec);
+          Sloy = Math.min(100, Sloy + gvRepeatBonusPoints(rec, tw));
+        }
         const C = gvParseAmount(rec);
         if (C == null) return Math.max(0, Math.min(100, Sloy));
         const T = gvParseCourseMinutes(rec);
         const Ccost = gvCostFromYpm(C, T);
-        return Math.max(0, Math.min(100, 0.65 * Sloy + 0.35 * Ccost));
+        let score = (tw.loyalWS || 0.70) * Sloy + (tw.loyalWC || 0.30) * Ccost;
+        if (tw.bigLossPenalty) {
+          const med = gvYpmMedianAll();
+          const y = C / T;
+          if (med && y > med * 1.35) score -= tw.bigLossPenalty;
+        }
+        return Math.max(0, Math.min(100, score));
       }
 
-      // --- 案2 / 慎重レビュアー: 対数コスパ ---
+      // --- 案2 / 慎重レビュアー: 対数コスパ（D6動的R0, E3/E4） ---
       {
         let S = flagOnly ? gvFlagBaseS(rec, formulaId === 'careful_reviewer' ? 'careful_reviewer' : 'balanced') : gvRatedBaseS(rec);
-        // balanced 用のフラグベース微調整
         if (flagOnly && formulaId === 'balanced') {
-          const atari = gvHasFlag(rec, '🆂');
-          const hazure = gvHasFlag(rec, '⚔');
           if (atari && !hazure) S = gvIsRepeatCast(rec) ? 80 : 72;
           else if (hazure && !atari) S = 28;
-          else S = 50;
+          else S = (tw.balancedFlagMid != null ? tw.balancedFlagMid : 50);
+        }
+        if (!flagOnly && formulaId === 'balanced' && atari && !hazure && tw.balancedAtariSBoost) {
+          S = Math.min(100, S + tw.balancedAtariSBoost);
         }
         const C = gvParseAmount(rec);
         if (C == null) return Math.max(0, Math.min(100, S));
         const T = gvParseCourseMinutes(rec);
-        const raw = (S * Math.pow(T, 0.4)) / C;
-        let score = 50 + 25 * Math.log(Math.max(raw, 1e-9) / GV_R0);
-        if (formulaId === 'careful_reviewer') {
-          if (gvSameStorePrevHazure(rec)) score -= 5;
-          // 直近のハズレ多さ（簡易）
-          let hazureRecent = 0;
-          historyList.forEach(v => {
-            if (!v || v.pendingCheckIn) return;
-            if (gvHasFlag(v, '⚔')) hazureRecent++;
-          });
-          if (hazureRecent >= 2 && historyList.length >= 3) {
-            const rate = hazureRecent / Math.max(historyList.length, 1);
-            if (rate >= 0.25) score -= 8;
+        let raw = (S * Math.pow(T, 0.4)) / C;
+        if (tw.cheapBoostCap) {
+          const med = gvYpmMedianAll();
+          const y = C / T;
+          if (med && y < med * 0.55) {
+            // 極端な安さの加点を抑制（raw上限）
+            const capRaw = (S * Math.pow(T, 0.4)) / (med * 0.55 * T);
+            raw = Math.min(raw, capRaw * 1.05);
           }
         }
+        const r0 = gvGetDynamicR0();
+        const coeff = tw.logCoeff != null ? tw.logCoeff : 25;
+        let score = 50 + coeff * Math.log(Math.max(raw, 1e-9) / r0);
+        if (formulaId === 'careful_reviewer') {
+          const storePen = tw.carefulStorePenalty != null ? tw.carefulStorePenalty : 5;
+          if (gvSameStorePrevHazure(rec)) score -= storePen;
+          const n = tw.carefulRecentN || 10;
+          const rate = gvRecentHazureRate(n);
+          if (rate >= 0.25) score -= 8;
+          if (tw.carefulStreakBonus) score += gvAtariStreakBonus();
+        }
+        if (formulaId === 'balanced' && hazure && tw.hazureExtra) score -= tw.hazureExtra;
         return Math.max(0, Math.min(100, score));
       }
     }
