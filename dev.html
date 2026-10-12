@@ -2063,6 +2063,66 @@
     .notif-panel-body { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
     .notif-empty-note { text-align: center; color: var(--light-text); font-size: 0.82rem; padding: 40px 10px; }
 
+    
+    /* 出会い記念日：ソフトペタル通知 */
+    .notif-glass-card.anniversary-petal {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid color-mix(in srgb, var(--accent-pink) 35%, transparent);
+      background: linear-gradient(135deg,
+        color-mix(in srgb, #ffb3c6 35%, var(--card-bg)) 0%,
+        color-mix(in srgb, #e0c3fc 28%, var(--card-bg)) 55%,
+        color-mix(in srgb, var(--card-bg) 90%, #fff) 100%);
+      box-shadow: 0 6px 18px color-mix(in srgb, var(--accent-pink) 12%, transparent);
+    }
+    .notif-glass-card.anniversary-petal .petal-hearts {
+      position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+    }
+    .notif-glass-card.anniversary-petal .petal-heart {
+      position: absolute;
+      color: color-mix(in srgb, var(--accent-pink) 45%, transparent);
+      opacity: 0.35;
+      font-size: 0.85rem;
+      line-height: 1;
+      animation: petalFloat 4.5s ease-in-out infinite;
+    }
+    .notif-glass-card.anniversary-petal .petal-heart:nth-child(1) { left: 8%; top: 18%; animation-delay: 0s; font-size: 0.7rem; }
+    .notif-glass-card.anniversary-petal .petal-heart:nth-child(2) { right: 12%; top: 22%; animation-delay: 0.8s; font-size: 1rem; opacity: 0.28; }
+    .notif-glass-card.anniversary-petal .petal-heart:nth-child(3) { left: 22%; bottom: 14%; animation-delay: 1.4s; font-size: 0.65rem; opacity: 0.3; }
+    @keyframes petalFloat {
+      0%, 100% { transform: translateY(0) scale(1); opacity: 0.28; }
+      50% { transform: translateY(-5px) scale(1.08); opacity: 0.42; }
+    }
+    .notif-glass-card.anniversary-petal .notif-card-title,
+    .notif-glass-card.anniversary-petal .notif-card-sub {
+      position: relative; z-index: 1;
+    }
+    .notif-glass-card.anniversary-petal .notif-card-title {
+      color: var(--accent-pink); font-weight: 800;
+    }
+    .cal-anniversary-block {
+      margin: 8px 0 12px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid color-mix(in srgb, var(--accent-pink) 30%, var(--border-color));
+      background: linear-gradient(135deg,
+        color-mix(in srgb, #ffb3c6 22%, var(--card-bg)),
+        color-mix(in srgb, #e0c3fc 18%, var(--card-bg)));
+    }
+    .cal-anniversary-block-title {
+      font-size: 0.78rem; font-weight: 800; color: var(--accent-pink); margin-bottom: 6px;
+    }
+    .cal-anniversary-item {
+      font-size: 0.78rem; color: var(--text-color); padding: 4px 0;
+      display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: baseline;
+    }
+    .cal-anniversary-item .ann-name {
+      font-weight: 800; color: var(--accent-pink); cursor: pointer;
+    }
+    .cal-anniversary-item .ann-meta {
+      font-size: 0.7rem; color: var(--light-text);
+    }
+
     .notif-glass-card {
       background: rgba(var(--glass-tint-rgb), 0.45); backdrop-filter: blur(6px);
       border: 1px solid rgba(var(--glass-tint-rgb), 0.5); border-radius: 14px; padding: 12px 14px;
@@ -9715,6 +9775,149 @@ async function attemptBiometricUnlock() {
       }
     }
 
+
+    function gvParseRecordDateParts(h) {
+      const y = parseInt(h.year, 10);
+      const m = parseInt(h.month, 10);
+      const d = parseInt(h.day, 10) || 1;
+      if (!y || !m || isNaN(y) || isNaN(m)) return null;
+      return { y: y, m: m, d: d };
+    }
+
+    function gvGetCastVisitStats() {
+      const map = {};
+      (historyList || []).forEach(h => {
+        if (!h || h.pendingCheckIn) return;
+        const name = (h.name || '').trim();
+        if (!name) return;
+        const parts = gvParseRecordDateParts(h);
+        if (!parts) return;
+        if (!map[name]) map[name] = { name: name, count: 0, first: parts, last: parts };
+        map[name].count++;
+        const key = parts.y * 10000 + parts.m * 100 + parts.d;
+        const f = map[name].first;
+        const fkey = f.y * 10000 + f.m * 100 + f.d;
+        if (key < fkey) map[name].first = parts;
+        const l = map[name].last;
+        const lkey = l.y * 10000 + l.m * 100 + l.d;
+        if (key > lkey) map[name].last = parts;
+      });
+      return map;
+    }
+
+    function gvIsCastRetired(name) {
+      try {
+        if (typeof castData !== 'undefined' && castData && castData[name] && castData[name].status === 'retired') return true;
+      } catch (e) {}
+      return false;
+    }
+
+    /** 卒業後、最終出勤から1年を超えたら記念日対象外 */
+    function gvAnniversaryEligible(stat, refY, refM, refD) {
+      if (!stat || stat.count < 3) return false;
+      if (!gvIsCastRetired(stat.name)) return true;
+      const last = stat.last || stat.first;
+      if (!last) return false;
+      // 参照日時点で最終出勤から1年超か
+      const ref = new Date(refY, refM - 1, refD);
+      const lastDt = new Date(last.y, last.m - 1, last.d);
+      const ms = ref.getTime() - lastDt.getTime();
+      const days = ms / (1000 * 60 * 60 * 24);
+      if (days > 365) return false;
+      return true;
+    }
+
+
+    /**
+     * 指定日（閲覧中の年月日）が「初回の月日」と一致し、
+     * 通算3回以上、かつ初回より後の年（翌年以降）の子のみ。
+     * 初回当日は出さない。years = 閲覧年 - 初回年。
+     */
+    function getFirstMeetCastsOnDate(y, m, d) {
+      const yy = parseInt(y, 10), mm = parseInt(m, 10), dd = parseInt(d, 10);
+      const stats = gvGetCastVisitStats();
+      const list = [];
+      Object.keys(stats).forEach(function(name) {
+        const s = stats[name];
+        if (s.count < 3) return;
+        if (s.first.m !== mm || s.first.d !== dd) return;
+        if (yy <= s.first.y) return; // 初回年そのものは表示しない
+        const years = yy - s.first.y;
+        if (years < 1) return;
+        if (!gvAnniversaryEligible(s, yy, mm, dd)) return;
+        list.push({
+          name: s.name,
+          count: s.count,
+          first: s.first,
+          years: years
+        });
+      });
+      list.sort(function(a, b) { return b.count - a.count; });
+      return list;
+    }
+
+    /** 今日が月日一致の出会い記念（年次）・通算3回以上 */
+    function getAnniversaryCastsForToday(now) {
+      const n = now || new Date();
+      const mm = n.getMonth() + 1;
+      const dd = n.getDate();
+      const yy = n.getFullYear();
+      const stats = gvGetCastVisitStats();
+      const list = [];
+      Object.keys(stats).forEach(function(name) {
+        const s = stats[name];
+        if (s.count < 3) return;
+        if (s.first.m === mm && s.first.d === dd) {
+          const years = yy - s.first.y;
+          if (years < 1) return; // 初回年は通知しない。翌年以降のみ
+          if (!gvAnniversaryEligible(s, yy, mm, dd)) return;
+          list.push({
+            name: s.name,
+            count: s.count,
+            first: s.first,
+            years: years
+          });
+        }
+      });
+      list.sort(function(a, b) { return b.count - a.count; });
+      return list;
+    }
+
+    function anniversaryNotifStorageKey(name, year) {
+      const user = (typeof currentUserName !== 'undefined' && currentUserName) ? currentUserName : 'default';
+      return 'anniv_notif_' + user + '_' + year + '_' + name;
+    }
+
+    function wasAnniversaryNotifShown(name, year) {
+      try {
+        return localStorage.getItem(anniversaryNotifStorageKey(name, year)) === '1';
+      } catch (e) { return false; }
+    }
+
+    function markAnniversaryNotifShown(name, year) {
+      try {
+        localStorage.setItem(anniversaryNotifStorageKey(name, year), '1');
+      } catch (e) {}
+    }
+
+    function buildAnniversaryPetalCard(item) {
+      const years = item.years;
+      let whenLabel;
+      if (years === 1) whenLabel = '出会って1年';
+      else whenLabel = '出会って' + years + '年';
+      const nameEsc = (typeof escapeHTML === 'function') ? escapeHTML(item.name) : String(item.name);
+      return (
+        '<div class="notif-glass-card anniversary-petal">' +
+          '<div class="petal-hearts" aria-hidden="true">' +
+            '<span class="petal-heart">♡</span><span class="petal-heart">♡</span><span class="petal-heart">♡</span>' +
+          '</div>' +
+          '<div class="notif-card-title">♡ ' + whenLabel + '</div>' +
+          '<div class="notif-card-sub" style="opacity:1;">今日は <strong style="color:var(--accent-pink);">' + nameEsc + '</strong> と初めて会った日です。<br>' +
+          'いままで <strong>' + item.count + '回</strong>会っています。</div>' +
+        '</div>'
+      );
+    }
+
     function selectCalendarDate(dateStr) {
       selectedCalDateStr = dateStr;
       
@@ -9731,6 +9934,22 @@ async function attemptBiometricUnlock() {
       detailsPanel.innerHTML = `<div style="font-weight:bold; font-size:0.9rem; margin-bottom:8px; border-bottom:1px solid var(--border-color); padding-bottom:4px; color:var(--accent-pink);">📅 ${y}年${m}月${d}日 の詳細</div>`;
       
       let foundContent = false;
+
+      // 出会い初日（通算3回以上・ドットなし・日付詳細のみ）
+      const firstMeetList = getFirstMeetCastsOnDate(y, m, d);
+      if (firstMeetList.length > 0) {
+        foundContent = true;
+        let annHtml = '<div class="cal-anniversary-block"><div class="cal-anniversary-block-title">♡ 出会い記念日</div>';
+        firstMeetList.forEach(function(s) {
+          const nm = (typeof escapeHTML === 'function') ? escapeHTML(s.name) : String(s.name);
+          const yearsLabel = (s.years === 1) ? '出会って1年' : ('出会って' + s.years + '年');
+          annHtml += '<div class="cal-anniversary-item">' +
+            '<span class="ann-name">' + nm + '</span>' +
+            '<span class="ann-meta">' + yearsLabel + ' · いままで' + s.count + '回</span></div>';
+        });
+        annHtml += '</div>';
+        detailsPanel.innerHTML += annHtml;
+      }
 
       const matchedHistory = historyList.filter(h => {
         return parseInt(h.year, 10) == y && parseInt(h.month, 10) == m && (parseInt(h.day, 10) || 1) == d;
@@ -10174,6 +10393,16 @@ async function attemptBiometricUnlock() {
       const now = new Date();
       let cardsHtml = '';
       let activeCount = 0;
+
+      // ♡ 出会い記念日（年次・月日一致・通算3回以上）N1: パネル表示時に生成
+      const annivList = getAnniversaryCastsForToday(now);
+      annivList.forEach(function(item) {
+        const y = now.getFullYear();
+        if (wasAnniversaryNotifShown(item.name, y)) return;
+        cardsHtml += buildAnniversaryPetalCard(item);
+        markAnniversaryNotifShown(item.name, y);
+        activeCount++;
+      });
 
       // 📌 ピン留め：タイムカプセル（N年/ヶ月前の今日）
       const capsule = getTimeCapsuleMatch();
