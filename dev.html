@@ -1594,7 +1594,97 @@
       color: #008040;
       font-weight: 800;
     }
-    [data-theme="jreast"] details.timeline-item {
+    [data-theme="jreast"] details
+    
+    /* レポート機能：一時非表示（コードは残置） */
+    .tl-report-btn,
+    .report-entry-row,
+    #reportReaderModal,
+    #reportEditorModal {
+      display: none !important;
+    }
+
+    /* ===== レポート（体験談） ===== */
+    .tl-report-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      margin-top: 6px; padding: 5px 10px; border-radius: 999px;
+      border: 1px solid color-mix(in srgb, var(--accent-pink) 40%, var(--border-color));
+      background: color-mix(in srgb, var(--accent-pink) 8%, var(--card-bg));
+      color: var(--accent-pink); font-size: 0.72rem; font-weight: 800;
+      font-family: inherit; cursor: pointer;
+    }
+    .report-entry-row {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+      margin: 6px 0 10px; padding: 8px 10px; border-radius: 12px;
+      border: 1px dashed var(--border-color);
+      background: color-mix(in srgb, var(--soft-pink) 25%, var(--card-bg));
+      font-size: 0.78rem; color: var(--light-text);
+    }
+    .report-entry-row strong { color: var(--text-color); font-weight: 800; }
+    .report-entry-row .report-entry-actions { margin-left: auto; display: flex; gap: 6px; }
+    .report-entry-row button {
+      font-size: 0.72rem; font-weight: 800; padding: 5px 10px; border-radius: 999px;
+      border: 1px solid var(--border-color); background: var(--card-bg);
+      color: var(--accent-pink); font-family: inherit; cursor: pointer;
+    }
+    #reportReaderModal,
+    #reportEditorModal {
+      z-index: 3200 !important;
+    }
+    #reportReaderModal h3,
+    #reportEditorModal h3,
+    #reportReaderModal .report-reader-meta,
+    #reportEditorModal .report-reader-meta {
+      text-align: left;
+    }
+    #reportReaderModal .modal-content,
+    #reportEditorModal .modal-content {
+      max-width: 520px; width: 96%; max-height: 92vh;
+      display: flex; flex-direction: column; padding-bottom: 12px;
+      text-align: left;
+    }
+    .report-reader-meta {
+      font-size: 0.78rem; color: var(--light-text); margin-bottom: 10px;
+      padding-bottom: 8px; border-bottom: 1px solid var(--border-color);
+    }
+    .report-reader-meta .rr-name { color: var(--accent-pink); font-weight: 800; }
+    .report-reader-body {
+      flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+      font-size: 0.92rem; line-height: 1.85; color: var(--text-color);
+      padding: 4px 2px 20px;
+      text-align: left;
+    }
+    .report-reader-body .note-hl {
+      background: color-mix(in srgb, #ffe066 55%, transparent);
+      border-radius: 2px; padding: 0 2px;
+    }
+    .report-toolbar {
+      display: flex; flex-wrap: wrap; gap: 4px; align-items: center;
+      padding: 6px 0 8px; border-bottom: 1px solid var(--border-color); margin-bottom: 8px;
+    }
+    .report-toolbar button {
+      min-width: 32px; height: 32px; padding: 0 8px; border-radius: 8px;
+      border: 1px solid var(--border-color); background: var(--card-bg);
+      color: var(--text-color); font-size: 0.78rem; font-weight: 800;
+      font-family: inherit; cursor: pointer;
+    }
+    .report-toolbar .rt-color {
+      width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border-color);
+      padding: 0; min-width: 22px;
+    }
+    #reportEditorArea {
+      flex: 1; min-height: 220px; max-height: 55vh; overflow-y: auto;
+      padding: 12px; border-radius: 12px; border: 1.5px solid var(--border-color);
+      background: var(--card-bg); color: var(--text-color);
+      font-size: 0.9rem; line-height: 1.75; outline: none;
+      text-align: left;
+      direction: ltr;
+    }
+    #reportEditorArea:empty:before {
+      content: attr(data-placeholder); color: var(--light-text); pointer-events: none;
+    }
+
+    .timeline-item {
       border-left: 3px solid #008e43;
       border-radius: 0 6px 6px 0;
     }
@@ -1824,48 +1914,46 @@
       transition: opacity 0.22s ease, transform 0.22s ease, max-width 0.28s ease, padding 0.28s ease, border-width 0.2s ease;
     }
     .cast-style-feat-pill.is-tail {
-      max-width: 0 !important;
-      opacity: 0;
-      padding-left: 0 !important;
-      padding-right: 0 !important;
-      margin: 0 !important;
-      border-width: 0 !important;
-      overflow: hidden;
-      transform: scale(0.85);
-      pointer-events: none;
+      /* 閉じ時は非表示（gapで空白が空かないように） */
+      display: none !important;
     }
     .cast-feat-fold.is-open .cast-style-feat-pill.is-tail {
-      max-width: 20em !important;
+      display: inline-flex !important;
+      max-width: 20em;
       opacity: 1;
-      padding-left: 8px !important;
-      padding-right: 8px !important;
-      border-width: 1px !important;
       transform: scale(1);
       pointer-events: auto;
-      overflow: visible;
     }
     .cast-feat-toggle {
       flex: 0 0 auto;
-      height: auto; min-height: 22px; min-width: 24px; padding: 2px 8px; border-radius: 8px;
-      border: 1px solid var(--border-color); background: var(--bg-color); color: var(--accent-pink);
-      font-size: 0.65rem; font-weight: 800; cursor: pointer; font-family: inherit;
-      display: inline-flex; align-items: center; justify-content: center; gap: 3px;
+      height: auto; min-height: 22px; min-width: 22px; padding: 2px 6px; border-radius: 8px;
+      border: 1px solid color-mix(in srgb, var(--border-color) 80%, transparent);
+      background: transparent;
+      color: color-mix(in srgb, var(--light-text) 85%, var(--text-color));
+      font-size: 0.62rem; font-weight: 600; cursor: pointer; font-family: inherit;
+      display: inline-flex; align-items: center; justify-content: center; gap: 1px;
       line-height: 1; white-space: nowrap;
-      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, color 0.2s ease;
     }
     .cast-feat-toggle:active { transform: scale(0.94); }
     .cast-feat-fold.is-open .cast-feat-toggle {
-      background: color-mix(in srgb, var(--accent-pink) 14%, var(--card-bg));
-      border-color: var(--accent-pink);
+      background: color-mix(in srgb, var(--bg-color) 80%, transparent);
+      border-color: var(--border-color);
+      color: var(--light-text);
     }
     .cast-feat-toggle .feat-arrow {
       display: inline-block;
-      transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+      opacity: 0.75;
+      letter-spacing: -0.05em;
     }
     .cast-feat-fold.is-open .cast-feat-toggle .feat-arrow {
-      transform: rotate(180deg);
+      transform: none;
     }
-    .cast-feat-toggle .feat-rest { font-variant-numeric: tabular-nums; }
+    .cast-feat-toggle .feat-rest {
+      font-variant-numeric: tabular-nums;
+      opacity: 0.85;
+      font-weight: 600;
+    }
     .cast-feat-toggle.is-closing { animation: featTogglePulse 0.35s ease; }
     @keyframes featTogglePulse {
       0% { transform: scale(1); }
@@ -5738,6 +5826,13 @@
         </div>
 
         <div class="form-group"><label>メモ・感想</label><input type="text" id="addVisitNote" placeholder="接客メモなど"></div>
+        <div class="report-entry-row" id="addReportEntryRow">
+          <span id="addReportStatus"><strong>レポート</strong>（任意・長文）</span>
+          <div class="report-entry-actions">
+            <button type="button" onclick="openReportEditor('add')">レポートを書く</button>
+          </div>
+        </div>
+        <input type="hidden" id="addVisitReport" value="">
 
         <details class="detail-fold">
           <summary>詳細（スタイル・評価・レポート）</summary>
@@ -5794,6 +5889,43 @@
   </div>
 
 <!-- 記録編集モーダル -->
+
+  <!-- レポート読む -->
+  <div class="modal-overlay" id="reportReaderModal">
+    <div class="modal-content">
+      <h3 id="reportReaderTitle">レポート</h3>
+      <div class="report-reader-meta" id="reportReaderMeta"></div>
+      <div class="report-reader-body" id="reportReaderBody"></div>
+      <button type="button" class="close-btn" style="margin-top:12px;" onclick="closeModal('reportReaderModal')">閉じる</button>
+    </div>
+  </div>
+
+  <!-- レポート書く -->
+  <div class="modal-overlay" id="reportEditorModal">
+    <div class="modal-content">
+      <h3 id="reportEditorTitle">レポートを書く</h3>
+      <div class="report-reader-meta" id="reportEditorMeta" style="margin-bottom:6px;"></div>
+      <div class="report-toolbar">
+        <button type="button" title="太字" onclick="reportEditorCmd('bold')"><b>B</b></button>
+        <button type="button" title="下線" onclick="reportEditorCmd('underline')"><u>U</u></button>
+        <span class="rt-sep"></span>
+        <button type="button" class="rt-color" style="background:#f72585;" title="ピンク" onclick="reportEditorColor('pink')"></button>
+        <button type="button" class="rt-color" style="background:#e03131;" title="赤" onclick="reportEditorColor('red')"></button>
+        <button type="button" class="rt-color" style="background:#1c7ed6;" title="青" onclick="reportEditorColor('blue')"></button>
+        <button type="button" class="rt-color" style="background:#2f9e44;" title="緑" onclick="reportEditorColor('green')"></button>
+        <button type="button" class="rt-color" style="background:#9c36b5;" title="紫" onclick="reportEditorColor('purple')"></button>
+        <button type="button" class="rt-color" style="background:#e8590c;" title="橙" onclick="reportEditorColor('orange')"></button>
+        <span class="rt-sep"></span>
+        <button type="button" title="ハイライト" onclick="reportEditorHighlight()">HL</button>
+      </div>
+      <div id="reportEditorArea" contenteditable="true" data-placeholder="体験談・レポートを入力…"></div>
+      <div style="display:flex; gap:8px; margin-top:12px;">
+        <button type="button" class="close-btn" style="background:#888; flex:1;" onclick="closeModal('reportEditorModal')">キャンセル</button>
+        <button type="button" class="close-btn" style="flex:1;" onclick="saveReportEditor()">保存</button>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-overlay" id="editRecordModal">
     <div class="modal-content">
       <h3>✏️ 記録の編集</h3>
@@ -5912,6 +6044,13 @@
         </div>
 
         <div class="form-group"><label>メモ</label><textarea id="editVisitNote" rows="2"></textarea></div>
+        <div class="report-entry-row" id="editReportEntryRow">
+          <span id="editReportStatus"><strong>レポート</strong>（任意・長文）</span>
+          <div class="report-entry-actions">
+            <button type="button" onclick="openReportEditor('edit')">レポートを書く</button>
+          </div>
+        </div>
+        <input type="hidden" id="editVisitReport" value="">
         <div style="display:flex; gap:6px;">
           <div class="form-group" style="flex:1;"><label>金額（円）</label><input type="number" id="editAmount" min="0" placeholder="15000"></div>
           <div class="form-group" style="flex:1;"><label>コース時間（分）</label><input type="number" id="editCourseTime" min="0" placeholder="60"></div>
@@ -11502,7 +11641,10 @@ async function attemptBiometricUnlock() {
       }
       s = escapeHTML(s);
       s = s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
-      s = s.replace(/\{\{(pink|red|blue|muted|orange|green|purple):(.+?)\}\}/g, function(_, c, t) {
+      s = s.replace(/__(.+?)__/g, '<u>$1</u>');
+      s = s.replace(/==(.+?)==/g, '<span class="note-hl">$1</span>');
+      s = s.replace(/\{\{(pink|red|blue|muted|orange|green|purple|hl):(.+?)\}\}/g, function(_, c, t) {
+        if (c === 'hl') return '<span class="note-hl">' + t + '</span>';
         return '<span class="note-' + c + '">' + t + '</span>';
       });
       if (!oneLine) s = s.replace(/\n/g, '<br>');
@@ -11528,8 +11670,20 @@ function notesHtmlToMarkup(html) {
           acc.push('**');
           return;
         }
+        if (tag === 'u') {
+          acc.push('__');
+          Array.from(node.childNodes).forEach(ch => walk(ch, acc));
+          acc.push('__');
+          return;
+        }
         if (tag === 'span') {
           const cls = node.className || '';
+          if (cls.indexOf('note-hl') >= 0) {
+            acc.push('==');
+            Array.from(node.childNodes).forEach(ch => walk(ch, acc));
+            acc.push('==');
+            return;
+          }
           let color = '';
           if (cls.indexOf('note-pink') >= 0) color = 'pink';
           else if (cls.indexOf('note-red') >= 0) color = 'red';
@@ -11548,6 +11702,7 @@ function notesHtmlToMarkup(html) {
         if (tag === 'div' || tag === 'p') {
           if (acc.length && acc[acc.length - 1] !== '\n') acc.push('\n');
           Array.from(node.childNodes).forEach(ch => walk(ch, acc));
+          if (acc.length && acc[acc.length - 1] !== '\n') acc.push('\n');
           return;
         }
         Array.from(node.childNodes).forEach(ch => walk(ch, acc));
@@ -12336,6 +12491,7 @@ ${sideActionsHtml}
           items = items.filter(i =>
             (i.name || '').toLowerCase().includes(kw) ||
             (i.visitNote || '').toLowerCase().includes(kw) ||
+            (i.visitReport || '').toLowerCase().includes(kw) ||
             (i.storeName || '').toLowerCase().includes(kw) ||
             (i.typeTag || '').toLowerCase().includes(kw)
           );
@@ -12410,6 +12566,7 @@ ${sideActionsHtml}
                   </div>
                   ${typeof buildPlayPillsHtml === 'function' ? buildPlayPillsHtml(i.playTags) : ''}
                   <div class="tl-memo ${memo ? '' : 'tl-memo-empty'}">${memo || 'メモなし'}</div>
+                  ${(i.visitReport && String(i.visitReport).trim()) ? `<button type="button" class="tl-report-btn" onclick="event.stopPropagation(); openReportReader(${i.originalIndex})">レポートを読む</button>` : ''}
                   <div class="tl-actions">
                     <button type="button" class="edit-icon-btn" onclick="openEditRecordModal(event, ${i.originalIndex})" title="編集">
                       <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
@@ -14663,7 +14820,7 @@ ${sideActionsHtml}
       return '<div class="cast-feat-fold" data-cast-feat="' + escapeHTML(name).replace(/"/g, '') + '">' +
         '<div class="cast-feat-track">' + pills +
         '<button type="button" class="cast-feat-toggle" onclick="toggleCastFeatFold(event, this)" title="スタイル特徴を展開">' +
-        '<span class="feat-arrow">▶</span><span class="feat-rest">' + restCount + '</span></button>' +
+        '<span class="feat-arrow">⋯</span><span class="feat-rest">' + restCount + '</span></button>' +
         '</div></div>';
     }
 
@@ -14677,7 +14834,7 @@ ${sideActionsHtml}
       const rest = btn.querySelector('.feat-rest');
       const track = fold.querySelector('.cast-feat-track');
       if (willOpen) {
-        if (arrow) arrow.textContent = '◀';
+        if (arrow) arrow.textContent = '⋯';
         if (rest) rest.textContent = '閉じる';
         btn.setAttribute('title', '閉じる');
         // 展開後、末尾の閉じるボタンが見える位置へ
@@ -14690,7 +14847,7 @@ ${sideActionsHtml}
         btn.classList.remove('is-closing');
         void btn.offsetWidth;
         btn.classList.add('is-closing');
-        if (arrow) arrow.textContent = '▶';
+        if (arrow) arrow.textContent = '⋯';
         const tails = fold.querySelectorAll('.cast-style-feat-pill.is-tail');
         if (rest) rest.textContent = String(tails.length);
         btn.setAttribute('title', 'スタイル特徴を展開');
@@ -14701,6 +14858,10 @@ ${sideActionsHtml}
 
 
     function openAddModal() {
+      const ar = document.getElementById('addVisitReport');
+      if (ar) ar.value = '';
+      if (typeof updateReportEntryStatus === 'function') updateReportEntryStatus('add');
+
       if (typeof isPcViewMode === 'function' && isPcViewMode()) { showPcGuideModal('記録の追加'); return; }
       const d = new Date();
       document.getElementById('addYear').value = d.getFullYear();
@@ -14802,6 +14963,7 @@ ${sideActionsHtml}
         name: name,
         flags: document.getElementById('addFlags').value,
         visitNote: document.getElementById('addVisitNote').value,
+        visitReport: (document.getElementById('addVisitReport') && document.getElementById('addVisitReport').value) || '',
         amount: document.getElementById('addAmount').value || '',
         courseTime: document.getElementById('addCourseTime').value || '',
         storeName: storeName,
@@ -14850,6 +15012,165 @@ ${sideActionsHtml}
       saveData(); syncDataToCloud(true); closeModal('addModal'); render(); renderDashboard(); alert('保存しました！');
     }
 
+
+    let reportEditorContext = null; // 'add' | 'edit' | { index }
+
+    function updateReportEntryStatus(mode) {
+      const hiddenId = mode === 'add' ? 'addVisitReport' : 'editVisitReport';
+      const statusId = mode === 'add' ? 'addReportStatus' : 'editReportStatus';
+      const el = document.getElementById(hiddenId);
+      const st = document.getElementById(statusId);
+      if (!st) return;
+      const has = el && String(el.value || '').trim();
+      st.innerHTML = has
+        ? '<strong>レポート</strong> 入力済み'
+        : '<strong>レポート</strong>（任意・長文）';
+    }
+
+    function openReportReader(index) {
+      const rec = historyList[index];
+      if (!rec || !(rec.visitReport && String(rec.visitReport).trim())) return;
+      const title = document.getElementById('reportReaderTitle');
+      const meta = document.getElementById('reportReaderMeta');
+      const body = document.getElementById('reportReaderBody');
+      if (title) title.textContent = 'レポート';
+      const y = rec.year || '';
+      const m = rec.month || '';
+      const d = rec.day || '';
+      const dateStr = [y, m, d].filter(Boolean).join('/') || '';
+      const store = (rec.storeName || '').trim();
+      if (meta) {
+        meta.innerHTML = '<span class="rr-name">' + (typeof escapeHTML === 'function' ? escapeHTML(rec.name || '') : (rec.name || '')) + '</span>' +
+          (dateStr ? ' · ' + dateStr : '') +
+          (store ? ' · ' + (typeof escapeHTML === 'function' ? escapeHTML(store) : store) : '');
+      }
+      if (body) body.innerHTML = notesMarkupToHtml(rec.visitReport, { oneLine: false });
+      document.getElementById('reportReaderModal').style.display = 'flex';
+    }
+
+    function openReportEditor(mode) {
+      reportEditorContext = mode;
+      const area = document.getElementById('reportEditorArea');
+      const meta = document.getElementById('reportEditorMeta');
+      let markup = '';
+      if (mode === 'add') {
+        markup = (document.getElementById('addVisitReport') || {}).value || '';
+        if (meta) meta.textContent = '新規記録のレポート';
+      } else if (mode === 'edit') {
+        markup = (document.getElementById('editVisitReport') || {}).value || '';
+        const header = document.getElementById('editRecordHeader');
+        if (meta) meta.textContent = header ? header.innerText : '記録のレポート';
+      }
+      if (area) {
+        area.innerHTML = notesMarkupToHtml(markup, { oneLine: false }) || '';
+      }
+      document.getElementById('reportEditorModal').style.display = 'flex';
+      setTimeout(function() { if (area) area.focus(); }, 50);
+    }
+
+    function reportEditorCmd(cmd) {
+      document.execCommand(cmd, false, null);
+      const area = document.getElementById('reportEditorArea');
+      if (area) area.focus();
+    }
+
+    function reportEditorColor(color) {
+      const area = document.getElementById('reportEditorArea');
+      if (!area) return;
+      const sel = window.getSelection();
+      if (!sel || sel.rangeCount === 0 || sel.toString().length === 0) {
+        alert('色を付ける範囲を選択してください');
+        return;
+      }
+      const range = sel.getRangeAt(0);
+      const span = document.createElement('span');
+      span.className = 'note-' + color;
+      try {
+        range.surroundContents(span);
+      } catch (e) {
+        const frag = range.extractContents();
+        span.appendChild(frag);
+        range.insertNode(span);
+      }
+      area.focus();
+    }
+
+    function reportEditorHighlight() {
+      const area = document.getElementById('reportEditorArea');
+      if (!area) return;
+      const sel = window.getSelection();
+      if (!sel || sel.rangeCount === 0 || sel.toString().length === 0) {
+        alert('ハイライトする範囲を選択してください');
+        return;
+      }
+      const range = sel.getRangeAt(0);
+      const span = document.createElement('span');
+      span.className = 'note-hl';
+      try {
+        range.surroundContents(span);
+      } catch (e) {
+        const frag = range.extractContents();
+        span.appendChild(frag);
+        range.insertNode(span);
+      }
+      area.focus();
+    }
+
+    function saveReportEditor() {
+      const area = document.getElementById('reportEditorArea');
+      if (!area) return;
+      let markup = '';
+      try {
+        markup = notesHtmlToMarkup(area.innerHTML) || '';
+      } catch (e) {
+        markup = '';
+      }
+      // マークアップ変換が空でも本文があればプレーンテキストで残す
+      const plain = (area.innerText || area.textContent || '').replace(/\u00a0/g, ' ').trim();
+      if (!String(markup).trim() && plain) {
+        markup = plain;
+      }
+      markup = String(markup || '');
+      const ctx = reportEditorContext;
+      if (ctx === 'add') {
+        let h = document.getElementById('addVisitReport');
+        if (!h) {
+          h = document.createElement('input');
+          h.type = 'hidden';
+          h.id = 'addVisitReport';
+          document.body.appendChild(h);
+        }
+        h.value = markup;
+        updateReportEntryStatus('add');
+      } else if (ctx === 'edit') {
+        let h = document.getElementById('editVisitReport');
+        if (!h) {
+          h = document.createElement('input');
+          h.type = 'hidden';
+          h.id = 'editVisitReport';
+          document.body.appendChild(h);
+        }
+        h.value = markup;
+        // 編集中のレコードへ即反映（記録モーダルの「保存」前でも保持）
+        const idxEl = document.getElementById('editRecordIndex');
+        const idx = idxEl ? parseInt(idxEl.value, 10) : NaN;
+        if (!isNaN(idx) && historyList[idx]) {
+          historyList[idx].visitReport = markup;
+          try {
+            if (typeof saveData === 'function') saveData();
+            if (typeof syncDataToCloud === 'function') syncDataToCloud(true);
+          } catch (e) {}
+        }
+        updateReportEntryStatus('edit');
+      }
+      closeModal('reportEditorModal');
+      // タイムライン等を更新
+      try {
+        if (typeof render === 'function') render();
+      } catch (e) {}
+    }
+
+
     function openEditRecordModal(event, index) {
       event.preventDefault(); event.stopPropagation();
       const rec = historyList[index]; if(!rec) return;
@@ -14865,6 +15186,9 @@ ${sideActionsHtml}
       }
       if (typeof applyPlayContentVisibility === 'function') applyPlayContentVisibility();
       document.getElementById('editVisitNote').value = rec.visitNote || '';
+      const er = document.getElementById('editVisitReport');
+      if (er) er.value = rec.visitReport || '';
+      if (typeof updateReportEntryStatus === 'function') updateReportEntryStatus('edit');
       document.getElementById('editAmount').value = rec.amount || '';
       document.getElementById('editCourseTime').value = rec.courseTime || '';
       
@@ -14900,6 +15224,8 @@ ${sideActionsHtml}
         rec.typeTag = document.getElementById('editTypeTag').value;
         rec.playTags = (typeof getSelectedPlayTagsFromForm === 'function') ? getSelectedPlayTagsFromForm('edit') : (rec.playTags || []);
         rec.visitNote = document.getElementById('editVisitNote').value;
+        const erp = document.getElementById('editVisitReport');
+        if (erp) rec.visitReport = erp.value || '';
         rec.amount = document.getElementById('editAmount').value;
         rec.courseTime = document.getElementById('editCourseTime').value;
         
