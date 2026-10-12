@@ -2710,6 +2710,225 @@
     .cal-bell { position: absolute; top: 1px; right: 2px; font-size: 0.55rem; color: #ff922b; }
     
     .calendar-details { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 12px; min-height: 100px; box-shadow: var(--shadow); }
+    
+    /* カレンダー予定カード（案A 2段 + 案B 左アクセント） */
+    .cal-detail-item.cal-sch-card {
+      position: relative;
+      padding: 12px 12px 12px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+    .cal-detail-item.cal-sch-card::before {
+      content: '';
+      position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+      background: var(--sch-accent, var(--accent-pink));
+      border-radius: 4px 0 0 4px;
+    }
+    
+    /* カレンダー履歴カード（案A+B） */
+    .cal-detail-item.cal-hist-card {
+      position: relative;
+      padding: 12px 12px 12px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+    .cal-detail-item.cal-hist-card::before {
+      content: '';
+      position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+      background: var(--accent-pink);
+      border-radius: 4px 0 0 4px;
+    }
+    .cal-hist-row1 {
+      display: flex; align-items: flex-start; gap: 8px; flex-wrap: wrap;
+    }
+    .cal-hist-row1 .hist-label {
+      display: inline-flex; align-items: center; gap: 3px;
+      font-size: 0.68rem; font-weight: 700;
+      color: color-mix(in srgb, var(--accent-pink) 75%, var(--light-text));
+      opacity: 0.9; white-space: nowrap; margin-top: 3px;
+    }
+    .cal-hist-row1 .hist-name {
+      flex: 1; min-width: 4em;
+      font-size: 0.95rem; font-weight: 800;
+      color: var(--accent-pink);
+      line-height: 1.3;
+    }
+    .cal-hist-row1 .hist-flags {
+      display: flex; flex-wrap: wrap; gap: 4px; justify-content: flex-end;
+      max-width: 46%;
+    }
+    .cal-hist-row2 {
+      display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px;
+      margin-top: 6px; font-size: 0.78rem; color: var(--light-text);
+    }
+    .cal-hist-row2 .hist-inline {
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    
+    /* ジャンプ後ハイライト */
+    .timeline-item.tl-flash-target {
+      animation: tlFlashGuide 1.45s ease;
+      outline: 2px solid var(--accent-pink);
+      outline-offset: 2px;
+      border-radius: 12px;
+      position: relative;
+      z-index: 2;
+    }
+    @keyframes tlFlashGuide {
+      0% { transform: scale(1); box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-pink) 50%, transparent); }
+      30% { transform: scale(1.015); box-shadow: 0 0 0 10px color-mix(in srgb, var(--accent-pink) 0%, transparent); background: color-mix(in srgb, var(--accent-pink) 12%, var(--card-bg)); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 transparent; }
+    }
+    .cal-detail-item.cal-hist-card.hist-flash-target {
+      animation: histFlashGuide 1.45s ease;
+      outline: 2px solid var(--accent-pink);
+      outline-offset: 2px;
+    }
+    @keyframes histFlashGuide {
+      0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-pink) 45%, transparent); }
+      35% { box-shadow: 0 0 0 8px transparent; background: color-mix(in srgb, var(--accent-pink) 14%, var(--card-bg)); }
+      100% { box-shadow: none; }
+    }
+    .cal-cell.cal-flash-target {
+      animation: calCellFlash 1.3s ease;
+      outline: 2px solid var(--accent-pink);
+      outline-offset: 1px;
+      border-radius: 10px;
+    }
+    @keyframes calCellFlash {
+      0%, 100% { background: transparent; }
+      40% { background: color-mix(in srgb, var(--accent-pink) 22%, transparent); }
+    }
+    .cal-hist-card {
+      cursor: pointer;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    .cal-hist-card:active {
+      transform: scale(0.99);
+    }
+
+    .cal-hist-memo-wrap {
+      position: relative;
+      margin-top: 8px;
+    }
+    .cal-hist-memo {
+      font-size: 0.78rem; line-height: 1.45;
+      color: var(--text-color);
+      overflow: hidden;
+      max-height: calc(0.78rem * 1.45 * 2);
+      transition: max-height 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+      word-break: break-word;
+    }
+    .cal-hist-memo-wrap.is-expanded .cal-hist-memo {
+      max-height: 40em;
+    }
+    .cal-hist-memo-fade {
+      pointer-events: none;
+      position: absolute; left: 0; right: 0; bottom: 0;
+      height: 1.6em;
+      background: linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--card-bg) 0%, transparent) 0%,
+        var(--card-bg) 100%
+      );
+      opacity: 0;
+      transition: opacity 0.28s ease;
+    }
+    .cal-hist-memo-wrap.is-clamped:not(.is-expanded) .cal-hist-memo-fade {
+      opacity: 1;
+    }
+    .cal-hist-memo-wrap.is-expanded .cal-hist-memo-fade {
+      opacity: 0;
+    }
+    .cal-hist-memo-more {
+      display: none;
+      margin-top: 6px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      border: 1px solid color-mix(in srgb, var(--accent-pink) 35%, var(--border-color));
+      background: color-mix(in srgb, var(--accent-pink) 8%, var(--card-bg));
+      color: var(--accent-pink);
+      font-size: 0.68rem; font-weight: 800;
+      font-family: inherit; cursor: pointer;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.28s ease, transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+                  background 0.2s ease, border-color 0.2s ease;
+    }
+    .cal-hist-memo-wrap.is-clamped .cal-hist-memo-more {
+      display: inline-flex;
+      align-items: center;
+      opacity: 1;
+      transform: translateY(0);
+      animation: calHistMoreIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    @keyframes calHistMoreIn {
+      from { opacity: 0; transform: translateY(6px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .cal-hist-memo-more:active {
+      transform: scale(0.96);
+      background: color-mix(in srgb, var(--accent-pink) 16%, var(--card-bg));
+    }
+    .cal-hist-memo-wrap.is-expanded .cal-hist-memo-more {
+      border-color: var(--border-color);
+      color: var(--light-text);
+      background: transparent;
+    }
+
+
+    .cal-sch-card.cal-sch-plan { --sch-accent: #20c997; }
+    .cal-sch-card.cal-sch-res { --sch-accent: #ff922b; }
+    .cal-sch-row1 {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+      font-weight: 800; font-size: 0.88rem; color: var(--text-color);
+    }
+    .cal-sch-row1 .sch-type {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 0.75rem; font-weight: 800;
+    }
+    .cal-sch-card.cal-sch-plan .sch-type { color: #20c997; }
+    .cal-sch-card.cal-sch-res .sch-type { color: #ff922b; }
+    .cal-sch-row1 .sch-name { flex: 1; min-width: 4em; }
+    .cal-sch-row1 .sch-mins {
+      font-size: 0.75rem; font-weight: 700; color: var(--light-text);
+      white-space: nowrap;
+    }
+    .cal-sch-row1 .sch-actions {
+      display: flex; align-items: center; gap: 6px; margin-left: auto;
+    }
+    .cal-sch-row2 {
+      display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px;
+      margin-top: 6px; font-size: 0.78rem; color: var(--light-text);
+    }
+    .cal-sch-row2 .sch-inline {
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .cal-sch-row3 {
+      display: flex; align-items: center; flex-wrap: wrap; gap: 6px;
+      margin-top: 8px;
+    }
+    .cal-sch-chip {
+      display: inline-flex; align-items: center; gap: 3px;
+      font-size: 0.65rem; font-weight: 700; padding: 2px 7px; border-radius: 999px;
+      border: 1px solid currentColor;
+    }
+    .cal-sch-chip.notify { color: #ff922b; }
+    .cal-sch-chip.phone { color: #339af0; }
+    .cal-sch-lucide {
+      width: 14px; height: 14px; flex-shrink: 0;
+      stroke: currentColor; fill: none; stroke-width: 2;
+      stroke-linecap: round; stroke-linejoin: round;
+    }
+    .cal-sch-lucide-sm { width: 12px; height: 12px; }
+
     .cal-detail-item { padding: 8px; border-bottom: 1px dashed var(--border-color); display: flex; flex-direction: column; gap: 4px; }
     .cal-detail-item:last-child { border-bottom: none; }
     .cal-detail-title { font-size: 0.85rem; font-weight: bold; color: var(--accent-pink); display: flex; justify-content: space-between; align-items: center; }
@@ -4419,8 +4638,8 @@
           </div>
 
           <div class="home-card-c" onclick="switchMainTab('calendar')">
-            <div style="font-size: 0.72rem; color: var(--light-text); font-weight: bold; margin-bottom: 2px;">次回の予定</div>
-            <div style="font-size: 0.95rem; font-weight: bold; color: var(--accent-pink);" id="homeNextVisitText">次はいつイクのー？♡</div>
+            <div style="font-size: 0.72rem; color: var(--light-text); font-weight: bold; margin-bottom: 2px;">次の予定</div>
+            <div style="font-size: 0.95rem; font-weight: bold; color: var(--accent-pink);" id="homeNextVisitText">予定できたら追加してね〜！</div>
           </div>
         </div>
       </div>
@@ -5386,7 +5605,7 @@
       <div id="cvPrefillSummary" class="cv-prefill-summary">
         <div class="cv-prefill-name" id="cvPrefillName">—</div>
         <div class="cv-prefill-store" id="cvPrefillStore"></div>
-        <div class="cv-prefill-note">女の子名・店舗はイク予定から引き継ぎ済みです</div>
+        <div class="cv-prefill-note">女の子名・店舗は予約済み予定から引き継ぎ済みです</div>
       </div>
       <div class="form-group"><label>実際の総額</label><input type="text" id="cvAmount" placeholder="例: 20000"></div>
       <div class="form-group" style="display:none;" aria-hidden="true"><label>系統タグ</label><input type="text" id="cvTypeTag"></div>
@@ -5603,7 +5822,7 @@
 
         <div class="help-box">
           <h4>2. 📅 マイカレンダー＆リマインダー</h4>
-          <p>イク予定や予約開始日を管理し、直前にはプッシュ通知でお知らせします。</p>
+          <p>予約済みや予約開始を管理し、直前にはプッシュ通知でお知らせします。</p>
         </div>
 
         <div class="help-box">
@@ -6069,8 +6288,8 @@
         <div class="form-group">
           <label>予定の種類</label>
           <select id="schType" required onchange="togglePhoneConfirm()">
-            <option value="plan">⚔️ イク予定 (来店日・店名など)</option>
-            <option value="reservation">🎫 予約開始日 (枠取り・待機)</option>
+            <option value="plan">予約済み（来店日・店名など）</option>
+            <option value="reservation">予約開始（枠取り）</option>
           </select>
         </div>
 
@@ -6165,8 +6384,8 @@
         <div class="form-group">
           <label>予定の種類</label>
           <select id="editSchType" required onchange="toggleEditPhoneConfirm()">
-            <option value="plan">⚔️ イク予定</option>
-            <option value="reservation">🎫 予約開始日</option>
+            <option value="plan">予約済み</option>
+            <option value="reservation">予約開始</option>
           </select>
         </div>
 
@@ -10057,6 +10276,152 @@ async function attemptBiometricUnlock() {
       );
     }
 
+
+    function lucideSvg(name, cls) {
+      const c = cls || 'cal-sch-lucide';
+      const paths = {
+        calendarCheck: '<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/>',
+        calendarClock: '<path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h5"/><circle cx="16" cy="16" r="6"/><path d="M16 14v2l1 1"/>',
+        clock: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+        bell: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+        phone: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>',
+        user: '<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+        store: '<path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path d="M2 7h20"/>',
+        link: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+        banknote: '<rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/>',
+        timer: '<line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/>'
+      };
+      const p = paths[name] || paths.clock;
+      return '<svg class="' + c + '" viewBox="0 0 24 24" aria-hidden="true">' + p + '</svg>';
+    }
+
+    function scheduleTimeBandLabel(hour, forDay) {
+      if (hour == null || isNaN(hour)) {
+        return forDay === 'today' ? '今日' : (forDay === 'tomorrow' ? '明日' : '');
+      }
+      if (forDay === 'today') {
+        if (hour >= 5 && hour < 11) return '今朝';
+        if (hour >= 11 && hour < 17) return '今日昼';
+        if (hour >= 17 && hour < 22) return '今日夜';
+        return '今夜';
+      }
+      if (forDay === 'tomorrow') {
+        if (hour >= 5 && hour < 11) return '明日朝';
+        if (hour >= 11 && hour < 17) return '明日昼';
+        return '明日夜';
+      }
+      return '';
+    }
+
+    function getScheduleRelativeDayLabel(dateStr, timeStr, opts) {
+      opts = opts || {};
+      const simple = !!opts.simple;
+      const parts = String(dateStr || '').split(/[-/]/);
+      if (parts.length < 3) return dateStr || '';
+      const y = parseInt(parts[0], 10), m = parseInt(parts[1], 10), d = parseInt(parts[2], 10);
+      const target = new Date(y, m - 1, d);
+      if (isNaN(target.getTime())) return dateStr || '';
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const tMid = new Date(y, m - 1, d);
+      const diffDays = Math.round((tMid - today) / 86400000);
+      let hour = null;
+      if (timeStr && /^\d{1,2}:\d{2}/.test(timeStr)) hour = parseInt(timeStr.split(':')[0], 10);
+      const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+      const wd = weekdays[target.getDay()];
+
+      if (diffDays === 0) {
+        if (simple) return '今日';
+        return scheduleTimeBandLabel(hour, 'today');
+      }
+      if (diffDays === 1) {
+        if (simple) return '明日';
+        return scheduleTimeBandLabel(hour, 'tomorrow');
+      }
+      if (diffDays === 2) return '明後日';
+
+      const dayOfWeek = today.getDay();
+      const startThisWeek = new Date(today);
+      startThisWeek.setDate(today.getDate() - dayOfWeek);
+      const startNextWeek = new Date(startThisWeek);
+      startNextWeek.setDate(startThisWeek.getDate() + 7);
+      const startWeekAfter = new Date(startThisWeek);
+      startWeekAfter.setDate(startThisWeek.getDate() + 14);
+
+      if (tMid >= startThisWeek && tMid < startNextWeek && diffDays > 2) {
+        return '今週' + wd + '曜';
+      }
+      if (tMid >= startNextWeek && tMid < startWeekAfter) {
+        return '来週' + wd + '曜';
+      }
+      return m + '/' + d;
+    }
+
+    function formatHomeNextScheduleText(sch) {
+      if (!sch) return '予定できたら追加してね〜！';
+      const rel = getScheduleRelativeDayLabel(sch.date, sch.time, { simple: sch.type === 'reservation' });
+      if (sch.type === 'reservation') {
+        const t = (sch.time && String(sch.time).trim()) ? String(sch.time).trim() : '10:00';
+        const mm = t.match(/^(\d{1,2}):(\d{2})/);
+        let clockLabel = t;
+        if (mm) {
+          clockLabel = parseInt(mm[1], 10) + '時' + (mm[2] === '00' ? '' : parseInt(mm[2], 10) + '分');
+        }
+        return rel + 'の' + clockLabel + 'から予約スタート';
+      }
+      const timePart = (sch.time && String(sch.time).trim()) ? String(sch.time).trim() : '';
+      const store = (sch.storeName || '').trim();
+      const name = (sch.castName || sch.title || '').trim();
+      let line = rel;
+      if (timePart) line += ' ' + timePart;
+      const tail = [store, name].filter(Boolean).join('・');
+      if (tail) line += ' ' + tail;
+      return line.trim();
+    }
+
+
+    function enhanceCalHistMemos(root) {
+      const scope = root || document.getElementById('calendarDetails') || document;
+      const wraps = scope.querySelectorAll('.cal-hist-memo-wrap');
+      wraps.forEach(function(wrap) {
+        const memo = wrap.querySelector('.cal-hist-memo');
+        const btn = wrap.querySelector('.cal-hist-memo-more');
+        if (!memo) return;
+        // 一旦制限なしで高さ計測
+        const wasExpanded = wrap.classList.contains('is-expanded');
+        wrap.classList.remove('is-clamped', 'is-expanded');
+        memo.style.maxHeight = 'none';
+        const fullH = memo.scrollHeight;
+        const lineH = parseFloat(getComputedStyle(memo).lineHeight) || (0.78 * 16 * 1.45);
+        const clampH = lineH * 2 + 1;
+        memo.style.maxHeight = '';
+        if (fullH > clampH + 2) {
+          wrap.classList.add('is-clamped');
+          if (btn) btn.textContent = '全文';
+        } else {
+          wrap.classList.remove('is-clamped');
+          if (btn) btn.style.display = 'none';
+        }
+        if (wasExpanded && wrap.classList.contains('is-clamped')) {
+          wrap.classList.add('is-expanded');
+          if (btn) btn.textContent = '閉じる';
+        }
+      });
+    }
+
+    function toggleCalHistMemo(event, btn) {
+      if (event) { event.preventDefault(); event.stopPropagation(); }
+      const wrap = btn && btn.closest ? btn.closest('.cal-hist-memo-wrap') : null;
+      if (!wrap || !wrap.classList.contains('is-clamped')) return;
+      const open = !wrap.classList.contains('is-expanded');
+      wrap.classList.toggle('is-expanded', open);
+      btn.textContent = open ? '閉じる' : '全文';
+      // 開閉の軽いパルス
+      btn.style.animation = 'none';
+      void btn.offsetWidth;
+      btn.style.animation = 'calHistMoreIn 0.28s cubic-bezier(0.22, 1, 0.36, 1) both';
+    }
+
     function selectCalendarDate(dateStr) {
       selectedCalDateStr = dateStr;
       
@@ -10090,19 +10455,59 @@ async function attemptBiometricUnlock() {
         detailsPanel.innerHTML += annHtml;
       }
 
-      const matchedHistory = historyList.filter(h => {
-        return parseInt(h.year, 10) == y && parseInt(h.month, 10) == m && (parseInt(h.day, 10) || 1) == d;
+      const matchedHistory = [];
+      historyList.forEach((h, idx) => {
+        if (!h || h.pendingCheckIn) return;
+        if (parseInt(h.year, 10) == y && parseInt(h.month, 10) == m && (parseInt(h.day, 10) || 1) == d) {
+          matchedHistory.push({ rec: h, originalIndex: idx });
+        }
       });
       if(matchedHistory.length > 0) {
         foundContent = true;
-        matchedHistory.forEach(h => {
-          detailsPanel.innerHTML += `
-            <div class="cal-detail-item">
-              <div class="cal-detail-title"><span style="color:var(--primary-pink);">🌸 履歴: ${h.name}</span></div>
-              <div class="cal-detail-sub">${h.flags || ''} ${h.storeName ? '🏬 '+h.storeName : ''}</div>
-              ${h.visitNote ? `<div style="font-size:0.75rem; color:var(--text-color); margin-top:2px;">📝 ${h.visitNote}</div>` : ''}
-            </div>
-          `;
+        matchedHistory.forEach(({ rec: h, originalIndex: histIdx }) => {
+          const nameEsc = (typeof escapeHTML === 'function') ? escapeHTML(h.name || '（名前なし）') : (h.name || '（名前なし）');
+          const storeEsc = (h.storeName && String(h.storeName).trim())
+            ? ((typeof escapeHTML === 'function') ? escapeHTML(h.storeName.trim()) : h.storeName.trim())
+            : '';
+          const flagsHtml = (typeof buildFlagTagsHtml === 'function') ? buildFlagTagsHtml(h.flags) : (h.flags || '');
+          const amountNum = Number(h.amount) || 0;
+          const amountDisp = (typeof currentAmountHide !== 'undefined' && currentAmountHide === 'hide')
+            ? '***'
+            : (amountNum ? ('¥' + amountNum.toLocaleString()) : '');
+          let courseDisp = '';
+          if (h.courseTime !== undefined && h.courseTime !== null && String(h.courseTime).trim() !== '') {
+            courseDisp = String(h.courseTime).replace(/分$/, '') + '分';
+          }
+          const memoRaw = (h.visitNote || '').trim();
+          const memoEsc = memoRaw ? ((typeof escapeHTML === 'function') ? escapeHTML(memoRaw) : memoRaw) : '';
+
+          let row2 = '';
+          if (storeEsc) {
+            row2 += '<span class="hist-inline">' + (typeof lucideSvg === 'function' ? lucideSvg('store', 'cal-sch-lucide cal-sch-lucide-sm') : '') + storeEsc + '</span>';
+          }
+          if (amountDisp) {
+            row2 += '<span class="hist-inline">' + (typeof lucideSvg === 'function' ? lucideSvg('banknote', 'cal-sch-lucide cal-sch-lucide-sm') : '') + amountDisp + '</span>';
+          }
+          if (courseDisp) {
+            row2 += '<span class="hist-inline">' + (typeof lucideSvg === 'function' ? lucideSvg('timer', 'cal-sch-lucide cal-sch-lucide-sm') : '') + courseDisp + '</span>';
+          }
+
+          detailsPanel.innerHTML +=
+            '<div class="cal-detail-item cal-hist-card" data-hist-index="' + histIdx + '" onclick="navigateToTimelineFromCalendar(event, ' + histIdx + ')">' +
+              '<div class="cal-hist-row1">' +
+                '<span class="hist-label">' + (typeof lucideSvg === 'function' ? lucideSvg('user', 'cal-sch-lucide cal-sch-lucide-sm') : '') + '履歴</span>' +
+                '<span class="hist-name">' + nameEsc + '</span>' +
+                (flagsHtml ? '<div class="hist-flags">' + flagsHtml + '</div>' : '') +
+              '</div>' +
+              (row2 ? '<div class="cal-hist-row2">' + row2 + '</div>' : '') +
+              (memoEsc
+                ? ('<div class="cal-hist-memo-wrap">' +
+                    '<div class="cal-hist-memo">' + memoEsc + '</div>' +
+                    '<div class="cal-hist-memo-fade" aria-hidden="true"></div>' +
+                    '<button type="button" class="cal-hist-memo-more" onclick="toggleCalHistMemo(event, this)">全文</button>' +
+                  '</div>')
+                : '') +
+            '</div>';
         });
       }
 
@@ -10137,7 +10542,7 @@ async function attemptBiometricUnlock() {
                   <div style="color:var(--light-text); font-weight:bold;">${who} - ${ok ? '予約できた' : '予約できなかった'}</div>
                   <button type="button" onclick="hideCancelledSchedule('${s.id}')" style="background:none; border:none; color:var(--light-text); text-decoration:underline; cursor:pointer; font-size:0.7rem;">非表示</button>
                 </div>
-                <div class="cal-detail-sub">${ok ? 'イク予定の作成へ連携済み（または作成可能）' : '結果のみ記録'}${s.storeName ? ' · ' + s.storeName : ''}</div>
+                <div class="cal-detail-sub">${ok ? '予約済みの作成へ連携済み（または作成可能）' : '結果のみ記録'}${s.storeName ? ' · ' + s.storeName : ''}</div>
               </div>
             `;
             return;
@@ -10151,7 +10556,7 @@ async function attemptBiometricUnlock() {
               detailsPanel.innerHTML += `
                 <div class="cal-detail-item">
                   <div class="cal-detail-title">
-                    <div><span style="color:#ff922b;">🎫 予約開始日</span> - ${who}</div>
+                    <div><span style="color:#ff922b;">予約開始</span> - ${who}</div>
                   </div>
                   <div class="cal-detail-sub">開始時刻を過ぎています。結果を選んでください。</div>
                   <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
@@ -10164,44 +10569,75 @@ async function attemptBiometricUnlock() {
             }
           }
 
-          const typeIcon = s.type === 'plan' ? '<span style="color:#20c997;">⚔️ イク予定</span>' : '<span style="color:#ff922b;">🎫 予約開始日</span>';
-          const timeStr = s.time ? `🕐 ${s.time}` : '時間未定';
-          
-          let notifyStr = s.notifyMinutes > 0 ? `<span style="font-size:0.65rem; color:#ff922b; border:1px solid #ff922b; padding:1px 4px; border-radius:8px;">🔔 ${s.notifyMinutes}分前</span>` : '';
-          
-          if (s.phoneConfirmMinutes > 0) {
-             notifyStr += ` <span style="font-size:0.65rem; color:#339af0; border:1px solid #339af0; padding:1px 4px; border-radius:8px; margin-left:4px;">📞 電話 ${s.phoneConfirmMinutes}分前</span>`;
+          const isPlan = s.type === 'plan';
+          const typeLabel = isPlan ? '予約済み' : '予約開始';
+          const typeIconName = isPlan ? 'calendarCheck' : 'calendarClock';
+          const cardClass = isPlan ? 'cal-sch-plan' : 'cal-sch-res';
+          const displayName = (s.castName || s.title || '予定').trim();
+          let minsLabel = '';
+          if (s.courseMinutes) minsLabel = String(s.courseMinutes).replace(/分$/, '') + '分';
+          else if (s.courseTime) minsLabel = String(s.courseTime).replace(/分$/, '') + '分';
+          else {
+            const tm = String(s.title || '').match(/(\d+)\s*分/);
+            if (tm) minsLabel = tm[1] + '分';
           }
 
-          let extraInfoStr = '';
-          if (s.castName) extraInfoStr += `👤 ${s.castName} `;
-          if (s.storeName) extraInfoStr += `🏬 ${s.storeName} `;
-          if (s.phoneNumber) extraInfoStr += `<a href="tel:${s.phoneNumber}" style="color:var(--accent-pink); font-weight:bold; margin-left:4px;">📞 ${s.phoneNumber}</a> `;
-          if (s.bookingUrl) extraInfoStr += `<a href="${s.bookingUrl}" target="_blank" style="color:#339af0; font-weight:bold; margin-left:4px;">🌐 予約URL</a> `;
+          let chipsHtml = '';
+          if (s.notifyMinutes > 0) {
+            chipsHtml += '<span class="cal-sch-chip notify">' + lucideSvg('bell', 'cal-sch-lucide cal-sch-lucide-sm') + s.notifyMinutes + '分前</span>';
+          }
+          if (s.phoneConfirmMinutes > 0) {
+            chipsHtml += '<span class="cal-sch-chip phone">' + lucideSvg('phone', 'cal-sch-lucide cal-sch-lucide-sm') + '電話 ' + s.phoneConfirmMinutes + '分前</span>';
+          }
 
-          const actionBtn = s.type === 'plan'
-            ? `<button type="button" onclick="openCancelScheduleModal('${s.id}')" style="background:none; border:none; color:#fa5252; text-decoration:underline; cursor:pointer; font-size:0.7rem;">キャンセル</button>`
-            : `<button type="button" onclick="deleteSchedule('${s.id}')" style="background:none; border:none; color:var(--light-text); text-decoration:underline; cursor:pointer; font-size:0.7rem;">削除</button>`;
+          let row2 = '';
+          if (s.time) {
+            row2 += '<span class="sch-inline">' + lucideSvg('clock', 'cal-sch-lucide cal-sch-lucide-sm') + s.time + '</span>';
+          } else {
+            row2 += '<span class="sch-inline">' + lucideSvg('clock', 'cal-sch-lucide cal-sch-lucide-sm') + '時間未定</span>';
+          }
+          if (s.storeName) {
+            row2 += '<span class="sch-inline">' + lucideSvg('store', 'cal-sch-lucide cal-sch-lucide-sm') + (typeof escapeHTML === 'function' ? escapeHTML(s.storeName) : s.storeName) + '</span>';
+          }
+          if (s.castName && s.title && s.title.indexOf(s.castName) < 0) {
+            row2 += '<span class="sch-inline">' + lucideSvg('user', 'cal-sch-lucide cal-sch-lucide-sm') + (typeof escapeHTML === 'function' ? escapeHTML(s.castName) : s.castName) + '</span>';
+          }
+          if (s.phoneNumber) {
+            row2 += '<a class="sch-inline" href="tel:' + s.phoneNumber + '" style="color:var(--accent-pink);font-weight:700;">' + lucideSvg('phone', 'cal-sch-lucide cal-sch-lucide-sm') + s.phoneNumber + '</a>';
+          }
+          if (s.bookingUrl) {
+            row2 += '<a class="sch-inline" href="' + s.bookingUrl + '" target="_blank" rel="noopener" style="color:#339af0;font-weight:700;">' + lucideSvg('link', 'cal-sch-lucide cal-sch-lucide-sm') + '予約URL</a>';
+          }
 
-          detailsPanel.innerHTML += `
-            <div class="cal-detail-item">
-              <div class="cal-detail-title">
-                <div>${typeIcon} - ${s.title}</div>
-                <div style="display:flex; align-items:center; gap:6px;">
-                  <button class="edit-icon-btn" onclick="openEditScheduleModal('${s.id}')" title="予定を編集" style="opacity:0.6;"><svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>
-                  ${actionBtn}
-                </div>
-              </div>
-              <div class="cal-detail-sub" style="display:flex; align-items:center; flex-wrap:wrap; gap:4px;">${timeStr} ${notifyStr}</div>
-              ${extraInfoStr ? `<div style="font-size:0.75rem; margin-top:2px; color:var(--text-color);">${extraInfoStr}</div>` : ''}
-            </div>
-          `;
+          const actionBtn = isPlan
+            ? '<button type="button" onclick="openCancelScheduleModal(\'' + s.id + '\')" style="background:none;border:none;color:#fa5252;text-decoration:underline;cursor:pointer;font-size:0.7rem;">キャンセル</button>'
+            : '<button type="button" onclick="deleteSchedule(\'' + s.id + '\')" style="background:none;border:none;color:var(--light-text);text-decoration:underline;cursor:pointer;font-size:0.7rem;">削除</button>';
+
+          const nameEsc = typeof escapeHTML === 'function' ? escapeHTML(displayName) : displayName;
+
+          detailsPanel.innerHTML +=
+            '<div class="cal-detail-item cal-sch-card ' + cardClass + '">' +
+              '<div class="cal-sch-row1">' +
+                '<span class="sch-type">' + lucideSvg(typeIconName) + typeLabel + '</span>' +
+                '<span class="sch-name">' + nameEsc + '</span>' +
+                (minsLabel ? '<span class="sch-mins">' + minsLabel + '</span>' : '') +
+                '<span class="sch-actions">' +
+                  '<button class="edit-icon-btn" onclick="openEditScheduleModal(\'' + s.id + '\')" title="予定を編集" style="opacity:0.6;">' +
+                    '<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>' +
+                  '</button>' +
+                  actionBtn +
+                '</span>' +
+              '</div>' +
+              '<div class="cal-sch-row2">' + row2 + '</div>' +
+              (chipsHtml ? '<div class="cal-sch-row3">' + chipsHtml + '</div>' : '') +
+            '</div>';
         });
       }
 
       if(!foundContent) {
         detailsPanel.innerHTML += `<div style="text-align:center; color:var(--light-text); font-size:0.8rem; padding: 10px 0;">この日の記録・予定はありません</div>`;
       }
+      try { enhanceCalHistMemos(detailsPanel); } catch (e) {}
     }
 
     function toggleBookingType() {
@@ -10969,26 +11405,18 @@ async function attemptBiometricUnlock() {
 
       const nextTextElem = document.getElementById('homeNextVisitText');
       const futurePlans = scheduleList.filter(s => {
+        if (!s || s.cancelled || s.hiddenFromCalendar) return false;
+        if (s.type === 'reservation' && s.reservationResult) return false;
         const sTime = s.time ? `T${s.time}:00` : 'T00:00:00';
         return new Date(s.date + sTime).getTime() >= new Date().getTime();
-      }).sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+      }).sort((a,b) => new Date(a.date + (a.time ? 'T'+a.time+':00' : 'T00:00:00')).getTime() - new Date(b.date + (b.time ? 'T'+b.time+':00' : 'T00:00:00')).getTime());
 
-      if(futurePlans.length === 0) {
-        nextTextElem.innerText = "直近のイク予定・予約なし";
+      // キャンセル・処理済み予約開始は除外
+      const futureActive = futurePlans.filter(s => s && !s.cancelled && !(s.type === 'reservation' && s.reservationResult));
+      if (futureActive.length === 0) {
+        nextTextElem.innerText = '予定できたら追加してね〜！';
       } else {
-        const next = futurePlans[0];
-        const nextDt = new Date(next.date.replace(/\//g, '-'));
-        const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        const targetMidnight = new Date(nextDt.getFullYear(), nextDt.getMonth(), nextDt.getDate());
-        const diffDaysNext = Math.ceil((targetMidnight - todayMidnight) / (1000 * 3600 * 24));
-        
-        let subText = next.type === 'plan' ? 'イク予定' : '予約戦';
-        if (next.castName) subText += ` (${next.castName})`;
-        if(diffDaysNext === 0) {
-          nextTextElem.innerHTML = `本日！<span style="font-size:0.75rem;">（${subText}）</span>`;
-        } else {
-          nextTextElem.innerHTML = `あと ${diffDaysNext} 日 <span style="font-size:0.75rem;">（${next.date.slice(5)} ${subText}）</span>`;
-        }
+        nextTextElem.innerText = formatHomeNextScheduleText(futureActive[0]);
       }
 
       // いい値ぇー！ホームウィジェット（ミニリング）
@@ -11893,7 +12321,89 @@ function notesHtmlToMarkup(html) {
 
 
 
-        function navigateToCastCard(castName, event) {
+    
+    function navigateToTimelineFromCalendar(event, originalIndex) {
+      if (event) {
+        if (event.target && event.target.closest && event.target.closest('.cal-hist-memo-more')) return;
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      const idx = parseInt(originalIndex, 10);
+      if (isNaN(idx) || !historyList[idx]) return;
+      if (typeof switchMainTab === 'function') switchMainTab('my');
+      if (typeof changeView === 'function') changeView('timeline');
+      try {
+        if (typeof activeTagFilter !== 'undefined') {
+          activeTagFilter = { type: null, value: null };
+          const badge = document.getElementById('selectedTypeBadge');
+          if (badge) badge.style.display = 'none';
+        }
+        if (typeof currentFilter !== 'undefined') currentFilter = 'all';
+        const search = document.getElementById('searchKeyword') || document.getElementById('searchInput');
+        if (search) search.value = '';
+        if (typeof render === 'function') render();
+      } catch (e) {}
+      const tryFocus = (attempt) => {
+        const items = document.querySelectorAll('details.timeline-item');
+        let target = null;
+        items.forEach(el => {
+          if (String(el.dataset.originalIndex) === String(idx)) target = el;
+        });
+        if (!target) {
+          if (attempt < 20) setTimeout(() => tryFocus(attempt + 1), 50);
+          return;
+        }
+        document.querySelectorAll('.tl-flash-target').forEach(el => el.classList.remove('tl-flash-target'));
+        try { target.open = true; } catch (e) {}
+        target.classList.add('tl-flash-target');
+        try { target.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+        catch (e) { target.scrollIntoView(true); }
+        setTimeout(() => target.classList.remove('tl-flash-target'), 1600);
+      };
+      setTimeout(() => tryFocus(0), 80);
+    }
+
+    function navigateToCalendarFromTimeline(dateStr, originalIndex) {
+      if (typeof closeContextMenu === 'function') closeContextMenu();
+      const ds = String(dateStr || '').trim();
+      if (!ds) return;
+      const parts = ds.split('-');
+      if (parts.length < 3) return;
+      const y = parseInt(parts[0], 10), m = parseInt(parts[1], 10), d = parseInt(parts[2], 10);
+      if (!y || !m) return;
+      if (typeof switchMainTab === 'function') switchMainTab('calendar');
+      try {
+        calCurrentDate = new Date(y, m - 1, 1);
+        selectedCalDateStr = y + '-' + String(m).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+        if (typeof renderCalendar === 'function') renderCalendar();
+        if (typeof selectCalendarDate === 'function') selectCalendarDate(selectedCalDateStr);
+      } catch (e) {}
+      const tryFocus = (attempt) => {
+        document.querySelectorAll('.cal-flash-target').forEach(el => el.classList.remove('cal-flash-target'));
+        document.querySelectorAll('.hist-flash-target').forEach(el => el.classList.remove('hist-flash-target'));
+        let histCard = null;
+        if (originalIndex != null && String(originalIndex) !== '') {
+          histCard = document.querySelector('.cal-hist-card[data-hist-index="' + originalIndex + '"]');
+        }
+        if (histCard) {
+          histCard.classList.add('hist-flash-target');
+          try { histCard.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) {}
+          setTimeout(() => histCard.classList.remove('hist-flash-target'), 1600);
+        }
+        const cells = document.querySelectorAll('.cal-cell:not(.empty)');
+        const cellIdx = d - 1;
+        if (cells[cellIdx]) {
+          cells[cellIdx].classList.add('cal-flash-target');
+          setTimeout(() => cells[cellIdx].classList.remove('cal-flash-target'), 1400);
+        }
+        if (!histCard && attempt < 12) {
+          setTimeout(() => tryFocus(attempt + 1), 40);
+        }
+      };
+      setTimeout(() => tryFocus(0), 100);
+    }
+
+    function navigateToCastCard(castName, event) {
       if (event) { event.preventDefault(); event.stopPropagation(); }
       const name = (castName || '').trim();
       if (!name) return;
@@ -12546,6 +13056,15 @@ ${sideActionsHtml}
 
           const details = document.createElement('details');
           details.className = 'timeline-item';
+          details.dataset.originalIndex = String(i.originalIndex != null ? i.originalIndex : '');
+          {
+            const yy = parseInt(i.year, 10);
+            const mm = (typeof parseMonthNum === 'function' ? parseMonthNum(i.month) : parseInt(String(i.month || '').replace(/\D/g, ''), 10)) || 0;
+            const dd = parseInt(i.day, 10) || 1;
+            if (yy && mm) {
+              details.dataset.calDate = yy + '-' + String(mm).padStart(2, '0') + '-' + String(dd).padStart(2, '0');
+            }
+          }
           details.innerHTML = `
             <summary class="timeline-summary">
               ${dayHtml}
@@ -17014,7 +17533,7 @@ ${question}`;
     let longPressMoved = false;
 
     document.addEventListener('touchstart', function(e) {
-      const summary = e.target.closest('.cast-card > summary, .store-card-fold > summary');
+      const summary = e.target.closest('.cast-card > summary, .store-card-fold > summary, details.timeline-item > summary.timeline-summary');
       if (!summary) return;
       longPressMoved = false;
       longPressTimer = setTimeout(() => {
@@ -17052,10 +17571,16 @@ ${question}`;
       if (!details) return;
       const castName = details.dataset.castName;
       const storeName = details.dataset.storeName;
+      const calDate = details.dataset.calDate;
+      const histIdx = details.dataset.originalIndex;
       const esc = (s) => String(s).replace(/'/g, "\\'");
       let itemsHtml = '';
 
-      if (castName) {
+      if (details.classList.contains('timeline-item') && calDate) {
+        itemsHtml = `
+          <button type="button" class="ctx-menu-item" onclick="navigateToCalendarFromTimeline('${esc(calDate)}', '${esc(histIdx || '')}')">📅 カレンダーで表示する</button>
+        `;
+      } else if (castName) {
         itemsHtml = `
           <button type="button" class="ctx-menu-item" onclick="openCastSettingsForName('${esc(castName)}')">⚙️ 女の子別設定</button>
           <button type="button" class="ctx-menu-item" onclick="closeContextMenu(); openLetterListModal(event, '${esc(castName)}')">💌 手紙を見る</button>
