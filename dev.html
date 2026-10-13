@@ -3188,6 +3188,21 @@
     }
 
 
+    
+    .cal-sch-soft-delete {
+      background: none !important;
+      border: none !important;
+      color: var(--light-text, #adb5bd) !important;
+      text-decoration: none !important;
+      cursor: pointer;
+      font-size: 0.68rem !important;
+      font-weight: 500 !important;
+      opacity: 0.5;
+      padding: 0 2px !important;
+      margin-left: 8px;
+      box-shadow: none !important;
+    }
+    .cal-sch-soft-delete:active { opacity: 0.85; }
     .cal-sch-card.cal-sch-plan { --sch-accent: #20c997; }
     .cal-sch-card.cal-sch-res { --sch-accent: #ff922b; }
     .cal-sch-row1 {
@@ -11074,9 +11089,10 @@ async function attemptBiometricUnlock() {
           }
 
           const isPlan = s.type === 'plan';
-          const typeLabel = isPlan ? '予約済み' : '予約開始';
+          const isCheckedIn = !!s.checkedIn;
+          const typeLabel = isPlan ? (isCheckedIn ? '入店済み' : '予約済み') : '予約開始';
           const typeIconName = isPlan ? 'calendarCheck' : 'calendarClock';
-          const cardClass = isPlan ? 'cal-sch-plan' : 'cal-sch-res';
+          const cardClass = isPlan ? (isCheckedIn ? 'cal-sch-plan cal-sch-checkedin' : 'cal-sch-plan') : 'cal-sch-res';
           const displayName = (s.castName || s.title || '予定').trim();
           let minsLabel = '';
           if (s.courseMinutes) minsLabel = String(s.courseMinutes).replace(/分$/, '') + '分';
@@ -11113,9 +11129,13 @@ async function attemptBiometricUnlock() {
             row2 += '<a class="sch-inline" href="' + s.bookingUrl + '" target="_blank" rel="noopener" style="color:#339af0;font-weight:700;">' + lucideSvg('link', 'cal-sch-lucide cal-sch-lucide-sm') + '予約URL</a>';
           }
 
-          const actionBtn = isPlan
+                    let actionBtn = isPlan
             ? '<button type="button" onclick="openCancelScheduleModal(\'' + s.id + '\')" style="background:none;border:none;color:#fa5252;text-decoration:underline;cursor:pointer;font-size:0.7rem;">キャンセル</button>'
             : '<button type="button" onclick="deleteSchedule(\'' + s.id + '\')" style="background:none;border:none;color:var(--light-text);text-decoration:underline;cursor:pointer;font-size:0.7rem;">削除</button>';
+          // 同日・同名・同店の履歴があるときだけ薄い削除
+          if (isPlan && !s.cancelled && typeof scheduleHasMatchingHistory === 'function' && scheduleHasMatchingHistory(s)) {
+            actionBtn += '<button type="button" class="cal-sch-soft-delete" onclick="forceDeleteSchedule(\'' + s.id + '\')">削除</button>';
+          }
 
           const nameEsc = typeof escapeHTML === 'function' ? escapeHTML(displayName) : displayName;
 
@@ -11362,6 +11382,67 @@ async function attemptBiometricUnlock() {
       alert('✨ 予定を更新しました！');
     }
 
+
+    function normalizeScheduleTime(t) {
+      if (!t) return '';
+      const m = String(t).trim().match(/^(\d{1,2}):(\d{2})/);
+      if (!m) return String(t).trim();
+      return String(parseInt(m[1], 10)).padStart(2, '0') + ':' + m[2];
+    }
+
+    function historyDateStr(h) {
+      if (!h) return '';
+      const y = parseInt(h.year, 10);
+      const m = (typeof parseMonthNum === 'function'
+        ? parseMonthNum(h.month)
+        : parseInt(String(h.month || '').replace(/\D/g, ''), 10));
+      const d = parseInt(h.day, 10);
+      if (!y || !m || !d) return '';
+      return y + '-' + String(m).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+    }
+
+    /** 同日・同名・同店の履歴があるか（時間は履歴にあれば照合） */
+    function scheduleHasMatchingHistory(s) {
+      if (!s || s.cancelled) return false;
+      const name = (s.castName || '').trim();
+      const store = (s.storeName || '').trim();
+      const date = (s.date || '').trim();
+      if (!name || !date) return false;
+
+      if (s.linkedHistoryId) {
+        const linked = historyList.find(function(h) { return h && h.id === s.linkedHistoryId; });
+        if (linked && !linked.pendingCheckIn) return true;
+      }
+
+      const st = normalizeScheduleTime(s.time);
+      return historyList.some(function(h) {
+        if (!h) return false;
+        // 補完前の仮履歴は除外（ただし同日同名の確定履歴があれば下で拾う）
+        if (h.pendingCheckIn) return false;
+        if (historyDateStr(h) !== date) return false;
+        if ((h.name || '').trim() !== name) return false;
+        const hs = (h.storeName || '').trim();
+        // 店名は両方あるときだけ一致必須
+        if (store && hs && store !== hs) return false;
+        const ht = normalizeScheduleTime(h.time || h.visitTime || '');
+        if (ht && st && ht !== st) return false;
+        return true;
+      });
+    }
+
+    function forceDeleteSchedule(id) {
+      if (!id) return;
+      if (!confirm('この予定をカレンダーから削除しますか？（履歴はそのまま残ります）')) return;
+      scheduleList = scheduleList.filter(function(s) { return s && s.id !== id; });
+      saveData();
+      renderCalendar();
+      if (typeof renderHomeMetrics === 'function') renderHomeMetrics();
+      if (typeof renderNotificationPanel === 'function') renderNotificationPanel();
+      if (typeof selectedCalDateStr !== 'undefined' && selectedCalDateStr && typeof selectCalendarDate === 'function') {
+        selectCalendarDate(selectedCalDateStr);
+      }
+    }
+
     function deleteSchedule(id) {
       const sch = scheduleList.find(s => s.id === id);
       if (!sch) return;
@@ -11497,8 +11578,36 @@ async function attemptBiometricUnlock() {
       }
 
       scheduleList.forEach(sch => {
-        if (sch.cancelled || sch.checkedIn || sch.hiddenFromCalendar || !sch.time) return;
+        if (sch.cancelled || sch.hiddenFromCalendar || !sch.time) return;
         if (sch.type === 'reservation' && sch.reservationResult) return;
+
+        // チェックイン後〜記録補完前：通知で「入店済み」
+        if (sch.checkedIn && sch.type === 'plan') {
+          const linked = sch.linkedHistoryId
+            ? historyList.find(function(h) { return h.id === sch.linkedHistoryId; })
+            : null;
+          if (linked && !linked.pendingCheckIn) return;
+          if (linked && linked.courseEndTime && now.getTime() >= linked.courseEndTime) {
+            return; // 補完カード側へ
+          }
+          activeCount++;
+          const who = escapeHTML(sch.castName || sch.title || '予定');
+          const store = escapeHTML(sch.storeName || '');
+          let endHint = '';
+          if (linked && linked.courseEndTime) {
+            const end = new Date(linked.courseEndTime);
+            if (!isNaN(end.getTime())) {
+              endHint = ' · 終了予定 ' + String(end.getHours()).padStart(2,'0') + ':' + String(end.getMinutes()).padStart(2,'0');
+            }
+          }
+          cardsHtml += '<div class="notif-glass-card">' +
+            '<div class="notif-card-title">✅ 入店済み — ' + who + '</div>' +
+            '<div class="notif-card-sub">' + (store ? store + ' · ' : '') + 'コース中です' + endHint + '</div>' +
+          '</div>';
+          return;
+        }
+        if (sch.checkedIn) return;
+
         const schDateTime = new Date(`${sch.date}T${sch.time}:00`);
         const diffMs = schDateTime.getTime() - now.getTime();
 
@@ -11623,7 +11732,7 @@ async function attemptBiometricUnlock() {
       renderCalendar();
       renderHomeMetrics();
       renderNotificationPanel();
-      alert('チェックインしました！コース終了予定時刻を過ぎると、記録の補完カードが通知パネルに表示されます。');
+      alert('入店済みにしました。コース終了後、通知パネルから記録を補完できます。');
     }
 
     /* ❌ 当日キャンセル */
@@ -11754,6 +11863,15 @@ async function attemptBiometricUnlock() {
       delete rec.pendingCheckIn;
       delete rec.courseEndTime;
 
+      // 履歴に残すので、紐づく予約済み予定は削除
+      if (Array.isArray(scheduleList)) {
+        scheduleList = scheduleList.filter(function(s) {
+          if (!s) return false;
+          if (s.linkedHistoryId && s.linkedHistoryId === historyId) return false;
+          return true;
+        });
+      }
+
       saveData();
       render();
       renderDashboard();
@@ -11761,7 +11879,7 @@ async function attemptBiometricUnlock() {
       renderHomeMetrics();
       renderNotificationPanel();
       closeModal('completeVisitModal');
-      alert('記録を補完しました！');
+      alert('記録を補完しました！予定は履歴に移したのでカレンダーから外しました。');
     }
 
     function startHomeAnimations() {
