@@ -22,6 +22,10 @@
   <link rel="icon" type="image/svg+xml" href="/icon.svg">
   
   <style>
+    html {
+      scrollbar-gutter: stable;
+    }
+
 
     /* 利用記録追加モーダル（リニューアル） */
     .add-modal-renewed { max-height: 90vh; overflow-y: auto; }
@@ -2132,7 +2136,141 @@
 
 
 
-    .btn-group { display: flex; gap: 6px; width: 100%; }
+    
+    /* 女の子別図鑑：並び替えドロップダウン */
+    
+    
+    /* 並び替えメニュー：fixed でスクロールバー／レイアウトずれ防止 */
+    .cast-sort-menu.cast-sort-menu-fixed {
+      position: fixed !important;
+      right: auto !important;
+      margin: 0 !important;
+      animation: castSortMenuIn 0.14s ease-out both !important;
+    }
+
+    .view-tab-wrap {
+      position: relative;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: stretch;
+      flex: 1;
+      z-index: 20;
+    }
+    .view-tab-wrap > .btn-toggle {
+      width: 100%;
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    .view-tab-chevron {
+      display: none;
+      font-size: 0.58rem;
+      line-height: 1;
+      opacity: 0.7;
+      transition: transform 0.2s ease;
+      flex-shrink: 0;
+    }
+    .view-tab-wrap.is-active .view-tab-chevron {
+      display: inline-block;
+    }
+    .view-tab-wrap.open .view-tab-chevron {
+      transform: rotate(180deg);
+    }
+    .view-tab-wrap.open {
+      z-index: 45;
+    }
+
+    .view-cast-wrap {
+      position: relative;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: stretch;
+      flex: 1;
+      z-index: 20;
+    }
+    .view-cast-wrap > #viewCast {
+      width: 100%;
+    }
+    .cast-sort-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      right: auto;
+      z-index: 50;
+      min-width: 168px;
+      padding: 8px;
+      border-radius: 14px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.16);
+      flex-direction: column;
+      gap: 3px;
+      box-sizing: border-box;
+    }
+    .view-cast-wrap.open .cast-sort-menu,
+    .view-tab-wrap.open .cast-sort-menu {
+      display: flex !important;
+      animation: castSortMenuIn 0.14s ease-out both;
+    }
+    @keyframes castSortMenuIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes castSortMenuOut {
+      from { opacity: 1; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(-3px); }
+    }
+    .cast-sort-menu .cast-sort-hint {
+      font-size: 0.65rem;
+      color: var(--light-text);
+      padding: 2px 10px 6px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    .cast-sort-menu button,
+    .cast-sort-menu button[type="button"],
+    #castSortMenu button {
+      display: block !important;
+      width: 100% !important;
+      flex: none !important;
+      text-align: left !important;
+      padding: 9px 12px !important;
+      margin: 0 !important;
+      border: none !important;
+      border-radius: 10px !important;
+      background: transparent !important;
+      background-image: none !important;
+      color: var(--text-color) !important;
+      font-size: 0.78rem !important;
+      font-weight: 700 !important;
+      font-family: inherit !important;
+      cursor: pointer;
+      opacity: 1 !important;
+      box-shadow: none !important;
+      line-height: 1.3 !important;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .cast-sort-menu button:active,
+    #castSortMenu button:active {
+      background: color-mix(in srgb, var(--accent-pink) 12%, var(--card-bg)) !important;
+      transform: none !important;
+    }
+    .cast-sort-menu button.active-sort,
+    #castSortMenu button.active-sort {
+      color: var(--accent-pink) !important;
+      background: color-mix(in srgb, var(--accent-pink) 14%, var(--card-bg)) !important;
+    }
+    /* 親の overflow でメニューが切れないように */
+    .options-fold-body,
+    .options-panel,
+    #optionsFoldWrapper {
+      overflow: visible !important;
+    }
+
+    .btn-group { display: flex; gap: 6px; width: 100%; position: relative; overflow: visible; }
+    .btn-group:has(.view-cast-wrap) { z-index: 15; overflow: visible; }
     .btn-toggle { flex: 1; padding: 5px 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); border-radius: 16px; font-size: 0.75rem; font-weight: bold; cursor: pointer; text-align: center; }
     .btn-toggle.active { background: var(--primary-pink); color: white; border-color: var(--primary-pink); }
 
@@ -4507,6 +4645,29 @@
       box-shadow: none !important;
     }
     /* noshow-btn cascade end */
+
+    /* view-tab-menu-fix：bodyポータル＋fixed＋素早いフェード */
+    .cast-sort-menu.cast-sort-menu-fixed,
+    .view-tab-wrap.open .cast-sort-menu,
+    .view-cast-wrap.open .cast-sort-menu,
+    #viewStoreWrap.open .cast-sort-menu,
+    #viewTimelineWrap.open .cast-sort-menu,
+    #viewCastWrap.open .cast-sort-menu {
+      display: flex !important;
+      flex-direction: column !important;
+      position: fixed !important;
+      z-index: 9999 !important;
+      min-width: 168px !important;
+      max-width: min(240px, 90vw) !important;
+      padding: 8px !important;
+      border-radius: 14px !important;
+      border: 1px solid var(--border-color) !important;
+      background: var(--card-bg) !important;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.18) !important;
+      box-sizing: border-box !important;
+      margin: 0 !important;
+      animation: castSortMenuIn 0.14s ease-out both !important;
+    }
 </style>
 </head>
 <body>
@@ -4850,16 +5011,37 @@
               </div>
 
               <div class="btn-group">
-                <button class="btn-toggle active" id="viewCast" onclick="changeView('cast')">女の子別図鑑</button>
-                <button class="btn-toggle" id="viewTimeline" onclick="changeView('timeline')">月別時系列</button>
-                <button class="btn-toggle" id="viewStore" onclick="changeView('store')">店舗一覧</button>
+                <div class="view-tab-wrap view-cast-wrap is-active" id="viewCastWrap">
+                  <button class="btn-toggle active" id="viewCast" onclick="onViewCastButtonClick(event)">女の子別図鑑<span class="view-tab-chevron" aria-hidden="true">▼</span></button>
+                  <div class="cast-sort-menu" id="castSortMenu" role="menu">
+                    <div class="cast-sort-hint">並び替え</div>
+                    <button type="button" data-sort="count" onclick="changeSort('count')">回数の多い順</button>
+                    <button type="button" data-sort="added" onclick="changeSort('added')">新規追加順</button>
+                    <button type="button" data-sort="recent" onclick="changeSort('recent')">最近プレイ順</button>
+                    <button type="button" data-sort="name" onclick="changeSort('name')">五十音順</button>
+                  </div>
+                </div>
+                <div class="view-tab-wrap" id="viewTimelineWrap">
+                  <button class="btn-toggle" id="viewTimeline" onclick="onViewTimelineButtonClick(event)">月別時系列<span class="view-tab-chevron" aria-hidden="true">▼</span></button>
+                  <div class="cast-sort-menu" id="timelineOrderMenu" role="menu">
+                    <div class="cast-sort-hint">月の並び</div>
+                    <button type="button" data-tl-order="new" onclick="changeTimelineOrder('new')">新しい月が上</button>
+                    <button type="button" data-tl-order="old" onclick="changeTimelineOrder('old')">古い月が上</button>
+                  </div>
+                </div>
+                <div class="view-tab-wrap" id="viewStoreWrap">
+                  <button class="btn-toggle" id="viewStore" onclick="onViewStoreButtonClick(event)">店舗一覧<span class="view-tab-chevron" aria-hidden="true">▼</span></button>
+                  <div class="cast-sort-menu" id="storeSortMenu" role="menu">
+                    <div class="cast-sort-hint">並び替え</div>
+                    <button type="button" data-store-sort="count" onclick="event.stopPropagation();changeStoreSort('count')">回数の多い順</button>
+                    <button type="button" data-store-sort="added" onclick="event.stopPropagation();changeStoreSort('added')">新規追加順</button>
+                    <button type="button" data-store-sort="recent" onclick="event.stopPropagation();changeStoreSort('recent')">最近プレイ順</button>
+                    <button type="button" data-store-sort="name" onclick="event.stopPropagation();changeStoreSort('name')">五十音順</button>
+                  </div>
+                </div>
               </div>
 
-              <div class="btn-group" id="sortGroup">
-                <button class="btn-toggle active" id="sortCount" onclick="changeSort('count')">回数順</button>
-                <button class="btn-toggle" id="sortRecent" onclick="changeSort('recent')">最近順</button>
-                <button class="btn-toggle" id="sortName" onclick="changeSort('name')">五十音順</button>
-              </div>
+              <div class="btn-group" id="sortGroup" style="display:none !important;" hidden></div>
             </div>
           </div>
         </div>
@@ -10412,6 +10594,13 @@ async function attemptBiometricUnlock() {
           </div>
         `;
       }
+
+      // 常に6週分（42マス）に揃え、月切替時の高さ・ナビずれを防ぐ
+      const filled = firstDay + lastDate;
+      const totalCells = Math.max(42, Math.ceil(filled / 7) * 7);
+      for (let i = filled; i < totalCells; i++) {
+        grid.innerHTML += '<div class="cal-cell empty"></div>';
+      }
       
       if(selectedCalDateStr) {
         selectCalendarDate(selectedCalDateStr);
@@ -10645,11 +10834,41 @@ async function attemptBiometricUnlock() {
       return m + '/' + d;
     }
 
+    function getScheduleDateTime(sch) {
+      if (!sch || !sch.date) return null;
+      const t = (sch.time && String(sch.time).trim()) ? String(sch.time).trim() : '00:00';
+      const mm = t.match(/^(\d{1,2}):(\d{2})/);
+      const hh = mm ? String(parseInt(mm[1], 10)).padStart(2, '0') : '00';
+      const mi = mm ? mm[2] : '00';
+      const d = new Date(String(sch.date).replace(/\//g, '-') + 'T' + hh + ':' + mi + ':00');
+      return isNaN(d.getTime()) ? null : d;
+    }
+
     function formatHomeNextScheduleText(sch) {
       if (!sch) return '予定できたら追加してね〜！';
+      const store = (sch.storeName || '').trim();
+      const name = (sch.castName || sch.title || '').trim();
+      const timePart = (sch.time && String(sch.time).trim()) ? String(sch.time).trim() : '';
+
+      // 予約済みが2時間以内 → 「このあと 19:00 店・名前」
+      if (sch.type === 'plan') {
+        const dt = getScheduleDateTime(sch);
+        if (dt) {
+          const now = new Date();
+          const diffMs = dt.getTime() - now.getTime();
+          if (diffMs >= 0 && diffMs <= 2 * 60 * 60 * 1000) {
+            const tail = [store, name].filter(Boolean).join('・');
+            let line = 'このあと';
+            if (timePart) line += ' ' + timePart;
+            if (tail) line += ' ' + tail;
+            return line.trim();
+          }
+        }
+      }
+
       const rel = getScheduleRelativeDayLabel(sch.date, sch.time, { simple: sch.type === 'reservation' });
       if (sch.type === 'reservation') {
-        const t = (sch.time && String(sch.time).trim()) ? String(sch.time).trim() : '10:00';
+        const t = timePart || '10:00';
         const mm = t.match(/^(\d{1,2}):(\d{2})/);
         let clockLabel = t;
         if (mm) {
@@ -10657,9 +10876,6 @@ async function attemptBiometricUnlock() {
         }
         return rel + 'の' + clockLabel + 'から予約スタート';
       }
-      const timePart = (sch.time && String(sch.time).trim()) ? String(sch.time).trim() : '';
-      const store = (sch.storeName || '').trim();
-      const name = (sch.castName || sch.title || '').trim();
       let line = rel;
       if (timePart) line += ' ' + timePart;
       const tail = [store, name].filter(Boolean).join('・');
@@ -12339,7 +12555,7 @@ async function attemptBiometricUnlock() {
       return { btn, panel };
     }
 
-    let currentView = 'cast', currentSort = 'count', currentFilter = 'all';
+    let currentView = 'cast', currentSort = 'count', storeSort = 'count', timelineOrder = 'new', currentFilter = 'all';
     let moreFilterTypeTags = [];
     let moreFilterPlayTags = [];
     let moreFilterDraftType = [];
@@ -12767,15 +12983,215 @@ function navigateToStoreCard(storeName, event) {
       if (typeof isPcViewMode === 'function' && isPcViewMode() && mode !== 'timeline') {
         showPcGuideModal('女の子別・店舗別など');
         mode = 'timeline';
-      } 
-      currentView = mode; 
+      }
+      if (typeof closeCastSortMenu === 'function') closeCastSortMenu();
+      currentView = mode;
+      if (typeof syncViewTabActiveClasses === 'function') syncViewTabActiveClasses(); 
       document.getElementById('viewCast').className = 'btn-toggle' + (mode === 'cast' ? ' active' : ''); 
       document.getElementById('viewTimeline').className = 'btn-toggle' + (mode === 'timeline' ? ' active' : ''); 
       document.getElementById('viewStore').className = 'btn-toggle' + (mode === 'store' ? ' active' : ''); 
       document.getElementById('sortGroup').style.display = (mode === 'cast' || mode === 'store') ? 'flex' : 'none'; 
       render(); 
     }
-    function changeSort(sort) { currentSort = sort; document.getElementById('sortCount').className = 'btn-toggle' + (sort === 'count' ? ' active' : ''); document.getElementById('sortRecent').className = 'btn-toggle' + (sort === 'recent' ? ' active' : ''); document.getElementById('sortName').className = 'btn-toggle' + (sort === 'name' ? ' active' : ''); render(); }
+    function changeSort(sort) {
+      currentSort = sort || 'count';
+      document.querySelectorAll('#castSortMenu button[data-sort]').forEach(function(btn) {
+        btn.classList.toggle('active-sort', btn.getAttribute('data-sort') === currentSort);
+      });
+      closeCastSortMenu();
+      render();
+    }
+
+    function repositionOpenCastSortMenu() {
+      const wrap = document.querySelector('.view-tab-wrap.open, .view-cast-wrap.open');
+      if (!wrap) return;
+      const btn = wrap.querySelector('.btn-toggle');
+      const homeId = wrap.id;
+      const menu = document.querySelector('.cast-sort-menu.cast-sort-menu-fixed[data-menu-home="' + homeId + '"]')
+        || document.querySelector('.cast-sort-menu.cast-sort-menu-fixed');
+      if (!menu || !btn) return;
+      const rect = btn.getBoundingClientRect();
+      menu.style.top = Math.round(rect.bottom + 6) + 'px';
+      const menuWidth = Math.max(168, menu.offsetWidth || 168);
+      let left = rect.left;
+      if (left + menuWidth > window.innerWidth - 8) {
+        left = Math.max(8, rect.right - menuWidth);
+      }
+      if (left < 8) left = 8;
+      menu.style.left = Math.round(left) + 'px';
+    }
+    window.addEventListener('scroll', function() { repositionOpenCastSortMenu(); }, true);
+    window.addEventListener('resize', function() { repositionOpenCastSortMenu(); });
+
+    function closeCastSortMenu() {
+      document.querySelectorAll('.view-tab-wrap, .view-cast-wrap').forEach(function(w) {
+        w.classList.remove('open');
+      });
+      if (typeof restoreCastSortMenusToWraps === 'function') restoreCastSortMenusToWraps();
+      document.querySelectorAll('.options-fold-inner').forEach(function(el) {
+        el.classList.remove('sort-menu-open');
+      });
+    }
+
+    function restoreCastSortMenusToWraps() {
+      document.querySelectorAll('.cast-sort-menu.cast-sort-menu-fixed').forEach(function(menu) {
+        const homeId = menu.getAttribute('data-menu-home');
+        const home = homeId ? document.getElementById(homeId) : null;
+        menu.style.display = 'none';
+        menu.style.top = '';
+        menu.style.left = '';
+        menu.style.right = '';
+        menu.classList.remove('cast-sort-menu-fixed');
+        if (home && menu.parentElement !== home) {
+          home.appendChild(menu);
+        }
+      });
+    }
+
+    function openViewTabMenu(wrapId) {
+      restoreCastSortMenusToWraps();
+      document.querySelectorAll('.view-tab-wrap, .view-cast-wrap').forEach(function(w) {
+        w.classList.remove('open');
+      });
+      const wrap = document.getElementById(wrapId);
+      if (!wrap) return;
+      wrap.classList.add('open');
+      const menu = wrap.querySelector('.cast-sort-menu') || document.querySelector('.cast-sort-menu[data-menu-home="' + wrapId + '"]');
+      const btn = wrap.querySelector('.btn-toggle');
+      if (!menu || !btn) return;
+      // backdrop-filter 等で fixed が閉じ込められるため body 直下へ
+      if (!menu.getAttribute('data-menu-home')) {
+        menu.setAttribute('data-menu-home', wrapId);
+      }
+      document.body.appendChild(menu);
+      menu.classList.add('cast-sort-menu-fixed');
+      menu.style.display = 'flex';
+      menu.style.position = 'fixed';
+      menu.style.zIndex = '9999';
+      // 素早いフェードインを毎回再生
+      menu.style.animation = 'none';
+      void menu.offsetWidth;
+      menu.style.animation = 'castSortMenuIn 0.14s ease-out both';
+      const rect = btn.getBoundingClientRect();
+      menu.style.top = Math.round(rect.bottom + 6) + 'px';
+      // 一度表示して幅を測る
+      const menuWidth = Math.max(168, menu.offsetWidth || 168);
+      let left = rect.left;
+      if (left + menuWidth > window.innerWidth - 8) {
+        left = Math.max(8, rect.right - menuWidth);
+      }
+      if (left < 8) left = 8;
+      menu.style.left = Math.round(left) + 'px';
+      menu.style.right = 'auto';
+    }
+
+    function syncViewTabActiveClasses() {
+      const castW = document.getElementById('viewCastWrap');
+      const tlW = document.getElementById('viewTimelineWrap');
+      const stW = document.getElementById('viewStoreWrap');
+      if (castW) castW.classList.toggle('is-active', currentView === 'cast');
+      if (tlW) tlW.classList.toggle('is-active', currentView === 'timeline');
+      if (stW) stW.classList.toggle('is-active', currentView === 'store');
+    }
+
+    function changeStoreSort(sort) {
+      try { if (event) { event.preventDefault(); event.stopPropagation(); } } catch (e) {}
+      storeSort = sort || 'count';
+      document.querySelectorAll('#storeSortMenu button[data-store-sort]').forEach(function(btn) {
+        btn.classList.toggle('active-sort', btn.getAttribute('data-store-sort') === storeSort);
+      });
+      closeCastSortMenu();
+      if (typeof currentView !== 'undefined' && currentView !== 'store' && typeof changeView === 'function') {
+        changeView('store');
+      } else if (typeof render === 'function') {
+        render();
+      }
+    }
+
+    function changeTimelineOrder(order) {
+      timelineOrder = order === 'old' ? 'old' : 'new';
+      document.querySelectorAll('#timelineOrderMenu button[data-tl-order]').forEach(function(btn) {
+        btn.classList.toggle('active-sort', btn.getAttribute('data-tl-order') === timelineOrder);
+      });
+      closeCastSortMenu();
+      render();
+    }
+
+    function onViewStoreButtonClick(event) {
+      if (event) { event.preventDefault(); event.stopPropagation(); }
+      if (currentView === 'store') {
+        const wrap = document.getElementById('viewStoreWrap');
+        if (wrap && wrap.classList.contains('open')) closeCastSortMenu();
+        else {
+          openViewTabMenu('viewStoreWrap');
+          document.querySelectorAll('#storeSortMenu button[data-store-sort]').forEach(function(btn) {
+            btn.classList.toggle('active-sort', btn.getAttribute('data-store-sort') === storeSort);
+          });
+        }
+      } else {
+        closeCastSortMenu();
+        changeView('store');
+      }
+    }
+
+    function onViewTimelineButtonClick(event) {
+      if (event) { event.preventDefault(); event.stopPropagation(); }
+      if (currentView === 'timeline') {
+        const wrap = document.getElementById('viewTimelineWrap');
+        if (wrap && wrap.classList.contains('open')) closeCastSortMenu();
+        else {
+          openViewTabMenu('viewTimelineWrap');
+          document.querySelectorAll('#timelineOrderMenu button[data-tl-order]').forEach(function(btn) {
+            btn.classList.toggle('active-sort', btn.getAttribute('data-tl-order') === timelineOrder);
+          });
+        }
+      } else {
+        closeCastSortMenu();
+        changeView('timeline');
+      }
+    }
+
+
+    function toggleCastSortMenu() {
+      const wrap = document.getElementById('viewCastWrap');
+      if (!wrap) return;
+      wrap.classList.toggle('open');
+      const open = wrap.classList.contains('open');
+      document.querySelectorAll('.options-fold-inner').forEach(function(el) {
+        el.classList.toggle('sort-menu-open', open);
+      });
+      if (open) {
+        document.querySelectorAll('#castSortMenu button[data-sort]').forEach(function(btn) {
+          btn.classList.toggle('active-sort', btn.getAttribute('data-sort') === currentSort);
+        });
+      }
+    }
+
+    function onViewCastButtonClick(event) {
+      if (event) { event.preventDefault(); event.stopPropagation(); }
+      if (currentView === 'cast') {
+        const wrap = document.getElementById('viewCastWrap');
+        if (wrap && wrap.classList.contains('open')) closeCastSortMenu();
+        else {
+          openViewTabMenu('viewCastWrap');
+          document.querySelectorAll('#castSortMenu button[data-sort]').forEach(function(btn) {
+            btn.classList.toggle('active-sort', btn.getAttribute('data-sort') === currentSort);
+          });
+        }
+      } else {
+        closeCastSortMenu();
+        changeView('cast');
+      }
+    }
+
+    document.addEventListener('click', function(e) {
+      const openWrap = document.querySelector('.view-tab-wrap.open, .view-cast-wrap.open');
+      if (!openWrap) return;
+      if (openWrap.contains(e.target)) return;
+      if (e.target.closest && e.target.closest('.cast-sort-menu')) return;
+      closeCastSortMenu();
+    });
+
     function setFilter(filter) {
       currentFilter = filter;
       document.querySelectorAll('.filter-presets .ftag').forEach(el => {
@@ -13112,8 +13528,23 @@ function navigateToStoreCard(storeName, event) {
         );
       }
 
-      if (currentSort === 'count') list.sort((a,b) => b.visits.length - a.visits.length || (a.firstIdx ?? 0) - (b.firstIdx ?? 0));
-      else if (currentSort === 'recent') list.sort((a,b) => b.lastIdx - a.lastIdx);
+      // 追加順: 初めて記録した日が新しい子を上に（従来の古い順の逆）
+      const firstSeenKey = (c) => {
+        let min = Infinity;
+        (c.visits || []).forEach(v => {
+          const y = parseInt(v.year, 10) || 0;
+          const m = (typeof parseMonthNum === 'function' ? parseMonthNum(v.month) : parseInt(v.month, 10)) || 0;
+          const d = parseInt(v.day, 10) || 1;
+          const k = y * 10000 + m * 100 + d;
+          if (k > 0 && k < min) min = k;
+        });
+        if (min === Infinity) return (c.firstIdx != null ? c.firstIdx : 0);
+        // firstIdx を小数で混ぜて同日の順序を安定化（新しい追加が上）
+        return min * 100000 + (c.firstIdx != null ? c.firstIdx : 0);
+      };
+      if (currentSort === 'added') list.sort((a, b) => firstSeenKey(b) - firstSeenKey(a));
+      else if (currentSort === 'count') list.sort((a,b) => b.visits.length - a.visits.length || firstSeenKey(b) - firstSeenKey(a));
+      else if (currentSort === 'recent') list.sort((a,b) => (b.lastIdx ?? 0) - (a.lastIdx ?? 0));
       else list.sort((a,b) => a.name.localeCompare(b.name, 'ja'));
 
       const grid = document.createElement('div');
@@ -13271,10 +13702,11 @@ ${sideActionsHtml}
         groups[key].push(item);
       });
 
-      // 月キーを年月の新しい順に
+      // 月キー並び（新しい月が上 / 古い月が上）
       const monthKeys = Object.keys(groups).sort((a, b) => {
         const itemsA = groups[a][0], itemsB = groups[b][0];
-        return timelineVisitDateKey(itemsB || {}) - timelineVisitDateKey(itemsA || {});
+        const diff = timelineVisitDateKey(itemsB || {}) - timelineVisitDateKey(itemsA || {});
+        return (typeof timelineOrder !== 'undefined' && timelineOrder === 'old') ? -diff : diff;
       });
 
       let any = false;
@@ -13421,7 +13853,7 @@ ${sideActionsHtml}
     function renderStoreView(target, keyword) {
       const storeMap = {};
       
-      historyList.forEach(v => {
+      historyList.forEach((v, idx) => {
         const store = v.storeName && v.storeName.trim() ? v.storeName.trim() : '未設定・その他';
         if (!storeMap[store]) {
           storeMap[store] = {
@@ -13429,7 +13861,8 @@ ${sideActionsHtml}
             visits: [],
             totalAmount: 0,
             castSet: new Map(),
-            lastIdx: -1
+            firstIdx: idx,
+            lastIdx: idx
           };
         }
         storeMap[store].visits.push(v);
@@ -13442,9 +13875,8 @@ ${sideActionsHtml}
         cStat.count++;
         cStat.amount += Number(v.amount) || 0;
 
-        if (v.originalIndex > storeMap[store].lastIdx) {
-          storeMap[store].lastIdx = v.originalIndex;
-        }
+        if (idx > storeMap[store].lastIdx) storeMap[store].lastIdx = idx;
+        if (idx < storeMap[store].firstIdx) storeMap[store].firstIdx = idx;
       });
 
       let list = Object.values(storeMap);
@@ -13462,8 +13894,22 @@ ${sideActionsHtml}
 
       if (keyword) list = list.filter(s => s.storeName.toLowerCase().includes(keyword) || s.visits.some(v => v.name.toLowerCase().includes(keyword) || (v.visitNote||'').toLowerCase().includes(keyword) || (v.typeTag||'').toLowerCase().includes(keyword)));
 
-      if (currentSort === 'count') list.sort((a,b) => b.visits.length - a.visits.length || b.lastIdx - a.lastIdx);
-      else if (currentSort === 'recent') list.sort((a,b) => b.lastIdx - a.lastIdx);
+      const storeFirstSeenKey = (s) => {
+        let min = Infinity;
+        (s.visits || []).forEach(v => {
+          const y = parseInt(v.year, 10) || 0;
+          const m = (typeof parseMonthNum === 'function' ? parseMonthNum(v.month) : parseInt(v.month, 10)) || 0;
+          const d = parseInt(v.day, 10) || 1;
+          const k = y * 10000 + m * 100 + d;
+          if (k > 0 && k < min) min = k;
+        });
+        if (min === Infinity) return (s.firstIdx != null ? s.firstIdx : 0);
+        return min * 100000 + (s.firstIdx != null ? s.firstIdx : 0);
+      };
+      const ss = (typeof storeSort !== 'undefined' && storeSort) ? storeSort : 'count';
+      if (ss === 'added') list.sort((a,b) => storeFirstSeenKey(b) - storeFirstSeenKey(a));
+      else if (ss === 'count') list.sort((a,b) => b.visits.length - a.visits.length || storeFirstSeenKey(b) - storeFirstSeenKey(a));
+      else if (ss === 'recent') list.sort((a,b) => (b.lastIdx ?? 0) - (a.lastIdx ?? 0));
       else list.sort((a,b) => a.storeName.localeCompare(b.storeName, 'ja'));
 
       if (list.length === 0) {
