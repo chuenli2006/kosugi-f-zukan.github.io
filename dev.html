@@ -66,7 +66,64 @@
       background: color-mix(in srgb, var(--accent-pink) 18%, var(--card-bg));
       color: var(--accent-pink); border: 1px solid var(--primary-pink);
     }
-    .play-picker-modal .modal-content {
+    .play-picker-modal 
+    .store-web-label-row {
+      display: flex; align-items: center; gap: 6px;
+    }
+    .store-web-info-btn {
+      width: 18px; height: 18px; border-radius: 50%;
+      border: 1.5px solid color-mix(in srgb, var(--accent-pink) 55%, var(--border-color));
+      background: color-mix(in srgb, var(--accent-pink) 10%, var(--card-bg));
+      color: var(--accent-pink);
+      font-size: 0.68rem; font-weight: 800; font-style: italic;
+      font-family: Georgia, 'Times New Roman', serif;
+      line-height: 1; padding: 0; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .store-web-info-btn:active { transform: scale(0.92); }
+    .store-web-info-wrap {
+      position: relative; display: inline-flex; align-items: center;
+    }
+    .store-web-info-bubble {
+      display: none;
+      position: absolute;
+      left: 50%; bottom: calc(100% + 8px);
+      transform: translateX(-50%);
+      width: min(260px, 72vw);
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: var(--card-bg);
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      font-size: 0.72rem; font-weight: 600; line-height: 1.45;
+      z-index: 40;
+      text-align: left;
+      font-style: normal;
+    }
+    .store-web-info-bubble::after {
+      content: '';
+      position: absolute; left: 50%; bottom: -6px;
+      transform: translateX(-50%) rotate(45deg);
+      width: 10px; height: 10px;
+      background: var(--card-bg);
+      border-right: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+    .store-web-info-wrap.open .store-web-info-bubble {
+      display: block;
+      animation: storeInfoBubbleIn 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    @keyframes storeInfoBubbleIn {
+      from { opacity: 0; transform: translateX(-50%) translateY(4px) scale(0.96); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+    }
+    .store-web-info-bubble strong {
+      color: var(--accent-pink); font-weight: 800;
+    }
+
+    .modal-content {
       max-width: 440px; max-height: 88vh; display: flex; flex-direction: column; padding-bottom: 12px;
     }
     .play-picker-search {
@@ -5435,7 +5492,16 @@
         </div>
 
         <div class="form-group">
-          <label>店舗 Webリンク</label>
+          <div class="store-web-label-row">
+            <label style="margin:0;">店舗 Webリンク</label>
+            <div class="store-web-info-wrap" id="storeWebInfoWrap">
+              <button type="button" class="store-web-info-btn" onclick="toggleStoreWebInfoBubble(event)" aria-label="Webリンクのヒント">i</button>
+              <div class="store-web-info-bubble" role="tooltip">
+                このリンクは予約以外に、<strong>店舗カードのイメージ画像</strong>にも使われます。<br>
+                安定して画像を取るには、ヘブンネットより<strong>駅チカ</strong>のページがおすすめです。
+              </div>
+            </div>
+          </div>
           <input type="url" id="editModalStoreWeb" placeholder="https://...">
         </div>
 
@@ -13415,46 +13481,155 @@ ${sideActionsHtml}
       return scored[0].url;
     }
 
-    async function fetchStorePreviewImage(pageUrl) {
-      const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(pageUrl);
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 8000);
-      try {
-        const res = await fetch(proxyUrl, { signal: controller.signal });
-        clearTimeout(timeoutId);
-        if (!res.ok) return null;
-        const html = await res.text();
-        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const STORE_PREVIEW_CACHE_KEY = 'store_web_preview_v1';
+    const STORE_PREVIEW_PROXIES = [
+      function(u) { return 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u); },
+      function(u) { return 'https://corsproxy.io/?' + encodeURIComponent(u); },
+      function(u) { return 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u); }
+    ];
 
-        // OGPは不安定なため当面オフ — 本文 <img> のみ
-        return extractContentImage(doc, pageUrl);
+    function getStorePreviewCache() {
+      try {
+        return JSON.parse(localStorage.getItem(STORE_PREVIEW_CACHE_KEY) || '{}') || {};
+      } catch (e) { return {}; }
+    }
+
+    function setStorePreviewCacheEntry(pageUrl, imageUrl) {
+      if (!pageUrl || !imageUrl) return;
+      try {
+        const cache = getStorePreviewCache();
+        cache[pageUrl] = { url: imageUrl, at: Date.now() };
+        const keys = Object.keys(cache);
+        if (keys.length > 80) {
+          keys.sort(function(a, b) { return (cache[a].at || 0) - (cache[b].at || 0); });
+          keys.slice(0, keys.length - 80).forEach(function(k) { delete cache[k]; });
+        }
+        localStorage.setItem(STORE_PREVIEW_CACHE_KEY, JSON.stringify(cache));
+      } catch (e) {}
+    }
+
+    function getCachedStorePreview(pageUrl) {
+      const cache = getStorePreviewCache();
+      const hit = cache[pageUrl];
+      if (!hit || !hit.url) return null;
+      if (hit.at && (Date.now() - hit.at > 30 * 24 * 3600 * 1000)) return null;
+      return hit.url;
+    }
+
+    function clearCachedStorePreview(pageUrl) {
+      try {
+        const cache = getStorePreviewCache();
+        if (cache[pageUrl]) {
+          delete cache[pageUrl];
+          localStorage.setItem(STORE_PREVIEW_CACHE_KEY, JSON.stringify(cache));
+        }
+      } catch (e) {}
+    }
+
+    async function fetchHtmlViaProxies(pageUrl) {
+      for (let i = 0; i < STORE_PREVIEW_PROXIES.length; i++) {
+        const proxyUrl = STORE_PREVIEW_PROXIES[i](pageUrl);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(function() { controller.abort(); }, 9000);
+        try {
+          const res = await fetch(proxyUrl, { signal: controller.signal });
+          clearTimeout(timeoutId);
+          if (!res.ok) continue;
+          const html = await res.text();
+          if (html && html.length > 200 && /<img/i.test(html)) return html;
+          if (html && html.length > 500) return html;
+        } catch (err) {
+          clearTimeout(timeoutId);
+        }
+      }
+      return null;
+    }
+
+    async function fetchStorePreviewImage(pageUrl) {
+      if (!pageUrl) return null;
+      const cached = getCachedStorePreview(pageUrl);
+      if (cached) return cached;
+      try {
+        const html = await fetchHtmlViaProxies(pageUrl);
+        if (!html) return null;
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const imageUrl = extractContentImage(doc, pageUrl);
+        if (imageUrl) setStorePreviewCacheEntry(pageUrl, imageUrl);
+        return imageUrl;
       } catch (err) {
-        clearTimeout(timeoutId);
         console.log('店舗プレビュー画像の取得に失敗しました:', pageUrl, err);
         return null;
       }
     }
 
+    let storePreviewQueue = Promise.resolve();
+
     function loadStoreWebPreviews() {
-      document.querySelectorAll('.store-web-preview-img[data-web-url]').forEach(imgEl => {
+      const imgs = Array.from(document.querySelectorAll('.store-web-preview-img[data-web-url]'));
+      imgs.forEach(function(imgEl) {
         if (imgEl.dataset.previewLoading) return;
         imgEl.dataset.previewLoading = 'true';
         const webUrl = imgEl.getAttribute('data-web-url');
+        if (!webUrl) return;
 
-        fetchStorePreviewImage(webUrl).then(imageUrl => {
-          if (!imageUrl) {
+        const cached = getCachedStorePreview(webUrl);
+        if (cached) {
+          imgEl.onerror = function() {
+            clearCachedStorePreview(webUrl);
             imgEl.style.display = 'none';
-            return;
-          }
-          imgEl.onerror = () => { imgEl.style.display = 'none'; };
-          imgEl.src = imageUrl;
+            imgEl.dataset.previewLoading = '';
+            storePreviewQueue = storePreviewQueue.then(function() {
+              return fetchStorePreviewImage(webUrl).then(function(imageUrl) {
+                if (!imageUrl) { imgEl.style.display = 'none'; return; }
+                imgEl.onerror = function() { imgEl.style.display = 'none'; };
+                imgEl.src = imageUrl;
+                imgEl.style.display = 'block';
+              });
+            });
+          };
+          imgEl.src = cached;
           imgEl.style.display = 'block';
+          return;
+        }
+
+        storePreviewQueue = storePreviewQueue.then(function() {
+          return fetchStorePreviewImage(webUrl).then(function(imageUrl) {
+            if (!imageUrl) {
+              imgEl.style.display = 'none';
+              return;
+            }
+            imgEl.onerror = function() {
+              clearCachedStorePreview(webUrl);
+              imgEl.style.display = 'none';
+            };
+            imgEl.src = imageUrl;
+            imgEl.style.display = 'block';
+          }).catch(function() {
+            imgEl.style.display = 'none';
+          }).then(function() {
+            return new Promise(function(r) { setTimeout(r, 350); });
+          });
         });
       });
     }
 
 
     /* 🏬 店舗情報ダイレクト編集モーダル制御 */
+    
+    function toggleStoreWebInfoBubble(event) {
+      if (event) { event.preventDefault(); event.stopPropagation(); }
+      const wrap = document.getElementById('storeWebInfoWrap');
+      if (!wrap) return;
+      wrap.classList.toggle('open');
+    }
+
+    document.addEventListener('click', function(e) {
+      const wrap = document.getElementById('storeWebInfoWrap');
+      if (!wrap || !wrap.classList.contains('open')) return;
+      if (wrap.contains(e.target)) return;
+      wrap.classList.remove('open');
+    });
+
     function openEditStoreInfoModal(event, storeName) {
       if(event) { event.preventDefault(); event.stopPropagation(); }
       const info = storeInfoData[storeName] || {};
