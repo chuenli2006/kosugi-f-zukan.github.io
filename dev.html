@@ -67,6 +67,63 @@
       color: var(--accent-pink); border: 1px solid var(--primary-pink);
     }
     .play-picker-modal 
+    
+    /* 当欠記録：全体 button 指定より優先して薄く */
+    button.cs-noshow-btn,
+    #csNoshowRecordBtn.cs-noshow-btn {
+      display: block !important;
+      width: auto !important;
+      max-width: 100%;
+      margin: 10px 0 0 0 !important;
+      padding: 4px 2px !important;
+      border: none !important;
+      border-radius: 4px !important;
+      background: transparent !important;
+      background-image: none !important;
+      box-shadow: none !important;
+      color: var(--light-text, #9ca3af) !important;
+      font-size: 0.7rem !important;
+      font-weight: 500 !important;
+      font-family: inherit !important;
+      text-align: left !important;
+      opacity: 0.42 !important;
+      cursor: pointer;
+      letter-spacing: 0.02em;
+      line-height: 1.4;
+      -webkit-tap-highlight-color: transparent;
+    }
+    button.cs-noshow-btn:hover,
+    button.cs-noshow-btn:active,
+    #csNoshowRecordBtn.cs-noshow-btn:hover,
+    #csNoshowRecordBtn.cs-noshow-btn:active {
+      opacity: 0.7 !important;
+      background: transparent !important;
+      color: var(--light-text, #9ca3af) !important;
+      transform: none !important;
+      filter: none !important;
+    }
+    .cs-noshow-list {
+      display: flex; flex-direction: column; gap: 8px;
+      max-height: 50vh; overflow-y: auto;
+      text-align: left;
+    }
+    .cs-noshow-item {
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      background: color-mix(in srgb, var(--bg-color) 40%, var(--card-bg));
+      font-size: 0.8rem;
+    }
+    .cs-noshow-item .ns-date {
+      font-weight: 800; color: var(--text-color); margin-bottom: 2px;
+    }
+    .cs-noshow-item .ns-meta {
+      font-size: 0.72rem; color: var(--light-text);
+    }
+    .cs-noshow-empty {
+      text-align: center; color: var(--light-text); font-size: 0.82rem; padding: 20px 8px;
+    }
+
     .store-web-label-row {
       display: flex; align-items: center; gap: 6px;
     }
@@ -4440,7 +4497,17 @@
     .fake-bag-btn { flex: 1; border: none; padding: 12px; border-radius: 12px; font-size: 0.85rem; font-weight: bold; cursor: pointer; }
     .fake-bag-btn-no { background: #e03131; color: #fff; }
     .fake-bag-btn-yes { background: #adb5bd; color: #fff; }
-  </style>
+  
+    button.cs-noshow-btn, #csNoshowRecordBtn {
+      color: var(--light-text, #9ca3af) !important;
+      background: transparent !important;
+      border: none !important;
+      opacity: 0.42 !important;
+      font-weight: 500 !important;
+      box-shadow: none !important;
+    }
+    /* noshow-btn cascade end */
+</style>
 </head>
 <body>
 
@@ -4939,6 +5006,7 @@
               <textarea id="csNotes" style="display:none;" aria-hidden="true"></textarea>
             </div>
             <div class="sec-status-note" style="margin-top:4px;">文字を選択してから上の <b>B</b> や色ボタンで装飾できます（OSのコピーメニューとは別です）。カード上は1行LED表示です。</div>
+            <button type="button" class="cs-noshow-btn" id="csNoshowRecordBtn" onclick="openCastNoshowModal()">当欠記録</button>
           </div>
 
           <div style="display:flex; gap:8px; margin-top:2px;">
@@ -6260,6 +6328,16 @@
         <button type="button" class="close-btn" style="background:#888; flex:1;" onclick="closeModal('reportEditorModal')">キャンセル</button>
         <button type="button" class="close-btn" style="flex:1;" onclick="saveReportEditor()">保存</button>
       </div>
+    </div>
+  </div>
+
+
+  <!-- 当欠記録モーダル -->
+  <div class="modal-overlay" id="castNoshowModal">
+    <div class="modal-content" style="max-width:400px;">
+      <h3 id="castNoshowTitle" style="text-align:left;">当欠記録</h3>
+      <div class="cs-noshow-list" id="castNoshowList"></div>
+      <button type="button" class="close-btn" style="margin-top:12px;" onclick="closeModal('castNoshowModal')">閉じる</button>
     </div>
   </div>
 
@@ -8242,6 +8320,98 @@ async function attemptBiometricUnlock() {
       const isActive = document.getElementById('csStatusActive').checked;
       document.getElementById('csStatusActiveLabel').classList.toggle('cs-status-selected', isActive);
       document.getElementById('csStatusRetiredLabel').classList.toggle('cs-status-selected', !isActive && document.getElementById('csStatusRetired').checked);
+    }
+
+    
+    function collectCastNoshowRecords(castName) {
+      const name = (castName || '').trim();
+      if (!name) return [];
+      const map = {};
+      // castData に蓄積された当欠
+      try {
+        const list = (castData[name] && castData[name].cancellations) || [];
+        list.forEach(function(c) {
+          if (!c) return;
+          if (c.reason && c.reason !== 'castFault') return;
+          const key = (c.scheduleId || '') + '|' + (c.date || '') + '|' + (c.storeName || '');
+          map[key] = {
+            date: c.date || '',
+            storeName: c.storeName || '',
+            scheduleId: c.scheduleId || '',
+            cancelledAt: c.cancelledAt || c.at || ''
+          };
+        });
+      } catch (e) {}
+      // scheduleList からも収集
+      (scheduleList || []).forEach(function(s) {
+        if (!s || !s.cancelled) return;
+        if (s.cancelReason !== 'castFault') return;
+        const cn = (s.castName || '').trim();
+        if (cn !== name) return;
+        const key = (s.id || '') + '|' + (s.date || '') + '|' + (s.storeName || '');
+        map[key] = {
+          date: s.date || '',
+          storeName: s.storeName || '',
+          scheduleId: s.id || '',
+          cancelledAt: s.cancelledAt || '',
+          time: s.time || ''
+        };
+      });
+      const arr = Object.keys(map).map(function(k) { return map[k]; });
+      arr.sort(function(a, b) {
+        return String(b.date || '').localeCompare(String(a.date || ''));
+      });
+      return arr;
+    }
+
+    function formatNoshowDateLabel(dateStr) {
+      if (!dateStr) return '日付不明';
+      const p = String(dateStr).split(/[-/]/);
+      if (p.length >= 3) {
+        const y = parseInt(p[0], 10), m = parseInt(p[1], 10), d = parseInt(p[2], 10);
+        if (y && m && d) {
+          const dt = new Date(y, m - 1, d);
+          const wd = ['日', '月', '火', '水', '木', '金', '土'][dt.getDay()];
+          return y + '年' + m + '月' + d + '日（' + wd + '）';
+        }
+      }
+      return dateStr;
+    }
+
+    function openCastNoshowModal() {
+      const nameEl = document.getElementById('csTargetName') || document.getElementById('csTargetNameDisp');
+      let name = '';
+      if (nameEl) {
+        name = (nameEl.value || nameEl.innerText || '').replace(/^🌸\s*/, '').trim();
+      }
+      // 表示名から取る
+      const disp = document.getElementById('csTargetNameDisp');
+      if (disp && disp.innerText) {
+        name = disp.innerText.replace(/^🌸\s*/, '').trim() || name;
+      }
+      if (!name) {
+        alert('女の子が選択されていません');
+        return;
+      }
+      const records = collectCastNoshowRecords(name);
+      const title = document.getElementById('castNoshowTitle');
+      if (title) title.textContent = name + ' の当欠記録';
+      const list = document.getElementById('castNoshowList');
+      if (!list) return;
+      if (!records.length) {
+        list.innerHTML = '<div class="cs-noshow-empty">当欠の記録はまだありません</div>';
+      } else {
+        list.innerHTML = records.map(function(r) {
+          const dateL = formatNoshowDateLabel(r.date);
+          const store = r.storeName ? escapeHTML(r.storeName) : '店舗未設定';
+          const time = r.time ? (' · ' + r.time) : '';
+          return '<div class="cs-noshow-item">' +
+            '<div class="ns-date">' + dateL + time + '</div>' +
+            '<div class="ns-meta">' + store + ' · 女の子都合</div>' +
+          '</div>';
+        }).join('');
+      }
+      document.getElementById('castNoshowModal').style.display = 'flex';
     }
 
     function loadCastSettingsForm() {
