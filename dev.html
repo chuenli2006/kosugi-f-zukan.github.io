@@ -6007,7 +6007,17 @@
         <div class="score-slider-row"><span class="score-slider-label">イチャ度</span><input type="range" id="cvIntimacy" min="1" max="5" value="3" oninput="document.getElementById('cvIntimacyVal').innerText=this.value"><span class="score-slider-val" id="cvIntimacyVal">3</span></div>
         <div class="score-slider-row"><span class="score-slider-label">コスパ</span><input type="range" id="cvValue" min="1" max="5" value="3" oninput="document.getElementById('cvValueVal').innerText=this.value"><span class="score-slider-val" id="cvValueVal">3</span></div>
       </div>
-      <div class="form-group"><label>マーク・フラグ</label><input type="text" id="cvFlags" placeholder="マーク"></div>
+      <div class="form-group">
+        <label>マーク・フラグ</label>
+        <div class="flag-picker">
+          <button type="button" class="flag-btn" onclick="appendFlagChar('cvFlags','🆂')">🆂 当たり</button>
+          <button type="button" class="flag-btn" onclick="appendFlagChar('cvFlags','⚔')">⚔ ハズレ</button>
+          <button type="button" class="flag-btn" onclick="appendFlagChar('cvFlags','✈')">✈ 県外</button>
+          <button type="button" class="flag-btn" onclick="appendFlagChar('cvFlags','★')">★ オキニ</button>
+          <button type="button" class="flag-btn flag-btn-clear" onclick="(function(){var el=document.getElementById('cvFlags'); if(el) el.value='';})()">クリア</button>
+        </div>
+        <input type="text" id="cvFlags" placeholder="タップで追加・直接入力も可" style="margin-top:6px;">
+      </div>
       <div class="form-group"><label>メモ・感想</label><input type="text" id="cvNote" placeholder="接客メモなど"></div>
       <div class="form-group">
         <label>手紙・カード画像 (自動Imgurアップロード)</label>
@@ -11722,6 +11732,15 @@ async function attemptBiometricUnlock() {
 
       if (rec.storeName && !storeInfoData[rec.storeName]) storeInfoData[rec.storeName] = {};
 
+      // 新規（未登録）女の子は在籍で初期化／既存は status 未設定時のみ在籍を入れる
+      if (rec.name) {
+        if (!castData[rec.name]) {
+          castData[rec.name] = { status: 'active', link: '', notes: '', letters: [] };
+        } else if (!castData[rec.name].status) {
+          castData[rec.name].status = 'active';
+        }
+      }
+
       historyList.push(rec);
       sch.checkedIn = true;
       sch.checkInTime = now.getTime();
@@ -13456,9 +13475,8 @@ function navigateToStoreCard(storeName, event) {
     function applyPresetFilterToCastList(list) {
       if (currentFilter === 'active') {
         list = list.filter(c => {
-          const info = castData[c.name];
-          if (!info) return false;
-          return info.status ? info.status === 'active' : !!info.link;
+          const info = castData[c.name] || {};
+          return typeof isCastStatusActive === 'function' ? isCastStatusActive(info) : (info.status !== 'retired');
         });
       } else if (currentFilter === 'fav') {
         list = list.filter(c => c.favCount >= 1);
@@ -13476,7 +13494,7 @@ function navigateToStoreCard(storeName, event) {
       if (currentFilter === 'active') {
         const info = castData[v.name];
         if (!info) return false;
-        if (!(info.status ? info.status === 'active' : !!info.link)) return false;
+        if (!(typeof isCastStatusActive === 'function' ? isCastStatusActive(info) : info.status !== 'retired')) return false;
       } else if (currentFilter === 'fav') {
         if (!(v.flags && String(v.flags).includes('🆂'))) return false;
       } else if (currentFilter === 'super') {
@@ -13496,7 +13514,7 @@ function navigateToStoreCard(storeName, event) {
         list = list.filter(s => s.visits.some(v => {
           const info = castData[v.name];
           if (!info) return false;
-          return info.status ? info.status === 'active' : !!info.link;
+          return typeof isCastStatusActive === 'function' ? isCastStatusActive(info) : (info.status !== 'retired');
         }));
       } else if (currentFilter === 'fav') {
         list = list.filter(s => s.visits.some(v => v.flags && String(v.flags).includes('🆂')));
@@ -13587,7 +13605,7 @@ function navigateToStoreCard(storeName, event) {
       const list = Object.values(map);
       document.getElementById('stTotalVisits').innerText = historyList.length;
       document.getElementById('stTotalCasts').innerText = list.length;
-      document.getElementById('stActiveCasts').innerText = list.filter(c => castData[c.name] && castData[c.name].link).length;
+      document.getElementById('stActiveCasts').innerText = list.filter(c => typeof isCastStatusActive === 'function' ? isCastStatusActive(c.name) : true).length;
       const favCount = list.filter(c => c.favCount >= 1).length;
       document.getElementById('stFavRate').innerText = (list.length > 0 ? Math.round((favCount / list.length) * 100) : 0) + "%";
     }
@@ -13681,7 +13699,7 @@ function navigateToStoreCard(storeName, event) {
         details.className = 'cast-card' + (c.favCount >= 5 ? ' super-favorite' : (c.favCount >= 1 ? ' favorite' : ''));
         details.dataset.castName = c.name;
         const info = castData[c.name] || { link: '', notes: '', oldName: '', style: '', letters: [] };
-        const isActive = info.status ? info.status === 'active' : (info.link && info.link.trim() !== '');
+        const isActive = typeof isCastStatusActive === 'function' ? isCastStatusActive(info) : (info.status !== 'retired');
 
         let latestStore = '';
         let latestType = '';
@@ -17474,6 +17492,18 @@ ${sideActionsHtml}
 
     /* 🔧 v.month は "9" のような数字だけでなく "9月" のように漢字付きで保存されている場合があるため、
        日付文字列を組み立てる箇所では必ずこれで数値だけを取り出してから使うこと */
+    
+    /** 在籍判定：女の子別設定の status を優先（リンク有無は使わない） */
+    function isCastStatusActive(nameOrInfo) {
+      const info = (typeof nameOrInfo === 'string')
+        ? (castData[nameOrInfo] || {})
+        : (nameOrInfo || {});
+      if (info.status === 'retired') return false;
+      if (info.status === 'active') return true;
+      // 未設定は在籍扱い（入店時に active が入る想定）
+      return true;
+    }
+
     function parseMonthNum(monthVal) {
       const m = parseInt(String(monthVal || '').replace(/[^0-9]/g, ''), 10);
       return isNaN(m) ? 1 : m;
