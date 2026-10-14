@@ -279,6 +279,41 @@
       letter-spacing: 0.02em;
     }
 
+    
+    #completeVisitModal .modal-content {
+      max-height: min(90vh, 720px);
+      overflow-y: auto;
+    }
+    #completeVisitModal .form-group {
+      margin-bottom: 16px !important;
+    }
+    #completeVisitModal .form-group label {
+      margin-bottom: 8px;
+      display: block;
+    }
+    #completeVisitModal .score-slider-grid {
+      gap: 12px;
+      margin-bottom: 16px;
+      padding: 12px;
+      border-radius: 12px;
+      background: color-mix(in srgb, var(--bg-color) 70%, var(--card-bg));
+      border: 1px solid var(--border-color);
+    }
+    #completeVisitModal .cv-prefill-summary {
+      margin-bottom: 18px;
+    }
+    #completeVisitModal .flag-picker {
+      margin-bottom: 8px;
+    }
+    #completeVisitModal .flag-full-list {
+      display: none;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 8px 0 10px;
+      padding: 10px;
+      border: 1px dashed var(--border-color);
+      border-radius: 12px;
+    }
     .cv-prefill-summary {
       background: var(--soft-pink);
       border: 1px solid var(--primary-pink);
@@ -2534,6 +2569,97 @@
     .notif-btn-cancel { background: #868e96; }
     .notif-btn-complete { background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink)); }
     .notif-btn-default { background: var(--accent-pink); }
+
+    
+    /* 入店中カード：案E ソフトグロー */
+    .cast-card.cast-card-in-progress {
+      box-shadow: 0 0 0 2px rgba(18, 184, 134, 0.35), 0 8px 28px rgba(18, 184, 134, 0.18) !important;
+      border-color: rgba(18, 184, 134, 0.35) !important;
+      position: relative;
+    }
+    .cast-card.cast-card-await-complete {
+      box-shadow: 0 0 0 2px rgba(255, 146, 43, 0.4), 0 8px 28px rgba(255, 146, 43, 0.2) !important;
+      border-color: rgba(255, 146, 43, 0.4) !important;
+      animation: castAwaitPulse 2.2s ease-in-out infinite;
+    }
+    @keyframes castAwaitPulse {
+      0%, 100% { box-shadow: 0 0 0 2px rgba(255, 146, 43, 0.35), 0 8px 24px rgba(255, 146, 43, 0.15); }
+      50% { box-shadow: 0 0 0 3px rgba(255, 146, 43, 0.55), 0 10px 32px rgba(255, 146, 43, 0.28); }
+    }
+    .cast-inprogress-pill {
+      font-size: 0.65rem; font-weight: 800; padding: 2px 8px; border-radius: 999px;
+      background: rgba(18, 184, 134, 0.15); color: #0ca678; white-space: nowrap;
+    }
+    .cast-await-pill {
+      font-size: 0.65rem; font-weight: 800; padding: 2px 8px; border-radius: 999px;
+      background: rgba(255, 146, 43, 0.18); color: #e67700; white-space: nowrap;
+    }
+    .cast-card.cast-card-in-progress summary.card-btn,
+    .cast-card.cast-card-await-complete summary.card-btn {
+      cursor: pointer;
+    }
+    .cast-card.cast-card-in-progress .arrow-icon,
+    .cast-card.cast-card-await-complete .arrow-icon {
+      opacity: 0.25;
+    }
+    /* 案C：進行中の訪問行 */
+    .history-row.history-row-in-progress {
+      background: linear-gradient(90deg, rgba(18,184,134,0.12), rgba(18,184,134,0.04));
+      border-radius: 10px;
+      border: 1px solid rgba(18,184,134,0.22);
+      padding: 8px 10px;
+      position: relative;
+      overflow: hidden;
+    }
+    .history-row.history-row-in-progress::before {
+      content: '';
+      position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+      background: #12b886; border-radius: 4px 0 0 4px;
+    }
+    .history-row.history-row-await {
+      background: linear-gradient(90deg, rgba(255,146,43,0.14), rgba(255,146,43,0.04));
+      border: 1px solid rgba(255,146,43,0.28);
+    }
+    .history-row.history-row-await::before {
+      background: #fd7e14;
+    }
+    .inprogress-bar-track {
+      height: 4px; border-radius: 999px; background: rgba(18,184,134,0.15);
+      margin-top: 6px; overflow: hidden;
+    }
+    .inprogress-bar-fill {
+      height: 100%; border-radius: 999px;
+      background: linear-gradient(90deg, #12b886, #20c997);
+      transition: width 0.4s ease;
+    }
+    .inprogress-meta {
+      font-size: 0.72rem; color: #0ca678; font-weight: 700; margin-top: 2px;
+    }
+    .await-meta {
+      font-size: 0.72rem; color: #e67700; font-weight: 700; margin-top: 2px;
+    }
+    /* Speech bubble */
+    .cast-progress-bubble {
+      position: fixed; z-index: 10050;
+      max-width: 240px; padding: 10px 12px;
+      background: var(--card-bg); color: var(--text-color);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.16);
+      font-size: 0.78rem; font-weight: 600; line-height: 1.45;
+      pointer-events: none;
+      animation: castBubbleIn 0.18s ease-out both;
+    }
+    .cast-progress-bubble::after {
+      content: '';
+      position: absolute; top: -6px; left: 24px;
+      border: 6px solid transparent; border-bottom-color: var(--card-bg);
+      filter: drop-shadow(0 -1px 0 var(--border-color));
+    }
+    @keyframes castBubbleIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
     .checkin-badge { font-size: 0.68rem; font-weight: bold; color: #12b886; background: rgba(18,184,134,0.12); padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
 
@@ -5990,17 +6116,21 @@
         <div class="cv-prefill-store" id="cvPrefillStore"></div>
         <div class="cv-prefill-note">女の子名・店舗は予約済み予定から引き継ぎ済みです</div>
       </div>
-      <div class="form-group"><label>実際の総額</label><input type="text" id="cvAmount" placeholder="例: 20000"></div>
+      <div class="form-group">
+        <label>実際の総額</label>
+        <input type="text" id="cvAmount" placeholder="例: 20000" inputmode="numeric">
+      </div>
       <div class="form-group" style="display:none;" aria-hidden="true"><label>系統タグ</label><input type="text" id="cvTypeTag"></div>
-      <div class="form-group"><label>スリーサイズ（未登録の場合のみ）</label>
-        <div style="display:flex; gap:6px;">
-          <input type="text" id="cvStyleT" placeholder="T">
-          <input type="text" id="cvStyleB" placeholder="B">
-          <input type="text" id="cvStyleW" placeholder="W">
-          <input type="text" id="cvStyleH" placeholder="H">
+      <div class="form-group">
+        <label>スリーサイズ（未登録の場合のみ）</label>
+        <div style="display:flex; gap:8px;">
+          <input type="text" id="cvStyleT" placeholder="T" style="flex:1;">
+          <input type="text" id="cvStyleB" placeholder="B" style="flex:1;">
+          <input type="text" id="cvStyleW" placeholder="W" style="flex:1;">
+          <input type="text" id="cvStyleH" placeholder="H" style="flex:1;">
         </div>
       </div>
-      <div class="score-slider-grid">
+      <div class="score-slider-grid" id="cvScoreGroup">
         <div class="score-slider-row"><span class="score-slider-label">ルックス</span><input type="range" id="cvLooks" min="1" max="5" value="3" oninput="document.getElementById('cvLooksVal').innerText=this.value"><span class="score-slider-val" id="cvLooksVal">3</span></div>
         <div class="score-slider-row"><span class="score-slider-label">接客</span><input type="range" id="cvService" min="1" max="5" value="3" oninput="document.getElementById('cvServiceVal').innerText=this.value"><span class="score-slider-val" id="cvServiceVal">3</span></div>
         <div class="score-slider-row"><span class="score-slider-label">スタイル</span><input type="range" id="cvStyleScore" min="1" max="5" value="3" oninput="document.getElementById('cvStyleScoreVal').innerText=this.value"><span class="score-slider-val" id="cvStyleScoreVal">3</span></div>
@@ -6008,24 +6138,46 @@
         <div class="score-slider-row"><span class="score-slider-label">コスパ</span><input type="range" id="cvValue" min="1" max="5" value="3" oninput="document.getElementById('cvValueVal').innerText=this.value"><span class="score-slider-val" id="cvValueVal">3</span></div>
       </div>
       <div class="form-group">
-        <label>マーク・フラグ</label>
+        <label>フラグ</label>
         <div class="flag-picker">
           <button type="button" class="flag-btn" onclick="appendFlagChar('cvFlags','🆂')">🆂 当たり</button>
           <button type="button" class="flag-btn" onclick="appendFlagChar('cvFlags','⚔')">⚔ ハズレ</button>
           <button type="button" class="flag-btn" onclick="appendFlagChar('cvFlags','✈')">✈ 県外</button>
-          <button type="button" class="flag-btn" onclick="appendFlagChar('cvFlags','★')">★ オキニ</button>
+          <button type="button" class="flag-btn" onclick="appendFlagChar('cvFlags','❖')">❖ 高額</button>
+          <button type="button" class="flag-btn flag-btn-list" onclick="toggleFlagFullList('cvFlagFullList')">📋 一覧</button>
           <button type="button" class="flag-btn flag-btn-clear" onclick="(function(){var el=document.getElementById('cvFlags'); if(el) el.value='';})()">クリア</button>
         </div>
-        <input type="text" id="cvFlags" placeholder="タップで追加・直接入力も可" style="margin-top:6px;">
+        <div class="flag-full-list" id="cvFlagFullList">
+          <button type="button" class="flag-btn" style="background:#2f9e44; color:#fff;" onclick="appendFlagChar('cvFlags','🈠')">🈠 初出勤</button>
+          <button type="button" class="flag-btn" style="background:linear-gradient(135deg, #ffd700, #ff8c00); color:#5c3d00;" onclick="appendFlagChar('cvFlags','🆂')">🆂 当たり</button>
+          <button type="button" class="flag-btn" style="background:#1c7ed6; color:#fff;" onclick="appendFlagChar('cvFlags','✈')">✈ 県外</button>
+          <button type="button" class="flag-btn" style="background:#e03131; color:#fff;" onclick="appendFlagChar('cvFlags','⚔')">⚔ ハズレ</button>
+          <button type="button" class="flag-btn" style="background:#9c36b5; color:#fff;" onclick="appendFlagChar('cvFlags','🈘')">🈘 ソープ</button>
+          <button type="button" class="flag-btn" style="background:#f06595; color:#fff;" onclick="appendFlagChar('cvFlags','🄽')">🄽 NNソープ</button>
+          <button type="button" class="flag-btn" style="background:#9c36b5; color:#fff;" onclick="appendFlagChar('cvFlags','㍁')">㍁ AF</button>
+          <button type="button" class="flag-btn" style="background:#2f9e44; color:#fff;" onclick="appendFlagChar('cvFlags','⑱')">⑱ 18歳</button>
+          <button type="button" class="flag-btn" style="background:#ffd43b; color:#5c3d00;" onclick="appendFlagChar('cvFlags','㋑')">㋑ コスプレ</button>
+          <button type="button" class="flag-btn" style="background:#e03131; color:#fff;" onclick="appendFlagChar('cvFlags','㋗')">㋗ クレーム</button>
+          <button type="button" class="flag-btn" style="background:#2f9e44; color:#fff;" onclick="appendFlagChar('cvFlags','ｴ')">ｴ エステ</button>
+          <button type="button" class="flag-btn" style="background:linear-gradient(135deg, #ff8fab, #ff6b9d); color:#fff;" onclick="appendFlagChar('cvFlags','❀')">❀ 卒業の出勤</button>
+          <button type="button" class="flag-btn" style="background:#9c36b5; color:#fff;" onclick="appendFlagChar('cvFlags','ｄ')">ｄ デリヘル</button>
+          <button type="button" class="flag-btn" style="background:linear-gradient(135deg, #ffd700, #ffb700); color:#5c3d00;" onclick="appendFlagChar('cvFlags','❖')">❖ 高額</button>
+          <button type="button" class="flag-btn" style="background:#94d82d; color:#5c3d00;" onclick="appendFlagChar('cvFlags','❑')">❑ ピンサロ</button>
+          <span class="custom-flags-slot" id="cvCustomFlagSlot"></span>
+        </div>
+        <input type="text" id="cvFlags" placeholder="マーク（タップで追加・直接入力可）">
       </div>
-      <div class="form-group"><label>メモ・感想</label><input type="text" id="cvNote" placeholder="接客メモなど"></div>
+      <div class="form-group">
+        <label>メモ・感想</label>
+        <input type="text" id="cvNote" placeholder="接客メモなど">
+      </div>
       <div class="form-group">
         <label>手紙・カード画像 (自動Imgurアップロード)</label>
         <div style="display:flex; align-items:center; gap:8px;">
           <input type="file" accept="image/*" style="font-size:0.75rem; padding:4px; flex:1;" onchange="uploadImageToImgur(this, 'cvLetterImg', 'cvUploadStatus')">
           <span id="cvUploadStatus" style="font-size:0.7rem;"></span>
         </div>
-        <input type="url" id="cvLetterImg" placeholder="https://i.imgur.com/...">
+        <input type="url" id="cvLetterImg" placeholder="https://i.imgur.com/..." style="margin-top:8px;">
       </div>
 
       <div class="form-group first-visit-intent-section" id="cvFirstVisitSection" style="display:none;">
@@ -11706,6 +11858,12 @@ async function attemptBiometricUnlock() {
       body.innerHTML = cardsHtml || '<div class="notif-empty-note">現在、新しい通知はありません。</div>';
       const dot = document.getElementById('notifBadgeDot');
       if (dot) dot.style.display = activeCount > 0 ? 'block' : 'none';
+      if (typeof checkPendingCompletePrompts === 'function') {
+        const hasAwait = (historyList || []).some(function(v) {
+          return v && v.pendingCheckIn && v.courseEndTime && Date.now() >= v.courseEndTime;
+        });
+        if (hasAwait) checkPendingCompletePrompts();
+      }
     }
 
     /* 📍 クイックチェックイン */
@@ -11816,6 +11974,13 @@ async function attemptBiometricUnlock() {
       document.getElementById('cvFlags').value = '';
       document.getElementById('cvNote').value = '';
       document.getElementById('cvLetterImg').value = '';
+      const scoreGroup = document.getElementById('cvScoreGroup');
+      if (scoreGroup) {
+        scoreGroup.style.display = (typeof ratingEnabled !== 'undefined' && ratingEnabled === false) ? 'none' : '';
+      }
+      const fullList = document.getElementById('cvFlagFullList');
+      if (fullList) fullList.style.display = 'none';
+      if (typeof renderFlagFullLists === 'function') renderFlagFullLists();
       document.getElementById('cvUploadStatus').innerText = '';
 
       const cvSection = document.getElementById('cvFirstVisitSection');
@@ -11913,7 +12078,14 @@ async function attemptBiometricUnlock() {
       const curMonthNum = now.getMonth() + 1;
       const curMonthStr = curMonthNum + '月';
 
-      const thisMonthVisits = historyList.filter(v => v.year === curYear && (v.month === curMonthStr || v.month === String(curMonthNum) || v.month === String(curMonthNum).padStart(2,'0')));
+      const thisMonthVisits = historyList.filter(v => {
+        if (!v) return false;
+        const y = String(v.year || '');
+        if (y !== curYear && y !== String(parseInt(curYear, 10))) return false;
+        const mRaw = v.month;
+        const mNum = (typeof parseMonthNum === 'function' ? parseMonthNum(mRaw) : parseInt(String(mRaw||'').replace(/\D/g,''), 10));
+        return mNum === curMonthNum;
+      });
       const thisCount = thisMonthVisits.length;
 
       let prevMonthNum = curMonthNum - 1;
@@ -13643,6 +13815,110 @@ function navigateToStoreCard(storeName, event) {
       }
     }
 
+    
+    function formatCourseEndLabel(ts) {
+      if (!ts) return '';
+      const end = new Date(ts);
+      if (isNaN(end.getTime())) return '';
+      return String(end.getHours()).padStart(2, '0') + ':' + String(end.getMinutes()).padStart(2, '0');
+    }
+
+    function getCastPendingVisit(c) {
+      if (!c || !c.visits) return null;
+      return c.visits.find(function(v) { return v && v.pendingCheckIn; }) || null;
+    }
+
+    function showCastProgressBubble(anchorEl, message) {
+      document.querySelectorAll('.cast-progress-bubble').forEach(function(b) { b.remove(); });
+      const bubble = document.createElement('div');
+      bubble.className = 'cast-progress-bubble';
+      bubble.textContent = message;
+      document.body.appendChild(bubble);
+      const rect = anchorEl.getBoundingClientRect();
+      let top = rect.bottom + 8;
+      let left = rect.left + 12;
+      if (left + 240 > window.innerWidth - 8) left = window.innerWidth - 248;
+      if (left < 8) left = 8;
+      if (top + 80 > window.innerHeight - 8) top = rect.top - 70;
+      bubble.style.top = Math.round(top) + 'px';
+      bubble.style.left = Math.round(left) + 'px';
+      setTimeout(function() { if (bubble.parentNode) bubble.remove(); }, 2800);
+    }
+
+    function bindCastPendingCard(details, pendingVisit) {
+      if (!details || !pendingVisit) return;
+      const now = Date.now();
+      const ended = !!(pendingVisit.courseEndTime && now >= pendingVisit.courseEndTime);
+      const endLabel = formatCourseEndLabel(pendingVisit.courseEndTime);
+
+      // 進行中は開いたまま折りたたみ不可（プログレス行を見せる）
+      details.open = true;
+      details.addEventListener('toggle', function() {
+        details.open = true;
+      });
+
+      details.addEventListener('click', function(e) {
+        if (e.target.closest && (
+          e.target.closest('a') ||
+          e.target.closest('button') ||
+          e.target.closest('.store-nav-btn') ||
+          e.target.closest('.letter-btn') ||
+          e.target.closest('.cast-progress-bubble')
+        )) return;
+        // summary タップでも閉じない
+        e.preventDefault();
+        e.stopPropagation();
+        details.open = true;
+        if (ended) {
+          if (typeof openCompleteVisitModal === 'function') openCompleteVisitModal(pendingVisit.id);
+        } else {
+          const msg = endLabel
+            ? ('コース終了時間（' + endLabel + '）までは表示できません')
+            : 'コース終了時間までは表示できません';
+          showCastProgressBubble(details, msg);
+        }
+      }, true);
+    }
+
+    function checkPendingCompletePrompts() {
+      const now = Date.now();
+      const waiting = (historyList || []).filter(function(v) {
+        return v && v.pendingCheckIn && v.courseEndTime && now >= v.courseEndTime;
+      });
+      if (!waiting.length) return;
+      // 通知ドット強調
+      const dot = document.getElementById('notifBadgeDot');
+      if (dot) {
+        dot.style.display = 'block';
+        dot.classList.add('notif-dot-urgent');
+      }
+      // 同一セッションで一度だけやさしく促す
+      try {
+        const key = 'cv_prompt_' + waiting.map(function(v) { return v.id; }).sort().join('_');
+        if (sessionStorage.getItem(key)) return;
+        sessionStorage.setItem(key, '1');
+      } catch (e) {}
+      // ホーム／図鑑にいるとき短いトースト風
+      let toast = document.getElementById('cvPromptToast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'cvPromptToast';
+        toast.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);z-index:10060;max-width:90vw;padding:12px 16px;border-radius:14px;background:var(--card-bg);border:1px solid rgba(255,146,43,0.45);box-shadow:0 12px 32px rgba(0,0,0,0.16);font-size:0.8rem;font-weight:700;color:var(--text-color);text-align:center;';
+        document.body.appendChild(toast);
+      }
+      const names = waiting.map(function(v) { return v.name || '女の子'; }).join('・');
+      toast.innerHTML = '📝 ' + names + ' の記録を補完できます<br><span style="font-size:0.72rem;font-weight:600;opacity:0.8;">通知またはカードをタップ</span>';
+      toast.style.display = 'block';
+      toast.style.opacity = '1';
+      setTimeout(function() {
+        if (toast) {
+          toast.style.transition = 'opacity 0.4s';
+          toast.style.opacity = '0';
+          setTimeout(function() { if (toast) toast.style.display = 'none'; }, 400);
+        }
+      }, 4500);
+    }
+
     function renderCastView(target, map, keyword) {
       let list = Object.values(map);
       list = applyPresetFilterToCastList(list);
@@ -13695,9 +13971,17 @@ function navigateToStoreCard(storeName, event) {
       };
 
       list.forEach(c => {
+        const pendingVisit = (typeof getCastPendingVisit === 'function') ? getCastPendingVisit(c) : ((c.visits || []).find(function(v){ return v && v.pendingCheckIn; }) || null);
+        const nowMs = Date.now();
+        const pendingEnded = !!(pendingVisit && pendingVisit.courseEndTime && nowMs >= pendingVisit.courseEndTime);
+        const pendingActive = !!(pendingVisit && !pendingEnded);
         const details = document.createElement('details');
-        details.className = 'cast-card' + (c.favCount >= 5 ? ' super-favorite' : (c.favCount >= 1 ? ' favorite' : ''));
+        let cardExtra = '';
+        if (pendingActive) cardExtra = ' cast-card-in-progress';
+        else if (pendingVisit && pendingEnded) cardExtra = ' cast-card-await-complete';
+        details.className = 'cast-card' + cardExtra + (c.favCount >= 5 ? ' super-favorite' : (c.favCount >= 1 ? ' favorite' : ''));
         details.dataset.castName = c.name;
+        if (pendingVisit && pendingVisit.id) details.dataset.pendingHistoryId = String(pendingVisit.id);
         const info = castData[c.name] || { link: '', notes: '', oldName: '', style: '', letters: [] };
         const isActive = typeof isCastStatusActive === 'function' ? isCastStatusActive(info) : (info.status !== 'retired');
 
@@ -13767,14 +14051,37 @@ function navigateToStoreCard(storeName, event) {
             : `${v.year.slice(2)}年 ${v.month}`;
 
           const editSvg = '<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>';
-          const checkedInBadgeHtml = v.pendingCheckIn ? '<span class="checkin-badge">入店済み</span>' : '';
-          const editBtnHtml = v.pendingCheckIn
+          const isPending = !!v.pendingCheckIn;
+          const pendEnded = isPending && v.courseEndTime && Date.now() >= v.courseEndTime;
+          const endLbl = isPending && typeof formatCourseEndLabel === 'function' ? formatCourseEndLabel(v.courseEndTime) : '';
+          let progressPct = 0;
+          if (isPending && v.checkInTime && v.courseEndTime && v.courseEndTime > v.checkInTime) {
+            progressPct = Math.min(100, Math.max(0, ((Date.now() - v.checkInTime) / (v.courseEndTime - v.checkInTime)) * 100));
+          }
+          if (pendEnded) progressPct = 100;
+
+          const checkedInBadgeHtml = isPending
+            ? (pendEnded
+              ? '<span class="checkin-badge" style="color:#e67700;background:rgba(255,146,43,0.15);">記録待ち</span>'
+              : '<span class="checkin-badge">入店済み</span>')
+            : '';
+          const editBtnHtml = isPending
             ? `<button class="edit-icon-btn" disabled style="opacity:0.35; cursor:not-allowed;" title="コース終了まで編集できません">${editSvg}</button>`
             : `<button class="edit-icon-btn" onclick="openEditRecordModal(event, ${v.originalIndex})">${editSvg}</button>`;
 
+          const rowClass = isPending
+            ? (pendEnded ? 'history-row history-row-in-progress history-row-await' : 'history-row history-row-in-progress')
+            : 'history-row';
+          const progressBlock = isPending
+            ? (pendEnded
+              ? `<div class="await-meta">コース終了 · 記録を補完してください</div>`
+              : `<div class="inprogress-meta">コース中 · 終了予定 ${endLbl || '—'}</div>
+                 <div class="inprogress-bar-track"><div class="inprogress-bar-fill" style="width:${progressPct.toFixed(1)}%"></div></div>`)
+            : '';
+
           rowsHtml += `
             <div class="history-row-wrap">
-              <div class="history-row">
+              <div class="${rowClass}">
                 <div class="history-row-top">
                   <span class="history-date">${dateStr}</span>
                   <div style="display:flex; align-items:center; gap:6px;">
@@ -13784,6 +14091,7 @@ function navigateToStoreCard(storeName, event) {
                     ${editBtnHtml}
                   </div>
                 </div>
+                ${progressBlock}
                 ${buildFlagTagsHtml(v.flags)}
               </div>
               ${infoPanel}
@@ -13797,6 +14105,8 @@ function navigateToStoreCard(storeName, event) {
               <span>${c.name}</span>
               ${info.oldName?`<span class="old-name-badge">旧:${info.oldName}</span>`:''}
               <span class="status-badge ${isActive?'status-active':'status-retired'}">${isActive?'在籍':'卒業'}</span>
+              ${pendingActive?'<span class="cast-inprogress-pill">入店中</span>':''}
+              ${pendingVisit && pendingEnded?'<span class="cast-await-pill">記録を補完</span>':''}
               ${c.favCount>=5?'<span class="super-tag">オキニ</span>':''}
             </div>
             ${badgeCountHtml}
@@ -13817,8 +14127,10 @@ ${sideActionsHtml}
             ${rowsHtml}
           </div></div></div>`;
         grid.appendChild(details);
+        if (pendingVisit && typeof bindCastPendingCard === "function") { try { bindCastPendingCard(details, pendingVisit); } catch (e) { console.warn(e); } }
       });
       target.appendChild(grid);
+      if (typeof checkPendingCompletePrompts === 'function') checkPendingCompletePrompts();
       if (window.lucide) if (typeof initNotesMarquees === 'function') initNotesMarquees(target);
       lucide.createIcons();
     }
@@ -16878,6 +17190,9 @@ ${sideActionsHtml}
 
       const editSlot = document.getElementById('editCustomFlagSlot');
       if (editSlot) editSlot.innerHTML = btnHtml(c => `appendFlagChar('editFlags','${c}')`);
+
+      const cvSlot = document.getElementById('cvCustomFlagSlot');
+      if (cvSlot) cvSlot.innerHTML = btnHtml(c => `appendFlagChar('cvFlags','${c}')`);
     }
 
     function openCustomFlagModal() {
