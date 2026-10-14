@@ -299,7 +299,186 @@
       background: color-mix(in srgb, var(--bg-color) 70%, var(--card-bg));
       border: 1px solid var(--border-color);
     }
-    #completeVisitModal .cv-prefill-summary {
+    #completeVisitModal 
+    .sch-step-hint,
+    #addScheduleModal .sch-step-hint,
+    #addScheduleModal .add-form .sch-step-hint {
+      display: block !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+      font-size: 0.72rem !important;
+      font-weight: 500 !important;
+      color: var(--light-text) !important;
+      margin: 16px 0 20px !important;
+      padding: 6px 12px !important;
+      text-align: center !important;
+      letter-spacing: 0.03em !important;
+      line-height: 1.55 !important;
+    }
+    .sch-step1-cancel {
+      display: block;
+      width: 100%;
+      margin-top: 16px;
+      padding: 12px 16px;
+      border-radius: 14px;
+      border: none;
+      background: rgba(134, 142, 150, 0.18);
+      color: var(--light-text);
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+    }
+    .sch-step1-cancel:active {
+      opacity: 0.85;
+      transform: scale(0.98);
+    }
+    .sch-type-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .sch-type-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+      width: 100%;
+      padding: 18px 20px;
+      border-radius: 18px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      text-align: left;
+      overflow: hidden;
+      isolation: isolate;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+    .sch-type-card.sch-type-plan {
+      border-color: rgba(32, 201, 151, 0.45);
+      background:
+        linear-gradient(135deg, rgba(32, 201, 151, 0.14) 0%, rgba(32, 201, 151, 0.04) 55%, rgba(255,255,255,0.5) 100%),
+        var(--card-bg);
+      box-shadow: 0 8px 24px rgba(32, 201, 151, 0.12);
+    }
+    .sch-type-card.sch-type-plan .sch-type-card-title { color: #12b886; }
+    .sch-type-card.sch-type-res {
+      border-color: rgba(255, 146, 43, 0.5);
+      background:
+        linear-gradient(135deg, rgba(255, 146, 43, 0.16) 0%, rgba(255, 146, 43, 0.05) 55%, rgba(255,255,255,0.5) 100%),
+        var(--card-bg);
+      box-shadow: 0 8px 24px rgba(255, 146, 43, 0.14);
+    }
+    .sch-type-card.sch-type-res .sch-type-card-title { color: #f76707; }
+    .sch-type-card-chevrons {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .sch-type-card-chevrons span {
+      font-size: 1.35rem;
+      font-weight: 900;
+      line-height: 1;
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+      animation: schChevronPulse 1.6s ease-in-out infinite;
+    }
+    .sch-type-card.sch-type-plan .sch-type-card-chevrons span {
+      background-image: linear-gradient(90deg, rgba(32, 201, 151, 0.25), rgba(32, 201, 151, 0.85), rgba(18, 184, 134, 1));
+    }
+    .sch-type-card.sch-type-res .sch-type-card-chevrons span {
+      background-image: linear-gradient(90deg, rgba(255, 146, 43, 0.25), rgba(255, 146, 43, 0.9), rgba(247, 103, 7, 1));
+    }
+    .sch-type-card-chevrons span:nth-child(1) { animation-delay: 0s; }
+    .sch-type-card-chevrons span:nth-child(2) { animation-delay: 0.15s; }
+    .sch-type-card-chevrons span:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes schChevronPulse {
+      0%, 100% { transform: translateX(0); opacity: 0.4; }
+      50% { transform: translateX(3px); opacity: 1; }
+    }
+    .sch-type-card-body {
+      position: relative;
+      z-index: 1;
+      padding-right: 56px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .sch-type-card:active { transform: scale(0.985); }
+    .sch-type-card.sch-type-plan:hover,
+    .sch-type-card.sch-type-plan.selected {
+      border-color: #20c997;
+      box-shadow: 0 10px 28px rgba(32, 201, 151, 0.22);
+    }
+    .sch-type-card.sch-type-res:hover,
+    .sch-type-card.sch-type-res.selected {
+      border-color: #ff922b;
+      box-shadow: 0 10px 28px rgba(255, 146, 43, 0.24);
+    }
+    .sch-type-card-title { font-size: 1.08rem; font-weight: 800; }
+    .sch-type-card-desc { font-size: 0.78rem; color: var(--light-text); line-height: 1.4; }
+    #addScheduleModal .sch-add-modal { overflow: hidden; }
+    #addScheduleModal .add-form { text-align: center; }
+    #addScheduleModal #schStep2 { text-align: left; }
+    .sch-step {
+      width: 100%;
+      transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.32s ease;
+      will-change: transform, opacity;
+    }
+    .sch-step.sch-step-exit-left {
+      transform: translateX(-30%);
+      opacity: 0;
+      pointer-events: none;
+    }
+    .sch-step.sch-step-enter-from-right {
+      transform: translateX(42%);
+      opacity: 0;
+    }
+    .sch-step.sch-step-enter-active {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    .sch-step.sch-step-exit-right {
+      transform: translateX(30%);
+      opacity: 0;
+      pointer-events: none;
+    }
+    .sch-step2-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .sch-back-btn {
+      background: none; border: none; color: var(--primary-pink);
+      font-size: 0.78rem; font-weight: 700; cursor: pointer; padding: 4px 0;
+    }
+    .sch-step2-type-label {
+      font-size: 0.78rem; font-weight: 800; padding: 4px 10px; border-radius: 999px;
+      background: color-mix(in srgb, var(--primary-pink) 15%, transparent);
+      color: var(--primary-pink);
+    }
+    .sch-step2-type-label.is-plan {
+      background: rgba(32, 201, 151, 0.15); color: #12b886;
+    }
+    .sch-step2-type-label.is-res {
+      background: rgba(255, 146, 43, 0.18); color: #f76707;
+    }
+    .sch-field-hint {
+      font-size: 0.65rem; color: var(--light-text); margin-top: 4px; line-height: 1.35;
+    }
+    #addScheduleModal .form-group { margin-bottom: 14px; }
+
+    .cv-prefill-summary {
       margin-bottom: 18px;
     }
     #completeVisitModal .flag-picker {
@@ -6837,94 +7016,131 @@
 
   <!-- カレンダーの予定・予約追加モーダル -->
   <div class="modal-overlay" id="addScheduleModal">
-    <div class="modal-content">
+    <div class="modal-content sch-add-modal">
       <h3>📅 カレンダーに予定を追加</h3>
       <form class="add-form" onsubmit="saveSchedule(event)">
-        <div class="form-group">
-          <label>予定の種類</label>
-          <select id="schType" required onchange="togglePhoneConfirm()">
-            <option value="plan">予約済み（来店日・店名など）</option>
-            <option value="reservation">予約開始（枠取り）</option>
-          </select>
-        </div>
-
-        <div style="display:flex; gap:6px;">
-          <div class="form-group" style="flex:1;">
-            <label>女の子の名前 (任意)</label>
-            <input type="text" id="schCastName" list="castDatalist" placeholder="例: ゆあ">
+        <!-- Step 1: 種類 -->
+        <div id="schStep1" class="sch-step">
+          <p class="sch-step-hint">追加する予定の種類を選んでください</p>
+          <div class="sch-type-cards">
+            <button type="button" class="sch-type-card sch-type-plan" id="schTypeCardPlan" onclick="schSelectType('plan')">
+              <div class="sch-type-card-chevrons" aria-hidden="true"><span>›</span><span>›</span><span>›</span></div>
+              <div class="sch-type-card-body">
+                <span class="sch-type-card-title">予約済み</span>
+                <span class="sch-type-card-desc">来店日が決まっている予定</span>
+              </div>
+            </button>
+            <button type="button" class="sch-type-card sch-type-res" id="schTypeCardRes" onclick="schSelectType('reservation')">
+              <div class="sch-type-card-chevrons" aria-hidden="true"><span>›</span><span>›</span><span>›</span></div>
+              <div class="sch-type-card-body">
+                <span class="sch-type-card-title">予約開始</span>
+                <span class="sch-type-card-desc">枠取り・電話／ネット予約の開始時刻</span>
+              </div>
+            </button>
           </div>
-          <div class="form-group" style="flex:1;">
-            <label>店舗名 (任意)</label>
-            <input type="text" id="schStoreName" list="storeDatalist" placeholder="例: ○○ヘルス 渋谷店">
+          <button type="button" class="sch-step1-cancel" onclick="closeModal('addScheduleModal')">キャンセル</button>
+        </div>
+
+        <!-- Step 2: 詳細 -->
+        <div id="schStep2" class="sch-step" style="display:none;">
+          <input type="hidden" id="schType" value="plan">
+          <div class="sch-step2-head">
+            <button type="button" class="sch-back-btn" onclick="schBackToStep1()">← 種類を選び直す</button>
+            <span class="sch-step2-type-label" id="schStep2TypeLabel">予約済み</span>
           </div>
-        </div>
 
-        <div style="display:flex; gap:6px;">
-          <div class="form-group" style="flex:1;">
-            <label>日付</label>
-            <input type="date" id="schDate" required>
+          <div style="display:flex; gap:8px;">
+            <div class="form-group" style="flex:1;">
+              <label>日付</label>
+              <input type="date" id="schDate" required>
+            </div>
+            <div class="form-group" style="flex:1;">
+              <label id="schTimeLabel">時間</label>
+              <input type="time" id="schTime">
+            </div>
           </div>
-          <div class="form-group" style="flex:1;">
-            <label>時間 (任意)</label>
-            <input type="time" id="schTime">
+
+          <div id="schPlanFields">
+            <div class="form-group">
+              <label>女の子の名前</label>
+              <input type="text" id="schCastName" list="castDatalist" placeholder="例: ゆあ" autocomplete="off" oninput="onSchCastNameInput()" onchange="onSchCastNameInput()">
+              <div class="sch-field-hint" id="schCastHint"></div>
+            </div>
+            <div class="form-group">
+              <label>店舗名</label>
+              <input type="text" id="schStoreName" list="storeDatalist" placeholder="例: Lesson.1" autocomplete="off" onchange="onSchStoreNameInput()">
+              <div class="sch-field-hint" id="schStoreHint"></div>
+            </div>
+            <div class="form-group">
+              <label>タイトル・内容 <span style="font-weight:500;opacity:0.7;">（空なら自動）</span></label>
+              <input type="text" id="schTitle" placeholder="空欄で「店・名前 時間」を自動作成">
+            </div>
+            <div class="form-group" id="phoneConfirmGroup">
+              <label>📞 お店からの電話確認リマインダー</label>
+              <select id="schPhoneConfirm" onchange="togglePhoneConfirmPhoneInput()">
+                <option value="0">不要</option>
+                <option value="15">15分前</option>
+                <option value="30" selected>30分前</option>
+                <option value="45">45分前</option>
+                <option value="60">1時間前</option>
+              </select>
+              <div class="sch-field-hint">来店前にお店から確認の電話が来る場合に設定。通知パネルにも表示されます。</div>
+            </div>
+            <div class="form-group">
+              <label>⏱️ コース時間（分）</label>
+              <input type="number" id="schCourseMinutes" placeholder="60" min="0" step="5" value="60">
+              <div class="sch-field-hint">チェックイン後、この時間が過ぎると記録の補完を促します。</div>
+            </div>
           </div>
-        </div>
 
-        <div class="form-group">
-          <label>タイトル・内容</label>
-          <input type="text" id="schTitle" required placeholder="例: 〇〇店 ゆあちゃん予約">
-        </div>
+          <div id="schResFields" style="display:none;">
+            <div class="form-group">
+              <label>店舗名（任意）</label>
+              <input type="text" id="schResStoreName" list="storeDatalist" placeholder="枠を取るお店" autocomplete="off">
+            </div>
+            <div class="form-group">
+              <label>女の子の名前（任意）</label>
+              <input type="text" id="schResCastName" list="castDatalist" placeholder="希望の子がいれば" autocomplete="off">
+            </div>
+            <div class="form-group">
+              <label>タイトル・内容 <span style="font-weight:500;opacity:0.7;">（空なら自動）</span></label>
+              <input type="text" id="schResTitle" placeholder="空欄で「予約開始 店」を自動作成">
+            </div>
+            <div class="form-group">
+              <label>予約方法</label>
+              <select id="schBookingType" onchange="toggleBookingType()">
+                <option value="none">選択なし</option>
+                <option value="phone">📞 電話予約</option>
+                <option value="web">🌐 ネット予約</option>
+              </select>
+            </div>
+            <div class="form-group" id="schPhoneGroup" style="display:none;">
+              <label>予約・確認用 電話番号</label>
+              <input type="tel" id="schPhoneNumber" placeholder="例: 03-1234-5678">
+            </div>
+            <div class="form-group" id="schWebUrlGroup" style="display:none;">
+              <label>ネット予約ページ URL</label>
+              <input type="url" id="schBookingUrl" placeholder="https://...">
+            </div>
+          </div>
 
-        <div class="form-group">
-          <label>予約方法（任意）</label>
-          <select id="schBookingType" onchange="toggleBookingType()">
-            <option value="none">選択なし</option>
-            <option value="phone">📞 電話予約</option>
-            <option value="web">🌐 ネット予約</option>
-          </select>
-        </div>
+          <div class="form-group">
+            <label>🔔 プッシュ通知リマインダー</label>
+            <select id="schNotify">
+              <option value="0">通知しない</option>
+              <option value="1">1分前</option>
+              <option value="5" selected>5分前</option>
+              <option value="10">10分前</option>
+              <option value="30">30分前</option>
+              <option value="60">1時間前</option>
+            </select>
+            <div class="sch-field-hint">※通知許可が必要です。PWAインストール推奨。</div>
+          </div>
 
-        <div class="form-group" id="schPhoneGroup" style="display:none;">
-          <label>予約・確認用 電話番号</label>
-          <input type="tel" id="schPhoneNumber" placeholder="例: 03-1234-5678">
-        </div>
-
-        <div class="form-group" id="schWebUrlGroup" style="display:none;">
-          <label>ネット予約ページ URL</label>
-          <input type="url" id="schBookingUrl" placeholder="https://...">
-        </div>
-        
-        <div class="form-group" id="phoneConfirmGroup" style="display:none;">
-          <label>📞 お店からの電話確認リマインダー</label>
-          <select id="schPhoneConfirm" onchange="togglePhoneConfirmPhoneInput()">
-            <option value="0">不要</option>
-            <option value="15">15分前</option>
-            <option value="30">30分前</option>
-            <option value="45">45分前</option>
-            <option value="60">1時間前</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>🔔 プッシュ通知リマインダー</label>
-          <select id="schNotify">
-            <option value="0">通知しない</option>
-            <option value="1">1分前</option>
-            <option value="5">5分前</option>
-            <option value="10">10分前</option>
-            <option value="30">30分前</option>
-            <option value="60">1時間前</option>
-          </select>
-          <div style="font-size:0.65rem; color:var(--light-text); margin-top:2px;">※設定時にブラウザの通知許可が求められます。通知を受け取るにはタブを開いたままか、PWAとして端末にインストールしてください。</div>
-        </div>
-        <div class="form-group">
-          <label>⏱️ コース時間（分）</label>
-          <input type="number" id="schCourseMinutes" placeholder="60" min="0" step="5">
-          <div style="font-size:0.65rem; color:var(--light-text); margin-top:2px;">チェックイン後、この時間が経過すると記録の補完カードが通知パネルに表示されます。</div>
-        </div>
-        <div style="display:flex; gap:8px;">
-          <button type="submit" class="close-btn" style="flex:1;">予定を保存</button>
-          <button type="button" class="close-btn" onclick="closeModal('addScheduleModal')" style="background:#888; flex:1;">取消</button>
+          <div style="display:flex; gap:8px; margin-top:8px;">
+            <button type="submit" class="close-btn" style="flex:1;">予定を保存</button>
+            <button type="button" class="close-btn" onclick="closeModal('addScheduleModal')" style="background:#888; flex:1;">取消</button>
+          </div>
         </div>
       </form>
     </div>
@@ -11370,22 +11586,171 @@ async function attemptBiometricUnlock() {
       updateCastDatalist();
       updateStoreDatalist();
       const form = document.getElementById('addScheduleModal');
-      // reset defaults
-      const typeEl = document.getElementById('schType');
-      if (typeEl) typeEl.value = (prefill && prefill.type) || 'plan';
-      if (document.getElementById('schCastName')) document.getElementById('schCastName').value = (prefill && prefill.castName) || '';
-      if (document.getElementById('schStoreName')) document.getElementById('schStoreName').value = (prefill && prefill.storeName) || '';
-      if (document.getElementById('schTitle')) document.getElementById('schTitle').value = (prefill && prefill.title) || '';
-      if (document.getElementById('schTime')) document.getElementById('schTime').value = (prefill && prefill.time) || '';
-      if (document.getElementById('schBookingType')) document.getElementById('schBookingType').value = (prefill && prefill.bookingType) || 'none';
-      if (document.getElementById('schPhoneNumber')) document.getElementById('schPhoneNumber').value = (prefill && prefill.phoneNumber) || '';
-      if (document.getElementById('schBookingUrl')) document.getElementById('schBookingUrl').value = (prefill && prefill.bookingUrl) || '';
-      if (document.getElementById('schDate')) {
-        document.getElementById('schDate').value = (prefill && prefill.date) || selectedCalDateStr || '';
+      const setVal = function(id, v) {
+        const el = document.getElementById(id);
+        if (el) el.value = (v != null ? v : '');
+      };
+      setVal('schType', (prefill && prefill.type) || 'plan');
+      setVal('schCastName', (prefill && prefill.castName) || '');
+      setVal('schStoreName', (prefill && prefill.storeName) || '');
+      setVal('schResCastName', (prefill && prefill.castName) || '');
+      setVal('schResStoreName', (prefill && prefill.storeName) || '');
+      setVal('schTitle', (prefill && prefill.title) || '');
+      setVal('schResTitle', (prefill && prefill.title) || '');
+      setVal('schTime', (prefill && prefill.time) || '');
+      setVal('schBookingType', (prefill && prefill.bookingType) || 'none');
+      setVal('schPhoneNumber', (prefill && prefill.phoneNumber) || '');
+      setVal('schBookingUrl', (prefill && prefill.bookingUrl) || '');
+      setVal('schPhoneConfirm', (prefill && prefill.phoneConfirmMinutes != null) ? String(prefill.phoneConfirmMinutes) : '30');
+      setVal('schNotify', (prefill && prefill.notifyMinutes != null) ? String(prefill.notifyMinutes) : '5');
+      setVal('schCourseMinutes', (prefill && prefill.courseMinutes != null) ? String(prefill.courseMinutes) : '60');
+      const dateEl = document.getElementById('schDate');
+      if (dateEl) {
+        if (prefill && prefill.date) dateEl.value = prefill.date;
+        else if (typeof selectedCalDateStr !== 'undefined' && selectedCalDateStr) dateEl.value = selectedCalDateStr;
+        else {
+          const n = new Date();
+          dateEl.value = n.getFullYear() + '-' + String(n.getMonth()+1).padStart(2,'0') + '-' + String(n.getDate()).padStart(2,'0');
+        }
       }
+      const hintC = document.getElementById('schCastHint');
+      const hintS = document.getElementById('schStoreHint');
+      if (hintC) hintC.textContent = '';
+      if (hintS) hintS.textContent = '';
       window._linkFromReservationId = (prefill && prefill.fromReservationId) || null;
-      togglePhoneConfirm();
+
+      if (prefill && prefill.type) schShowStep2(prefill.type);
+      else schShowStep1();
+      if (typeof toggleBookingType === 'function') toggleBookingType();
       form.style.display = 'flex';
+    }
+
+    function schApplyStep2Fields(type) {
+      type = type || 'plan';
+      const typeEl = document.getElementById('schType');
+      if (typeEl) typeEl.value = type;
+      const label = document.getElementById('schStep2TypeLabel');
+      if (label) {
+        label.textContent = type === 'reservation' ? '予約開始' : '予約済み';
+        label.classList.toggle('is-plan', type === 'plan');
+        label.classList.toggle('is-res', type === 'reservation');
+      }
+      const planF = document.getElementById('schPlanFields');
+      const resF = document.getElementById('schResFields');
+      if (planF) planF.style.display = type === 'plan' ? 'block' : 'none';
+      if (resF) resF.style.display = type === 'reservation' ? 'block' : 'none';
+      const timeLabel = document.getElementById('schTimeLabel');
+      if (timeLabel) timeLabel.textContent = type === 'reservation' ? '開始時間' : '来店時間';
+      const phoneGroup = document.getElementById('phoneConfirmGroup');
+      if (phoneGroup) phoneGroup.style.display = type === 'plan' ? 'block' : 'none';
+      document.querySelectorAll('.sch-type-card').forEach(function(c) { c.classList.remove('selected'); });
+      const card = document.getElementById(type === 'reservation' ? 'schTypeCardRes' : 'schTypeCardPlan');
+      if (card) card.classList.add('selected');
+      if (typeof toggleBookingType === 'function') toggleBookingType();
+    }
+
+    function schShowStep1(animated) {
+      const s1 = document.getElementById('schStep1');
+      const s2 = document.getElementById('schStep2');
+      if (!s1 || !s2) return;
+      document.querySelectorAll('.sch-type-card').forEach(function(c) { c.classList.remove('selected'); });
+      if (!animated) {
+        s1.style.display = 'block';
+        s1.className = 'sch-step';
+        s2.style.display = 'none';
+        s2.className = 'sch-step';
+        return;
+      }
+      s2.classList.add('sch-step-exit-right');
+      setTimeout(function() {
+        s2.style.display = 'none';
+        s2.className = 'sch-step';
+        s1.style.display = 'block';
+        s1.className = 'sch-step sch-step-enter-from-right';
+        requestAnimationFrame(function() {
+          requestAnimationFrame(function() {
+            s1.classList.add('sch-step-enter-active');
+            s1.classList.remove('sch-step-enter-from-right');
+          });
+        });
+      }, 280);
+    }
+
+    function schShowStep2(type, animated) {
+      type = type || 'plan';
+      const s1 = document.getElementById('schStep1');
+      const s2 = document.getElementById('schStep2');
+      if (!s1 || !s2) return;
+      schApplyStep2Fields(type);
+      if (!animated) {
+        s1.style.display = 'none';
+        s1.className = 'sch-step';
+        s2.style.display = 'block';
+        s2.className = 'sch-step';
+        return;
+      }
+      s1.classList.add('sch-step-exit-left');
+      setTimeout(function() {
+        s1.style.display = 'none';
+        s1.className = 'sch-step';
+        s2.style.display = 'block';
+        s2.className = 'sch-step sch-step-enter-from-right';
+        requestAnimationFrame(function() {
+          requestAnimationFrame(function() {
+            s2.classList.add('sch-step-enter-active');
+            s2.classList.remove('sch-step-enter-from-right');
+          });
+        });
+      }, 280);
+    }
+
+    function schSelectType(type) {
+      schShowStep2(type || 'plan', true);
+    }
+
+    function schBackToStep1() {
+      schShowStep1(true);
+    }
+
+    function onSchCastNameInput() {
+      const nameEl = document.getElementById('schCastName');
+      const storeEl = document.getElementById('schStoreName');
+      const hint = document.getElementById('schCastHint');
+      if (!nameEl || !storeEl) return;
+      const name = nameEl.value.trim();
+      if (!name) { if (hint) hint.textContent = ''; return; }
+      const exists = (historyList || []).some(function(h) {
+        return h && !h.pendingCheckIn && (h.name || '').trim() === name;
+      });
+      if (!exists) { if (hint) hint.textContent = ''; return; }
+      if (typeof getLastStoreForCast === 'function') {
+        const lastStore = getLastStoreForCast(name);
+        if (lastStore) {
+          storeEl.value = lastStore;
+          if (hint) hint.textContent = '既存の子：前回の店「' + lastStore + '」を入力しました';
+          onSchStoreNameInput();
+        } else if (hint) {
+          hint.textContent = '既存の子です（店舗履歴なし）';
+        }
+      }
+    }
+
+    function onSchStoreNameInput() {
+      const storeEl = document.getElementById('schStoreName');
+      const phoneEl = document.getElementById('schPhoneNumber');
+      const hint = document.getElementById('schStoreHint');
+      if (!storeEl) return;
+      const store = storeEl.value.trim();
+      if (!store) { if (hint) hint.textContent = ''; return; }
+      if (phoneEl && !phoneEl.value.trim() && typeof storeInfoData !== 'undefined' && storeInfoData[store]) {
+        const p = storeInfoData[store].phone || storeInfoData[store].tel || '';
+        if (p) {
+          phoneEl.value = p;
+          if (hint) hint.textContent = '店舗の電話番号を入力しました';
+          return;
+        }
+      }
+      if (hint) hint.textContent = '';
     }
 
     function openPlanFromReservation(resId) {
@@ -11450,29 +11815,75 @@ async function attemptBiometricUnlock() {
 
     function saveSchedule(e) {
       e.preventDefault();
-      const notifyMins = parseInt(document.getElementById('schNotify').value, 10);
-      const phoneConfirmMins = parseInt(document.getElementById('schPhoneConfirm').value, 10);
-      
-      if((notifyMins > 0 || phoneConfirmMins > 0) && "Notification" in window && Notification.permission !== "granted") {
+      // step2 必須
+      const step2 = document.getElementById('schStep2');
+      if (step2 && step2.style.display === 'none') {
+        alert('先に予定の種類を選んでください');
+        return;
+      }
+
+      const type = (document.getElementById('schType') || {}).value || 'plan';
+      const notifyMins = parseInt((document.getElementById('schNotify') || {}).value, 10) || 0;
+      const phoneConfirmEl = document.getElementById('schPhoneConfirm');
+      const phoneConfirmMins = type === 'plan'
+        ? (parseInt(phoneConfirmEl && phoneConfirmEl.value, 10) || 0)
+        : 0;
+
+      if ((notifyMins > 0 || phoneConfirmMins > 0) && 'Notification' in window && Notification.permission !== 'granted') {
         Notification.requestPermission();
       }
 
+      let castName = '';
+      let storeName = '';
+      let title = '';
+      if (type === 'plan') {
+        castName = (document.getElementById('schCastName') || {}).value.trim() || '';
+        storeName = (document.getElementById('schStoreName') || {}).value.trim() || '';
+        title = (document.getElementById('schTitle') || {}).value.trim() || '';
+      } else {
+        castName = (document.getElementById('schResCastName') || {}).value.trim() || '';
+        storeName = (document.getElementById('schResStoreName') || {}).value.trim() || '';
+        title = (document.getElementById('schResTitle') || {}).value.trim() || '';
+      }
+
+      const date = (document.getElementById('schDate') || {}).value || '';
+      const time = (document.getElementById('schTime') || {}).value || '';
+      if (!date) {
+        alert('日付を入力してください');
+        return;
+      }
+
+      // タイトル自動生成
+      if (!title) {
+        const parts = [storeName, castName].filter(Boolean);
+        if (type === 'reservation') {
+          title = (parts.length ? parts.join('・') + ' ' : '') + '予約開始' + (time ? ' ' + time : '');
+        } else {
+          title = (parts.length ? parts.join('・') : '予約済み') + (time ? ' ' + time : '');
+        }
+        title = title.trim();
+      }
+
+      const courseMinutes = type === 'plan'
+        ? (parseInt((document.getElementById('schCourseMinutes') || {}).value, 10) || 60)
+        : 60;
+
       const sch = {
         id: 'sch_' + new Date().getTime(),
-        type: document.getElementById('schType').value,
-        castName: document.getElementById('schCastName').value.trim(),
-        storeName: document.getElementById('schStoreName').value.trim(),
-        date: document.getElementById('schDate').value,
-        time: document.getElementById('schTime').value,
-        title: document.getElementById('schTitle').value.trim(),
-        bookingType: document.getElementById('schBookingType').value,
-        phoneNumber: document.getElementById('schPhoneNumber').value.trim(),
-        bookingUrl: document.getElementById('schBookingUrl').value.trim(),
+        type: type,
+        castName: castName,
+        storeName: storeName,
+        date: date,
+        time: time,
+        title: title,
+        bookingType: (document.getElementById('schBookingType') || {}).value || 'none',
+        phoneNumber: (document.getElementById('schPhoneNumber') || {}).value.trim() || '',
+        bookingUrl: (document.getElementById('schBookingUrl') || {}).value.trim() || '',
         notifyMinutes: notifyMins,
         notified: false,
         phoneConfirmMinutes: phoneConfirmMins,
         phoneNotified: false,
-        courseMinutes: parseInt(document.getElementById('schCourseMinutes').value, 10) || 60,
+        courseMinutes: courseMinutes,
         checkedIn: false,
         checkInTime: null,
         linkedHistoryId: null,
@@ -11481,10 +11892,10 @@ async function attemptBiometricUnlock() {
         reservationResult: null,
         linkedPlanId: null
       };
-      
-            if (window._linkFromReservationId) {
+
+      if (window._linkFromReservationId) {
         sch.linkedFromReservationId = window._linkFromReservationId;
-        const res = scheduleList.find(s => s.id === window._linkFromReservationId);
+        const res = scheduleList.find(function(s) { return s.id === window._linkFromReservationId; });
         if (res) {
           res.reservationResult = 'success';
           res.linkedPlanId = sch.id;
@@ -11493,21 +11904,15 @@ async function attemptBiometricUnlock() {
       }
       scheduleList.push(sch);
       saveData();
-      
+
       closeModal('addScheduleModal');
-      
-      document.getElementById('schCastName').value = '';
-      document.getElementById('schStoreName').value = '';
-      document.getElementById('schTime').value = '';
-      document.getElementById('schTitle').value = '';
-      document.getElementById('schPhoneNumber').value = '';
-      document.getElementById('schBookingUrl').value = '';
-      document.getElementById('schPhoneConfirm').value = '0';
-      document.getElementById('schBookingType').value = 'none';
-      document.getElementById('schCourseMinutes').value = '';
-      
+      if (typeof schShowStep1 === 'function') schShowStep1();
+
       renderCalendar();
-      renderHomeMetrics();
+      if (typeof renderHomeMetrics === 'function') renderHomeMetrics();
+      if (typeof selectedCalDateStr !== 'undefined' && date && typeof selectCalendarDate === 'function') {
+        try { selectCalendarDate(date); } catch (err) {}
+      }
       alert('📅 カレンダーに予定を追加しました！');
     }
 
