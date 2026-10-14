@@ -238,7 +238,7 @@
     .play-card {
       border: 1.5px solid var(--border-color); border-radius: 12px; padding: 12px 10px;
       background: var(--card-bg); color: var(--text-color); cursor: pointer;
-      min-height: 5.8rem;
+      min-height: 7.2rem;
       display: flex; flex-direction: column; justify-content: flex-start; gap: 5px;
       font-family: inherit; text-align: left;
       transition: border-color 0.15s, background 0.15s, transform 0.1s;
@@ -254,8 +254,8 @@
     }
     .play-card.is-selected .play-card-title { color: var(--accent-pink); }
     .play-card-desc {
-      font-size: 0.65rem; line-height: 1.4; color: var(--light-text); font-weight: normal;
-      display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3;
+      font-size: 0.65rem; line-height: 1.45; color: var(--light-text); font-weight: normal;
+      display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4;
       overflow: hidden;
       min-height: calc(0.65rem * 1.4 * 3);
     }
@@ -268,6 +268,103 @@
       grid-column: 1 / -1; font-size: 0.72rem; font-weight: 800; color: var(--accent-pink);
       margin-top: 4px; padding-left: 2px;
     }
+    
+    .tl-play-pills {
+      display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px;
+    }
+    .tl-play-pill {
+      display: inline-flex; align-items: center;
+      font-size: 0.68rem; font-weight: 700;
+      padding: 3px 9px; border-radius: 999px;
+      background: color-mix(in srgb, var(--accent-pink, var(--primary-pink)) 14%, var(--card-bg));
+      color: var(--accent-pink, var(--primary-pink));
+      border: 1px solid color-mix(in srgb, var(--accent-pink, var(--primary-pink)) 28%, transparent);
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.12s ease, background 0.15s ease;
+    }
+    .tl-play-pill:active {
+      transform: scale(0.96);
+    }
+    .tl-play-pill.is-bubble-open {
+      background: color-mix(in srgb, var(--accent-pink, var(--primary-pink)) 28%, var(--card-bg));
+    }
+    .play-desc-bubble {
+      position: fixed;
+      z-index: 10080;
+      max-width: min(280px, calc(100vw - 24px));
+      padding: 10px 0;
+      border-radius: 14px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      box-shadow: 0 14px 36px rgba(0,0,0,0.18);
+      pointer-events: none;
+      animation: playBubbleIn 0.18s ease-out both;
+    }
+    .play-desc-bubble::before {
+      content: '';
+      position: absolute;
+      top: -6px;
+      left: var(--bubble-arrow-left, 20px);
+      border: 6px solid transparent;
+      border-bottom-color: var(--card-bg);
+      filter: drop-shadow(0 -1px 0 var(--border-color));
+    }
+    @keyframes playBubbleIn {
+      from { opacity: 0; transform: translateY(5px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .play-desc-bubble-title {
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--accent-pink, var(--primary-pink));
+      padding: 0 12px 6px;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 6px;
+    }
+    .play-desc-bubble-track {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      height: 1.35em;
+      mask-image: linear-gradient(90deg, transparent 0%, #000 8%, #000 92%, transparent 100%);
+      -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 8%, #000 92%, transparent 100%);
+    }
+    .play-desc-bubble-track::before,
+    .play-desc-bubble-track::after {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 18px;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .play-desc-bubble-track::before {
+      left: 0;
+      background: linear-gradient(90deg, var(--card-bg), transparent);
+    }
+    .play-desc-bubble-track::after {
+      right: 0;
+      background: linear-gradient(270deg, var(--card-bg), transparent);
+    }
+    .play-desc-bubble-led {
+      display: inline-block;
+      white-space: nowrap;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-color);
+      line-height: 1.35;
+      padding-left: 100%;
+      animation: playDescLedScroll linear infinite;
+      /* 通常メモLEDの約1.8倍速 → durationを短く */
+      animation-duration: 7.5s;
+    }
+    @keyframes playDescLedScroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
+    }
+
     .tl-play-pills {
       display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 2px;
     }
@@ -672,7 +769,10 @@
       line-height: 1.25;
     }
     .play-card-desc {
-      min-height: calc(0.65rem * 1.4 * 3);
+      min-height: calc(0.65rem * 1.45 * 4);
+    }
+    .play-card {
+      min-height: 7.2rem !important;
     }
     summary.card-btn {
       min-height: 44px;
@@ -4988,7 +5088,197 @@
       margin: 0 !important;
       animation: castSortMenuIn 0.14s ease-out both !important;
     }
-</style>
+
+    /* ===== 僕の四十八手（プレイカタログ） ===== */
+    
+    #viewPlayCatalog.tab-content {
+      display: none;
+      padding: 12px 14px 100px;
+      max-width: 800px;
+      margin: 0 auto;
+      width: 100%;
+      box-sizing: border-box;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    #viewPlayCatalog.tab-content[style*="block"] {
+      display: block !important;
+    }
+    .play-cat-tab-inner {
+      width: 100%;
+    }
+    .play-cat-root {
+      padding: 4px 2px 28px;
+      --play-cat-serif: "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", serif;
+    }
+    .play-cat-hero {
+      text-align: center;
+      padding: 18px 12px 14px;
+      margin-bottom: 12px;
+      border-radius: 18px;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.06) 0%, transparent 55%),
+        linear-gradient(180deg, #1a1a1e 0%, #121214 100%);
+      color: #f5f0e8;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.22);
+    }
+    .play-cat-hero-title {
+      font-family: var(--play-cat-serif);
+      font-size: 1.45rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      margin: 0;
+      line-height: 1.35;
+    }
+    .play-cat-hero-sub {
+      font-family: var(--play-cat-serif);
+      font-size: 0.68rem;
+      font-weight: 400;
+      letter-spacing: 0.18em;
+      opacity: 0.65;
+      margin-top: 6px;
+    }
+    .play-cat-hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      margin-top: 14px;
+      font-size: 0.72rem;
+      opacity: 0.85;
+    }
+    .play-cat-hero-stats strong {
+      font-family: var(--play-cat-serif);
+      font-size: 1.05rem;
+      font-weight: 600;
+      display: block;
+      letter-spacing: 0.04em;
+    }
+    .play-cat-index {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 4px 2px 12px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .play-cat-index::-webkit-scrollbar { display: none; }
+    .play-cat-index-btn {
+      flex: 0 0 auto;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: #222;
+      color: #f0ebe3;
+      font-family: var(--play-cat-serif);
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      padding: 7px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .play-cat-index-btn.is-on {
+      background: linear-gradient(135deg, #c9a227, #a67c00);
+      color: #1a1200;
+      border-color: transparent;
+      font-weight: 600;
+    }
+    .play-cat-section-label {
+      font-family: var(--play-cat-serif);
+      font-size: 0.78rem;
+      letter-spacing: 0.2em;
+      color: var(--light-text);
+      margin: 16px 4px 10px;
+      padding-left: 10px;
+      border-left: 2px solid #c9a227;
+    }
+    .play-cat-grid { display: flex; flex-direction: column; gap: 10px; }
+    .play-cat-card {
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      overflow: hidden;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    }
+    .play-cat-card.is-done {
+      border-color: color-mix(in srgb, #c9a227 35%, var(--border-color));
+    }
+    .play-cat-card.is-empty { opacity: 0.45; }
+    .play-cat-card-main {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 14px 14px 12px; cursor: pointer; width: 100%;
+      border: none; background: transparent; text-align: left;
+      color: inherit; font-family: inherit;
+    }
+    .play-cat-card-accent {
+      width: 3px; align-self: stretch; border-radius: 2px;
+      background: #c9a227; flex-shrink: 0; margin: 2px 0; opacity: 0.85;
+    }
+    .play-cat-card.is-empty .play-cat-card-accent {
+      background: var(--border-color); opacity: 0.5;
+    }
+    .play-cat-card-body { flex: 1; min-width: 0; }
+    .play-cat-card-name {
+      font-family: var(--play-cat-serif);
+      font-size: 1.02rem; font-weight: 600; letter-spacing: 0.06em;
+      line-height: 1.35; margin: 0 0 6px;
+    }
+    .play-cat-card-meta {
+      font-size: 0.68rem; color: var(--light-text);
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .play-cat-card-meta b { color: var(--text-color); font-weight: 700; }
+    .play-cat-card-chevron {
+      font-size: 0.7rem; color: var(--light-text); margin-top: 4px;
+      transition: transform 0.2s ease;
+    }
+    .play-cat-card.open .play-cat-card-chevron { transform: rotate(180deg); }
+    .play-cat-card-detail {
+      display: none; padding: 0 14px 14px 29px;
+      border-top: 1px solid var(--border-color);
+    }
+    .play-cat-card.open .play-cat-card-detail {
+      display: block; animation: playCatDetailIn 0.22s ease;
+    }
+    @keyframes playCatDetailIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .play-cat-desc {
+      font-size: 0.72rem; line-height: 1.55; color: var(--light-text);
+      margin: 10px 0 12px; font-family: var(--play-cat-serif);
+    }
+    .play-cat-cast-list { display: flex; flex-direction: column; gap: 6px; }
+    .play-cat-cast-row {
+      display: flex; justify-content: space-between; align-items: center; gap: 8px;
+      padding: 8px 10px; border-radius: 10px;
+      background: color-mix(in srgb, var(--bg-color) 70%, var(--card-bg));
+      font-size: 0.75rem;
+    }
+    .play-cat-cast-name {
+      font-weight: 700; color: var(--accent-pink, var(--primary-pink));
+    }
+    .play-cat-cast-meta { font-size: 0.65rem; color: var(--light-text); white-space: nowrap; }
+    .play-cat-empty-msg {
+      text-align: center; padding: 28px 12px; color: var(--light-text); font-size: 0.8rem;
+    }
+    #viewPlay {
+      flex-direction: column !important; line-height: 1.15; gap: 1px !important;
+      padding-top: 6px !important; padding-bottom: 6px !important;
+    }
+    #viewPlay .play-tab-main { font-size: 0.72rem; font-weight: 800; }
+    #viewPlay .play-tab-sub { font-size: 0.52rem; font-weight: 500; opacity: 0.75; }
+    .tab-content .btn-group:has(#viewPlayWrap) {
+      display: flex; flex-wrap: nowrap; overflow-x: auto;
+      -webkit-overflow-scrolling: touch; gap: 6px; scrollbar-width: none;
+    }
+    .tab-content .btn-group:has(#viewPlayWrap)::-webkit-scrollbar { display: none; }
+    #viewPlayWrap { flex: 1 0 auto; min-width: 4.8rem; }
+    #viewPlayWrap .btn-toggle { width: 100%; }
+
+
+  </style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -5428,7 +5718,15 @@
       </div>
 
       <!-- 6. 女の子別設定タブ -->
-      <div id="viewCastSettings" class="tab-content">
+      
+      <!-- 僕の四十八手（プレイカタログ）フルタブ -->
+      <div id="viewPlayCatalog" class="tab-content">
+        <div class="play-cat-tab-inner">
+          <div id="playCatalogContent"></div>
+        </div>
+      </div>
+
+<div id="viewCastSettings" class="tab-content">
         <div class="cs-lookup-bar">
           <div class="form-group">
             <label>編集対象の女の子の名前</label>
@@ -5990,6 +6288,13 @@
 
       <button class="sheet-nav-item" id="nav-goodValue" onclick="switchMainTab('goodValue'); closeMoreMenu();">
         <span class="nav-icon icon-badge icon-cat-goodvalue icon-badge-sm"><span class="emoji-icon">💰</span><i data-lucide="circle-dollar-sign" class="smart-icon"></i></span><span>いい値ぇー</span>
+      </button>
+      <button class="sheet-nav-item" id="nav-playCatalog" onclick="switchMainTab('playCatalog'); closeMoreMenu();">
+        <span class="nav-icon icon-badge icon-cat-playcatalog icon-badge-sm"><span class="emoji-icon">📖</span><i data-lucide="book-open" class="smart-icon"></i></span>
+        <span style="display:flex;flex-direction:column;align-items:flex-start;line-height:1.2;">
+          <span>僕の四十八手</span>
+          <span style="font-size:0.62rem;opacity:0.7;font-weight:500;">プレイカタログ</span>
+        </span>
       </button>
 
       <div class="sheet-ad-carousel" id="sheetAdCarousel" onscroll="handleSheetAdScroll()"></div>
@@ -10826,7 +11131,7 @@ async function attemptBiometricUnlock() {
 
     function switchMainTab(type) {
       if (isPcViewMode() && PC_VIEW_ALLOWED_TABS.indexOf(type) < 0) {
-        showPcGuideModal(type === 'home' ? 'ホーム' : type === 'calendar' ? 'カレンダー' : type === 'dashboard' ? '統計' : type === 'goodValue' ? 'いい値ぇースコア' : type === 'castSettings' ? '女の子別設定' : 'この機能');
+        showPcGuideModal(type === 'home' ? 'ホーム' : type === 'calendar' ? 'カレンダー' : type === 'dashboard' ? '統計' : type === 'goodValue' ? 'いい値ぇースコア' : type === 'playCatalog' ? '僕の四十八手' : type === 'castSettings' ? '女の子別設定' : 'この機能');
         return;
       }
       document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -10846,6 +11151,7 @@ async function attemptBiometricUnlock() {
       const aiTalkListView = document.getElementById('viewAiTalkList');
       const albumView = document.getElementById('viewAlbum');
       const goodValueView = document.getElementById('viewGoodValue');
+      const playCatalogView = document.getElementById('viewPlayCatalog');
       const headerTitle = document.getElementById('headerTitle');
       const fabContainer = document.getElementById('fabContainer');
 
@@ -10870,6 +11176,7 @@ async function attemptBiometricUnlock() {
         aiTalkListView.style.display = 'none';
         albumView.style.display = 'none'; if (typeof closeAlbumReader === 'function') closeAlbumReader();
         if (goodValueView) goodValueView.style.display = 'none';
+        if (playCatalogView) playCatalogView.style.display = 'none';
         startHomeAnimations();
       } else {
         homeView.classList.remove('active');
@@ -10887,6 +11194,7 @@ async function attemptBiometricUnlock() {
         aiTalkListView.style.display = 'none';
         albumView.style.display = 'none'; if (typeof closeAlbumReader === 'function') closeAlbumReader();
         if (goodValueView) goodValueView.style.display = 'none';
+        if (playCatalogView) playCatalogView.style.display = 'none';
 
         if(type === 'my') {
           myView.style.display = 'block';
@@ -10904,6 +11212,16 @@ async function attemptBiometricUnlock() {
         else if (type === 'aiTalkList') { aiTalkListView.style.display = 'block'; renderTalkList(); }
         else if (type === 'album') { albumView.style.display = 'block'; initAlbumView(); }
         else if (type === 'goodValue') { if (goodValueView) goodValueView.style.display = 'block'; initGoodValueView(); }
+        else if (type === 'playCatalog') {
+          if (playCatalogView) playCatalogView.style.display = 'block';
+          const pc = document.getElementById('playCatalogContent');
+          if (pc && typeof renderPlayCatalogView === 'function') {
+            const kwEl = document.getElementById('searchInput');
+            const kw = kwEl ? (kwEl.value || '').toLowerCase() : '';
+            renderPlayCatalogView(pc, kw);
+          }
+          try { if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons(); } catch (e) {}
+        }
 
         setTimeout(() => {
           const area = document.getElementById('homeFloatingArea');
@@ -13700,12 +14018,18 @@ function navigateToStoreCard(storeName, event) {
       }
       if (typeof closeCastSortMenu === 'function') closeCastSortMenu();
       currentView = mode;
-      if (typeof syncViewTabActiveClasses === 'function') syncViewTabActiveClasses(); 
-      document.getElementById('viewCast').className = 'btn-toggle' + (mode === 'cast' ? ' active' : ''); 
-      document.getElementById('viewTimeline').className = 'btn-toggle' + (mode === 'timeline' ? ' active' : ''); 
-      document.getElementById('viewStore').className = 'btn-toggle' + (mode === 'store' ? ' active' : ''); 
-      document.getElementById('sortGroup').style.display = (mode === 'cast' || mode === 'store') ? 'flex' : 'none'; 
-      render(); 
+      if (typeof syncViewTabActiveClasses === 'function') syncViewTabActiveClasses();
+      const vc = document.getElementById('viewCast');
+      const vt = document.getElementById('viewTimeline');
+      const vs = document.getElementById('viewStore');
+      const vp = document.getElementById('viewPlay');
+      if (vc) vc.className = 'btn-toggle' + (mode === 'cast' ? ' active' : '');
+      if (vt) vt.className = 'btn-toggle' + (mode === 'timeline' ? ' active' : '');
+      if (vs) vs.className = 'btn-toggle' + (mode === 'store' ? ' active' : '');
+      if (vp) vp.className = 'btn-toggle' + (mode === 'play' ? ' active' : '');
+      const sg = document.getElementById('sortGroup');
+      if (sg) sg.style.display = (mode === 'cast' || mode === 'store') ? 'flex' : 'none';
+      render();
     }
     function changeSort(sort) {
       currentSort = sort || 'count';
@@ -16403,72 +16727,78 @@ ${sideActionsHtml}
 
     const PLAY_CATALOG = [
       // 1. 基本・導入
-      { cat: '基本・導入', label: 'キス', desc: '唇を重ねてゆっくり舌を絡める口づけ' },
-      { cat: '基本・導入', label: 'ディープキス', desc: '舌を深く入れて唾液まで交換する濃厚な口づけ' },
-      { cat: '基本・導入', label: 'タッチ（上半身）', desc: '胸やお腹を手で這わせて敏感なところを探る' },
-      { cat: '基本・導入', label: 'タッチ（下半身）', desc: '股間や太ももを執拗に撫でて熱を上げる' },
-      { cat: '基本・導入', label: 'おっぱい揉み', desc: '柔らかい胸を両手で掴んで形を変えるほど揉む' },
-      { cat: '基本・導入', label: '乳首責め', desc: '硬くなった乳首を指や舌で摘まみ舐め回す' },
-      { cat: '基本・導入', label: 'フェザータッチ', desc: '指先だけで肌をくすぐるように撫でる焦らし' },
-      { cat: '基本・導入', label: 'マッサージ', desc: '体をほぐしながら敏感帯へ誘導する下地作り' },
-      // 2. 口関連
-      { cat: '口・舌', label: 'フェラ', desc: '咥えて上下に動かし舌で裏筋を刺激する奉仕' },
-      { cat: '口・舌', label: 'イラマチオ', desc: '奥まで咥えさせ喉の奥で締め付ける深い口技' },
-      { cat: '口・舌', label: '玉舐め', desc: '袋を舌で転がし舐め上げて快感を底上げする' },
-      { cat: '口・舌', label: '69', desc: '互いの性器を同時に口で貪り合う体位' },
-      { cat: '口・舌', label: '顔面騎乗', desc: '顔に跨がり性器を押しつけてクンニさせる' },
-      { cat: '口・舌', label: 'クンニ', desc: '舌で割れ目を舐め分けクリを執拗に吸う' },
-      { cat: '口・舌', label: 'アナル舐め（男側）', desc: '尻穴を舌でほじるように舐められる羞恥快感' },
-      { cat: '口・舌', label: '唾液プレイ', desc: '糸を引く唾を垂らし塗り合う生々しい交換' },
-      { cat: '口・舌', label: '生唾液ごっくん(女の子から)', desc: '女の子の生唾を口移しや指で飲まされる' },
-      { cat: '口・舌', label: '生唾液ごっくん(お客さまから)', desc: '自分の唾を女の子に飲ませる支配的な行為' },
-      { cat: '口・舌', label: 'ごっくん', desc: '出された精液を喉を鳴らして飲み干す' },
-      { cat: '口・舌', label: '顔射', desc: '顔に精液を浴びせて白く汚す発射' },
-      { cat: '口・舌', label: '口内発射', desc: '咥えたまま口の中に熱い精を放つ' },
-      // 3. 挿入・素股（体位あり）
-      { cat: '素股・挿入', label: '素股', desc: '股の熱い溝で肉棒を挟み擦り上げる擬似挿入' },
-      { cat: '素股・挿入', label: '素股（正常位）', desc: '仰向けの股に挟み、正常位の形で腰を擦る' },
-      { cat: '素股・挿入', label: '素股（騎乗位）', desc: '跨がった股の隙間で上下に擦りつける素股' },
-      { cat: '素股・挿入', label: '素股（後背位）', desc: '後ろから尻の谷間・股に擦りつける素股' },
-      { cat: '素股・挿入', label: '挿入（正常位）', desc: '向き合って奥まで沈めて腰を打ちつける' },
-      { cat: '素股・挿入', label: '挿入（騎乗位）', desc: '跨がり自分のペースで奥を突くように腰を振る' },
-      { cat: '素股・挿入', label: '挿入（後背位）', desc: '後ろから掴んで深く突く獣のような結合' },
-      { cat: '素股・挿入', label: '挿入（側位）', desc: '横向きに密着したままゆっくり出し入れする' },
-      { cat: '素股・挿入', label: '立ちバック', desc: '立ったまま後ろから突き上げる激しい挿入' },
-      { cat: '素股・挿入', label: '連続イキ', desc: 'イった後も止めずに責め続け何度も絶頂させる' },
-      { cat: '素股・挿入', label: '中出し', desc: '中に出したまま熱い精を注ぎ込む' },
-      { cat: '素股・挿入', label: '外出し', desc: '抜いて体や外に精液を撒き散らす' },
-      { cat: '素股・挿入', label: '二回戦', desc: '一度出したあと再び硬くして続行する' },
-      { cat: '素股・挿入', label: '三回戦以上', desc: '何度も果てるまで腰を止めない持久戦' },
+      { cat: '基本・導入', label: 'キス', desc: 'ねっとり舌を絡め合い唾液まで混ぜ合う濃厚キス' },
+      { cat: '基本・導入', label: 'ディープキス', desc: '舌を根元までねじ込み唾液ダラダラに交換する超濃厚ディープキス' },
+      { cat: '基本・導入', label: 'タッチ（上半身）', desc: '胸やお腹をゆっくり這わせ敏感なポイントをじっくり探る焦らしタッチ' },
+      { cat: '基本・導入', label: 'タッチ（下半身）', desc: '股間と太ももを執拗に撫で回し熱を帯びた秘部を焦らす下半身タッチ' },
+      { cat: '基本・導入', label: 'おっぱい揉み', desc: '柔らかおっぱいを両手で掴み形が崩れるまでねっとり揉みしだく' },
+      { cat: '基本・導入', label: '乳首責め', desc: '硬く尖った乳首を指と舌で摘まみ舐め回し疼かせる徹底乳首責め' },
+      { cat: '基本・導入', label: 'フェザータッチ', desc: '指先だけで肌をくすぐるように撫でじれったい快感をじわじわ広げるフェザータッチ' },
+      { cat: '基本・導入', label: 'マッサージ', desc: '体を丁寧にほぐしながら敏感帯へ誘導するエロティックマッサージ' },
+      // 2. 口・舌
+      { cat: '口・舌', label: 'フェラ', desc: '咥えて上下に動かし舌で裏筋をねっとり舐め上げる濃厚フェラチオ' },
+      { cat: '口・舌', label: 'バキュームフェラ', desc: '強く吸い付き真空のように咥え込み先っぽまでしゃぶり尽くすバキュームフェラ' },
+      { cat: '口・舌', label: '亀頭責め', desc: '敏感な先端だけを執拗に舌と唇で転がし焦らすねっとり亀頭責め' },
+      { cat: '口・舌', label: '耳舐め', desc: '熱い吐息とともに耳たぶや耳の穴をねっとり舐め回す甘い耳舐め' },
+      { cat: '口・舌', label: '即尺', desc: '会った直後から跪いて咥え込み待機なしでしゃぶり始める即尺奉仕' },
+      { cat: '口・舌', label: 'イラマチオ', desc: '喉の奥まで咥えさせ締め付けるように突き入れる激イラマチオ' },
+      { cat: '口・舌', label: '玉舐め', desc: '金玉を舌で転がし丁寧に舐め上げ快感を底から高める玉舐め' },
+      { cat: '口・舌', label: '69', desc: '互いの性器を同時に貪り合い熱い吐息を浴びせながら舐め合う69' },
+      { cat: '口・舌', label: '顔面騎乗', desc: '顔に跨がり熱い秘部を押しつけクンニを強要する顔面騎乗位' },
+      { cat: '口・舌', label: 'クンニ', desc: '割れ目を丁寧に舐め分けクリトリスを執拗に吸い上げる濃厚クンニ' },
+      { cat: '口・舌', label: 'アナル舐め（男側）', desc: '尻穴を舌でほじるように舐められ羞恥と快感に身をよじるアナル舐め' },
+      { cat: '口・舌', label: '唾液プレイ', desc: '糸を引く濃い唾液を垂らし塗り広げ生々しく絡み合う唾液プレイ' },
+      { cat: '口・舌', label: '生唾液ごっくん(女の子から)', desc: '女の子の生唾を口移しや指で飲まされその味を味わう生唾ごっくん' },
+      { cat: '口・舌', label: '生唾液ごっくん(お客さまから)', desc: '自分の唾液を女の子に飲ませ支配的悦びに浸る生唾ごっくん' },
+      { cat: '口・舌', label: 'ごっくん', desc: '口内に放たれた熱い精液を喉を鳴らして全て飲み干すごっくん' },
+      { cat: '口・舌', label: '顔射', desc: '顔に熱い精液を浴びせ白く汚しながら射精の余韻に浸る顔射' },
+      { cat: '口・舌', label: '口内発射', desc: '咥えたまま口の中に熱い精を放ちその温度と量を直接味わわせる口内発射' },
+      // 3. 素股・挿入
+      { cat: '素股・挿入', label: '素股', desc: '熱く濡れた股の溝で肉棒を挟みねっとり擦り上げる擬似挿入素股' },
+      { cat: '素股・挿入', label: '素股（正常位）', desc: '仰向けの柔らかな股に挟み正常位の体勢で腰を擦りつける素股' },
+      { cat: '素股・挿入', label: '素股（騎乗位）', desc: '跨がった股の隙間で上下に擦りつけぬるぬると肉棒を擦る騎乗位素股' },
+      { cat: '素股・挿入', label: '素股（後背位）', desc: '後ろから尻の谷間や股に押しつけ獣のように擦りつける後背位素股' },
+      { cat: '素股・挿入', label: '挿入（正常位）', desc: '向き合いながら奥までじっくり沈め腰を打ちつけて結合を深める正常位' },
+      { cat: '素股・挿入', label: '挿入（騎乗位）', desc: '跨がり自分のペースで奥を突き上げるように腰を振る騎乗位挿入' },
+      { cat: '素股・挿入', label: '挿入（後背位）', desc: '後ろから腰を掴み獣のように深く突き入れる激しい後背位' },
+      { cat: '素股・挿入', label: '挿入（側位）', desc: '横向きに密着したままゆっくり出し入れを繰り返す密やかな側位' },
+      { cat: '素股・挿入', label: '立ちバック', desc: '立ったまま後ろから突き上げ激しく腰を打ちつける立ちバック' },
+      { cat: '素股・挿入', label: '連続イキ', desc: 'イった後も止めずに責め続け何度も体を痙攣させながら絶頂させる連続イキ' },
+      { cat: '素股・挿入', label: '寸止め', desc: '射精間際で動きを止めじれったい快感だけを何度も積み上げる残酷な寸止め' },
+      { cat: '素股・挿入', label: '中出し', desc: '奥まで咥え込んだまま熱い精を注ぎ込み子宮を満たす中出し' },
+      { cat: '素股・挿入', label: '外出し', desc: '引き抜いて体や外に熱い精液を撒き散らし白く汚す外出し' },
+      { cat: '素股・挿入', label: '二回戦', desc: '一度果てた後も再び硬くさせ休む間もなく続行する二回戦' },
+      { cat: '素股・挿入', label: '三回戦以上', desc: '何度も果てるまで腰を止めず限界まで貪り合う三回戦以上の持久戦' },
       // 4. 手・道具
-      { cat: '手・道具', label: '手コキ', desc: '巧みな手つきで根元から先端まで扱く' },
-      { cat: '手・道具', label: 'パイズリ', desc: '柔らかな胸で挟み込み乳圧で射精へ導く' },
-      { cat: '手・道具', label: '足コキ', desc: '足裏や指の間で挟んで扱く倒錯的な刺激' },
-      { cat: '手・道具', label: 'オナニー見せ', desc: '目の前で指を入れ自らを慰す姿を見せる' },
-      { cat: '手・道具', label: 'ローター', desc: '振動をクリや先端に当てて跳ねるような快感' },
-      { cat: '手・道具', label: 'バイブ', desc: '棒状の振動を奥まで入れ抽送する' },
-      { cat: '手・道具', label: '電マ', desc: '強い振動を押し当てて一気にイカせる' },
-      { cat: '手・道具', label: 'プラグ／アナルグッズ', desc: '尻穴に異物を入れたまま感度を上げる' },
-      { cat: '手・道具', label: 'ローション多め', desc: 'ぬるぬるに塗りたくり滑りを過剰にする' },
+      { cat: '手・道具', label: '手コキ', desc: '巧みな指使いで根元から先端まで丁寧に扱き上げ射精へ導く手コキ' },
+      { cat: '手・道具', label: '手マン', desc: '指を奥まで入れぐちゅぐちゅ音を立てながら敏感な点をかき回す濃厚手マン' },
+      { cat: '手・道具', label: 'パイズリ', desc: '柔らかなおっぱいで肉棒を挟み乳圧でねっとり擦り上げるパイズリ' },
+      { cat: '手・道具', label: '足コキ', desc: '足裏や指の間で肉棒を挟み倒錯的な刺激で扱き上げる足コキ' },
+      { cat: '手・道具', label: 'オナニー見せ', desc: '目の前で指を自ら挿れぐちゅぐちゅ音を立てて慰めるオナニー見せ' },
+      { cat: '手・道具', label: 'ローター', desc: '振動をクリトリスや先端に当て跳ねるような快感を与え続けるローター' },
+      { cat: '手・道具', label: 'バイブ', desc: '棒状の振動を奥まで押し込み抽送しながら激しく刺激するバイブ責め' },
+      { cat: '手・道具', label: '電マ', desc: '強い振動を押し当て一気に体を跳ね上げるほどイカせる電マ責め' },
+      { cat: '手・道具', label: 'プラグ／アナルグッズ', desc: '尻穴に異物を入れたまま感度を高め別の快感を呼び覚ますアナルグッズ' },
+      { cat: '手・道具', label: 'ローション多め', desc: 'ぬるぬるに塗りたくり過剰なほど滑りを良くして絡み合うローションプレイ' },
       // 5. コス・演出
-      { cat: 'コス・演出', label: 'コスプレ', desc: '衣装に身を包んだままの背徳的なプレイ' },
-      { cat: 'コス・演出', label: '制服', desc: '制服姿のまま乱れる学校系の興奮' },
-      { cat: 'コス・演出', label: '水着・下着', desc: '布越しに透ける身体を弄ぶ' },
-      { cat: 'コス・演出', label: '裸エプロン', desc: '後ろが丸見えのエプロンだけの奉仕' },
-      { cat: 'コス・演出', label: 'お風呂・シャワープレイ', desc: '湯気の中で体を洗い合い密着する' },
-      { cat: 'コス・演出', label: 'マットプレイ', desc: 'ローションマットで全身を滑らせる密着' },
-      { cat: 'コス・演出', label: 'ボディ洗い', desc: '泡と裸体で全身を擦り洗いする' },
-      { cat: 'コス・演出', label: '遊戯室・ミラー', desc: '鏡に映る結合を見せながらのプレイ' },
+      { cat: 'コス・演出', label: 'コスプレ', desc: '衣装に身を包んだまま乱れ背徳的な興奮を煽るコスプレプレイ' },
+      { cat: 'コス・演出', label: '制服', desc: '制服姿のまま乱れ学校系の禁忌的興奮を味わう制服プレイ' },
+      { cat: 'コス・演出', label: '水着・下着', desc: '布越しに透ける身体を弄び布の感触ごと快感を与える水着下着プレイ' },
+      { cat: 'コス・演出', label: '裸エプロン', desc: '後ろが丸見えのエプロン一枚で奉仕し羞恥と興奮を同時に味わう裸エプロン' },
+      { cat: 'コス・演出', label: 'お風呂・シャワープレイ', desc: '湯気の中で体を洗い合いぬるぬると密着して絡み合うお風呂プレイ' },
+      { cat: 'コス・演出', label: 'マットプレイ', desc: 'ローションマットの上で全身を滑らせ密着しながら貪り合うマットプレイ' },
+      { cat: 'コス・演出', label: 'ボディ洗い', desc: '泡と裸体で全身を擦り洗い敏感な部位を丁寧に洗ってやるボディ洗い' },
+      { cat: 'コス・演出', label: '遊戯室・ミラー', desc: '鏡に映る結合の姿を見せつけ視覚的にも興奮を高めるミラープレイ' },
       // 6. 責め・ロール
-      { cat: '責め・ロール', label: 'Ｍ受け', desc: '自分が責められ従う側に回る' },
-      { cat: '責め・ロール', label: 'Ｓ寄り', desc: '相手を言いなりにして主導する' },
-      { cat: '責め・ロール', label: '言葉責め', desc: '淫語や侮辱で耳から興奮を煽る' },
-      { cat: '責め・ロール', label: '甘々・いちゃいちゃ', desc: '恋人のように抱き合い甘い声を漏らす' },
-      { cat: '責め・ロール', label: '処女風・感度演出', desc: '初めてのような痛みと感度を演じる' },
-      { cat: '責め・ロール', label: '潮吹き', desc: '噴き出すほどイキ潮を漏らす' },
-      { cat: '責め・ロール', label: '拘束・軽め', desc: '動けない状態で一方的に弄ばれる' },
-      { cat: '責め・ロール', label: '鞭・軽SM', desc: '軽い痛みと支配で興奮を高める' }
-    ];
+      { cat: '責め・ロール', label: 'Ｍ受け', desc: '自分が責められ従う側に回って一方的に快感を与えられるＭ受けプレイ' },
+      { cat: '責め・ロール', label: 'Ｓ寄り', desc: '相手を言いなりにさせ主導権を握って好きなように扱うＳ寄りプレイ' },
+      { cat: '責め・ロール', label: '言葉責め', desc: '淫語や侮辱の言葉を耳元で囁き耳から直接興奮を煽る言葉責め' },
+      { cat: '責め・ロール', label: '甘々・いちゃいちゃ', desc: '恋人のように抱き合い甘い声を漏らしながらねっとり絡み合う甘々プレイ' },
+      { cat: '責め・ロール', label: '処女風・感度演出', desc: '初めてのような痛みと感度の良さを演じ疼くような反応を見せる処女風演出' },
+      { cat: '責め・ロール', label: '潮吹き', desc: '噴き出すほどイキ潮を漏らし体を痙攣させながら絶頂する潮吹き' },
+      { cat: '責め・ロール', label: '拘束・軽め', desc: '動けない状態で一方的に弄ばれ抵抗できない快感に身を委ねる軽拘束' },
+      { cat: '責め・ロール', label: '鞭・軽SM', desc: '軽い痛みと支配の快感で興奮を高め疼く体をさらに敏感にする軽SM' }
+        ];
 
     function getCustomPlayTags() {
       try {
@@ -16614,13 +16944,307 @@ ${sideActionsHtml}
       renderPlayPickerGrid();
     }
 
+    
+    let playCatFilter = 'all'; // all | done | cat name
+
+    function visitDateNum(v) {
+      if (!v) return 0;
+      const y = parseInt(v.year, 10) || 0;
+      const m = (typeof parseMonthNum === 'function' ? parseMonthNum(v.month) : parseInt(String(v.month||'').replace(/\D/g,''), 10)) || 0;
+      const d = parseInt(v.day, 10) || 0;
+      return y * 10000 + m * 100 + d;
+    }
+
+    function aggregatePlayCatalog() {
+      const map = {};
+      (historyList || []).forEach(function(h) {
+        if (!h || h.pendingCheckIn || h.cancelled) return;
+        const tags = h.playTags || h.plays || [];
+        if (!tags || !tags.length) return;
+        const name = (h.name || '').trim() || '（名前なし）';
+        const dn = visitDateNum(h);
+        tags.forEach(function(tag) {
+          const label = String(tag || '').trim();
+          if (!label) return;
+          if (!map[label]) map[label] = { label: label, count: 0, last: 0, casts: {} };
+          map[label].count += 1;
+          if (dn >= map[label].last) map[label].last = dn;
+          if (!map[label].casts[name]) map[label].casts[name] = { name: name, count: 0, last: 0 };
+          map[label].casts[name].count += 1;
+          if (dn >= map[label].casts[name].last) map[label].casts[name].last = dn;
+        });
+      });
+      return map;
+    }
+
+    function formatPlayCatDate(n) {
+      if (!n) return '—';
+      const y = Math.floor(n / 10000);
+      const m = Math.floor((n % 10000) / 100);
+      const d = n % 100;
+      return y + '/' + String(m).padStart(2,'0') + '/' + String(d).padStart(2,'0');
+    }
+
+    function setPlayCatFilter(f) {
+      playCatFilter = f || 'all';
+      const pc = document.getElementById('playCatalogContent');
+      if (pc && typeof renderPlayCatalogView === 'function') {
+        const kwEl = document.getElementById('searchInput');
+        const kw = kwEl ? (kwEl.value || '').toLowerCase() : '';
+        renderPlayCatalogView(pc, kw);
+        return;
+      }
+      // フォールバック（旧サブビュー互換）
+      if (typeof currentView !== 'undefined' && currentView === 'play' && typeof render === 'function') render();
+    }
+
+    function togglePlayCatCard(btn) {
+      const card = btn && btn.closest ? btn.closest('.play-cat-card') : null;
+      if (!card) return;
+      card.classList.toggle('open');
+    }
+
+    function renderPlayCatalogView(target, keyword) {
+      if (!target) return;
+      const agg = aggregatePlayCatalog();
+      const baseCatalog = (typeof getAllPlayCatalog === 'function') ? getAllPlayCatalog() : (PLAY_CATALOG || []);
+      const catalog = (baseCatalog || []).slice();
+      const cats = [];
+      const seenCat = {};
+      catalog.forEach(function(p) {
+        if (p && p.cat && !seenCat[p.cat]) { seenCat[p.cat] = true; cats.push(p.cat); }
+      });
+
+      let doneCount = 0;
+      catalog.forEach(function(p) {
+        if (p && agg[p.label] && agg[p.label].count > 0) doneCount++;
+      });
+      // custom plays not in catalog（コピーにだけ追加）
+      Object.keys(agg).forEach(function(label) {
+        if (!catalog.some(function(p) { return p && p.label === label; })) {
+          catalog.push({ cat: 'カスタム', label: label, desc: '' });
+          if (!seenCat['カスタム']) { seenCat['カスタム'] = true; cats.push('カスタム'); }
+          doneCount++;
+        }
+      });
+
+      const kw = (keyword || '').trim().toLowerCase();
+      let filter = playCatFilter || 'all';
+
+      let html = '<div class="play-cat-root">';
+      html += '<div class="play-cat-hero">';
+      html += '<p class="play-cat-hero-title">僕の四十八手</p>';
+      html += '<p class="play-cat-hero-sub">プレイカタログ</p>';
+      html += '<div class="play-cat-hero-stats">';
+      html += '<div><strong>' + doneCount + '</strong>経験した種類</div>';
+      html += '<div><strong>' + catalog.length + '</strong>図鑑収録</div>';
+      html += '</div></div>';
+
+      // index
+      html += '<div class="play-cat-index-wrap"><div class="play-cat-index" id="playCatIndexScroll">';
+      html += '<button type="button" class="play-cat-index-btn' + (filter==='all'?' is-on':'') + '" onclick="setPlayCatFilter(\'all\')">すべて</button>';
+      html += '<button type="button" class="play-cat-index-btn' + (filter==='done'?' is-on':'') + '" onclick="setPlayCatFilter(\'done\')">経験済み</button>';
+      cats.forEach(function(c) {
+        html += '<button type="button" class="play-cat-index-btn' + (filter===c?' is-on':'') + '" onclick="setPlayCatFilter(\'' + c.replace(/'/g, "\\'") + '\')">' + c + '</button>';
+      });
+      html += '</div>';
+
+      const byCat = {};
+      catalog.forEach(function(p) {
+        if (!p) return;
+        if (kw && !(p.label + (p.desc||'') + (p.cat||'')).toLowerCase().includes(kw)) return;
+        const st = agg[p.label];
+        const count = st ? st.count : 0;
+        if (filter === 'done' && count <= 0) return;
+        if (filter !== 'all' && filter !== 'done' && p.cat !== filter) return;
+        if (!byCat[p.cat]) byCat[p.cat] = [];
+        byCat[p.cat].push({ p: p, st: st, count: count });
+      });
+
+      const order = cats.filter(function(c) { return byCat[c] && byCat[c].length; });
+      if (!order.length) {
+        html += '<div class="play-cat-empty-msg">該当するプレイがありません</div>';
+      } else {
+        order.forEach(function(cat) {
+          html += '<div class="play-cat-section-label">' + cat + '</div>';
+          html += '<div class="play-cat-grid">';
+          // sort: done first by count desc, then name
+          byCat[cat].sort(function(a, b) {
+            if (b.count !== a.count) return b.count - a.count;
+            return a.p.label.localeCompare(b.p.label, 'ja');
+          });
+          byCat[cat].forEach(function(item) {
+            const p = item.p;
+            const st = item.st;
+            const done = item.count > 0;
+            const castList = st ? Object.values(st.casts).sort(function(a,b){ return b.count - a.count; }) : [];
+            html += '<div class="play-cat-card' + (done ? ' is-done' : ' is-empty') + '">';
+            html += '<button type="button" class="play-cat-card-main" onclick="togglePlayCatCard(this)">';
+            html += '<span class="play-cat-card-accent"></span>';
+            html += '<div class="play-cat-card-body">';
+            html += '<p class="play-cat-card-name">' + escapeHTML(p.label) + '</p>';
+            html += '<div class="play-cat-card-meta">';
+            if (done) {
+              html += '<span>通算 <b>' + item.count + '</b> 回</span>';
+              html += '<span>最終 ' + formatPlayCatDate(st.last) + '</span>';
+              if (castList[0]) html += '<span>よく ' + escapeHTML(castList[0].name) + '</span>';
+            } else {
+              html += '<span>未経験</span>';
+            }
+            html += '</div></div>';
+            html += '<span class="play-cat-card-chevron">▼</span>';
+            html += '</button>';
+            html += '<div class="play-cat-card-detail">';
+            if (p.desc) html += '<div class="play-cat-desc">' + escapeHTML(p.desc) + '</div>';
+            if (castList.length) {
+              html += '<div class="play-cat-cast-list">';
+              castList.forEach(function(c) {
+                html += '<div class="play-cat-cast-row">';
+                html += '<span class="play-cat-cast-name">' + escapeHTML(c.name) + '</span>';
+                html += '<span class="play-cat-cast-meta">' + c.count + '回 · 最終 ' + formatPlayCatDate(c.last) + '</span>';
+                html += '</div>';
+              });
+              html += '</div>';
+            } else {
+              html += '<div class="play-cat-empty-msg" style="padding:8px 0;">まだこのプレイの記録がありません</div>';
+            }
+            html += '</div></div>';
+          });
+          html += '</div>';
+        });
+      }
+      html += '</div>';
+      target.innerHTML = html;
+      const idxEl = document.getElementById('playCatIndexScroll');
+      if (idxEl && !idxEl.dataset.swipeGuard) {
+        idxEl.dataset.swipeGuard = '1';
+        const stop = function(e) { e.stopPropagation(); };
+        idxEl.addEventListener('touchstart', stop, { passive: true, capture: true });
+        idxEl.addEventListener('touchmove', stop, { passive: true, capture: true });
+        idxEl.addEventListener('touchend', stop, { passive: true, capture: true });
+        idxEl.addEventListener('pointerdown', stop, { capture: true });
+      }
+    }
+
+
+    function getPlayDescByLabel(label) {
+      if (!label) return '';
+      const all = (typeof getAllPlayCatalog === 'function') ? getAllPlayCatalog() : (typeof PLAY_CATALOG !== 'undefined' ? PLAY_CATALOG : []);
+      const hit = (all || []).find(function(p) { return p && p.label === label; });
+      return hit && hit.desc ? hit.desc : '';
+    }
+
+    function dismissPlayDescBubble() {
+      document.querySelectorAll('.play-desc-bubble').forEach(function(b) { b.remove(); });
+      document.querySelectorAll('.tl-play-pill.is-bubble-open').forEach(function(p) { p.classList.remove('is-bubble-open'); });
+    }
+
+    function showPlayDescBubble(anchorEl, label) {
+      dismissPlayDescBubble();
+      const desc = getPlayDescByLabel(label) || (label + 'の説明がありません');
+      const bubble = document.createElement('div');
+      bubble.className = 'play-desc-bubble';
+      bubble.innerHTML =
+        '<div class="play-desc-bubble-title">' + escapeHTML(label) + '</div>' +
+        '<div class="play-desc-bubble-track">' +
+          '<span class="play-desc-bubble-led">' + escapeHTML(desc) + '&nbsp;&nbsp;&nbsp;&nbsp;' + escapeHTML(desc) + '</span>' +
+        '</div>';
+      document.body.appendChild(bubble);
+      if (anchorEl) anchorEl.classList.add('is-bubble-open');
+      const rect = anchorEl.getBoundingClientRect();
+      // duration: base ~11s for notes → 1.8x speed ≈ 11/1.8 ≈ 6s (CSS default)
+      const led = bubble.querySelector('.play-desc-bubble-led');
+      if (led) {
+        const len = desc.length || 20;
+        // 通常よりやや速め(1.2倍速)＝durationをやや短め。1.8倍から1.2倍へ遅く
+        const dur = Math.max(5.5, Math.min(12, len * 0.22));
+        led.style.animationDuration = dur + 's';
+      }
+      let top = rect.bottom + 8;
+      let left = rect.left;
+      const bw = bubble.offsetWidth || 260;
+      if (left + bw > window.innerWidth - 8) left = window.innerWidth - bw - 8;
+      if (left < 8) left = 8;
+      if (top + 70 > window.innerHeight - 8) top = rect.top - 70;
+      bubble.style.top = Math.round(top) + 'px';
+      bubble.style.left = Math.round(left) + 'px';
+      // arrow position
+      const arrowLeft = Math.max(12, Math.min(bw - 24, rect.left + rect.width / 2 - left - 6));
+      bubble.style.setProperty('--bubble-arrow-left', Math.round(arrowLeft) + 'px');
+    }
+
+    // ダブルタップ検出
+    const _playPillTapState = { t: 0, el: null };
+    function onPlayPillTap(ev, label) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      const el = ev.currentTarget;
+      const now = Date.now();
+      if (_playPillTapState.el === el && now - _playPillTapState.t < 380) {
+        _playPillTapState.t = 0;
+        _playPillTapState.el = null;
+        showPlayDescBubble(el, label);
+        return;
+      }
+      _playPillTapState.t = now;
+      _playPillTapState.el = el;
+      // 1回目は何もしない（誤爆防止）
+    }
+
+    if (!window._playBubbleOutsideBound) {
+      window._playBubbleOutsideBound = true;
+      document.addEventListener('click', function(e) {
+        if (e.target.closest && e.target.closest('.tl-play-pill')) return;
+        if (e.target.closest && e.target.closest('.play-desc-bubble')) return;
+        dismissPlayDescBubble();
+      }, true);
+      document.addEventListener('touchstart', function(e) {
+        if (e.target.closest && e.target.closest('.tl-play-pill')) return;
+        if (e.target.closest && e.target.closest('.play-desc-bubble')) return;
+        dismissPlayDescBubble();
+      }, { passive: true, capture: true });
+    }
+
     function buildPlayPillsHtml(tags) {
       if (playContentEnabled === 'off') return '';
       if (!tags || !tags.length) return '';
-      return '<div class="tl-play-pills">' + tags.map(t =>
-        '<span class="tl-play-pill">' + escapeHTML(t) + '</span>'
-      ).join('') + '</div>';
+      return '<div class="tl-play-pills">' + tags.map(function(t) {
+        const safe = escapeHTML(t);
+        const labelAttr = escapeHTML(String(t));
+        return '<span class="tl-play-pill" role="button" tabindex="0" data-play-label="' + labelAttr + '">' + safe + '</span>';
+      }).join('') + '</div>';
     }
+
+    function bindTimelinePlayPillTaps() {
+      if (window._tlPlayPillBound) return;
+      window._tlPlayPillBound = true;
+      const state = { t: 0, el: null };
+      function handle(e) {
+        const pill = e.target.closest && e.target.closest('.tl-play-pill');
+        if (!pill) return;
+        // 月別時系列内のみ
+        const inTimeline = pill.closest('#timelineList') || pill.closest('.timeline-list') || pill.closest('[data-view="timeline"]') || pill.closest('#viewTimeline') || pill.closest('.cast-grid') || pill.closest('#mainContent');
+        if (!inTimeline && !pill.closest('.tl-play-pills')) return;
+        e.preventDefault();
+        e.stopPropagation();
+        const label = pill.getAttribute('data-play-label') || pill.textContent.trim();
+        const now = Date.now();
+        if (state.el === pill && (now - state.t) < 420) {
+          state.t = 0;
+          state.el = null;
+          if (typeof showPlayDescBubble === 'function') showPlayDescBubble(pill, label);
+          return;
+        }
+        state.t = now;
+        state.el = pill;
+      }
+      document.addEventListener('click', handle, true);
+      document.addEventListener('touchend', function(e) {
+        if (!e.target.closest || !e.target.closest('.tl-play-pill')) return;
+        handle(e);
+      }, { capture: true, passive: false });
+    }
+    try { bindTimelinePlayPillTaps(); } catch (e) {}
 
 
     
