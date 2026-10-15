@@ -5216,6 +5216,39 @@
       background: var(--border-color); opacity: 0.5;
     }
     .play-cat-card-body { flex: 1; min-width: 0; }
+    
+    .play-cat-card-name-row {
+      display: flex;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 6px 10px;
+      margin-bottom: 6px;
+    }
+    .play-cat-card-name { margin: 0 !important; }
+    .play-cat-modern {
+      font-family: "Kosugi Maru", sans-serif;
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--light-text);
+      opacity: 0.85;
+    }
+    .play-cat-exp-badge {
+      font-size: 0.6rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(201, 162, 39, 0.25), rgba(201, 162, 39, 0.12));
+      color: #a67c00;
+      border: 1px solid rgba(201, 162, 39, 0.4);
+      flex-shrink: 0;
+    }
+    body.dark-mode .play-cat-exp-badge {
+      color: #e8c547;
+      border-color: rgba(232, 197, 71, 0.45);
+    }
+
     .play-cat-card-name {
       font-family: var(--play-cat-serif);
       font-size: 1.02rem; font-weight: 600; letter-spacing: 0.06em;
@@ -5274,6 +5307,50 @@
     #viewPlayWrap { flex: 1 0 auto; min-width: 4.8rem; }
     #viewPlayWrap .btn-toggle { width: 100%; }
 
+
+  
+    .cs-name-honorific-row {
+      display: flex; align-items: center; flex-wrap: wrap; gap: 8px 10px; margin: 0 0 14px;
+    }
+    .cs-name-honorific-row .cs-target-name { margin: 0; }
+    .cs-honorific-btn {
+      border: 1px solid var(--border-color); background: transparent;
+      color: var(--light-text); font-size: 0.68rem; font-weight: 600;
+      padding: 3px 9px; border-radius: 999px; cursor: pointer; opacity: 0.75;
+    }
+    .cs-honorific-btn.has-value {
+      opacity: 0.95; color: var(--text-color);
+      border-color: color-mix(in srgb, var(--primary-pink) 35%, var(--border-color));
+    }
+    .cs-honorific-panel {
+      display: none; width: 100%; margin: -6px 0 14px; padding: 10px;
+      border-radius: 12px; border: 1px dashed var(--border-color);
+      background: color-mix(in srgb, var(--bg-color) 80%, var(--card-bg));
+      max-height: 220px; overflow-y: auto;
+    }
+    .cs-honorific-panel.open { display: block !important; visibility: visible !important; }
+    .cs-honorific-hint { font-size: 0.65rem; color: var(--light-text); margin: 0 0 8px; }
+    .cs-honorific-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+    .cs-honorific-opt {
+      border: 1px solid var(--border-color); background: var(--card-bg);
+      color: var(--text-color); font-size: 0.68rem; padding: 5px 9px;
+      border-radius: 999px; cursor: pointer;
+      pointer-events: auto; z-index: 2; position: relative;
+      -webkit-tap-highlight-color: rgba(0,0,0,0.08);
+    }
+    .cs-honorific-btn {
+      pointer-events: auto; z-index: 2; position: relative;
+    }
+    .cs-honorific-opt.is-on {
+      border-color: var(--primary-pink);
+      background: color-mix(in srgb, var(--primary-pink) 14%, var(--card-bg));
+      color: var(--primary-pink); font-weight: 700;
+    }
+    .cast-honorific-pre, .cast-honorific-post {
+      font-size: 0.68em; font-weight: 600; opacity: 0.75; color: var(--light-text);
+    }
+    .cast-honorific-pre { margin-right: 0.15em; }
+    .cast-honorific-post { margin-left: 0.08em; }
 
   </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -5740,7 +5817,15 @@
         </div>
 
         <div id="csEditForm" class="cs-edit-form" style="display:none;">
-          <div class="cs-target-name" id="csTargetNameDisp"></div>
+          <div class="cs-name-honorific-row">
+            <div class="cs-target-name" id="csTargetNameDisp"></div>
+            <button type="button" class="cs-honorific-btn" id="csHonorificBtn" onclick="event.stopPropagation(); toggleCsHonorificPanel(event)">敬称: なし</button>
+          </div>
+          <div class="cs-honorific-panel" id="csHonorificPanel">
+            <p class="cs-honorific-hint">名前の前後に小さく表示されます。未設定は敬称なし。</p>
+            <div class="cs-honorific-grid" id="csHonorificGrid"></div>
+          </div>
+          <input type="hidden" id="csHonorific" value="">
 
           <div class="form-group">
             <label>在籍状況ステータス</label>
@@ -9294,6 +9379,130 @@ async function attemptBiometricUnlock() {
       document.getElementById('castNoshowModal').style.display = 'flex';
     }
 
+
+    const CAST_HONORIFICS = [
+      { id: '', label: 'なし', pos: '', text: '' },
+      { id: 'chan', label: 'ちゃん', pos: 'post', text: 'ちゃん' },
+      { id: 'san', label: 'さん', pos: 'post', text: 'さん' },
+      { id: 'kun', label: 'くん', pos: 'post', text: 'くん' },
+      { id: 'sama', label: '様', pos: 'post', text: '様' },
+      { id: 'dono', label: '殿', pos: 'post', text: '殿' },
+      { id: 'tan', label: 'たん', pos: 'post', text: 'たん' },
+      { id: 'chin', label: 'ちん', pos: 'post', text: 'ちん' },
+      { id: 'pi', label: 'ぴ', pos: 'post', text: 'ぴ' },
+      { id: 'kim', label: '君', pos: 'post', text: '君' },
+      { id: 'jou', label: '嬢', pos: 'post', text: '嬢' },
+      { id: 'hime', label: '姫', pos: 'post', text: '姫' },
+      { id: 'sensei', label: '先生', pos: 'post', text: '先生' },
+      { id: 'shishou', label: '師匠', pos: 'post', text: '師匠' },
+      { id: 'senpai', label: '先輩', pos: 'post', text: '先輩' },
+      { id: 'kouhai', label: '後輩', pos: 'post', text: '後輩' },
+      { id: 'oneesan', label: 'お姉さん', pos: 'post', text: 'お姉さん' },
+      { id: 'imouto', label: '妹', pos: 'post', text: '妹' },
+      { id: 'okusan', label: '奥様', pos: 'post', text: '奥様' },
+      { id: 'wakazuma', label: '若妻', pos: 'post', text: '若妻' },
+      { id: 'mama', label: 'ママ', pos: 'post', text: 'ママ' },
+      { id: 'miboujin', label: '未亡人', pos: 'post', text: '未亡人' },
+      { id: 'joou', label: '女王様', pos: 'post', text: '女王様' },
+      { id: 'kaicho', label: '会長', pos: 'post', text: '会長' },
+      { id: 'shacho', label: '社長', pos: 'post', text: '社長' },
+      { id: 'nurse', label: 'ナース', pos: 'post', text: 'ナース' },
+      { id: 'miss', label: 'Miss.', pos: 'pre', text: 'Miss.' },
+      { id: 'ms', label: 'Ms.', pos: 'pre', text: 'Ms.' },
+      { id: 'mrs', label: 'Mrs.', pos: 'pre', text: 'Mrs.' },
+      { id: 'lady', label: 'Lady', pos: 'pre', text: 'Lady' },
+      { id: 'madam', label: 'Madam', pos: 'pre', text: 'Madam' },
+      { id: 'mlle', label: 'Mlle.', pos: 'pre', text: 'Mlle.' }
+    ];
+
+    function getHonorificDef(id) {
+      if (!id) return CAST_HONORIFICS[0];
+      return CAST_HONORIFICS.find(function(h) { return h.id === id; }) || CAST_HONORIFICS[0];
+    }
+
+    function formatCastNameHtml(name, info) {
+      const h = getHonorificDef(info && info.honorific);
+      const safe = (typeof escapeHTML === 'function') ? escapeHTML(name) : String(name || '');
+      if (!h || !h.id) return safe;
+      if (h.pos === 'pre') {
+        return '<span class="cast-honorific-pre">' + escapeHTML(h.text) + '</span>' + safe;
+      }
+      return safe + '<span class="cast-honorific-post">' + escapeHTML(h.text) + '</span>';
+    }
+
+    function formatCastNameText(name, info) {
+      const h = getHonorificDef(info && info.honorific);
+      if (!h || !h.id) return name || '';
+      if (h.pos === 'pre') return h.text + ' ' + (name || '');
+      return (name || '') + h.text;
+    }
+
+    function toggleCsHonorificPanel(ev) {
+      if (ev && ev.stopPropagation) ev.stopPropagation();
+      const panel = document.getElementById('csHonorificPanel');
+      if (!panel) return;
+      panel.classList.toggle('open');
+      if (panel.classList.contains('open')) {
+        renderCsHonorificGrid();
+      }
+    }
+
+    function renderCsHonorificGrid() {
+      const grid = document.getElementById('csHonorificGrid');
+      const cur = (document.getElementById('csHonorific') || {}).value || '';
+      if (!grid) return;
+      grid.innerHTML = CAST_HONORIFICS.map(function(h) {
+        const on = (h.id === cur) ? ' is-on' : '';
+        const id = h.id || '';
+        return '<button type="button" class="cs-honorific-opt' + on + '" data-honorific-id="' + id.replace(/"/g, '') + '">' +
+          (h.id ? h.label : 'なし') + '</button>';
+      }).join('');
+      if (!grid.dataset.bound) {
+        grid.dataset.bound = '1';
+        grid.addEventListener('click', function(e) {
+          const btn = e.target.closest('.cs-honorific-opt');
+          if (!btn) return;
+          e.preventDefault();
+          e.stopPropagation();
+          selectCsHonorific(btn.getAttribute('data-honorific-id') || '');
+        });
+      }
+    }
+
+    function selectCsHonorific(id) {
+      id = (id == null) ? '' : String(id);
+      const el = document.getElementById('csHonorific');
+      if (el) el.value = id;
+      syncCsHonorificBtn();
+      const panel = document.getElementById('csHonorificPanel');
+      if (panel) panel.classList.remove('open');
+      // グリッドが開いたままの場合に備え再描画はパネルが開いているときだけ
+      if (panel && panel.classList.contains('open')) renderCsHonorificGrid();
+    }
+
+    function syncCsHonorificBtn() {
+      const btn = document.getElementById('csHonorificBtn');
+      const id = (document.getElementById('csHonorific') || {}).value || '';
+      const h = getHonorificDef(id);
+      if (!btn) return;
+      if (!h || !h.id) {
+        btn.textContent = '敬称: なし';
+        btn.classList.remove('has-value');
+      } else {
+        btn.textContent = '敬称: ' + h.label;
+        btn.classList.add('has-value');
+      }
+    }
+
+    // グローバル公開（インライン/他スコープ対策）
+    window.toggleCsHonorificPanel = toggleCsHonorificPanel;
+    window.selectCsHonorific = selectCsHonorific;
+    window.syncCsHonorificBtn = syncCsHonorificBtn;
+    window.renderCsHonorificGrid = renderCsHonorificGrid;
+    window.formatCastNameHtml = formatCastNameHtml;
+    window.formatCastNameText = formatCastNameText;
+
+
     function loadCastSettingsForm() {
       const name = document.getElementById('csTargetName').value.trim();
       const notFoundMsg = document.getElementById('csNotFoundMsg');
@@ -9309,6 +9518,11 @@ async function attemptBiometricUnlock() {
       notFoundMsg.style.display = 'none';
       editForm.style.display = 'flex';
       document.getElementById('csTargetNameDisp').innerText = `🌸 ${name}`;
+      const honEl = document.getElementById('csHonorific');
+      if (honEl) honEl.value = info.honorific || '';
+      if (typeof syncCsHonorificBtn === 'function') syncCsHonorificBtn();
+      const honPanel = document.getElementById('csHonorificPanel');
+      if (honPanel) honPanel.classList.remove('open');
 
       const status = info.status === 'retired' ? 'retired' : 'active';
       document.getElementById('csStatusActive').checked = (status === 'active');
@@ -9374,6 +9588,7 @@ async function attemptBiometricUnlock() {
       castData[name].status = status;
       castData[name].style = parts.join(' ');
       castData[name].oldName = document.getElementById('csOldName').value.trim();
+      castData[name].honorific = (document.getElementById('csHonorific') || {}).value || '';
       castData[name].link = document.getElementById('csLink').value.trim();
       if (typeof syncCsNotesFromEditor === 'function') syncCsNotesFromEditor();
       castData[name].notes = document.getElementById('csNotes').value;
@@ -14831,7 +15046,7 @@ function navigateToStoreCard(storeName, event) {
           <summary class="card-btn">
             <div class="cast-info">
               <span class="arrow-icon">▼</span>
-              <span>${c.name}</span>
+              <span class="cast-name-with-honorific">${typeof formatCastNameHtml === 'function' ? formatCastNameHtml(c.name, info) : c.name}</span>
               ${info.oldName?`<span class="old-name-badge">旧:${info.oldName}</span>`:''}
               <span class="status-badge ${isActive?'status-active':'status-retired'}">${isActive?'在籍':'卒業'}</span>
               ${pendingActive?'<span class="cast-inprogress-pill">入店中</span>':''}
@@ -16797,8 +17012,45 @@ ${sideActionsHtml}
       { cat: '責め・ロール', label: '処女風・感度演出', desc: '初めてのような痛みと感度の良さを演じ疼くような反応を見せる処女風演出' },
       { cat: '責め・ロール', label: '潮吹き', desc: '噴き出すほどイキ潮を漏らし体を痙攣させながら絶頂する潮吹き' },
       { cat: '責め・ロール', label: '拘束・軽め', desc: '動けない状態で一方的に弄ばれ抵抗できない快感に身を委ねる軽拘束' },
-      { cat: '責め・ロール', label: '鞭・軽SM', desc: '軽い痛みと支配の快感で興奮を高め疼く体をさらに敏感にする軽SM' }
-        ];
+      { cat: '責め・ロール', label: '鞭・軽SM', desc: '軽い痛みと支配の快感で興奮を高め疼く体をさらに敏感にする軽SM' },
+      // 7. 大江戸の四十八手（雅称 + modern で既存プレイとひも付け）
+      { cat: '大江戸の四十八手', label: '本手', modern: '挿入（正常位）', desc: '仰向けに寝た相手の上に覆い被さり、向き合って腰を打ちつける最も基本の体位' },
+      { cat: '大江戸の四十八手', label: '位の差', modern: '挿入（騎乗位）', desc: '相手が上になり跨がって腰を振り、主導権を握る騎乗の体勢' },
+      { cat: '大江戸の四十八手', label: '後朝', modern: '挿入（後背位）', desc: '四つん這いの相手の後ろから掴み、深く突き入れる後背の体勢' },
+      { cat: '大江戸の四十八手', label: '寄り添い', modern: '挿入（側位）', desc: '横向きに密着し、隙間なく体を重ねたままゆっくり出し入れする' },
+      { cat: '大江戸の四十八手', label: '立姿', modern: '立ちバック', desc: '立ったまま後ろから腰を押しつけ、激しく突き上げる立位の後背' },
+      { cat: '大江戸の四十八手', label: '対面座位', modern: '挿入（騎乗位）', desc: '座り抱き合うように密着し、胸を合わせたまま奥を探る座位' },
+      { cat: '大江戸の四十八手', label: '背面騎乗', modern: '挿入（騎乗位）', desc: '背を向けて跨がり、自分のペースで腰を落とす後ろ向きの騎乗' },
+      { cat: '大江戸の四十八手', label: '駅弁', modern: '立ちバック', desc: '相手を抱き上げ脚を絡ませたまま、立って突き上げる体勢' },
+      { cat: '大江戸の四十八手', label: '壁押し', modern: '立ちバック', desc: '壁に手をつかせ逃げ場をなくし、前または後ろから攻める' },
+      { cat: '大江戸の四十八手', label: '開脚', modern: '挿入（正常位）', desc: '脚を大きくM字に開かせ、正面から奥まで見下ろすように沈める' },
+      { cat: '大江戸の四十八手', label: '肩乗せ', modern: '挿入（正常位）', desc: '脚を肩に掛け折りたたむようにし、極めて深く入れる' },
+      { cat: '大江戸の四十八手', label: '屈曲', modern: '挿入（正常位）', desc: '相手の脚を大きく開き、体を折りたたむように深く沈める' },
+      { cat: '大江戸の四十八手', label: '松葉崩し', modern: '挿入（正常位）', desc: '脚を大きく開き崩すように体勢を作り、深く密着して動く' },
+      { cat: '大江戸の四十八手', label: '燕返し', modern: '挿入（後背位）', desc: '結合したまま体勢をひるがえし、角度を変えて刺激を変える' },
+      { cat: '大江戸の四十八手', label: '浮橋', modern: '素股', desc: '腰だけを浮かせ接点を保ち、浅い動きと焦らしを繰り返す' },
+      { cat: '大江戸の四十八手', label: '帆かけ', modern: '挿入（正常位）', desc: '脚を高く掲げ帆のように開き、深く受け入れる' },
+      { cat: '大江戸の四十八手', label: '薬研彫り', modern: '挿入（正常位）', desc: 'すり鉢のように密着し、研ぐようにゆっくり深く腰を入れる' },
+      { cat: '大江戸の四十八手', label: '時雨', modern: '挿入（正常位）', desc: '短く速い腰使いで、雨のように連続して当てる' },
+      { cat: '大江戸の四十八手', label: '陣雨', modern: '挿入（後背位）', desc: '強く止まらない抽送で畳みかけ、激しく責める' },
+      { cat: '大江戸の四十八手', label: '蓮の花', modern: '挿入（正常位）', desc: '花が開くように脚を開き、結合を意識した見せる体勢' },
+      { cat: '大江戸の四十八手', label: '蜻蛉', modern: '素股（騎乗位）', desc: '体重を軽くし、浅く浮くような動きで焦らす' },
+      { cat: '大江戸の四十八手', label: '海老反り', modern: '挿入（正常位）', desc: '背中を反らせた体勢で、奥の当たり方を変える' },
+      { cat: '大江戸の四十八手', label: '牡蠣割り', modern: '挿入（正常位）', desc: '殻を割るように脚と腰を大きく開き、受け入れを最大化する' },
+      { cat: '大江戸の四十八手', label: '手つなぎ', modern: '挿入（正常位）', desc: '手を取り合い視線を合わせながら、向き合って結合する' },
+      { cat: '大江戸の四十八手', label: '観音', modern: '挿入（正常位）', desc: '静かに深く沈めたまま、大きな動きより密着を保つ' },
+      { cat: '大江戸の四十八手', label: '流し', modern: '挿入（側位）', desc: '止めず流れるように腰を動かし、リズムを途切れさせない' },
+      { cat: '大江戸の四十八手', label: '止め刺し', modern: '寸止め', desc: '奥まで入れたまま動きを止め、圧と脈だけを味わう' },
+      { cat: '大江戸の四十八手', label: '浅瀬', modern: '素股', desc: '入り口付近だけを細かく刺激し、焦らしを主にする' },
+      { cat: '大江戸の四十八手', label: '深海', modern: '挿入（正常位）', desc: '可能な限り深く沈め、抜きを少なくして圧を掛ける' },
+      { cat: '大江戸の四十八手', label: '杭打ち', modern: '挿入（騎乗位）', desc: '上になったまま深く沈めた位置で、上下に激しく打ちつける' },
+      { cat: '大江戸の四十八手', label: '縁側', modern: '挿入（後背位）', desc: '台やベッド端に腰を預け、高さを合わせて後ろから結合する' },
+      { cat: '大江戸の四十八手', label: '抱脚', modern: '挿入（正常位）', desc: '両脚を胸の前にまとめ、締めつけながら動く' },
+      { cat: '大江戸の四十八手', label: '片脚上げ', modern: '挿入（正常位）', desc: '一方の脚を高く上げ、開いた角度から深く届かせる' },
+      { cat: '大江戸の四十八手', label: '椅子の宴', modern: '挿入（騎乗位）', desc: '椅子に座った状態で跨がせ、または抱え込んで動く' },
+      { cat: '大江戸の四十八手', label: 'うつ伏せ', modern: '挿入（後背位）', desc: 'うつ伏せの相手の上から覆い、後ろから沈める' },
+      { cat: '大江戸の四十八手', label: '寝背面', modern: '挿入（騎乗位）', desc: '仰向けの相手に背を向けて跨がり、後ろ向きに腰を落とす' }
+    ];
 
     function getCustomPlayTags() {
       try {
@@ -16987,14 +17239,32 @@ ${sideActionsHtml}
 
     function setPlayCatFilter(f) {
       playCatFilter = f || 'all';
+      const idxEl = document.getElementById('playCatIndexScroll');
+      const savedScroll = idxEl ? idxEl.scrollLeft : 0;
       const pc = document.getElementById('playCatalogContent');
       if (pc && typeof renderPlayCatalogView === 'function') {
         const kwEl = document.getElementById('searchInput');
         const kw = kwEl ? (kwEl.value || '').toLowerCase() : '';
         renderPlayCatalogView(pc, kw);
+        // フィルター横スクロール位置を復元（先頭に戻さない）
+        requestAnimationFrame(function() {
+          const el = document.getElementById('playCatIndexScroll');
+          if (!el) return;
+          el.scrollLeft = savedScroll;
+          // 選択中ピルが見える範囲に軽く合わせる（必要なら最小限だけ）
+          const on = el.querySelector('.play-cat-index-btn.is-on');
+          if (on) {
+            const er = el.getBoundingClientRect();
+            const br = on.getBoundingClientRect();
+            if (br.left < er.left + 8) {
+              el.scrollLeft -= (er.left + 8 - br.left);
+            } else if (br.right > er.right - 8) {
+              el.scrollLeft += (br.right - (er.right - 8));
+            }
+          }
+        });
         return;
       }
-      // フォールバック（旧サブビュー互換）
       if (typeof currentView !== 'undefined' && currentView === 'play' && typeof render === 'function') render();
     }
 
@@ -17016,9 +17286,13 @@ ${sideActionsHtml}
       });
 
       let doneCount = 0;
+      const doneLabels = {};
       catalog.forEach(function(p) {
-        if (p && agg[p.label] && agg[p.label].count > 0) doneCount++;
+        if (!p) return;
+        if (agg[p.label] && agg[p.label].count > 0) doneLabels[p.label] = true;
+        if (p.modern && agg[p.modern] && agg[p.modern].count > 0) doneLabels[p.label] = true;
       });
+      doneCount = Object.keys(doneLabels).length;
       // custom plays not in catalog（コピーにだけ追加）
       Object.keys(agg).forEach(function(label) {
         if (!catalog.some(function(p) { return p && p.label === label; })) {
@@ -17052,13 +17326,29 @@ ${sideActionsHtml}
       const byCat = {};
       catalog.forEach(function(p) {
         if (!p) return;
-        if (kw && !(p.label + (p.desc||'') + (p.cat||'')).toLowerCase().includes(kw)) return;
+        if (kw && !(p.label + (p.desc||'') + (p.cat||'') + (p.modern||'')).toLowerCase().includes(kw)) return;
         const st = agg[p.label];
         const count = st ? st.count : 0;
-        if (filter === 'done' && count <= 0) return;
+        let linkedDone = false, linkedCount = 0, linkedLast = 0, linkedSt = null;
+        if (p.modern && agg[p.modern]) {
+          linkedSt = agg[p.modern];
+          linkedCount = linkedSt.count || 0;
+          linkedLast = linkedSt.last || 0;
+          linkedDone = linkedCount > 0;
+        }
+        // 直接記録 or ひも付き現代プレイで経験
+        const experienced = count > 0 || linkedDone;
+        if (filter === 'done' && !experienced) return;
         if (filter !== 'all' && filter !== 'done' && p.cat !== filter) return;
         if (!byCat[p.cat]) byCat[p.cat] = [];
-        byCat[p.cat].push({ p: p, st: st, count: count });
+        byCat[p.cat].push({
+          p: p, st: st, count: count,
+          linkedDone: linkedDone && count <= 0, // 直接未記録でひも付きのみのときバッジ
+          linkedCount: linkedCount,
+          linkedLast: linkedLast,
+          linkedSt: linkedSt,
+          experienced: experienced
+        });
       });
 
       const order = cats.filter(function(c) { return byCat[c] && byCat[c].length; });
@@ -17070,24 +17360,50 @@ ${sideActionsHtml}
           html += '<div class="play-cat-grid">';
           // sort: done first by count desc, then name
           byCat[cat].sort(function(a, b) {
-            if (b.count !== a.count) return b.count - a.count;
+            const ae = a.experienced ? 1 : 0, be = b.experienced ? 1 : 0;
+            if (be !== ae) return be - ae;
+            const ac = Math.max(a.count || 0, a.linkedCount || 0);
+            const bc = Math.max(b.count || 0, b.linkedCount || 0);
+            if (bc !== ac) return bc - ac;
             return a.p.label.localeCompare(b.p.label, 'ja');
           });
           byCat[cat].forEach(function(item) {
             const p = item.p;
             const st = item.st;
             const done = item.count > 0;
-            const castList = st ? Object.values(st.casts).sort(function(a,b){ return b.count - a.count; }) : [];
-            html += '<div class="play-cat-card' + (done ? ' is-done' : ' is-empty') + '">';
+            const experienced = !!(item.experienced || done || item.linkedDone);
+            let castList = st ? Object.values(st.casts).sort(function(a,b){ return b.count - a.count; }) : [];
+            if (!castList.length && item.linkedSt && item.linkedSt.casts) {
+              castList = Object.values(item.linkedSt.casts).sort(function(a,b){ return b.count - a.count; });
+            }
+            // 直接経験 or ひも付き経験の両方でバッジ
+            if (experienced && p.modern && !item.linkedDone && done) {
+              item.linkedDone = false; // 直接記録時は通算表示を優先
+            } else if (experienced && p.modern && !done) {
+              item.linkedDone = true;
+            }
+            html += '<div class="play-cat-card' + (experienced ? ' is-done' : ' is-empty') + '">';
             html += '<button type="button" class="play-cat-card-main" onclick="togglePlayCatCard(this)">';
             html += '<span class="play-cat-card-accent"></span>';
             html += '<div class="play-cat-card-body">';
+            html += '<div class="play-cat-card-name-row">';
             html += '<p class="play-cat-card-name">' + escapeHTML(p.label) + '</p>';
+            if (p.modern) {
+              html += '<span class="play-cat-modern">' + escapeHTML(p.modern) + '</span>';
+            }
+            if (item.linkedDone) {
+              html += '<span class="play-cat-exp-badge">経験あり</span>';
+            }
+            html += '</div>';
             html += '<div class="play-cat-card-meta">';
             if (done) {
               html += '<span>通算 <b>' + item.count + '</b> 回</span>';
-              html += '<span>最終 ' + formatPlayCatDate(st.last) + '</span>';
+              if (st && st.last) html += '<span>最終 ' + formatPlayCatDate(st.last) + '</span>';
               if (castList[0]) html += '<span>よく ' + escapeHTML(castList[0].name) + '</span>';
+            } else if (item.linkedDone) {
+              html += '<span>ひも付き「' + escapeHTML(p.modern || '') + '」で経験あり</span>';
+              if (item.linkedLast) html += '<span>最終 ' + formatPlayCatDate(item.linkedLast) + '</span>';
+              if (item.linkedCount) html += '<span>通算 <b>' + item.linkedCount + '</b> 回相当</span>';
             } else {
               html += '<span>未経験</span>';
             }
