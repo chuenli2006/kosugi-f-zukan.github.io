@@ -4234,7 +4234,9 @@
     .help-box { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 10px; padding: 10px; text-align: left; font-size: 0.8rem; margin-bottom: 6px; }
     .help-box h4 { color: var(--accent-pink); margin-bottom: 3px; font-size: 0.85rem; }
 
-    #viewDashboard { width: 100%; }
+    
+#viewDashboard { width: 100%; padding: 8px 14px 100px; box-sizing: border-box; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+    #viewDashboard.tab-content[style*="block"] { display: block !important; }
     .period-select-row { display: flex; gap: 4px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 8px; width: 100%; }
     .stat-section { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 14px; margin-bottom: 14px; box-shadow: var(--shadow); width: 100%; }
     .stat-section-title { font-size: 0.9rem; font-weight: bold; color: var(--accent-pink); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 2px solid var(--soft-pink); display: flex; align-items: center; gap: 6px; }
@@ -5352,6 +5354,256 @@
     .cast-honorific-pre { margin-right: 0.15em; }
     .cast-honorific-post { margin-left: 0.08em; }
 
+  
+
+    /* ===== 統計タブ（dash-v2） ===== */
+    .dash-v2 {
+      padding: 4px 0 24px;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+    .dash-v2-period {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+      margin-bottom: 12px;
+      padding: 0 2px;
+    }
+    .dash-v2-period .dash-period-chip {
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--light-text);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .dash-v2-period .dash-period-chip:active {
+      transform: scale(0.96);
+    }
+    .dash-v2-period .dash-period-chip.active {
+      background: color-mix(in srgb, var(--accent-pink, #f72585) 16%, var(--card-bg));
+      border-color: var(--accent-pink, #f72585);
+      color: var(--accent-pink, #f72585);
+      box-shadow: 0 2px 8px color-mix(in srgb, var(--accent-pink, #f72585) 20%, transparent);
+    }
+
+    .dash-v2-hero {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 18px;
+      padding: 16px 16px 14px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow);
+      color: var(--text-color, #212529);
+    }
+    .dash-v2-hero-main {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-end;
+    }
+    .dash-v2-hero-num {
+      font-size: 1.75rem;
+      font-weight: 800;
+      line-height: 1.15;
+      color: var(--text-color, #212529);
+      letter-spacing: -0.02em;
+    }
+    .dash-v2-hero-num > .dash-num-label {
+      display: block;
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--light-text);
+      margin-bottom: 2px;
+      letter-spacing: 0.04em;
+    }
+    .dash-v2-hero-num > .dash-num-value {
+      display: inline;
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--text-color, #212529);
+      line-height: 1.15;
+    }
+    .dash-v2-hero-num > .dash-num-unit {
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin-left: 2px;
+    }
+    .dash-v2-hero-sub {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+      margin-top: 12px;
+      font-size: 0.72rem;
+      color: var(--light-text);
+    }
+    .dash-v2-hero-sub b {
+      color: var(--text-color, #212529);
+      font-weight: 700;
+    }
+
+    .dash-v2-section {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow);
+    }
+    .dash-v2-sec-title {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--accent-pink, #f72585);
+      margin: 0 0 10px;
+      letter-spacing: 0.04em;
+    }
+    .dash-v2-seg {
+      display: flex;
+      gap: 4px;
+      padding: 3px;
+      border-radius: 12px;
+      background: var(--bg-color);
+      margin-bottom: 10px;
+    }
+    .dash-v2-seg button {
+      flex: 1;
+      border: none;
+      background: transparent;
+      color: var(--light-text);
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 7px 6px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: color 0.2s ease, background 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .dash-v2-seg button:active { transform: scale(0.96); }
+    .dash-v2-seg button.active {
+      background: var(--card-bg);
+      color: var(--accent-pink, #f72585);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+
+    .dash-v2-trend-wrap {
+      height: 160px;
+      min-height: 160px;
+      position: relative;
+      width: 100%;
+    }
+    .dash-v2-donut-wrap {
+      height: 180px;
+      min-height: 180px;
+      position: relative;
+      width: 100%;
+      max-width: 240px;
+      margin: 0 auto;
+    }
+    .dash-v2-trend-wrap canvas,
+    .dash-v2-donut-wrap canvas {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    .dash-v2-panel { display: none; }
+    .dash-v2-panel.active { display: block; }
+
+    .dash-donut-center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      pointer-events: none;
+      z-index: 1;
+      max-width: 46%;
+    }
+    .dash-donut-center .ddc-main {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text-color, #212529);
+      line-height: 1.15;
+    }
+    .dash-donut-center .ddc-sub {
+      font-size: 0.62rem;
+      font-weight: 600;
+      color: var(--light-text);
+      margin-top: 2px;
+      line-height: 1.3;
+    }
+    .dash-donut-center .ddc-prev {
+      font-size: 0.58rem;
+      color: var(--light-text);
+      margin-top: 3px;
+    }
+    .dash-donut-center .ddc-prev.up { color: #2f9e44; }
+    .dash-donut-center .ddc-prev.down { color: #e03131; }
+
+    .rank-row {
+      cursor: pointer;
+      border-radius: 10px;
+      padding: 6px 8px;
+      transition: background 0.15s ease, transform 0.12s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .rank-row:active { transform: scale(0.98); }
+    .rank-row.is-active {
+      background: color-mix(in srgb, var(--accent-pink, #f72585) 12%, var(--card-bg));
+      outline: 1px solid color-mix(in srgb, var(--accent-pink, #f72585) 35%, transparent);
+    }
+
+    .dash-v2-cumulative {
+      margin-top: 8px;
+      border-radius: 14px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      padding: 0;
+    }
+    .dash-v2-cum-sum {
+      list-style: none;
+      cursor: pointer;
+      padding: 12px 14px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--light-text);
+    }
+    .dash-v2-cum-sum::-webkit-details-marker { display: none; }
+    .dash-v2-cumulative[open] .dash-v2-cum-sum {
+      color: var(--accent-pink, #f72585);
+    }
+    .dash-v2-cum-body { padding: 0 14px 14px; }
+
+    .dash-v2-empty {
+      text-align: center;
+      padding: 36px 16px;
+      color: var(--light-text);
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+
+    .dash-jump-flash {
+      animation: dashJumpFlash 1.4s ease;
+    }
+    @keyframes dashJumpFlash {
+      0%, 100% { box-shadow: none; }
+      30%, 60% { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-pink, #f72585) 55%, transparent); }
+    }
+
+    #viewDashboard {
+      width: 100%;
+      padding: 8px 14px 100px;
+      box-sizing: border-box;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+
   </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -5762,27 +6014,22 @@
 
       <!-- 4. 統計タブ -->
       <div id="viewDashboard" class="tab-content">
-        <div class="dashboard" id="dashboardOverview" style="margin-bottom:14px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-            <div style="font-size:0.8rem; font-weight:bold; color:var(--accent-pink);">📊 全体利用統計</div>
-            <button type="button" class="ai-trigger-btn ai-trigger-btn-sm" onclick="openAiAnalysisModal()">🤖 AI好み診断</button>
-          </div>
-          <div class="dash-grid">
-            <div class="dash-item"><div class="dash-val" id="stTotalVisits">0</div><div class="dash-lbl">総利用回数</div></div>
-            <div class="dash-item"><div class="dash-val" id="stTotalCasts">0</div><div class="dash-lbl">経験人数</div></div>
-            <div class="dash-item"><div class="dash-val" id="stActiveCasts">0</div><div class="dash-lbl">現在在籍</div></div>
-            <div class="dash-item"><div class="dash-val" id="stFavRate">0%</div><div class="dash-lbl">オキニ率</div></div>
-          </div>
-          <div style="text-align:right; margin-top:8px;">
-            <button onclick="resetData()" style="font-size:0.65rem; color:var(--light-text); background:none; border:none; text-decoration:underline; cursor:pointer;">⚠️ 記録を初期化して空にする</button>
-          </div>
+        <div class="dash-v2" id="dashboardV2">
+          <div class="dash-v2-period" id="dashPeriodRow"></div>
+          <div id="dashboardContent"></div>
+          <details class="dash-v2-cumulative" id="dashboardOverview">
+            <summary class="dash-v2-cum-sum">累計を見る</summary>
+            <div class="dash-v2-cum-body">
+              <div class="dash-grid">
+                <div class="dash-item"><div class="dash-val" id="stTotalVisits">0</div><div class="dash-lbl">遊んだ総回数</div></div>
+                <div class="dash-item"><div class="dash-val" id="stTotalCasts">0</div><div class="dash-lbl">経験人数</div></div>
+                <div class="dash-item"><div class="dash-val" id="stActiveCasts">0</div><div class="dash-lbl">現在在籍</div></div>
+                <div class="dash-item"><div class="dash-val" id="stFavRate">0%</div><div class="dash-lbl">オキニ率</div></div>
+              </div>
+              <button type="button" class="ai-trigger-btn ai-trigger-btn-sm" style="margin-top:10px;width:100%;" onclick="openAiAnalysisModal()">AI好み診断</button>
+            </div>
+          </details>
         </div>
-
-        <div class="controls" style="margin-bottom:10px;">
-          <div style="font-size:0.78rem; font-weight:bold; color:var(--accent-pink); margin-bottom:4px;">📊 期間フィルター（月別 / 3ヶ月別 / 半年別 / 1年別 / 全データ）</div>
-          <div class="period-select-row" id="dashPeriodRow"></div>
-        </div>
-        <div id="dashboardContent"></div>
       </div>
 
       <!-- 5. 共有タブ -->
@@ -6093,6 +6340,10 @@
               <button class="close-btn" style="width:100%; margin-top:0; font-size:0.75rem; padding:6px; background:linear-gradient(135deg, #4dabf7, #339af0);" onclick="exportJSONFile()">💾 JSONダウンロード</button>
               <button class="close-btn" style="width:100%; margin-top:6px; font-size:0.75rem; padding:6px; background:#20c997;" onclick="triggerJSONFileInput()">📂 JSONファイルを選択して復元</button>
               <input type="file" id="jsonFileInput" accept=".json,application/json,text/plain" style="display:none;" onchange="importJSONFile(event)">
+              <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border-color);">
+                <p style="font-size:0.68rem;color:var(--light-text);margin:0 0 8px;line-height:1.4;">危険な操作。この端末の記録・女の子データを空にします。クラウドには自動では反映されません。</p>
+                <button type="button" class="close-btn" style="width:100%;margin-top:0;font-size:0.75rem;padding:8px;background:linear-gradient(135deg,#fa5252,#e03131);" onclick="resetData()">記録を初期化して空にする</button>
+              </div>
             </div>
           </details>
 
@@ -6562,7 +6813,7 @@
       <div class="stat-section" style="margin-bottom:10px;">
         <div class="stat-section-title">📊 これまでの総括</div>
         <div class="stat-grid-4" style="grid-template-columns: repeat(3, 1fr);">
-          <div class="stat-card"><div class="stat-card-lbl">総利用回数</div><div class="stat-card-val" id="annivTotalVisits">0回</div></div>
+          <div class="stat-card"><div class="stat-card-lbl">遊んだ総回数</div><div class="stat-card-val" id="annivTotalVisits">0回</div></div>
           <div class="stat-card"><div class="stat-card-lbl">使った総額</div><div class="stat-card-val" id="annivTotalAmount" style="font-size:1rem;">¥0</div></div>
           <div class="stat-card"><div class="stat-card-lbl">総経験人数</div><div class="stat-card-val" id="annivTotalCasts">0人</div></div>
         </div>
@@ -6941,7 +7192,7 @@
 
         <div class="help-box">
           <h4>3. 📊 利用統計ダッシュボード＆日本地図</h4>
-          <p>総利用回数や支出統計に加え、制覇した47都道府県の日本地図を自動作成します。</p>
+          <p>遊んだ総回数や支出統計に加え、制覇した47都道府県の日本地図を自動作成します。</p>
         </div>
 
         <div class="help-box">
@@ -15734,681 +15985,396 @@ ${sideActionsHtml}
     let rankingChartInstance = null;
     let amountChartInstance = null;
 
+    function setDashPeriod(type) {
+      dashPeriodType = type || 'month';
+      try {
+        const chips = document.querySelectorAll('.dash-period-chip');
+        chips.forEach(function(c) {
+          if ((c.textContent || '').trim() && c.classList.contains('active')) {
+            c.style.animation = 'none';
+            void c.offsetWidth;
+            c.style.animation = '';
+          }
+        });
+      } catch (e) {}
+      renderDashboard();
+    }
+
+    function filterRecordsByPeriod(list, type) {
+      if (!list || !list.length) return [];
+      if (type === 'all') return list.slice();
+      const now = new Date();
+      const curYear = now.getFullYear();
+      const curMonth = now.getMonth() + 1;
+      const maxDiff = type === 'month' ? 0
+        : type === '3months' ? 2
+        : type === 'halfyear' ? 5
+        : type === 'year' ? 11
+        : 9999;
+
+      return list.filter(function(v) {
+        if (!v) return false;
+        let y = parseInt(v.year, 10);
+        if (!y || isNaN(y)) y = curYear;
+        let m = parseInt(String(v.month != null ? v.month : '').replace(/\\D/g, ''), 10);
+        if (!m || isNaN(m)) m = curMonth;
+        if (m < 1) m = 1;
+        if (m > 12) m = 12;
+        const diffMonths = (curYear - y) * 12 + (curMonth - m);
+        return diffMonths >= 0 && diffMonths <= maxDiff;
+      });
+    }
+
     function renderDashboard() {
       const wrap = document.getElementById('dashboardContent');
       const periodRow = document.getElementById('dashPeriodRow');
-      if(!wrap || !periodRow) return;
+      if (!wrap || !periodRow) return;
 
-      if(historyList.length === 0) {
+      if (!window.dashTrendMode) window.dashTrendMode = 'count';
+      if (!window.dashDonutTab) window.dashDonutTab = 'cast';
+
+      if (!historyList || historyList.length === 0) {
         periodRow.innerHTML = '';
-        wrap.innerHTML = '<div class="dash-empty">記録がまだありません。<br>記録を追加すると統計が表示されます。</div>';
+        wrap.innerHTML = '<div class="dash-v2-empty">記録がまだありません。<br>追加するとここに統計が表示されます。</div>';
         return;
       }
 
       const periods = [
-        { id: 'month', label: '📅 月別' },
-        { id: '3months', label: '📊 3ヶ月別' },
-        { id: 'halfyear', label: '📈 半年別' },
-        { id: 'year', label: '👑 1年別' },
-        { id: 'all', label: '💎 全データ' }
+        { id: 'month', label: '月' },
+        { id: '3months', label: '3ヶ月' },
+        { id: 'halfyear', label: '半年' },
+        { id: 'year', label: '1年' },
+        { id: 'all', label: '全期間' }
       ];
-
-      periodRow.innerHTML = periods.map(p =>
-        `<div class="ftag ${p.id===dashPeriodType?'active':''}" onclick="setDashPeriod('${p.id}')">${p.label}</div>`
-      ).join('');
+      periodRow.innerHTML = periods.map(function(p) {
+        return '<button type="button" class="dash-period-chip' + (p.id === dashPeriodType ? ' active' : '') + '" onclick="setDashPeriod(\'' + p.id + '\')">' + p.label + '</button>';
+      }).join('');
 
       const filteredRecords = filterRecordsByPeriod(historyList, dashPeriodType);
       const totalVisits = filteredRecords.length;
-      const totalAmount = filteredRecords.reduce((s, v) => s + (Number(v.amount) || 0), 0);
+      const totalAmount = filteredRecords.reduce(function(s, v) { return s + (Number(v.amount) || 0); }, 0);
       const avgUnit = totalVisits > 0 ? Math.round(totalAmount / totalVisits) : 0;
-      const uniqueCasts = new Set(filteredRecords.map(v => v.name)).size;
+      const uniqueCasts = new Set(filteredRecords.map(function(v) { return v.name; })).size;
+      const totalAmountDisplay = currentAmountHide === 'hide' ? '***' : ('¥' + totalAmount.toLocaleString());
+      const avgUnitDisplay = currentAmountHide === 'hide' ? '***' : ('¥' + avgUnit.toLocaleString());
+      const trendMode = window.dashTrendMode || 'count';
+      const donutTab = window.dashDonutTab || 'cast';
 
-      const totalAmountDisplay = currentAmountHide === 'hide' ? '***' : `¥${totalAmount.toLocaleString()}`;
-      const avgUnitDisplay = currentAmountHide === 'hide' ? '***' : `¥${avgUnit.toLocaleString()}`;
+      wrap.innerHTML =
+        '<div class="dash-v2-hero">' +
+          '<div class="dash-v2-hero-main">' +
+            '<div class="dash-v2-hero-num"><span class="dash-num-label">遊んだ回数</span><span class="dash-num-value">' + totalVisits + '</span><span class="dash-num-value" style="display:inline;font-size:0.9rem;font-weight:700;margin-left:2px;">回</span></div>' +
+            '<div class="dash-v2-hero-num" style="text-align:right;"><span class="dash-num-label">支出合計</span><span class="dash-num-value">' + totalAmountDisplay + '</span></div>' +
+          '</div>' +
+          '<div class="dash-v2-hero-sub">' +
+            '<span>人数 <b>' + uniqueCasts + '</b>人</span>' +
+            '<span>平均単価 <b>' + avgUnitDisplay + '</b></span>' +
+          '</div>' +
+        '</div>' +
 
-      wrap.innerHTML = `
-        <div class="stat-section">
-          <div class="stat-section-title">📊 選択期間のサマリー</div>
-          <div class="stat-grid-4">
-            <div class="stat-card"><div class="stat-card-lbl">利用回数</div><div class="stat-card-val">${totalVisits}回</div></div>
-            <div class="stat-card"><div class="stat-card-lbl">経験人数</div><div class="stat-card-val">${uniqueCasts}人</div></div>
-            <div class="stat-card"><div class="stat-card-lbl">支出合計</div><div class="stat-card-val">${totalAmountDisplay}</div></div>
-            <div class="stat-card"><div class="stat-card-lbl">平均単価</div><div class="stat-card-val">${avgUnitDisplay}</div></div>
-          </div>
-        </div>
+        '<div class="dash-v2-section">' +
+          '<div class="dash-v2-sec-title">推移</div>' +
+          '<div class="dash-v2-seg">' +
+            '<button type="button" class="' + (trendMode === 'count' ? 'active' : '') + '" onclick="setDashTrendMode(\'count\')">回数</button>' +
+            '<button type="button" class="' + (trendMode === 'amount' ? 'active' : '') + '" onclick="setDashTrendMode(\'amount\')">金額</button>' +
+          '</div>' +
+          '<div class="dash-v2-trend-wrap" id="dashTrendCountWrap" style="' + (trendMode === 'count' ? '' : 'display:none') + '"><canvas id="dashTrendChart"></canvas></div>' +
+          '<div class="dash-v2-trend-wrap" id="dashTrendAmountWrap" style="' + (trendMode === 'amount' ? '' : 'display:none') + '"><canvas id="dashAmountChart"></canvas></div>' +
+        '</div>' +
 
-        <div class="dash-charts-row">
-          <div class="stat-section">
-            <div class="stat-section-title">📈 推移グラフ</div>
-            <div style="font-size:0.75rem; font-weight:bold; color:var(--light-text); margin-bottom:4px;">📆 利用回数の推移</div>
-            <div class="chart-wrap"><canvas id="dashTrendChart"></canvas></div>
-            <div style="font-size:0.75rem; font-weight:bold; color:var(--light-text); margin:12px 0 4px;">💰 月利用金額の推移</div>
-            <div class="chart-wrap"><canvas id="dashAmountChart"></canvas></div>
-          </div>
+        '<div class="dash-v2-section">' +
+          '<div class="dash-v2-sec-title">内訳</div>' +
+          '<div class="dash-v2-seg">' +
+            '<button type="button" class="' + (donutTab === 'cast' ? 'active' : '') + '" onclick="setDashDonutTab(\'cast\')">女の子</button>' +
+            '<button type="button" class="' + (donutTab === 'store' ? 'active' : '') + '" onclick="setDashDonutTab(\'store\')">店舗</button>' +
+            '<button type="button" class="' + (donutTab === 'type' ? 'active' : '') + '" onclick="setDashDonutTab(\'type\')">タイプ</button>' +
+          '</div>' +
+          '<div class="dash-v2-panel' + (donutTab === 'cast' ? ' active' : '') + '" id="dashPanelCast">' +
+            '<div class="dash-v2-donut-wrap"><canvas id="dashRankingChart"></canvas></div>' +
+            '<div class="rank-list" id="dashRankList"></div>' +
+          '</div>' +
+          '<div class="dash-v2-panel' + (donutTab === 'store' ? ' active' : '') + '" id="dashPanelStore">' +
+            '<div class="dash-v2-donut-wrap"><canvas id="dashStoreChart"></canvas></div>' +
+            '<div class="rank-list" id="dashStoreList"></div>' +
+          '</div>' +
+          '<div class="dash-v2-panel' + (donutTab === 'type' ? ' active' : '') + '" id="dashPanelType">' +
+            '<div class="dash-v2-donut-wrap"><canvas id="dashTypeChart"></canvas></div>' +
+            '<div class="rank-list" id="dashTypeList"></div>' +
+          '</div>' +
+        '</div>' +
 
-          <div class="stat-section">
-            <div class="stat-section-title">🍩 分析（女の子 / 系統 / 店舗）</div>
-            <div class="carousel-wrapper">
-              <div class="carousel-container" id="dashAnalysisCarousel">
-                
-                <div class="carousel-slide">
-                  <div style="text-align:center; font-size:0.75rem; font-weight:bold; margin-bottom:4px; color:var(--light-text);">👑 女の子別利用比率</div>
-                  <div class="chart-wrap donut"><canvas id="dashRankingChart"></canvas></div>
-                  <div class="rank-list" id="dashRankList"></div>
-                </div>
+        '<div class="dash-v2-section" id="dashMemorialSection">' +
+          '<div class="dash-v2-sec-title">累計メモリアル</div>' +
+          '<div class="stat-grid-4" id="cumulativeGrid"></div>' +
+        '</div>' +
 
-                <div class="carousel-slide">
-                  <div style="text-align:center; font-size:0.75rem; font-weight:bold; margin-bottom:4px; color:var(--light-text);">🏬 店舗別利用比率</div>
-                  <div class="chart-wrap donut"><canvas id="dashStoreChart"></canvas></div>
-                  <div class="rank-list" id="dashStoreList"></div>
-                </div>
-                
-                <div class="carousel-slide">
-                  <div style="text-align:center; font-size:0.75rem; font-weight:bold; margin-bottom:4px; color:var(--light-text);">💖 俺の好みタイプ分布</div>
-                  <div class="chart-wrap donut"><canvas id="dashTypeChart"></canvas></div>
-                  <div class="rank-list" id="dashTypeList"></div>
-                </div>
+        '<div class="dash-v2-section" id="scoreRankingSection">' +
+          '<div class="dash-v2-sec-title">項目別 NO.1</div>' +
+          '<div class="score-rank-list" id="scoreRankingGrid"></div>' +
+        '</div>';
 
-              </div>
-              
-              <div class="carousel-dots" id="carouselDots">
-                <div class="carousel-dot active" data-index="0"></div>
-                <div class="carousel-dot" data-index="1"></div>
-                <div class="carousel-dot" data-index="2"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="stat-section">
-          <div class="stat-section-title">🏆 累計メモリアル (タップで詳細表示)</div>
-          <div class="stat-grid-4" id="cumulativeGrid"></div>
-        </div>
-
-        <div class="stat-section" id="scoreRankingSection">
-          <div class="stat-section-title">⭐ 項目別NO.1女の子</div>
-          <div class="score-rank-list" id="scoreRankingGrid"></div>
-        </div>
-      `;
-
-      renderDashCharts(filteredRecords);
-      renderCumulativeMemorial();
-      renderScoreRanking(filteredRecords);
-    }
-
-    /* ==================================================================
-       🗾 都道府県シルエット日本地図（新設・専用画面）
-       ================================================================== */
-    const PREF_CODE_MAP = [
-      { code: 1, name: "北海道" }, { code: 2, name: "青森県" }, { code: 3, name: "岩手県" },
-      { code: 4, name: "宮城県" }, { code: 5, name: "秋田県" }, { code: 6, name: "山形県" },
-      { code: 7, name: "福島県" }, { code: 8, name: "茨城県" }, { code: 9, name: "栃木県" },
-      { code: 10, name: "群馬県" }, { code: 11, name: "埼玉県" }, { code: 12, name: "千葉県" },
-      { code: 13, name: "東京都" }, { code: 14, name: "神奈川県" }, { code: 15, name: "新潟県" },
-      { code: 16, name: "富山県" }, { code: 17, name: "石川県" }, { code: 18, name: "福井県" },
-      { code: 19, name: "山梨県" }, { code: 20, name: "長野県" }, { code: 21, name: "岐阜県" },
-      { code: 22, name: "静岡県" }, { code: 23, name: "愛知県" }, { code: 24, name: "三重県" },
-      { code: 25, name: "滋賀県" }, { code: 26, name: "京都府" }, { code: 27, name: "大阪府" },
-      { code: 28, name: "兵庫県" }, { code: 29, name: "奈良県" }, { code: 30, name: "和歌山県" },
-      { code: 31, name: "鳥取県" }, { code: 32, name: "島根県" }, { code: 33, name: "岡山県" },
-      { code: 34, name: "広島県" }, { code: 35, name: "山口県" }, { code: 36, name: "徳島県" },
-      { code: 37, name: "香川県" }, { code: 38, name: "愛媛県" }, { code: 39, name: "高知県" },
-      { code: 40, name: "福岡県" }, { code: 41, name: "佐賀県" }, { code: 42, name: "長崎県" },
-      { code: 43, name: "熊本県" }, { code: 44, name: "大分県" }, { code: 45, name: "宮崎県" },
-      { code: 46, name: "鹿児島県" }, { code: 47, name: "沖縄県" }
-    ];
-    const JAPAN_MAP_SVG_URLS = [
-      'https://geolonia.github.io/japanese-prefectures/map-mobile.svg',
-      'https://geolonia.github.io/japanese-prefectures/map-full.svg'
-    ];
-
-    let mapSvgLoaded = false;
-    let mapHeatmapMode = 'visits'; // visits | amount | okini
-    let mapSelectedPref = null;
-    let mapSelectedContentType = null; // cast | store | gallery
-
-    function openJapanMapModal() {
-      document.getElementById('japanMapModal').style.display = 'flex';
-      document.getElementById('mapPrefDetailPanel').innerHTML = '';
-      document.getElementById('mapPrefContentArea').innerHTML = '';
-      mapSelectedPref = null;
-      mapSelectedContentType = null;
-      if (!mapSvgLoaded) {
-        loadJapanMapSvg();
-      } else {
-        applyMapHeatmapColors();
-      }
-    }
-
-    async function loadJapanMapSvg() {
-      const wrap = document.getElementById('mapSvgWrap');
-      for (const url of JAPAN_MAP_SVG_URLS) {
+      const _dashRecs = filteredRecords;
+      // 1回だけ描画（二重表示防止）
+      requestAnimationFrame(function() {
         try {
-          const res = await fetch(url);
-          if (!res.ok) continue;
-          const svgText = await res.text();
-          wrap.innerHTML = svgText;
-          const svgEl = wrap.querySelector('svg');
-          if (svgEl) svgEl.classList.add('geolonia-svg-map');
-          mapSvgLoaded = true;
-          attachMapPrefEvents();
-          applyMapHeatmapColors();
-          return;
-        } catch (err) {
-          console.log('地図の読み込みに失敗しました:', url, err);
+          if (typeof renderDashCharts === 'function') renderDashCharts(_dashRecs);
+        } catch (e) { console.warn('renderDashCharts', e); }
+      });
+      try {
+        if (typeof renderCumulativeMemorial === 'function') renderCumulativeMemorial();
+      } catch (e) { console.warn('renderCumulativeMemorial', e); }
+      try {
+        if (typeof renderScoreRanking === 'function') renderScoreRanking(filteredRecords);
+      } catch (e) { console.warn('renderScoreRanking', e); }
+
+      // 入場・数値更新アニメ
+      try {
+        const root = document.getElementById('dashboardV2');
+        if (root) {
+          root.classList.remove('is-entering');
+          void root.offsetWidth;
+          root.classList.add('is-entering');
+          setTimeout(function() { root.classList.remove('is-entering'); }, 700);
         }
-      }
-      wrap.innerHTML = '<div class="map-svg-loading">地図の読み込みに失敗しました。ネットワーク環境をご確認ください。</div>';
-    }
-
-    function attachMapPrefEvents() {
-      const wrap = document.getElementById('mapSvgWrap');
-      const els = wrap.querySelectorAll('[data-code]');
-      els.forEach(el => {
-        const codeNum = parseInt(el.getAttribute('data-code'), 10);
-        const prefInfo = PREF_CODE_MAP.find(p => p.code === codeNum);
-        if (!prefInfo) return;
-        el.style.cursor = 'pointer';
-        el.addEventListener('click', () => selectMapPref(prefInfo.name, el));
-      });
-    }
-
-    function getMapPrefStats(prefName) {
-      const recs = historyList.filter(v => v.storeName && storeInfoData[v.storeName] && storeInfoData[v.storeName].pref === prefName);
-      const totalVisits = recs.length;
-      const totalAmount = recs.reduce((s, v) => s + (Number(v.amount) || 0), 0);
-      const okiniNames = new Set();
-      recs.forEach(v => { if (v.flags && v.flags.includes('🆂')) okiniNames.add(v.name); });
-      return { recs, totalVisits, totalAmount, okiniCount: okiniNames.size };
-    }
-
-    function mixHexColor(hex1, hex2, t) {
-      const c1 = hex1.replace('#', '').trim();
-      const c2 = hex2.replace('#', '').trim();
-      if (c1.length !== 6 || c2.length !== 6) return hex1;
-      const r1 = parseInt(c1.substr(0,2),16), g1 = parseInt(c1.substr(2,2),16), b1 = parseInt(c1.substr(4,2),16);
-      const r2 = parseInt(c2.substr(0,2),16), g2 = parseInt(c2.substr(2,2),16), b2 = parseInt(c2.substr(4,2),16);
-      const r = Math.round(r1 + (r2 - r1) * t);
-      const g = Math.round(g1 + (g2 - g1) * t);
-      const b = Math.round(b1 + (b2 - b1) * t);
-      return '#' + [r,g,b].map(x => x.toString(16).padStart(2,'0')).join('');
-    }
-
-    function setMapHeatmapMode(mode) {
-      mapHeatmapMode = mode;
-      document.querySelectorAll('.map-heatmap-tab').forEach(t => t.classList.remove('active'));
-      document.getElementById(mode === 'visits' ? 'mapTabVisits' : mode === 'amount' ? 'mapTabAmount' : 'mapTabOkini').classList.add('active');
-      applyMapHeatmapColors();
-    }
-
-    function applyMapHeatmapColors() {
-      const wrap = document.getElementById('mapSvgWrap');
-      if (!wrap) return;
-      const els = wrap.querySelectorAll('[data-code]');
-      if (!els.length) return;
-
-      const style = getComputedStyle(document.documentElement);
-      const baseColor = (style.getPropertyValue('--map-unvisited') || '#e0e0e0').trim();
-      const endColor = mapHeatmapMode === 'okini' ? (style.getPropertyValue('--gold-border') || '#f3c642').trim() : (style.getPropertyValue('--accent-pink') || '#f72585').trim();
-
-      const values = {};
-      let maxVal = 0;
-      PREF_CODE_MAP.forEach(p => {
-        const stats = getMapPrefStats(p.name);
-        const v = mapHeatmapMode === 'visits' ? stats.totalVisits : mapHeatmapMode === 'amount' ? stats.totalAmount : stats.okiniCount;
-        values[p.name] = v;
-        if (v > maxVal) maxVal = v;
-      });
-
-      let visitedCount = 0;
-      els.forEach(el => {
-        const codeNum = parseInt(el.getAttribute('data-code'), 10);
-        const prefInfo = PREF_CODE_MAP.find(p => p.code === codeNum);
-        if (!prefInfo) return;
-        const v = values[prefInfo.name] || 0;
-        let fillColor = baseColor;
-        if (v > 0) {
-          visitedCount++;
-          const t = Math.max(0.35, Math.min(1, Math.sqrt(v / maxVal)));
-          fillColor = mixHexColor(baseColor, endColor, t);
+        const hero = wrap.querySelector('.dash-v2-hero');
+        if (hero) {
+          hero.classList.add('is-updating');
+          setTimeout(function() { hero.classList.remove('is-updating'); }, 600);
         }
-        el.style.fill = fillColor;
-      });
-
-      const pct = Math.round((visitedCount / 47) * 100);
-      const modeLabel = mapHeatmapMode === 'visits' ? '訪問回数' : mapHeatmapMode === 'amount' ? '総支出' : 'オキニ人数';
-      document.getElementById('mapLegendLine').innerText = `全国制覇率: ${visitedCount} / 47 都道府県 (${pct}%) ｜ 表示中: ${modeLabel}`;
+      } catch (e) {}
     }
 
-    function selectMapPref(prefName, el) {
-      document.querySelectorAll('.map-svg-wrap .map-pref-selected').forEach(e => e.classList.remove('map-pref-selected'));
-      if (el) el.classList.add('map-pref-selected');
-
-      mapSelectedPref = prefName;
-      mapSelectedContentType = null;
-      document.getElementById('mapPrefContentArea').innerHTML = '';
-
-      const panel = document.getElementById('mapPrefDetailPanel');
-      const stats = getMapPrefStats(prefName);
-
-      if (stats.totalVisits === 0) {
-        panel.innerHTML = `
-          <div class="map-pref-detail-panel">
-            <div class="map-pref-detail-title">🗾 ${prefName}</div>
-            <div class="map-empty-note">まだ未訪問の都道府県です。</div>
-          </div>`;
-        return;
-      }
-
-      const totalAmountDisp = currentAmountHide === 'hide' ? '***' : `¥${stats.totalAmount.toLocaleString()}`;
-
-      panel.innerHTML = `
-        <div class="map-pref-detail-panel">
-          <div class="map-pref-detail-title">🗾 ${prefName}</div>
-          <div class="map-pref-stat-row">
-            <div class="stat-card"><div class="stat-card-lbl">総利用回数</div><div class="stat-card-val">${stats.totalVisits}回</div></div>
-            <div class="stat-card"><div class="stat-card-lbl">総支出額</div><div class="stat-card-val">${totalAmountDisp}</div></div>
-          </div>
-          <div class="map-action-grid">
-            <button type="button" class="map-action-btn" id="mapActionCast" onclick="showMapContent('cast')">
-              <span>🌸 女の子一覧</span><span class="map-action-arrow">➔</span>
-            </button>
-            <button type="button" class="map-action-btn" id="mapActionStore" onclick="showMapContent('store')">
-              <span>🏬 店舗一覧</span><span class="map-action-arrow">➔</span>
-            </button>
-            <button type="button" class="map-action-btn map-action-full" id="mapActionGallery" onclick="showMapContent('gallery')">
-              <span>💌 メッセージカード</span><span class="map-action-arrow">➔</span>
-            </button>
-          </div>
-        </div>`;
-    }
-
-    function showMapContent(type) {
-      if (!mapSelectedPref) return;
-      mapSelectedContentType = type;
-      document.querySelectorAll('.map-action-btn').forEach(b => b.classList.remove('active'));
-      const btnId = type === 'cast' ? 'mapActionCast' : type === 'store' ? 'mapActionStore' : 'mapActionGallery';
-      const btnEl = document.getElementById(btnId);
-      if (btnEl) btnEl.classList.add('active');
-
-      if (type === 'cast') renderMapCastList(mapSelectedPref);
-      else if (type === 'store') renderMapStoreList(mapSelectedPref);
-      else renderMapMessageGallery(mapSelectedPref);
-    }
-
-    function renderMapCastList(prefName) {
-      const area = document.getElementById('mapPrefContentArea');
-      const recs = historyList.filter(v => v.storeName && storeInfoData[v.storeName] && storeInfoData[v.storeName].pref === prefName);
-
-      const castMap = {};
-      recs.forEach(v => {
-        if (!castMap[v.name]) castMap[v.name] = { name: v.name, count: 0, favCount: 0 };
-        castMap[v.name].count++;
-        if (v.flags && v.flags.includes('🆂')) castMap[v.name].favCount++;
-      });
-
-      const list = Object.values(castMap).sort((a,b) => b.count - a.count);
-      if (list.length === 0) {
-        area.innerHTML = '<div class="map-content-area"><div class="map-empty-note">女の子データがありません。</div></div>';
-        return;
-      }
-
-      area.innerHTML = `<div class="map-content-area">${list.map(c => {
-        const info = castData[c.name] || {};
-        const isRetired = info.status === 'retired';
-        const linkHtml = info.link ? `<a href="${info.link}" target="_blank" class="map-profile-link">🔗 プロフィールを見る</a>` : '';
-        return `
-          <div class="map-cast-item">
-            <div class="map-item-top-row">
-              <span class="map-item-name">🌸 ${c.name}${isRetired ? '<span class="map-badge-retired">❀ 卒業</span>' : ''}${c.favCount>=1 ? '<span class="map-badge-okini">🆂 オキニ</span>' : ''}</span>
-              <span class="map-badge-count">${c.count}回指名</span>
-            </div>
-            ${linkHtml}
-          </div>`;
-      }).join('')}</div>`;
-    }
-
-    function renderMapStoreList(prefName) {
-      const area = document.getElementById('mapPrefContentArea');
-      const recs = historyList.filter(v => v.storeName && storeInfoData[v.storeName] && storeInfoData[v.storeName].pref === prefName);
-
-      const storeMap = {};
-      recs.forEach(v => {
-        const sName = v.storeName;
-        if (!storeMap[sName]) storeMap[sName] = { name: sName, count: 0, amount: 0 };
-        storeMap[sName].count++;
-        storeMap[sName].amount += Number(v.amount) || 0;
-      });
-
-      const list = Object.values(storeMap).sort((a,b) => b.count - a.count);
-      if (list.length === 0) {
-        area.innerHTML = '<div class="map-content-area"><div class="map-empty-note">店舗データがありません。</div></div>';
-        return;
-      }
-
-      area.innerHTML = `<div class="map-content-area">${list.map(s => {
-        const info = storeInfoData[s.name] || {};
-        const cat = info.category || 'その他';
-        const catStyle = getCategoryStyle(cat);
-        const avgAmount = s.count > 0 ? Math.round(s.amount / s.count) : 0;
-        const avgDisp = currentAmountHide === 'hide' ? '***' : `¥${avgAmount.toLocaleString()}`;
-        const phoneBtn = info.phone ? `<a href="tel:${info.phone}" class="store-contact-btn store-btn-phone" style="font-size:0.7rem; padding:6px 10px;">📞 電話</a>` : '';
-        const webBtn = info.web ? `<a href="${info.web}" target="_blank" class="store-contact-btn store-btn-web" style="font-size:0.7rem; padding:6px 10px;">🌐 Web</a>` : '';
-        return `
-          <div class="map-store-item">
-            <div class="map-item-top-row">
-              <span class="map-item-name">🏬 ${s.name}</span>
-              <span class="map-badge-count">${s.count}回訪問</span>
-            </div>
-            <div><span class="map-store-cat-badge" style="background:${catStyle.bg}; color:${catStyle.color};">${cat}</span></div>
-            <div class="map-store-sub-line">平均単価: ${avgDisp}</div>
-            ${(phoneBtn || webBtn) ? `<div class="map-store-btn-row">${phoneBtn}${webBtn}</div>` : ''}
-          </div>`;
-      }).join('')}</div>`;
-    }
-
-    function renderMapMessageGallery(prefName) {
-      const area = document.getElementById('mapPrefContentArea');
-      const recs = historyList.filter(v => v.storeName && storeInfoData[v.storeName] && storeInfoData[v.storeName].pref === prefName);
-      const castNamesInPref = new Set(recs.map(v => v.name));
-
-      const gallery = [];
-      recs.forEach(v => {
-        if (v.chekiImg) gallery.push({ date: `${v.year}年${v.month}${(currentDateFormat === 'ymd' && v.day) ? v.day+'日' : ''}`, img: v.chekiImg, text: v.visitNote || '' });
-      });
-      castNamesInPref.forEach(name => {
-        const info = castData[name];
-        if (info && info.letters) {
-          info.letters.forEach(l => {
-            if (l.imageUrl && !gallery.some(g => g.img === l.imageUrl)) {
-              gallery.push({ date: l.date || '思い出', img: l.imageUrl, text: l.text || '' });
-            }
-          });
-        }
-      });
-
-      if (gallery.length === 0) {
-        area.innerHTML = '<div class="map-content-area"><div class="map-empty-note">この都道府県に関連する画像がまだありません。</div></div>';
-        return;
-      }
-
-      area.innerHTML = `<div class="map-content-area"><div class="map-gallery-grid">${gallery.map((g, i) => `
-        <div class="map-gallery-item" onclick="openMapImageLightbox(${i}, '${prefName.replace(/'/g,"\\'")}')">
-          <img src="${g.img}" alt="思い出画像">
-          <div class="map-gallery-date">${g.date}</div>
-        </div>`).join('')}</div></div>`;
-
-      window._mapGalleryCache = gallery;
-    }
-
-    function openMapImageLightbox(index) {
-      const gallery = window._mapGalleryCache || [];
-      const item = gallery[index];
-      if (!item) return;
-      document.getElementById('mapLightboxImg').src = item.img;
-      document.getElementById('mapLightboxDate').innerText = item.date;
-      document.getElementById('mapLightboxText').innerText = item.text || '';
-      document.getElementById('mapImageLightbox').style.display = 'flex';
-    }
-
-    /* ==================================================================
-       📖 振り返りアルバム（月・年ごとの写真・手紙・ハイライトまとめ）
-       ================================================================== */
-    let albumCurrentYear = null;
-
-    function openAlbumTab() {
-      if (typeof isPcViewMode === 'function' && isPcViewMode()) {
-        /* allowed */
-      }
-      switchMainTab('album');
-    }
-
-    function buildAlbumData() {
-      const buckets = {};
-
-      function ensureBucket(year, month) {
-        const key = year + '-' + String(month).padStart(2, '0');
-        if (!buckets[key]) buckets[key] = { year: String(year), month, photos: [], recordCount: 0, castNames: new Set(), highlights: [] };
-        return buckets[key];
-      }
-
-      historyList.forEach(v => {
-        if (!v.year || !v.month || v.pendingCheckIn) return;
-        const monthNum = parseMonthNum(v.month);
-        const bucket = ensureBucket(v.year, monthNum);
-        bucket.recordCount++;
-        if (v.name) bucket.castNames.add(v.name);
-        if (v.chekiImg) {
-          const dayNum = parseInt(v.day, 10) || 0;
-          bucket.photos.push({
-            img: v.chekiImg,
-            date: `${v.year}年${monthNum}月${v.day ? v.day + '日' : ''}`,
-            text: v.visitNote || '',
-            name: v.name || '',
-            sortKey: (parseInt(v.year, 10) || 0) * 10000 + monthNum * 100 + dayNum
-          });
-        }
-      });
-
-      Object.keys(castData).forEach(name => {
-        const letters = (castData[name] && castData[name].letters) || [];
-        letters.forEach(l => {
-          if (!l.imageUrl) return;
-          const s = String(l.date || '');
-          const yearMatch = s.match(/^(\d{4})/);
-          if (!yearMatch) return;
-          const year = yearMatch[1];
-          const month = parseMonthNum(s.slice(4));
-          const bucket = ensureBucket(year, month);
-          if (!bucket.photos.some(p => p.img === l.imageUrl)) {
-            const dayM = s.match(/(\d{1,2})日/);
-            const dayNum = dayM ? parseInt(dayM[1], 10) : 0;
-            bucket.photos.push({
-              img: l.imageUrl,
-              date: s || '思い出',
-              text: l.text || '',
-              name: name,
-              sortKey: (parseInt(year, 10) || 0) * 10000 + month * 100 + dayNum
-            });
-          }
+    function setDashTrendMode(mode) {
+      window.dashTrendMode = mode === 'amount' ? 'amount' : 'count';
+      const c = document.getElementById('dashTrendCountWrap');
+      const a = document.getElementById('dashTrendAmountWrap');
+      if (c) c.style.display = window.dashTrendMode === 'count' ? '' : 'none';
+      if (a) a.style.display = window.dashTrendMode === 'amount' ? '' : 'none';
+      document.querySelectorAll('.dash-v2-section .dash-v2-seg').forEach(function(seg, idx) {
+        if (idx !== 0) return;
+        seg.querySelectorAll('button').forEach(function(btn) {
+          const isAmt = (btn.textContent || '').indexOf('金額') >= 0;
+          btn.classList.toggle('active', window.dashTrendMode === 'amount' ? isAmt : !isAmt);
         });
       });
-
-      return Object.keys(buckets).sort().reverse().map(key => {
-        const b = buckets[key];
-        b.photos.sort((a, c) => (c.sortKey || 0) - (a.sortKey || 0));
-        return b;
-      });
     }
 
-    function initAlbumView() {
-      const data = buildAlbumData();
-      window._albumMonthData = data;
-
-      const years = Array.from(new Set(data.map(b => b.year))).sort().reverse();
-      const yearTabsEl = document.getElementById('albumYearTabs');
-
-      if (years.length === 0) {
-        yearTabsEl.innerHTML = '';
-        document.getElementById('albumScrollBody').innerHTML = '<div class="album-empty-note">まだ手紙の記録がありません。</div>';
-        return;
-      }
-
-      if (!albumCurrentYear || !years.includes(albumCurrentYear)) albumCurrentYear = years[0];
-
-      yearTabsEl.innerHTML = years.map(y =>
-        `<button type="button" class="album-year-tab${y === albumCurrentYear ? ' active' : ''}" onclick="switchAlbumYear('${y}')">${y}年</button>`
-      ).join('');
-
-      renderAlbumMonths();
-    }
-
-    function switchAlbumYear(year) {
-      albumCurrentYear = year;
-      document.querySelectorAll('.album-year-tab').forEach(btn => btn.classList.toggle('active', btn.textContent === year + '年'));
-      renderAlbumMonths();
-    }
-
-    function renderAlbumMonths() {
-      closeAlbumReader();
-      const data = (window._albumMonthData || []).filter(b => b.year === albumCurrentYear);
-      const body = document.getElementById('albumScrollBody');
-      if (!body) return;
-      // 手紙がある月だけ封筒カバー表示（新しい月が上）
-      const withLetters = data.filter(b => b.photos && b.photos.length > 0);
-      if (withLetters.length === 0) {
-        body.innerHTML = '<div class="album-empty-note">この年の手紙はまだありません。</div>';
-        return;
-      }
-
-      const esc = (s) => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-      body.innerHTML = '<div class="album-cover-grid">' + withLetters.map(bucket => {
-        const key = bucket.year + '-' + bucket.month;
-        const cover = bucket.photos[0];
-        const n = bucket.photos.length;
-        const thumb = cover && cover.img
-          ? `<img src="${cover.img}" alt="" loading="lazy">`
-          : `<div class="album-cover-thumb-empty">✉️</div>`;
-        return `<div class="album-cover" onclick="openAlbumReader('${key}')">
-          <div class="album-cover-thumb">${thumb}</div>
-          <span class="album-cover-badge">${n}通</span>
-          <div class="album-cover-body">
-            <div class="album-cover-month">${bucket.year}年${bucket.month}月</div>
-            <div class="album-cover-meta">手紙をひらく</div>
-          </div>
-        </div>`;
-      }).join('') + '</div>';
-    }
-
-    function openAlbumReader(bucketKey, startIndex) {
-      const bucket = (window._albumMonthData || []).find(b => (b.year + '-' + b.month) === bucketKey);
-      if (!bucket || !bucket.photos || !bucket.photos.length) return;
-      const reader = document.getElementById('albumReader');
-      const track = document.getElementById('albumReaderTrack');
-      const dotsEl = document.getElementById('albumReaderDots');
-      const titleEl = document.getElementById('albumReaderTitle');
-      const countEl = document.getElementById('albumReaderCount');
-      if (!reader || !track) return;
-
-      const esc = (s) => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-      const photos = bucket.photos;
-      if (titleEl) titleEl.textContent = `${bucket.year}年${bucket.month}月`;
-      if (countEl) countEl.textContent = `1 / ${photos.length}`;
-
-      track.innerHTML = photos.map((p, i) => {
-        const noteHtml = (p.text && String(p.text).trim())
-          ? `<div class="album-letter-note-body">${esc(p.text)}</div>`
-          : `<div class="album-letter-note-empty">当時の感想は記録されていません</div>`;
-        return `<div class="album-reader-page" data-idx="${i}">
-          <div class="album-letter-card">
-            <div class="album-letter-img-wrap">
-              <img class="album-letter-img" src="${p.img}" alt="手紙" loading="lazy">
-              <div class="album-letter-meta">
-                <span class="album-letter-date">${esc(p.date || '')}</span>
-                <span class="album-letter-name">${esc(p.name || '')}</span>
-              </div>
-            </div>
-            <div class="album-letter-note">
-              <div class="album-letter-note-label">📝 当時の感想</div>
-              ${noteHtml}
-            </div>
-          </div>
-        </div>`;
-      }).join('');
-
-      if (dotsEl) {
-        dotsEl.innerHTML = photos.map((_, i) =>
-          `<span class="album-reader-dot${i === 0 ? ' active' : ''}" data-idx="${i}"></span>`
-        ).join('');
-        dotsEl.querySelectorAll('.album-reader-dot').forEach(dot => {
-          dot.onclick = () => {
-            const i = parseInt(dot.getAttribute('data-idx'), 10) || 0;
-            const w = track.clientWidth || 1;
-            track.scrollTo({ left: i * w, behavior: 'smooth' });
-          };
-        });
-      }
-
-      const updateReaderUI = () => {
-        const w = track.clientWidth || 1;
-        const idx = Math.min(photos.length - 1, Math.max(0, Math.round(track.scrollLeft / w)));
-        if (countEl) countEl.textContent = `${idx + 1} / ${photos.length}`;
-        if (dotsEl) {
-          dotsEl.querySelectorAll('.album-reader-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+    function setDashDonutTab(tab) {
+      window.dashDonutTab = tab;
+      ['cast', 'store', 'type'].forEach(function(t) {
+        const panel = document.getElementById('dashPanel' + (t === 'cast' ? 'Cast' : t === 'store' ? 'Store' : 'Type'));
+        if (!panel) return;
+        const on = (t === tab);
+        if (on) {
+          panel.classList.remove('active');
+          void panel.offsetWidth;
+          panel.classList.add('active');
+        } else {
+          panel.classList.remove('active');
         }
-      };
-
-      track.onscroll = () => {
-        if (window.__albumReaderRaf) cancelAnimationFrame(window.__albumReaderRaf);
-        window.__albumReaderRaf = requestAnimationFrame(updateReaderUI);
-      };
-
-      reader.classList.add('open');
-      const start = Math.max(0, Math.min(photos.length - 1, startIndex || 0));
-      requestAnimationFrame(() => {
-        const w = track.clientWidth || 1;
-        track.scrollLeft = start * w;
-        updateReaderUI();
       });
+      const sec = document.querySelectorAll('.dash-v2-section')[1];
+      if (sec) {
+        const seg = sec.querySelector('.dash-v2-seg');
+        if (seg) {
+          seg.querySelectorAll('button').forEach(function(btn, i) {
+            const map = ['cast', 'store', 'type'];
+            btn.classList.toggle('active', map[i] === tab);
+          });
+        }
+      }
     }
 
-    function closeAlbumReader() {
-      const reader = document.getElementById('albumReader');
-      if (reader) reader.classList.remove('open');
-    }
-
-    function openAlbumLightbox(bucketKey, index) {
-      // 互換: 旧呼び出しはリーダーへ
-      openAlbumReader(bucketKey, index || 0);
-    }
-
-    function setDashPeriod(type) { dashPeriodType = type; renderDashboard(); }
-
-    function filterRecordsByPeriod(list, type) {
-      if (type === 'all') return list;
+    
+    function getPreviousPeriodRecords(list, type) {
+      if (!list || !list.length || type === 'all') return [];
       const now = new Date();
-      const curYear = now.getFullYear();
-      const curMonth = now.getMonth() + 1;
-
-      return list.filter(v => {
-        const y = parseInt(v.year, 10) || curYear;
-        const m = parseInt(v.month, 10) || curMonth;
-        const diffMonths = (curYear - y) * 12 + (curMonth - m);
-
-        if (type === 'month') return diffMonths === 0;
-        if (type === '3months') return diffMonths >= 0 && diffMonths < 3;
-        if (type === 'halfyear') return diffMonths >= 0 && diffMonths < 6;
-        if (type === 'year') return diffMonths >= 0 && diffMonths < 12;
-        return true;
+      const y = now.getFullYear();
+      const m = now.getMonth() + 1;
+      if (type === 'month') {
+        let py = y, pm = m - 1;
+        if (pm < 1) { pm = 12; py -= 1; }
+        return list.filter(function(v) {
+          const vy = parseInt(v.year, 10) || 0;
+          const vm = parseInt(String(v.month != null ? v.month : '').replace(/\D/g, ''), 10) || 0;
+          return vy === py && vm === pm;
+        });
+      }
+      const len = type === '3months' ? 3 : type === 'halfyear' ? 6 : type === 'year' ? 12 : 1;
+      const maxDiff = len - 1;
+      return list.filter(function(v) {
+        const vy = parseInt(v.year, 10) || 0;
+        const vm = parseInt(String(v.month != null ? v.month : '').replace(/\D/g, ''), 10) || 0;
+        const diff = (y - vy) * 12 + (m - vm);
+        return diff >= len && diff <= len + maxDiff;
       });
     }
 
-    function getCssVar(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+    function navigateToStoreFromDash(storeName, event) {
+      if (event) { try { event.preventDefault(); event.stopPropagation(); } catch (e) {} }
+      const name = (storeName || '').trim();
+      if (!name) return;
+      if (typeof switchMainTab === 'function') switchMainTab('my');
+      setTimeout(function() {
+        if (typeof changeView === 'function') changeView('store');
+        setTimeout(function() {
+          let target = null;
+          const root = document.getElementById('mainContent') || document;
+          root.querySelectorAll('details, .card, .store-card, [class*="store"]').forEach(function(el) {
+            const t = (el.textContent || '').replace(/\s+/g, ' ');
+            if (t.indexOf(name) >= 0 && !target) target = el;
+          });
+          if (target) {
+            try { target.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) {}
+            target.classList.add('dash-jump-flash');
+            setTimeout(function() { target.classList.remove('dash-jump-flash'); }, 1600);
+          }
+        }, 220);
+      }, 100);
+    }
+
+    function dashHighlightRank(listId, index) {
+      const list = document.getElementById(listId);
+      if (!list) return;
+      list.querySelectorAll('.rank-row').forEach(function(row, i) {
+        row.classList.toggle('is-active', i === index);
+      });
+    }
+
+    function updateDonutCenter(wrapEl, main, sub, prevCount, curCount) {
+      if (!wrapEl) return;
+      let center = wrapEl.querySelector('.dash-donut-center');
+      if (!center) {
+        center = document.createElement('div');
+        center.className = 'dash-donut-center';
+        wrapEl.appendChild(center);
+      }
+      let prevHtml = '';
+      if (prevCount != null && typeof dashPeriodType !== 'undefined' && dashPeriodType !== 'all') {
+        const diff = (curCount || 0) - (prevCount || 0);
+        let cls = '';
+        let label = (dashPeriodType === 'month') ? '先月比 ' : '前期比 ';
+        if (diff > 0) { cls = 'up'; label += '+' + diff + '回'; }
+        else if (diff < 0) { cls = 'down'; label += diff + '回'; }
+        else { label += '±0'; }
+        prevHtml = '<div class="ddc-prev ' + cls + '">' + label + '（前' + (prevCount || 0) + '回）</div>';
+      }
+      center.classList.remove('is-tick');
+      void center.offsetWidth;
+      center.innerHTML =
+        '<div class="ddc-main">' + main + '</div>' +
+        (sub ? '<div class="ddc-sub">' + sub + '</div>' : '') +
+        prevHtml;
+      center.classList.add('is-tick');
+    }
+
+    function buildDashDonutOptions(onIndex) {
+      return {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '68%',
+        plugins: { legend: { display: false } },
+        onClick: function(evt, elements) {
+          if (elements && elements.length) onIndex(elements[0].index);
+          else onIndex(-1);
+        },
+        onHover: function(evt, elements) {
+          try {
+            const t = evt.native && evt.native.target;
+            if (t) t.style.cursor = (elements && elements.length) ? 'pointer' : 'default';
+          } catch (e) {}
+        }
+      };
+    }
+
+    function setDashActiveSlice(chart, index) {
+      if (!chart || !chart.data || !chart.data.datasets || !chart.data.datasets[0]) return;
+      const n = chart.data.datasets[0].data.length;
+      chart.data.datasets[0].borderWidth = Array.from({ length: n }, function(_, i) {
+        return i === index ? 4 : 2;
+      });
+      chart.data.datasets[0].offset = Array.from({ length: n }, function(_, i) {
+        return i === index ? 8 : 0;
+      });
+      try { chart.update('none'); } catch (e) { chart.update(); }
+    }
+
+function getCssVar(name, fallback) {
+      try {
+        const v = getComputedStyle(document.documentElement).getPropertyValue(name);
+        if (v && String(v).trim()) return String(v).trim();
+      } catch (e) {}
+      const defaults = {
+        '--accent-pink': '#f72585',
+        '--primary-pink': '#f72585',
+        '--card-bg': '#ffffff',
+        '--rank-c1': '#f72585',
+        '--rank-c2': '#ff6b6b',
+        '--rank-c3': '#fcc419',
+        '--rank-c4': '#51cf66',
+        '--rank-c5': '#339af0',
+        '--border-color': '#e9ecef',
+        '--soft-pink': 'rgba(247,37,133,0.15)'
+      };
+      return fallback || defaults[name] || '#f72585';
+    }
 
     function renderDashCharts(records) {
+      records = records || [];
       const canvasTrend = document.getElementById('dashTrendChart');
       const canvasRank = document.getElementById('dashRankingChart');
       const listEl = document.getElementById('dashRankList');
-      if(!canvasTrend || !canvasRank || typeof Chart === 'undefined') return;
+      if (typeof Chart === 'undefined') {
+        console.warn('Chart.js not loaded');
+        return;
+      }
+      if (!canvasTrend && !canvasRank) {
+        console.warn('dashboard canvas missing');
+        return;
+      }
 
       const agg = {};
-      records.forEach(v => {
-        const k = `${v.year}-${String(parseInt(v.month,10)||1).padStart(2,'0')}`;
-        if(!agg[k]) agg[k] = { count: 0, amount: 0 };
+      records.forEach(function(v) {
+        if (!v) return;
+        const y = parseInt(v.year, 10) || new Date().getFullYear();
+        let m = parseInt(String(v.month != null ? v.month : '').replace(/\D/g, ''), 10);
+        if (!m || m < 1 || m > 12) m = 1;
+        const k = y + '-' + String(m).padStart(2, '0');
+        if (!agg[k]) agg[k] = { count: 0, amount: 0 };
         agg[k].count++;
         agg[k].amount += Number(v.amount) || 0;
       });
       const keys = Object.keys(agg).sort();
+      const pink = getCssVar('--accent-pink', '#f72585');
+      const cardBg = getCssVar('--card-bg', '#fff');
 
-      if(monthlyChartInstance) monthlyChartInstance.destroy();
+      if (canvasTrend) {
+      if (monthlyChartInstance) { try { monthlyChartInstance.destroy(); } catch (e) {} }
       monthlyChartInstance = new Chart(canvasTrend.getContext('2d'), {
         type: 'line',
         data: {
-          labels: keys.map(k => k.replace('-', '年') + '月'),
-          datasets: [{ label: '利用回数', data: keys.map(k => agg[k].count), borderColor: getCssVar('--accent-pink'), backgroundColor: 'transparent', tension: 0.3 }]
+          labels: keys.length ? keys.map(function(k) { return k.replace('-', '年') + '月'; }) : ['—'],
+          datasets: [{
+            label: '遊んだ回数',
+            data: keys.length ? keys.map(function(k) { return agg[k].count; }) : [0],
+            borderColor: pink,
+            backgroundColor: 'transparent',
+            tension: 0.3,
+            pointRadius: 3
+          }]
         },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { font: { size: 10 } }, grid: { display: false } },
+            y: { beginAtZero: true, ticks: { font: { size: 10 }, precision: 0 } }
+          }
+        }
       });
+      } /* canvasTrend */
+
 
       const canvasAmount = document.getElementById('dashAmountChart');
       if (canvasAmount) {
@@ -16416,8 +16382,8 @@ ${sideActionsHtml}
         amountChartInstance = new Chart(canvasAmount.getContext('2d'), {
           type: 'line',
           data: {
-            labels: keys.map(k => k.replace('-', '年') + '月'),
-            datasets: [{ label: '利用金額', data: keys.map(k => agg[k].amount), borderColor: getCssVar('--rank-c2'), backgroundColor: 'transparent', tension: 0.3 }]
+            labels: keys.length ? keys.map(k => k.replace('-', '年') + '月') : ['—'],
+            datasets: [{ label: '利用金額', data: keys.length ? keys.map(k => agg[k].amount) : [0], borderColor: getCssVar('--rank-c2', '#ff6b6b'), backgroundColor: 'transparent', tension: 0.3, pointRadius: 3 }]
           },
           options: {
             responsive: true, maintainAspectRatio: false,
@@ -16437,62 +16403,119 @@ ${sideActionsHtml}
       const top = entries.slice(0, 5);
       const colors = [getCssVar('--rank-c1'), getCssVar('--rank-c2'), getCssVar('--rank-c3'), getCssVar('--rank-c4'), getCssVar('--rank-c5')];
 
-      if(rankingChartInstance) rankingChartInstance.destroy();
+      const prevRecords = (typeof getPreviousPeriodRecords === 'function')
+        ? getPreviousPeriodRecords(historyList, dashPeriodType) : [];
+      const prevTotal = prevRecords.length;
+      const curTotal = records.length;
+      if (canvasRank && listEl) {
+      const rankWrap = canvasRank.closest('.dash-v2-donut-wrap') || canvasRank.parentElement;
+
+      if (rankingChartInstance) { try { rankingChartInstance.destroy(); } catch (e) {} }
       rankingChartInstance = new Chart(canvasRank.getContext('2d'), {
         type: 'doughnut',
         data: {
-          labels: top.map(t => t.name),
-          datasets: [{ data: top.map(t => t.count), backgroundColor: colors.slice(0, top.length), borderWidth: 2, borderColor: getCssVar('--card-bg') }]
+          labels: top.map(function(t) { return t.name; }),
+          datasets: [{
+            data: top.length ? top.map(function(t) { return t.count; }) : [1],
+            backgroundColor: top.length ? colors.slice(0, top.length) : ['#dee2e6'],
+            borderWidth: 2,
+            borderColor: getCssVar('--card-bg', '#fff')
+          }]
         },
-        options: { responsive: true, maintainAspectRatio: false, cutout: '68%', plugins: { legend: { display: false } } }
+        options: buildDashDonutOptions(function(index) {
+          setDashActiveSlice(rankingChartInstance, index);
+          dashHighlightRank('dashRankList', index);
+          if (index >= 0 && top[index]) {
+            updateDonutCenter(rankWrap, top[index].count + '回', top[index].name, prevTotal, curTotal);
+          } else {
+            updateDonutCenter(rankWrap, curTotal + '回', '女の子別', prevTotal, curTotal);
+          }
+        })
       });
+      updateDonutCenter(rankWrap, curTotal + '回', '女の子別', prevTotal, curTotal);
 
-      listEl.innerHTML = top.map((t, i) => {
-        const tAmountDisplay = currentAmountHide === 'hide' ? '***' : `¥${t.amount.toLocaleString()}`;
-        return `
-        <div class="rank-row">
-          <span class="rank-dot" style="background:${colors[i]};"></span>
-          <span class="rank-name">${t.name}</span>
-          <span class="rank-sub">${t.count}回</span>
-          <span class="rank-pct">${tAmountDisplay}</span>
-        </div>`;
+      listEl.innerHTML = top.map(function(t, idx) {
+        const tAmountDisplay = currentAmountHide === 'hide' ? '***' : ('¥' + t.amount.toLocaleString());
+        const escaped = String(t.name).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+        return '<div class="rank-row" data-idx="' + idx + '" data-cast="' + escaped + '">' +
+          '<span class="rank-dot" style="background:' + colors[idx] + ';"></span>' +
+          '<span class="rank-name">' + escaped + '</span>' +
+          '<span class="rank-sub">' + t.count + '回</span>' +
+          '<span class="rank-pct">' + tAmountDisplay + '</span></div>';
       }).join('');
+
+      listEl.onclick = function(e) {
+        const row = e.target.closest('.rank-row');
+        if (!row) return;
+        const idx = parseInt(row.getAttribute('data-idx'), 10);
+        const name = row.getAttribute('data-cast') || '';
+        setDashActiveSlice(rankingChartInstance, idx);
+        dashHighlightRank('dashRankList', idx);
+        if (top[idx]) updateDonutCenter(rankWrap, top[idx].count + '回', top[idx].name, prevTotal, curTotal);
+        if (typeof navigateToCastCard === 'function') navigateToCastCard(name, e);
+      };
+      } /* canvasRank */
 
       const canvasStore = document.getElementById('dashStoreChart');
       const listStoreEl = document.getElementById('dashStoreList');
       if (canvasStore && listStoreEl) {
         const byStore = {};
-        records.forEach(v => {
+        records.forEach(function(v) {
           const st = v.storeName && v.storeName.trim() ? v.storeName.trim() : '未設定・その他';
           if (!byStore[st]) byStore[st] = { count: 0, amount: 0 };
           byStore[st].count++;
           byStore[st].amount += Number(v.amount) || 0;
         });
-
-        let storeEntries = Object.keys(byStore).map(name => ({ name, ...byStore[name] })).sort((a,b) => b.count - a.count || b.amount - a.amount);
-        const topStores = storeEntries.slice(0, 5);
+        const topStores = Object.keys(byStore).map(function(name) {
+          return { name: name, count: byStore[name].count, amount: byStore[name].amount };
+        }).sort(function(a, b) { return b.count - a.count || b.amount - a.amount; }).slice(0, 5);
         const storeColors = [getCssVar('--rank-c1'), getCssVar('--rank-c2'), getCssVar('--rank-c3'), getCssVar('--rank-c4'), getCssVar('--rank-c5')];
+        const storeWrap = canvasStore.closest('.dash-v2-donut-wrap') || canvasStore.parentElement;
 
-        if (window.storeChartInstance) window.storeChartInstance.destroy();
+        if (window.storeChartInstance) { try { window.storeChartInstance.destroy(); } catch (e) {} }
         window.storeChartInstance = new Chart(canvasStore.getContext('2d'), {
           type: 'doughnut',
           data: {
-            labels: topStores.map(t => t.name),
-            datasets: [{ data: topStores.map(t => t.count), backgroundColor: storeColors.slice(0, topStores.length), borderWidth: 2, borderColor: getCssVar('--card-bg') }]
+            labels: topStores.map(function(t) { return t.name; }),
+            datasets: [{
+              data: topStores.length ? topStores.map(function(t) { return t.count; }) : [1],
+              backgroundColor: topStores.length ? storeColors.slice(0, topStores.length) : ['#dee2e6'],
+              borderWidth: 2,
+              borderColor: getCssVar('--card-bg', '#fff')
+            }]
           },
-          options: { responsive: true, maintainAspectRatio: false, cutout: '68%', plugins: { legend: { display: false } } }
+          options: buildDashDonutOptions(function(index) {
+            setDashActiveSlice(window.storeChartInstance, index);
+            dashHighlightRank('dashStoreList', index);
+            if (index >= 0 && topStores[index]) {
+              updateDonutCenter(storeWrap, topStores[index].count + '回', topStores[index].name, prevTotal, curTotal);
+            } else {
+              updateDonutCenter(storeWrap, curTotal + '回', '店舗別', prevTotal, curTotal);
+            }
+          })
         });
+        updateDonutCenter(storeWrap, curTotal + '回', '店舗別', prevTotal, curTotal);
 
-        listStoreEl.innerHTML = topStores.map((t, i) => {
-          const stAmountDisplay = currentAmountHide === 'hide' ? '***' : `¥${t.amount.toLocaleString()}`;
-          return `
-          <div class="rank-row">
-            <span class="rank-dot" style="background:${storeColors[i]};"></span>
-            <span class="rank-name">${t.name}</span>
-            <span class="rank-sub">${t.count}回</span>
-            <span class="rank-pct">${stAmountDisplay}</span>
-          </div>`;
+        listStoreEl.innerHTML = topStores.map(function(t, idx) {
+          const stAmountDisplay = currentAmountHide === 'hide' ? '***' : ('¥' + t.amount.toLocaleString());
+          const escaped = String(t.name).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+          return '<div class="rank-row" data-idx="' + idx + '" data-store="' + escaped + '">' +
+            '<span class="rank-dot" style="background:' + storeColors[idx] + ';"></span>' +
+            '<span class="rank-name">' + escaped + '</span>' +
+            '<span class="rank-sub">' + t.count + '回</span>' +
+            '<span class="rank-pct">' + stAmountDisplay + '</span></div>';
         }).join('');
+
+        listStoreEl.onclick = function(e) {
+          const row = e.target.closest('.rank-row');
+          if (!row) return;
+          const idx = parseInt(row.getAttribute('data-idx'), 10);
+          const name = row.getAttribute('data-store') || '';
+          setDashActiveSlice(window.storeChartInstance, idx);
+          dashHighlightRank('dashStoreList', idx);
+          if (topStores[idx]) updateDonutCenter(storeWrap, topStores[idx].count + '回', topStores[idx].name, prevTotal, curTotal);
+          navigateToStoreFromDash(name, e);
+        };
       }
 
       const canvasType = document.getElementById('dashTypeChart');
@@ -16519,8 +16542,10 @@ ${sideActionsHtml}
             labels: topTypes.map(t => t.name),
             datasets: [{ data: topTypes.map(t => t.count), backgroundColor: typeColors.slice(0, topTypes.length), borderWidth: 2, borderColor: getCssVar('--card-bg') }]
           },
-          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-        });
+          options: Object.assign(buildDashDonutOptions(function(index) {
+          setDashActiveSlice(window.typeChartInstance, index);
+          dashHighlightRank('dashTypeList', index);
+        }), { cutout: 0 })});
 
         if (topTypes.length === 0) {
           listTypeEl.innerHTML = '<div style="text-align:center;font-size:0.8rem;color:var(--light-text);padding:10px;">系統の記録がありません</div>';
@@ -16642,7 +16667,7 @@ ${sideActionsHtml}
       const totalAmountDisplay = currentAmountHide === 'hide' ? '***' : `¥${totalAmount.toLocaleString()}`;
 
       el.innerHTML = `
-        <div class="stat-card" onclick="openBadge3DModal('visits')" style="cursor:pointer;"><div class="stat-card-lbl">🏆 累計利用回数</div><div class="stat-card-val">${totalVisits}回</div></div>
+        <div class="stat-card" onclick="openBadge3DModal('visits')" style="cursor:pointer;"><div class="stat-card-lbl">🏆 累計遊んだ回数</div><div class="stat-card-val">${totalVisits}回</div></div>
         <div class="stat-card" onclick="openBadge3DModal('amount')" style="cursor:pointer;"><div class="stat-card-lbl">💰 累計支出額</div><div class="stat-card-val">${totalAmountDisplay}</div></div>
         <div class="stat-card" onclick="openBadge3DModal('casts')" style="cursor:pointer;"><div class="stat-card-lbl">👥 総経験人数</div><div class="stat-card-val">${uniqueCasts}人</div></div>
         <div class="stat-card" onclick="openBadge3DModal('time')" style="cursor:pointer;"><div class="stat-card-lbl">⏱️ 累計プレイ時間</div><div class="stat-card-val" style="font-size:0.9rem;">${playTimeDisplay}</div></div>
@@ -16706,7 +16731,7 @@ ${sideActionsHtml}
       let categoryName = "", currentValStr = "";
 
       if (catKey === 'visits') {
-        categoryName = "🏆 累計利用回数";
+        categoryName = "🏆 累計遊んだ回数";
         currentValStr = `${data.totalVisits} 回`;
       } 
       else if (catKey === 'amount') {
@@ -18788,12 +18813,12 @@ ${sideActionsHtml}
       return `あなたは利用者本人と一緒に思い出を振り返る、親しみやすく丁寧な口調のパートナーAIです。以下はある利用者本人の全利用記録の集計データです。データを元に「自分はこれまでこんな感じで遊んでいたんだな」と懐かしく振り返れるような、温かみのある総合分析をしてください。単なる説教くさいアドバイスにはせず、まずは振り返り・思い出語りをメインにしてください。
 
 【集計データ】
-・総利用回数: ${data.total}回（記録期間: ${data.firstDate || '?'} 〜 ${data.lastDate || '?'}）
+・遊んだ総回数: ${data.total}回（記録期間: ${data.firstDate || '?'} 〜 ${data.lastDate || '?'}）
 ・利用した女の子数: ${data.uniqueCastCount}人 / 利用した店舗数: ${data.uniqueStoreCount}店舗
 ・最も多く指名した女の子TOP5: ${topCastText}
 ・最もよく通った店舗TOP5: ${topStoreText}
-・最も利用回数が多かった月: ${peakMonthText}
-・最も利用回数が多かった年: ${peakYearText}
+・最も遊んだ回数が多かった月: ${peakMonthText}
+・最も遊んだ回数が多かった年: ${peakYearText}
 ・アタリ（🆂当たり／オキニ）率: ${data.atariRate}%（${data.atariCount}件）
 ・ハズレ（⚔）率: ${data.hazureRate}%（${data.hazureCount}件）
 ・低評価（1〜2点）が付いた記録: ${data.lowScoreCount}件
@@ -19095,7 +19120,7 @@ ${sideActionsHtml}
 【参考：利用者全体の平均データ】
 ・全体の平均評価（5点満点、参考値）: ルックス/接客/スタイル/イチャ度/コスパの全体平均
 ・全体のアタリ率: ${overallData.atariRate}% / 全体の平均利用金額: ${overallData.avgAmount ? overallData.avgAmount.toLocaleString() + '円' : 'データ不足'}
-・全体の総利用回数: ${overallData.total}回
+・全体の遊んだ総回数: ${overallData.total}回
 
 【出力形式】必ず以下の3つの見出しで、日本語で回答してください。
 【このコとの歩み】
@@ -19269,7 +19294,7 @@ ${sideActionsHtml}
       return `あなたは利用者本人と一緒に古い日記や写真アルバムを読み返すような、温かく懐かしいトーンのパートナーAIです。以下は「${startYM} 〜 ${endYM}」という特定の期間だけに絞った利用記録データと、全期間の平均データです。この特定の時期にフォーカスして、「あの頃はこんな感じだったな」と思い出に浸れるような振り返りをしてください。
 
 【${startYM} 〜 ${endYM} の期間データ】
-・この期間の利用回数: ${eraData.total}回
+・この期間の遊んだ回数: ${eraData.total}回
 ・この期間によく指名した女の子: ${topCastText}
 ・この期間によく通った店舗: ${topStoreText}
 ・この期間のアタリ率: ${eraData.atariRate}%（${eraData.atariCount}件）
@@ -19277,7 +19302,7 @@ ${sideActionsHtml}
 ・印象的な記録（初出勤・高額・卒業・当たり等のフラグ付き）: ${highlightText}
 
 【参考：全期間の平均データ】
-・総利用回数: ${overallData.total}回（月あたり約${overallData.visitsPerMonth}回）
+・遊んだ総回数: ${overallData.total}回（月あたり約${overallData.visitsPerMonth}回）
 ・全期間のアタリ率: ${overallData.atariRate}%
 ・全期間の平均利用金額: ${overallData.avgAmount ? overallData.avgAmount.toLocaleString() + '円' : 'データ不足'}
 
@@ -19525,7 +19550,7 @@ ${sideActionsHtml}
       }).filter(Boolean).join('\n');
 
       return `【集計サマリー】
-総利用回数: ${overall.total}回 / アタリ率: ${overall.atariRate}% / ハズレ率: ${overall.hazureRate}% / 平均金額: ${overall.avgAmount ? overall.avgAmount.toLocaleString() + '円' : '-'}
+遊んだ総回数: ${overall.total}回 / アタリ率: ${overall.atariRate}% / ハズレ率: ${overall.hazureRate}% / 平均金額: ${overall.avgAmount ? overall.avgAmount.toLocaleString() + '円' : '-'}
 
 【当欠（女の子都合キャンセル）データ】
 ${noShowLines || '記録された当欠はありません'}
