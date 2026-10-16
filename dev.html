@@ -7028,10 +7028,18 @@
             <label>店舗業種</label>
             <select id="editModalStoreCategory">
               <option value="デリヘル">デリヘル</option>
+              <option value="ホテヘル">ホテヘル</option>
+              <option value="ホテトル">ホテトル</option>
               <option value="ヘルス">ヘルス</option>
               <option value="ソープ">ソープ</option>
-              <option value="エステ">エステ</option>
+              <option value="メンズエステ">メンズエステ</option>
               <option value="ピンサロ">ピンサロ</option>
+              <option value="オナクラ">オナクラ</option>
+              <option value="おっパブ">おっパブ</option>
+              <option value="セクキャバ">セクキャバ</option>
+              <option value="料亭">料亭</option>
+              <option value="ちょんの間">ちょんの間</option>
+              <option value="ピンポンマンション">ピンポンマンション</option>
               <option value="その他">その他</option>
             </select>
           </div>
@@ -7612,10 +7620,18 @@
                 </select></div>
               <div class="form-group" style="flex:1;"><label>業種</label><select id="addStoreCategory">
                   <option value="デリヘル">デリヘル</option>
+                  <option value="ホテヘル">ホテヘル</option>
+                  <option value="ホテトル">ホテトル</option>
                   <option value="ヘルス">ヘルス</option>
                   <option value="ソープ">ソープ</option>
-                  <option value="エステ">エステ</option>
+                  <option value="メンズエステ">メンズエステ</option>
                   <option value="ピンサロ">ピンサロ</option>
+                  <option value="オナクラ">オナクラ</option>
+                  <option value="おっパブ">おっパブ</option>
+                  <option value="セクキャバ">セクキャバ</option>
+                  <option value="料亭">料亭</option>
+                  <option value="ちょんの間">ちょんの間</option>
+                  <option value="ピンポンマンション">ピンポンマンション</option>
                   <option value="その他">その他</option>
                 </select></div>
             </div>
@@ -7850,10 +7866,18 @@
             <label>店舗業種</label>
             <select id="editStoreCategory">
               <option value="デリヘル">デリヘル</option>
+              <option value="ホテヘル">ホテヘル</option>
+              <option value="ホテトル">ホテトル</option>
               <option value="ヘルス">ヘルス</option>
               <option value="ソープ">ソープ</option>
-              <option value="エステ">エステ</option>
+              <option value="メンズエステ">メンズエステ</option>
               <option value="ピンサロ">ピンサロ</option>
+              <option value="オナクラ">オナクラ</option>
+              <option value="おっパブ">おっパブ</option>
+              <option value="セクキャバ">セクキャバ</option>
+              <option value="料亭">料亭</option>
+              <option value="ちょんの間">ちょんの間</option>
+              <option value="ピンポンマンション">ピンポンマンション</option>
               <option value="その他">その他</option>
             </select>
           </div>
@@ -15763,13 +15787,23 @@ ${sideActionsHtml}
     /* 🏬 【機能改修】マイ図鑑：店舗別表示（折りたたみ式＋一番指名している子表示＋店舗情報編集モーダル） */
     /* 🎨 店舗業種ごとのバッジカラー */
     function getCategoryStyle(cat) {
+      // 旧データ「エステ」→ メンズエステ扱い
+      if (cat === 'エステ') cat = 'メンズエステ';
       const map = {
-        'デリヘル': { bg: '#ffd9e6', color: '#c2185b' },
-        'ヘルス':   { bg: '#ff8fab', color: '#ffffff' },
-        'ソープ':   { bg: '#b197fc', color: '#ffffff' },
-        'エステ':   { bg: '#d3f9d8', color: '#2b8a3e' },
-        'ピンサロ': { bg: '#ffd8a8', color: '#d9480f' },
-        'その他':   { bg: '#e0e0e0', color: '#495057' }
+        'デリヘル':         { bg: '#ffd9e6', color: '#c2185b' },
+        'ホテヘル':         { bg: '#c5f6fa', color: '#0b7285' },
+        'ホテトル':         { bg: '#99e9f2', color: '#087f5b' },
+        'ヘルス':           { bg: '#ff8fab', color: '#ffffff' },
+        'ソープ':           { bg: '#b197fc', color: '#ffffff' },
+        'メンズエステ':     { bg: '#d3f9d8', color: '#2b8a3e' },
+        'ピンサロ':         { bg: '#ffd8a8', color: '#d9480f' },
+        'オナクラ':         { bg: '#e5dbff', color: '#5f3dc4' },
+        'おっパブ':         { bg: '#ffe8cc', color: '#e8590c' },
+        'セクキャバ':       { bg: '#ffc9c9', color: '#c92a2a' },
+        '料亭':             { bg: '#f3d9b1', color: '#8c5a2b' },
+        'ちょんの間':       { bg: '#f5d0c5', color: '#9c2b1f' },
+        'ピンポンマンション': { bg: '#fff3bf', color: '#e67700' },
+        'その他':           { bg: '#e9ecef', color: '#495057' }
       };
       return map[cat] || map['その他'];
     }
@@ -15854,7 +15888,7 @@ ${sideActionsHtml}
       list.forEach(s => {
         const storeInfo = storeInfoData[s.storeName] || {};
         const prefText = storeInfo.pref || '所在地未設定';
-        const categoryText = storeInfo.category || 'ヘルス';
+        const categoryText = (storeInfo.category === 'エステ' ? 'メンズエステ' : (storeInfo.category || 'ヘルス'));
         const phoneNum = storeInfo.phone || '';
         const webUrl = storeInfo.web || '';
 
