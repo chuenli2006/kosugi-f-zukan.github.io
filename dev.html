@@ -5595,6 +5595,284 @@
       30%, 60% { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-pink, #f72585) 55%, transparent); }
     }
 
+
+    /* ===== Wrapped（ストーリー振り返り） ===== */
+    #viewWrapped {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 12000;
+      background: var(--bg-color, #faf8f7);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 0 0 48px;
+      box-sizing: border-box;
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
+    }
+    #viewWrapped.open {
+      display: block;
+      pointer-events: auto;
+      animation: wrappedOpen 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    #viewWrapped.is-closing {
+      display: block;
+      pointer-events: none;
+      animation: wrappedClose 0.32s cubic-bezier(0.4, 0, 0.2, 1) both;
+    }
+    @keyframes wrappedOpen {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes wrappedClose {
+      from { opacity: 1; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(10px); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #viewWrapped.open,
+      #viewWrapped.is-closing {
+        animation: none;
+        opacity: 1;
+        transform: none;
+      }
+      #viewWrapped.is-closing { display: none; }
+    }
+    body.dark-mode #viewWrapped {
+      background: var(--bg-color, #121212);
+    }
+    .wrapped-top {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: color-mix(in srgb, var(--bg-color, #faf8f7) 92%, transparent);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-color);
+    }
+    .wrapped-close {
+      border: none;
+      background: transparent;
+      color: var(--text-color);
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 6px 10px;
+      cursor: pointer;
+    }
+    .wrapped-period-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--light-text);
+    }
+    .wrapped-inner {
+      max-width: 420px;
+      margin: 0 auto;
+      padding: 20px 18px 40px;
+    }
+    .wrapped-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 28px 22px;
+      margin-bottom: 18px;
+      box-shadow: var(--shadow);
+      animation: wrappedIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    .wrapped-card:nth-child(1) { animation-delay: 0.05s; }
+    .wrapped-card:nth-child(2) { animation-delay: 0.1s; }
+    .wrapped-card:nth-child(3) { animation-delay: 0.15s; }
+    .wrapped-card:nth-child(4) { animation-delay: 0.2s; }
+    .wrapped-card:nth-child(5) { animation-delay: 0.25s; }
+    .wrapped-card:nth-child(6) { animation-delay: 0.3s; }
+    @keyframes wrappedIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .wrapped-kicker {
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      color: var(--accent-pink, #f72585);
+      margin: 0 0 10px;
+      text-transform: uppercase;
+    }
+    .wrapped-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--text-color);
+      margin: 0 0 8px;
+      line-height: 1.35;
+      letter-spacing: 0.02em;
+    }
+    .wrapped-tagline {
+      font-size: 0.9rem;
+      color: var(--light-text);
+      margin: 0;
+      line-height: 1.5;
+    }
+    .wrapped-big {
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--text-color);
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin: 12px 0 4px;
+    }
+    .wrapped-big span {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-left: 4px;
+      color: var(--light-text);
+    }
+    .wrapped-meta {
+      font-size: 0.78rem;
+      color: var(--light-text);
+      margin-top: 8px;
+    }
+    .wrapped-meta b { color: var(--text-color); font-weight: 700; }
+    .wrapped-meta.up { color: #2f9e44; }
+    .wrapped-meta.down { color: #e03131; }
+    .wrapped-list {
+      list-style: none;
+      margin: 12px 0 0;
+      padding: 0;
+    }
+    .wrapped-list li {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.92rem;
+    }
+    .wrapped-list li:last-child { border-bottom: none; }
+    .wrapped-list .w-rank {
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: var(--accent-pink, #f72585);
+      width: 1.4em;
+      flex-shrink: 0;
+    }
+    .wrapped-list .w-name {
+      flex: 1;
+      font-weight: 700;
+      color: var(--text-color);
+    }
+    .wrapped-list .w-count {
+      font-weight: 700;
+      color: var(--light-text);
+      font-size: 0.82rem;
+    }
+    .wrapped-footer-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .wrapped-btn {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .wrapped-btn-primary {
+      background: linear-gradient(135deg, var(--accent-pink, #f72585), #ff6b9d);
+      color: #fff;
+    }
+    .wrapped-btn-ghost {
+      background: transparent;
+      color: var(--light-text);
+      border: 1px solid var(--border-color);
+    }
+    .wrapped-entry {
+      position: absolute;
+      right: 10px;
+      bottom: 8px;
+      border: none;
+      background: transparent;
+      color: var(--light-text);
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      opacity: 0.5;
+      padding: 4px 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .wrapped-entry .wrapped-entry-label {
+      font-size: 0.58rem;
+      font-weight: 700;
+      opacity: 0.9;
+      letter-spacing: 0.02em;
+    }
+    .wrapped-entry .wrapped-entry-chevs {
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      animation: wrappedChevron 1.6s ease-in-out infinite;
+      display: inline-block;
+    }
+    .wrapped-entry:active { opacity: 0.9; }
+    @keyframes wrappedChevron {
+      0%, 100% { transform: translateX(0); opacity: 0.4; }
+      50% { transform: translateX(5px); opacity: 0.85; }
+    }
+    .wrapped-subhead {
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--accent-pink, #f72585);
+      margin: 16px 0 4px;
+      letter-spacing: 0.04em;
+    }
+    .wrapped-new-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .wrapped-new-list li {
+      padding: 6px 0;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+    .wrapped-new-list li:last-child { border-bottom: none; }
+    .wrapped-new-list .w-new-tag {
+      font-size: 0.58rem;
+      font-weight: 800;
+      color: var(--accent-pink, #f72585);
+      margin-right: 6px;
+      letter-spacing: 0.06em;
+    }
+    .dash-v2-hero { position: relative; padding-bottom: 28px; }
+    .wrapped-entry-cum {
+      display: block;
+      width: 100%;
+      margin-top: 10px;
+      border: 1px solid var(--border-color);
+      background: transparent;
+      color: var(--light-text);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 8px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      opacity: 0.85;
+    }
+    .wrapped-entry-cum:active { opacity: 1; }
+    @media (prefers-reduced-motion: reduce) {
+      .wrapped-entry { animation: none; }
+      .wrapped-card { animation: none; }
+    }
+
     #viewDashboard {
       width: 100%;
       padding: 8px 14px 100px;
@@ -6030,6 +6308,16 @@
             </div>
           </details>
         </div>
+      </div>
+
+
+      <!-- Wrapped ストーリー画面 -->
+      <div id="viewWrapped" aria-hidden="true">
+        <div class="wrapped-top">
+          <button type="button" class="wrapped-close" onclick="closeWrapped()">← 統計に戻る</button>
+          <span class="wrapped-period-label" id="wrappedPeriodLabel"></span>
+        </div>
+        <div class="wrapped-inner" id="wrappedContent"></div>
       </div>
 
       <!-- 5. 共有タブ -->
@@ -16025,6 +16313,407 @@ ${sideActionsHtml}
       });
     }
 
+    
+    function getWrappedPeriodLabel(type) {
+      const map = { month: '今月', '3months': '直近3ヶ月', halfyear: '直近半年', year: '直近1年', all: '全期間' };
+      return map[type] || 'この期間';
+    }
+
+    function buildWrappedTagline(ctx) {
+      ctx = ctx || {};
+      const visits = ctx.visits || 0;
+      const prevVisits = ctx.prevVisits || 0;
+      const topCastShare = ctx.topCastShare || 0;
+      const storeCount = ctx.storeCount || 0;
+      const newCastCount = ctx.newCastCount || 0;
+      const uniqueCasts = ctx.uniqueCasts || 0;
+      const newStoreCount = ctx.newStoreCount || 0;
+      const topStoreShare = ctx.topStoreShare || 0;
+      const totalAmount = ctx.totalAmount || 0;
+      const prevAmount = ctx.prevAmount || 0;
+      const avgUnit = ctx.avgUnit || 0;
+      const overallAvgUnit = ctx.overallAvgUnit || 0;
+      const playUnique = ctx.playUnique || 0;
+      const topPlayShare = ctx.topPlayShare || 0;
+      const atariRate = ctx.atariRate;
+      const hazureRate = ctx.hazureRate;
+      const periodType = ctx.periodType || 'month';
+      const canCompare = periodType !== 'all' && prevVisits >= 0;
+
+      if (visits <= 0) return 'まだ物語の途中。記録を増やすと彩りが出ます。';
+      if (visits === 1) return '一回の出会いが、ちゃんと残っている。';
+      if (newCastCount >= 2 && uniqueCasts > 0 && newCastCount / uniqueCasts >= 0.5) {
+        return '新しい顔が多かった期間。開拓の季節。';
+      }
+      if (topCastShare >= 0.4) return 'リピート多め。お気に入りに足を運んだ期間。';
+      if (topStoreShare >= 0.45) return 'いつもの場所で、深掘りした期間。';
+      if (storeCount >= 3 && topStoreShare < 0.35) return 'はしご月。いくつかの場所を巡った記録。';
+      if (newStoreCount >= 2) return '地図が広がった期間。新しい店に足を踏み入れた。';
+      if (canCompare && prevVisits >= 1 && visits >= prevVisits * 1.25) {
+        return '足繁く通った期間。ペースが上がっています。';
+      }
+      if (canCompare && prevVisits >= 2 && visits <= prevVisits * 0.75) {
+        return '穏やかめのペース。余白のある期間。';
+      }
+      if (canCompare && prevAmount > 0 && totalAmount >= prevAmount * 1.3) {
+        return '投資が厚め。気合の入った期間。';
+      }
+      if (canCompare && prevAmount > 0 && totalAmount <= prevAmount * 0.7) {
+        return '抑えめの出費。賢く遊んだ印象。';
+      }
+      if (overallAvgUnit > 0 && avgUnit >= overallAvgUnit * 1.25) {
+        return '単価高め。特別感を選んだ回が多め。';
+      }
+      if (overallAvgUnit > 0 && visits >= 2 && avgUnit <= overallAvgUnit * 0.8) {
+        return 'コスパ意識がにじむ期間。';
+      }
+      if (playUnique >= 5) return '探究心が強かった期間。メニューが幅広い。';
+      if (topPlayShare >= 0.4) return 'いつものプレイに軸足。型が定まってきた。';
+      if (atariRate != null && atariRate >= 0.6 && ctx.flaggedCount >= 2) {
+        return '当たりが多め。調子のよい期間。';
+      }
+      if (hazureRate != null && hazureRate >= 0.3 && ctx.flaggedCount >= 2) {
+        return '相性の見直しが効いたかもしれない期間。';
+      }
+      return 'この期間のプレイを、静かに振り返る。';
+    }
+
+    window.openWrapped = function openWrapped() {
+      if (typeof isPcViewMode === 'function' && isPcViewMode()) {
+        if (typeof showPcGuideModal === 'function') showPcGuideModal('Wrapped');
+        return;
+      }
+      const el = document.getElementById('viewWrapped');
+      if (!el) return;
+      renderWrapped();
+      el.classList.remove('is-closing');
+      el.classList.add('open');
+      el.setAttribute('aria-hidden', 'false');
+      try { el.scrollTop = 0; } catch (e) {}
+      document.body.style.overflow = 'hidden';
+    }
+
+    window.closeWrapped = function closeWrapped() {
+      const el = document.getElementById('viewWrapped');
+      if (!el) {
+        document.body.style.overflow = '';
+        return;
+      }
+      if (!el.classList.contains('open') && !el.classList.contains('is-closing')) {
+        document.body.style.overflow = '';
+        return;
+      }
+      if (el.classList.contains('is-closing')) return;
+
+      const finish = function() {
+        el.classList.remove('open', 'is-closing');
+        el.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        el.removeEventListener('animationend', onEnd);
+      };
+      const onEnd = function(e) {
+        if (e.target !== el) return;
+        finish();
+      };
+
+      const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce) {
+        finish();
+        return;
+      }
+      el.classList.remove('open');
+      el.classList.add('is-closing');
+      el.addEventListener('animationend', onEnd);
+      // フォールバック
+      setTimeout(finish, 400);
+    }
+
+    function renderWrapped() {
+      const content = document.getElementById('wrappedContent');
+      const periodLab = document.getElementById('wrappedPeriodLabel');
+      if (!content) return;
+
+      const type = (typeof dashPeriodType !== 'undefined') ? dashPeriodType : 'month';
+      if (periodLab) periodLab.textContent = getWrappedPeriodLabel(type);
+
+      const list = (typeof historyList !== 'undefined' && historyList) ? historyList : [];
+      const records = (typeof filterRecordsByPeriod === 'function')
+        ? filterRecordsByPeriod(list, type) : list.slice();
+      const prev = (typeof getPreviousPeriodRecords === 'function')
+        ? getPreviousPeriodRecords(list, type) : [];
+
+      const visits = records.length;
+      const prevVisits = prev.length;
+      const totalAmount = records.reduce(function(s, v) { return s + (Number(v.amount) || 0); }, 0);
+      const prevAmount = prev.reduce(function(s, v) { return s + (Number(v.amount) || 0); }, 0);
+      const avgUnit = visits > 0 ? Math.round(totalAmount / visits) : 0;
+      const amountHide = (typeof currentAmountHide !== 'undefined' && currentAmountHide === 'hide');
+      const amountDisp = amountHide ? '***' : ('¥' + totalAmount.toLocaleString());
+      const avgDisp = amountHide ? '***' : ('¥' + avgUnit.toLocaleString());
+      const prevAmountDisp = amountHide ? '***' : ('¥' + prevAmount.toLocaleString());
+
+      function isHazureRec(v) {
+        const f = (v && v.flags != null) ? String(v.flags) : '';
+        return f.indexOf('⚔') >= 0;
+      }
+
+      function recTime(v) {
+        const y = parseInt(v.year, 10) || 0;
+        const m = parseInt(String(v.month != null ? v.month : '').replace(/\D/g, ''), 10) || 0;
+        const d = parseInt(v.day, 10) || parseInt(v.date, 10) || 1;
+        return y * 10000 + m * 100 + d;
+      }
+
+      // 期間内の名前ごとの最古日 / ハズレ有無
+      const castInPeriod = {};
+      records.forEach(function(v) {
+        if (!v || !v.name) return;
+        const n = v.name;
+        if (!castInPeriod[n]) castInPeriod[n] = { count: 0, hazure: false, first: recTime(v) };
+        castInPeriod[n].count++;
+        if (isHazureRec(v)) castInPeriod[n].hazure = true;
+        const t = recTime(v);
+        if (t < castInPeriod[n].first) castInPeriod[n].first = t;
+      });
+
+      // 期間より前に同名の記録があるか
+      const namesBefore = {};
+      list.forEach(function(v) {
+        if (!v || !v.name) return;
+        if (castInPeriod[v.name] && recTime(v) < castInPeriod[v.name].first) {
+          namesBefore[v.name] = true;
+        }
+      });
+      // 期間外かつ records に含まれない過去（簡易: 全履歴で期間外）
+      const recordSet = new Set(records);
+      list.forEach(function(v) {
+        if (!v || !v.name || !castInPeriod[v.name]) return;
+        if (recordSet.has(v)) return;
+        // 期間フィルタ外 = 以前 or 以後。以前判定は日付
+        if (recTime(v) < castInPeriod[v.name].first) namesBefore[v.name] = true;
+      });
+
+      const newCasts = Object.keys(castInPeriod).filter(function(n) {
+        return !namesBefore[n] && !castInPeriod[n].hazure;
+      }).sort(function(a, b) {
+        return castInPeriod[b].count - castInPeriod[a].count;
+      });
+
+      const byCast = {};
+      Object.keys(castInPeriod).forEach(function(n) {
+        byCast[n] = castInPeriod[n].count;
+      });
+      const topCasts = Object.keys(byCast).map(function(n) {
+        return { name: n, count: byCast[n] };
+      }).sort(function(a, b) { return b.count - a.count; }).slice(0, 3);
+      const topShare = (visits > 0 && topCasts[0]) ? (topCasts[0].count / visits) : 0;
+
+      // 店舗
+      const storeInPeriod = {};
+      records.forEach(function(v) {
+        const st = (v.storeName && v.storeName.trim()) ? v.storeName.trim() : '未設定・その他';
+        if (st === '未設定・その他') return;
+        if (!storeInPeriod[st]) storeInPeriod[st] = { count: 0, first: recTime(v) };
+        storeInPeriod[st].count++;
+        const t = recTime(v);
+        if (t < storeInPeriod[st].first) storeInPeriod[st].first = t;
+      });
+      const storesBefore = {};
+      list.forEach(function(v) {
+        const st = (v.storeName && v.storeName.trim()) ? v.storeName.trim() : '';
+        if (!st || !storeInPeriod[st]) return;
+        if (recordSet.has(v)) return;
+        if (recTime(v) < storeInPeriod[st].first) storesBefore[st] = true;
+      });
+      const newStores = Object.keys(storeInPeriod).filter(function(s) {
+        return !storesBefore[s];
+      }).sort(function(a, b) {
+        return storeInPeriod[b].count - storeInPeriod[a].count;
+      });
+
+      const byStore = {};
+      Object.keys(storeInPeriod).forEach(function(s) { byStore[s] = storeInPeriod[s].count; });
+      // 未設定も含めたTOP用
+      records.forEach(function(v) {
+        const st = (v.storeName && v.storeName.trim()) ? v.storeName.trim() : '未設定・その他';
+        if (!byStore[st]) byStore[st] = 0;
+        if (!storeInPeriod[st]) byStore[st]++;
+      });
+      // recount properly
+      const byStoreAll = {};
+      records.forEach(function(v) {
+        const st = (v.storeName && v.storeName.trim()) ? v.storeName.trim() : '未設定・その他';
+        byStoreAll[st] = (byStoreAll[st] || 0) + 1;
+      });
+      const topStores = Object.keys(byStoreAll).map(function(n) {
+        return { name: n, count: byStoreAll[n] };
+      }).sort(function(a, b) { return b.count - a.count; }).slice(0, 3);
+
+      // プレイタグ集計（現代名のまま・1レコード内は重複排除）
+      const playCount = {};
+      records.forEach(function(v) {
+        let tags = v.playTags;
+        if (!tags) return;
+        if (typeof tags === 'string') {
+          tags = tags.split(/[,、]/).map(function(s) { return s.trim(); }).filter(Boolean);
+        }
+        if (!Array.isArray(tags)) return;
+        const seen = {};
+        tags.forEach(function(t) {
+          if (!t || seen[t]) return;
+          seen[t] = true;
+          playCount[t] = (playCount[t] || 0) + 1;
+        });
+      });
+      const topPlays = Object.keys(playCount).map(function(n) {
+        return { name: n, count: playCount[n] };
+      }).sort(function(a, b) { return b.count - a.count; }).slice(0, 3);
+      const playUnique = Object.keys(playCount).length;
+      const playTotalTagged = Object.keys(playCount).reduce(function(s, k) { return s + playCount[k]; }, 0);
+      const topPlayShare = (playTotalTagged > 0 && topPlays[0]) ? (topPlays[0].count / playTotalTagged) : 0;
+
+      let flaggedCount = 0, atariN = 0, hazureN = 0;
+      records.forEach(function(v) {
+        const f = (v.flags != null) ? String(v.flags) : '';
+        if (!f) return;
+        let hit = false;
+        if (f.indexOf('🆂') >= 0 || f.indexOf('当たり') >= 0) { atariN++; hit = true; }
+        if (f.indexOf('⚔') >= 0) { hazureN++; hit = true; }
+        if (hit) flaggedCount++;
+      });
+      const atariRate = flaggedCount > 0 ? atariN / flaggedCount : null;
+      const hazureRate = flaggedCount > 0 ? hazureN / flaggedCount : null;
+
+      const overallAmount = list.reduce(function(s, v) { return s + (Number(v.amount) || 0); }, 0);
+      const overallAvgUnit = list.length > 0 ? Math.round(overallAmount / list.length) : 0;
+      const uniqueCasts = Object.keys(castInPeriod).length;
+      const topStoreShare = (visits > 0 && topStores[0]) ? (topStores[0].count / visits) : 0;
+
+      const tagline = buildWrappedTagline({
+        visits: visits,
+        prevVisits: prevVisits,
+        topCastShare: topShare,
+        storeCount: topStores.length,
+        newCastCount: newCasts.length,
+        uniqueCasts: uniqueCasts,
+        newStoreCount: newStores.length,
+        topStoreShare: topStoreShare,
+        totalAmount: totalAmount,
+        prevAmount: prevAmount,
+        avgUnit: avgUnit,
+        overallAvgUnit: overallAvgUnit,
+        playUnique: playUnique,
+        topPlayShare: topPlayShare,
+        atariRate: atariRate,
+        hazureRate: hazureRate,
+        flaggedCount: flaggedCount,
+        periodType: type
+      });
+
+      let diffHtml = '';
+      if (type !== 'all') {
+        const d = visits - prevVisits;
+        if (d > 0) diffHtml = '<div class="wrapped-meta up">前期比 +' + d + '回（前' + prevVisits + '回）</div>';
+        else if (d < 0) diffHtml = '<div class="wrapped-meta down">前期比 ' + d + '回（前' + prevVisits + '回）</div>';
+        else diffHtml = '<div class="wrapped-meta">前期比 ±0（前' + prevVisits + '回）</div>';
+      }
+
+      let moneyDiffHtml = '';
+      if (type !== 'all') {
+        const ad = totalAmount - prevAmount;
+        if (amountHide) {
+          moneyDiffHtml = '<div class="wrapped-meta">前期比 （金額非表示）</div>';
+        } else if (ad > 0) {
+          moneyDiffHtml = '<div class="wrapped-meta up">前期比 +¥' + ad.toLocaleString() + '（前' + prevAmountDisp + '）</div>';
+        } else if (ad < 0) {
+          moneyDiffHtml = '<div class="wrapped-meta down">前期比 −¥' + Math.abs(ad).toLocaleString() + '（前' + prevAmountDisp + '）</div>';
+        } else {
+          moneyDiffHtml = '<div class="wrapped-meta">前期比 ±0（前' + prevAmountDisp + '）</div>';
+        }
+      }
+
+      function listHtml(items) {
+        if (!items.length) return '<p class="wrapped-tagline">まだデータがありません。</p>';
+        return '<ul class="wrapped-list">' + items.map(function(it, i) {
+          const name = (typeof formatCastNameText === 'function' && it._cast)
+            ? formatCastNameText(it.name, (typeof castData !== 'undefined' && castData[it.name]) || {})
+            : it.name;
+          return '<li><span class="w-rank">' + (i + 1) + '</span><span class="w-name">' +
+            String(name).replace(/</g, '&lt;') + '</span><span class="w-count">' + it.count + '回</span></li>';
+        }).join('') + '</ul>';
+      }
+
+      function newListHtml(names, kind) {
+        if (!names.length) {
+          return '<p class="wrapped-tagline">' +
+            (kind === 'cast' ? '新しい出会いはなし。' : '新しく開拓した店はなし。') + '</p>';
+        }
+        return '<ul class="wrapped-new-list">' + names.map(function(n) {
+          let label = n;
+          if (kind === 'cast' && typeof formatCastNameText === 'function') {
+            label = formatCastNameText(n, (typeof castData !== 'undefined' && castData[n]) || {});
+          }
+          return '<li><span class="w-new-tag">NEW</span>' + String(label).replace(/</g, '&lt;') + '</li>';
+        }).join('') + '</ul>';
+      }
+
+      const castItems = topCasts.map(function(c) { return { name: c.name, count: c.count, _cast: true }; });
+
+      content.innerHTML =
+        '<section class="wrapped-card">' +
+          '<p class="wrapped-kicker">WRAPPED</p>' +
+          '<h2 class="wrapped-title">あなたの ' + getWrappedPeriodLabel(type) + '</h2>' +
+          '<p class="wrapped-tagline">' + tagline + '</p>' +
+        '</section>' +
+
+        '<section class="wrapped-card">' +
+          '<p class="wrapped-kicker">VOLUME</p>' +
+          '<h2 class="wrapped-title">遊んだ回数</h2>' +
+          '<div class="wrapped-big">' + visits + '<span>回</span></div>' +
+          diffHtml +
+        '</section>' +
+
+        '<section class="wrapped-card">' +
+          '<p class="wrapped-kicker">MONEY</p>' +
+          '<h2 class="wrapped-title">この期間の投資</h2>' +
+          '<div class="wrapped-big" style="font-size:2.2rem;">' + amountDisp + '</div>' +
+          '<div class="wrapped-meta">平均単価 <b>' + avgDisp + '</b></div>' +
+          moneyDiffHtml +
+        '</section>' +
+
+        '<section class="wrapped-card">' +
+          '<p class="wrapped-kicker">PEOPLE</p>' +
+          '<h2 class="wrapped-title">よく会った子</h2>' +
+          listHtml(castItems) +
+          '<p class="wrapped-subhead">新しい出会い</p>' +
+          newListHtml(newCasts, 'cast') +
+        '</section>' +
+
+        '<section class="wrapped-card">' +
+          '<p class="wrapped-kicker">PLACES</p>' +
+          '<h2 class="wrapped-title">よく行った店</h2>' +
+          listHtml(topStores) +
+          '<p class="wrapped-subhead">新しく開拓した店</p>' +
+          newListHtml(newStores, 'store') +
+        '</section>' +
+
+        '<section class="wrapped-card">' +
+          '<p class="wrapped-kicker">PLAYS</p>' +
+          '<h2 class="wrapped-title">よくしたプレイ</h2>' +
+          listHtml(topPlays) +
+        '</section>' +
+
+        '<section class="wrapped-card">' +
+          '<p class="wrapped-kicker">CLOSING</p>' +
+          '<h2 class="wrapped-title">また次の物語を。</h2>' +
+          '<p class="wrapped-tagline">スクショして、静かに残しておこう。</p>' +
+          '<div class="wrapped-footer-actions">' +
+            '<button type="button" class="wrapped-btn wrapped-btn-primary" onclick="closeWrapped()">統計に戻る</button>' +
+          '</div>' +
+        '</section>';
+    }
+
+
     function renderDashboard() {
       const wrap = document.getElementById('dashboardContent');
       const periodRow = document.getElementById('dashPeriodRow');
@@ -16063,13 +16752,14 @@ ${sideActionsHtml}
       wrap.innerHTML =
         '<div class="dash-v2-hero">' +
           '<div class="dash-v2-hero-main">' +
-            '<div class="dash-v2-hero-num"><span class="dash-num-label">遊んだ回数</span><span class="dash-num-value">' + totalVisits + '</span><span class="dash-num-value" style="display:inline;font-size:0.9rem;font-weight:700;margin-left:2px;">回</span></div>' +
+            '<div class="dash-v2-hero-num"><span class="dash-num-label">遊んだ回数</span><span class="dash-num-value">' + totalVisits + '</span><span class="dash-num-value dash-num-unit">回</span></div>' +
             '<div class="dash-v2-hero-num" style="text-align:right;"><span class="dash-num-label">支出合計</span><span class="dash-num-value">' + totalAmountDisplay + '</span></div>' +
           '</div>' +
           '<div class="dash-v2-hero-sub">' +
             '<span>人数 <b>' + uniqueCasts + '</b>人</span>' +
             '<span>平均単価 <b>' + avgUnitDisplay + '</b></span>' +
           '</div>' +
+          '<button type="button" class="wrapped-entry" onclick="openWrapped()" aria-label="Wrappedを見る"><span class="wrapped-entry-label">Wrapped</span><span class="wrapped-entry-chevs">&gt;&gt;&gt;</span></button>' +
         '</div>' +
 
         '<div class="dash-v2-section">' +
@@ -17038,43 +17728,43 @@ function getCssVar(name, fallback) {
       { cat: '責め・ロール', label: '潮吹き', desc: '噴き出すほどイキ潮を漏らし体を痙攣させながら絶頂する潮吹き' },
       { cat: '責め・ロール', label: '拘束・軽め', desc: '動けない状態で一方的に弄ばれ抵抗できない快感に身を委ねる軽拘束' },
       { cat: '責め・ロール', label: '鞭・軽SM', desc: '軽い痛みと支配の快感で興奮を高め疼く体をさらに敏感にする軽SM' },
-      // 7. 大江戸の四十八手（雅称 + modern で既存プレイとひも付け）
-      { cat: '大江戸の四十八手', label: '本手', modern: '挿入（正常位）', desc: '仰向けに寝た相手の上に覆い被さり、向き合って腰を打ちつける最も基本の体位' },
-      { cat: '大江戸の四十八手', label: '位の差', modern: '挿入（騎乗位）', desc: '相手が上になり跨がって腰を振り、主導権を握る騎乗の体勢' },
-      { cat: '大江戸の四十八手', label: '後朝', modern: '挿入（後背位）', desc: '四つん這いの相手の後ろから掴み、深く突き入れる後背の体勢' },
-      { cat: '大江戸の四十八手', label: '寄り添い', modern: '挿入（側位）', desc: '横向きに密着し、隙間なく体を重ねたままゆっくり出し入れする' },
-      { cat: '大江戸の四十八手', label: '立姿', modern: '立ちバック', desc: '立ったまま後ろから腰を押しつけ、激しく突き上げる立位の後背' },
-      { cat: '大江戸の四十八手', label: '対面座位', modern: '挿入（騎乗位）', desc: '座り抱き合うように密着し、胸を合わせたまま奥を探る座位' },
-      { cat: '大江戸の四十八手', label: '背面騎乗', modern: '挿入（騎乗位）', desc: '背を向けて跨がり、自分のペースで腰を落とす後ろ向きの騎乗' },
-      { cat: '大江戸の四十八手', label: '駅弁', modern: '立ちバック', desc: '相手を抱き上げ脚を絡ませたまま、立って突き上げる体勢' },
-      { cat: '大江戸の四十八手', label: '壁押し', modern: '立ちバック', desc: '壁に手をつかせ逃げ場をなくし、前または後ろから攻める' },
-      { cat: '大江戸の四十八手', label: '開脚', modern: '挿入（正常位）', desc: '脚を大きくM字に開かせ、正面から奥まで見下ろすように沈める' },
-      { cat: '大江戸の四十八手', label: '肩乗せ', modern: '挿入（正常位）', desc: '脚を肩に掛け折りたたむようにし、極めて深く入れる' },
-      { cat: '大江戸の四十八手', label: '屈曲', modern: '挿入（正常位）', desc: '相手の脚を大きく開き、体を折りたたむように深く沈める' },
-      { cat: '大江戸の四十八手', label: '松葉崩し', modern: '挿入（正常位）', desc: '脚を大きく開き崩すように体勢を作り、深く密着して動く' },
-      { cat: '大江戸の四十八手', label: '燕返し', modern: '挿入（後背位）', desc: '結合したまま体勢をひるがえし、角度を変えて刺激を変える' },
-      { cat: '大江戸の四十八手', label: '浮橋', modern: '素股', desc: '腰だけを浮かせ接点を保ち、浅い動きと焦らしを繰り返す' },
-      { cat: '大江戸の四十八手', label: '帆かけ', modern: '挿入（正常位）', desc: '脚を高く掲げ帆のように開き、深く受け入れる' },
-      { cat: '大江戸の四十八手', label: '薬研彫り', modern: '挿入（正常位）', desc: 'すり鉢のように密着し、研ぐようにゆっくり深く腰を入れる' },
-      { cat: '大江戸の四十八手', label: '時雨', modern: '挿入（正常位）', desc: '短く速い腰使いで、雨のように連続して当てる' },
-      { cat: '大江戸の四十八手', label: '陣雨', modern: '挿入（後背位）', desc: '強く止まらない抽送で畳みかけ、激しく責める' },
-      { cat: '大江戸の四十八手', label: '蓮の花', modern: '挿入（正常位）', desc: '花が開くように脚を開き、結合を意識した見せる体勢' },
-      { cat: '大江戸の四十八手', label: '蜻蛉', modern: '素股（騎乗位）', desc: '体重を軽くし、浅く浮くような動きで焦らす' },
-      { cat: '大江戸の四十八手', label: '海老反り', modern: '挿入（正常位）', desc: '背中を反らせた体勢で、奥の当たり方を変える' },
-      { cat: '大江戸の四十八手', label: '牡蠣割り', modern: '挿入（正常位）', desc: '殻を割るように脚と腰を大きく開き、受け入れを最大化する' },
-      { cat: '大江戸の四十八手', label: '手つなぎ', modern: '挿入（正常位）', desc: '手を取り合い視線を合わせながら、向き合って結合する' },
-      { cat: '大江戸の四十八手', label: '観音', modern: '挿入（正常位）', desc: '静かに深く沈めたまま、大きな動きより密着を保つ' },
-      { cat: '大江戸の四十八手', label: '流し', modern: '挿入（側位）', desc: '止めず流れるように腰を動かし、リズムを途切れさせない' },
-      { cat: '大江戸の四十八手', label: '止め刺し', modern: '寸止め', desc: '奥まで入れたまま動きを止め、圧と脈だけを味わう' },
-      { cat: '大江戸の四十八手', label: '浅瀬', modern: '素股', desc: '入り口付近だけを細かく刺激し、焦らしを主にする' },
-      { cat: '大江戸の四十八手', label: '深海', modern: '挿入（正常位）', desc: '可能な限り深く沈め、抜きを少なくして圧を掛ける' },
-      { cat: '大江戸の四十八手', label: '杭打ち', modern: '挿入（騎乗位）', desc: '上になったまま深く沈めた位置で、上下に激しく打ちつける' },
-      { cat: '大江戸の四十八手', label: '縁側', modern: '挿入（後背位）', desc: '台やベッド端に腰を預け、高さを合わせて後ろから結合する' },
-      { cat: '大江戸の四十八手', label: '抱脚', modern: '挿入（正常位）', desc: '両脚を胸の前にまとめ、締めつけながら動く' },
-      { cat: '大江戸の四十八手', label: '片脚上げ', modern: '挿入（正常位）', desc: '一方の脚を高く上げ、開いた角度から深く届かせる' },
-      { cat: '大江戸の四十八手', label: '椅子の宴', modern: '挿入（騎乗位）', desc: '椅子に座った状態で跨がせ、または抱え込んで動く' },
-      { cat: '大江戸の四十八手', label: 'うつ伏せ', modern: '挿入（後背位）', desc: 'うつ伏せの相手の上から覆い、後ろから沈める' },
-      { cat: '大江戸の四十八手', label: '寝背面', modern: '挿入（騎乗位）', desc: '仰向けの相手に背を向けて跨がり、後ろ向きに腰を落とす' }
+      // 7. 大江戸の四十八手（雅称・体位カタログ）
+      { cat: '大江戸の四十八手', label: '本手', desc: '仰向けに寝た相手の上に覆い被さり、向き合って腰を打ちつける最も基本の体位' },
+      { cat: '大江戸の四十八手', label: '位の差', desc: '相手が上になり跨がって腰を振り、主導権を握る騎乗の体勢' },
+      { cat: '大江戸の四十八手', label: '後朝', desc: '四つん這いの相手の後ろから掴み、深く突き入れる後背の体勢' },
+      { cat: '大江戸の四十八手', label: '寄り添い', desc: '横向きに密着し、隙間なく体を重ねたままゆっくり出し入れする' },
+      { cat: '大江戸の四十八手', label: '立姿', desc: '立ったまま後ろから腰を押しつけ、激しく突き上げる立位の後背' },
+      { cat: '大江戸の四十八手', label: '対面座位', desc: '座り抱き合うように密着し、胸を合わせたまま奥を探る座位' },
+      { cat: '大江戸の四十八手', label: '背面騎乗', desc: '背を向けて跨がり、自分のペースで腰を落とす後ろ向きの騎乗' },
+      { cat: '大江戸の四十八手', label: '駅弁', desc: '相手を抱き上げ脚を絡ませたまま、立って突き上げる体勢' },
+      { cat: '大江戸の四十八手', label: '壁押し', desc: '壁に手をつかせ逃げ場をなくし、前または後ろから攻める' },
+      { cat: '大江戸の四十八手', label: '開脚', desc: '脚を大きくM字に開かせ、正面から奥まで見下ろすように沈める' },
+      { cat: '大江戸の四十八手', label: '肩乗せ', desc: '脚を肩に掛け折りたたむようにし、極めて深く入れる' },
+      { cat: '大江戸の四十八手', label: '屈曲', desc: '相手の脚を大きく開き、体を折りたたむように深く沈める' },
+      { cat: '大江戸の四十八手', label: '松葉崩し', desc: '脚を大きく開き崩すように体勢を作り、深く密着して動く' },
+      { cat: '大江戸の四十八手', label: '燕返し', desc: '結合したまま体勢をひるがえし、角度を変えて刺激を変える' },
+      { cat: '大江戸の四十八手', label: '浮橋', desc: '腰だけを浮かせ接点を保ち、浅い動きと焦らしを繰り返す' },
+      { cat: '大江戸の四十八手', label: '帆かけ', desc: '脚を高く掲げ帆のように開き、深く受け入れる' },
+      { cat: '大江戸の四十八手', label: '薬研彫り', desc: 'すり鉢のように密着し、研ぐようにゆっくり深く腰を入れる' },
+      { cat: '大江戸の四十八手', label: '時雨', desc: '短く速い腰使いで、雨のように連続して当てる' },
+      { cat: '大江戸の四十八手', label: '陣雨', desc: '強く止まらない抽送で畳みかけ、激しく責める' },
+      { cat: '大江戸の四十八手', label: '蓮の花', desc: '花が開くように脚を開き、結合を意識した見せる体勢' },
+      { cat: '大江戸の四十八手', label: '蜻蛉', desc: '体重を軽くし、浅く浮くような動きで焦らす' },
+      { cat: '大江戸の四十八手', label: '海老反り', desc: '背中を反らせた体勢で、奥の当たり方を変える' },
+      { cat: '大江戸の四十八手', label: '牡蠣割り', desc: '殻を割るように脚と腰を大きく開き、受け入れを最大化する' },
+      { cat: '大江戸の四十八手', label: '手つなぎ', desc: '手を取り合い視線を合わせながら、向き合って結合する' },
+      { cat: '大江戸の四十八手', label: '観音', desc: '静かに深く沈めたまま、大きな動きより密着を保つ' },
+      { cat: '大江戸の四十八手', label: '流し', desc: '止めず流れるように腰を動かし、リズムを途切れさせない' },
+      { cat: '大江戸の四十八手', label: '止め刺し', desc: '奥まで入れたまま動きを止め、圧と脈だけを味わう' },
+      { cat: '大江戸の四十八手', label: '浅瀬', desc: '入り口付近だけを細かく刺激し、焦らしを主にする' },
+      { cat: '大江戸の四十八手', label: '深海', desc: '可能な限り深く沈め、抜きを少なくして圧を掛ける' },
+      { cat: '大江戸の四十八手', label: '杭打ち', desc: '上になったまま深く沈めた位置で、上下に激しく打ちつける' },
+      { cat: '大江戸の四十八手', label: '縁側', desc: '台やベッド端に腰を預け、高さを合わせて後ろから結合する' },
+      { cat: '大江戸の四十八手', label: '抱脚', desc: '両脚を胸の前にまとめ、締めつけながら動く' },
+      { cat: '大江戸の四十八手', label: '片脚上げ', desc: '一方の脚を高く上げ、開いた角度から深く届かせる' },
+      { cat: '大江戸の四十八手', label: '椅子の宴', desc: '椅子に座った状態で跨がせ、または抱え込んで動く' },
+      { cat: '大江戸の四十八手', label: 'うつ伏せ', desc: 'うつ伏せの相手の上から覆い、後ろから沈める' },
+      { cat: '大江戸の四十八手', label: '寝背面', desc: '仰向けの相手に背を向けて跨がり、後ろ向きに腰を落とす' }
     ];
 
     function getCustomPlayTags() {
@@ -17311,13 +18001,9 @@ function getCssVar(name, fallback) {
       });
 
       let doneCount = 0;
-      const doneLabels = {};
       catalog.forEach(function(p) {
-        if (!p) return;
-        if (agg[p.label] && agg[p.label].count > 0) doneLabels[p.label] = true;
-        if (p.modern && agg[p.modern] && agg[p.modern].count > 0) doneLabels[p.label] = true;
+        if (p && agg[p.label] && agg[p.label].count > 0) doneCount++;
       });
-      doneCount = Object.keys(doneLabels).length;
       // custom plays not in catalog（コピーにだけ追加）
       Object.keys(agg).forEach(function(label) {
         if (!catalog.some(function(p) { return p && p.label === label; })) {
@@ -17351,27 +18037,19 @@ function getCssVar(name, fallback) {
       const byCat = {};
       catalog.forEach(function(p) {
         if (!p) return;
-        if (kw && !(p.label + (p.desc||'') + (p.cat||'') + (p.modern||'')).toLowerCase().includes(kw)) return;
+        if (kw && !(p.label + (p.desc||'') + (p.cat||'')).toLowerCase().includes(kw)) return;
         const st = agg[p.label];
         const count = st ? st.count : 0;
-        let linkedDone = false, linkedCount = 0, linkedLast = 0, linkedSt = null;
-        if (p.modern && agg[p.modern]) {
-          linkedSt = agg[p.modern];
-          linkedCount = linkedSt.count || 0;
-          linkedLast = linkedSt.last || 0;
-          linkedDone = linkedCount > 0;
-        }
-        // 直接記録 or ひも付き現代プレイで経験
-        const experienced = count > 0 || linkedDone;
+        const experienced = count > 0;
         if (filter === 'done' && !experienced) return;
         if (filter !== 'all' && filter !== 'done' && p.cat !== filter) return;
         if (!byCat[p.cat]) byCat[p.cat] = [];
         byCat[p.cat].push({
           p: p, st: st, count: count,
-          linkedDone: linkedDone && count <= 0, // 直接未記録でひも付きのみのときバッジ
-          linkedCount: linkedCount,
-          linkedLast: linkedLast,
-          linkedSt: linkedSt,
+          linkedDone: false,
+          linkedCount: 0,
+          linkedLast: 0,
+          linkedSt: null,
           experienced: experienced
         });
       });
@@ -17401,34 +18079,18 @@ function getCssVar(name, fallback) {
             if (!castList.length && item.linkedSt && item.linkedSt.casts) {
               castList = Object.values(item.linkedSt.casts).sort(function(a,b){ return b.count - a.count; });
             }
-            // 直接経験 or ひも付き経験の両方でバッジ
-            if (experienced && p.modern && !item.linkedDone && done) {
-              item.linkedDone = false; // 直接記録時は通算表示を優先
-            } else if (experienced && p.modern && !done) {
-              item.linkedDone = true;
-            }
             html += '<div class="play-cat-card' + (experienced ? ' is-done' : ' is-empty') + '">';
             html += '<button type="button" class="play-cat-card-main" onclick="togglePlayCatCard(this)">';
             html += '<span class="play-cat-card-accent"></span>';
             html += '<div class="play-cat-card-body">';
             html += '<div class="play-cat-card-name-row">';
             html += '<p class="play-cat-card-name">' + escapeHTML(p.label) + '</p>';
-            if (p.modern) {
-              html += '<span class="play-cat-modern">' + escapeHTML(p.modern) + '</span>';
-            }
-            if (item.linkedDone) {
-              html += '<span class="play-cat-exp-badge">経験あり</span>';
-            }
             html += '</div>';
             html += '<div class="play-cat-card-meta">';
             if (done) {
               html += '<span>通算 <b>' + item.count + '</b> 回</span>';
               if (st && st.last) html += '<span>最終 ' + formatPlayCatDate(st.last) + '</span>';
               if (castList[0]) html += '<span>よく ' + escapeHTML(castList[0].name) + '</span>';
-            } else if (item.linkedDone) {
-              html += '<span>ひも付き「' + escapeHTML(p.modern || '') + '」で経験あり</span>';
-              if (item.linkedLast) html += '<span>最終 ' + formatPlayCatDate(item.linkedLast) + '</span>';
-              if (item.linkedCount) html += '<span>通算 <b>' + item.linkedCount + '</b> 回相当</span>';
             } else {
               html += '<span>未経験</span>';
             }
