@@ -2699,16 +2699,28 @@
     .cast-store-chip svg { width: 14px; height: 14px; flex-shrink: 0; stroke-width: 2.2; }
     .cast-store-chip-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .cast-card.cast-flash-target {
-      animation: castFlashGuide 1.4s ease !important;
-      outline: 2px solid var(--accent-pink);
-      outline-offset: 2px;
-      z-index: 2;
+      animation: castFlashGuide 1.6s ease !important;
+      outline: 2px solid var(--accent-pink) !important;
+      outline-offset: 3px;
+      z-index: 3;
       position: relative;
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-pink) 35%, transparent),
+                  0 0 20px color-mix(in srgb, var(--accent-pink) 40%, transparent) !important;
     }
     @keyframes castFlashGuide {
-      0% { transform: scale(1); box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-pink) 55%, transparent); }
-      35% { transform: scale(1.02); box-shadow: 0 0 0 8px color-mix(in srgb, var(--accent-pink) 28%, transparent); }
-      100% { transform: scale(1); box-shadow: 0 4px 15px rgba(247, 37, 133, 0.08); }
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-pink) 60%, transparent);
+      }
+      40% {
+        transform: scale(1.015);
+        box-shadow: 0 0 0 10px color-mix(in srgb, var(--accent-pink) 30%, transparent),
+                    0 0 24px color-mix(in srgb, var(--accent-pink) 45%, transparent);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 4px 15px rgba(247, 37, 133, 0.08);
+      }
     }
     .store-card-fold.store-flash-target {
       animation: storeFlashGuide 1.4s ease;
@@ -5627,14 +5639,17 @@
     }
     #homeSlineCanvas {
       position: relative;
-      z-index: 3;
+      z-index: 5;
     }
     #homeSlineLabels {
-      z-index: 4;
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 3;
     }
     /* 中央ピルはキャンバス下＝手前の線はオーバー可、奥の線はJSで非表示 */
     .sline-user-pill {
-      z-index: 2 !important;
+      z-index: 4 !important;
     }
     body.home-mode-sline #homeSlineLayer { display: block; }
     body.home-mode-sline #homeFloatingArea {
@@ -5712,31 +5727,39 @@
       height: 100%;
       touch-action: none;
       position: relative;
-      z-index: 3;
+      z-index: 5;
     }
     #homeSlineLabels {
       position: absolute;
       inset: 0;
       pointer-events: none;
-      z-index: 2;
+      z-index: 3;
     }
     .sline-hint { display: none !important; }
     .sline-bubble {
       display: none;
       position: absolute;
-      z-index: 7;
-      max-width: 220px;
+      z-index: 30 !important;
+      max-width: 240px;
       padding: 10px 12px;
-      border-radius: 12px;
+      border-radius: 14px;
       background: var(--card-bg);
       border: 1px solid var(--border-color);
       box-shadow: var(--shadow);
       font-size: 0.78rem;
       color: var(--text-color);
-      pointer-events: none;
+      pointer-events: auto !important;
+      cursor: pointer;
       transform: translate(-50%, -110%);
+      -webkit-tap-highlight-color: transparent;
     }
-    .sline-bubble.show { display: block; }
+    .sline-bubble.show {
+      display: block !important;
+      pointer-events: auto !important;
+    }
+    .sline-bubble * {
+      pointer-events: none;
+    }
     .sline-bubble .sb-name {
       font-weight: 800;
       font-size: 0.88rem;
@@ -5751,7 +5774,9 @@
     .sline-label {
       position: absolute;
       transform: translate(-50%, -50%);
-      pointer-events: auto;
+      transform-origin: center center;
+      will-change: transform, opacity;
+      pointer-events: none; /* 線が前面のためタップはキャンバスの raycast に任せる */
       cursor: pointer;
       font-size: 0.62rem;
       font-weight: 700;
@@ -12335,38 +12360,74 @@ async function attemptBiometricUnlock() {
       if (b) b.classList.remove('show');
     }
 
-    function showSlineBubble(node, clientX, clientY) {
+        function showSlineBubble(node, clientX, clientY) {
       const b = document.getElementById('homeSlineBubble');
       const layer = document.getElementById('homeSlineLayer');
       if (!b || !layer || !node) return;
+
       const last = node.lastTs ? new Date(node.lastTs) : null;
       const lastStr = last
         ? (last.getFullYear() + '/' + (last.getMonth() + 1) + '/' + last.getDate())
         : '—';
-      b.innerHTML = '<div class="sb-name">' + escapeHTML(node.name) + '</div>' +
-        '<div class="sb-row">最後: ' + lastStr + '</div>' +
-        '<div class="sb-row">在籍: ' + escapeHTML(node.statusLabel) + '</div>' +
-        '<div class="sb-hint">タップで図鑑へ</div>';
+      const days = (node.days != null)
+        ? node.days
+        : (last ? Math.max(0, Math.floor((Date.now() - node.lastTs) / 86400000)) : null);
+      const daysStr = days == null ? '—' : (days === 0 ? '今日' : (days + '日前'));
+      const count = node.count != null ? node.count : 0;
+
+      let lastStore = '';
+      try {
+        const list = (typeof historyList !== 'undefined' && historyList) ? historyList : [];
+        let best = null, bestT = -1;
+        list.forEach(function(v) {
+          if (!v || v.name !== node.name) return;
+          const t = (typeof slineRecTime === 'function') ? slineRecTime(v) : 0;
+          if (t >= bestT) { bestT = t; best = v; }
+        });
+        if (best && best.storeName) lastStore = String(best.storeName).trim();
+      } catch (e) {}
+
+      b.innerHTML =
+        '<div class="sb-name">' + escapeHTML(node.name) + '</div>' +
+        '<div class="sb-row">最後 ' + escapeHTML(lastStr) + '（' + escapeHTML(daysStr) + '）</div>' +
+        (lastStore ? '<div class="sb-row">店 ' + escapeHTML(lastStore) + '</div>' : '') +
+        '<div class="sb-row">通算 ' + count + '回 · ' + escapeHTML(node.statusLabel || '在籍') + '</div>' +
+        '<div class="sb-hint">タップで図鑑を開く →</div>';
+
       const rect = layer.getBoundingClientRect();
-      b.style.left = (clientX - rect.left) + 'px';
-      b.style.top = (clientY - rect.top) + 'px';
+      let left = clientX - rect.left;
+      let top = clientY - rect.top;
+      left = Math.max(24, Math.min(rect.width - 24, left));
+      top = Math.max(32, Math.min(rect.height - 12, top));
+      b.style.left = left + 'px';
+      b.style.top = top + 'px';
       b.classList.add('show');
-      b.onclick = function(ev) {
-        ev.preventDefault();
-        ev.stopPropagation();
-        hideSlineBubble();
-        if (typeof navigateToCastCard === 'function') {
-          navigateToCastCard(node.name, ev);
-        } else if (typeof changeView === 'function') {
+      b.style.pointerEvents = 'auto';
+      b.style.zIndex = '30';
+      b.setAttribute('role', 'button');
+      b.setAttribute('aria-label', node.name + 'の図鑑を開く');
+      b.dataset.castName = node.name;
+
+      const go = function(ev) {
+        if (ev) {
           try {
-            if (typeof switchMainTab === 'function') switchMainTab('my');
-            changeView('cast');
+            ev.preventDefault();
+            ev.stopPropagation();
+            if (ev.stopImmediatePropagation) ev.stopImmediatePropagation();
           } catch (e) {}
         }
+        const n = (b.dataset.castName || node.name || '').trim();
+        try { hideSlineBubble(); } catch (e) {}
+        setTimeout(function() {
+          if (typeof window.navigateToCastCard === 'function') window.navigateToCastCard(n, null);
+          else if (typeof navigateToCastCard === 'function') navigateToCastCard(n, null);
+        }, 40);
       };
+      b.onclick = go;
+      b.ontouchend = go;
     }
 
-    function initOrResizeSline() {
+function initOrResizeSline() {
       if (homeViewMode !== 'sline') return;
       if (typeof THREE === 'undefined') {
         const layer = document.getElementById('homeSlineLayer');
@@ -12385,7 +12446,7 @@ async function attemptBiometricUnlock() {
       if (!slineState.renderer) {
         const scene = new THREE.Scene();
         scene.background = null;
-        const camera = new THREE.PerspectiveCamera(50, w / h, 0.1, 100);
+        const camera = new THREE.PerspectiveCamera(42, w / h, 0.1, 100);
         camera.position.set(0, 6, 12);
         const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
         renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
@@ -12602,41 +12663,63 @@ async function attemptBiometricUnlock() {
       const canvas = slineState.renderer.domElement;
       const rect = canvas.getBoundingClientRect();
       const t = performance.now() * 0.001;
-      function projectToLabel(vec3, el, bobPx) {
+      const cam = slineState.camera;
+      const camDir = cam.position.clone().normalize();
+      const camPos = cam.position;
+
+      function projectToLabel(vec3, el, bobPx, depthScale, depthOpacity) {
         if (!el) return;
-        const v = vec3.clone().project(slineState.camera);
+        const v = vec3.clone().project(cam);
         const x = (v.x * 0.5 + 0.5) * rect.width;
         let y = (-v.y * 0.5 + 0.5) * rect.height;
         if (bobPx) y += bobPx;
         if (v.z > 1) {
           el.style.display = 'none';
-        } else {
-          el.style.display = '';
-          el.style.left = x + 'px';
-          el.style.top = y + 'px';
+          return;
         }
+        el.style.display = '';
+        el.style.left = x + 'px';
+        el.style.top = y + 'px';
+        const sc = depthScale != null ? depthScale : 1;
+        const op = depthOpacity != null ? depthOpacity : 1;
+        // translate で中央基準、奥は小さく薄く
+        el.style.transform = 'translate(-50%, -50%) scale(' + sc.toFixed(3) + ')';
+        el.style.opacity = String(Math.max(0.25, Math.min(1, op)));
+        el.style.zIndex = String(Math.round(10 + sc * 20));
       }
+
       slineState.nodes.forEach(function(node) {
         if (node._line) {
           node._line.visible = true;
           if (node._line.material && node._baseOpacity != null) {
-            node._line.material.opacity = node._baseOpacity;
+            // 奥の線は少し薄く、手前は濃く
+            const pos = new THREE.Vector3(node.x, node.y, node.z);
+            const depth = pos.dot(camDir);
+            const fade = 0.35 + 0.65 * Math.max(0, Math.min(1, (depth + 1.2) / 2.4));
+            node._line.material.opacity = node._baseOpacity * fade;
             node._line.material.needsUpdate = true;
+            // renderOrder: 手前の線を後から描画
+            node._line.renderOrder = Math.round(depth * 10);
           }
         }
-        // ゆっくり上下（周期 ~2.8s、位相は名前ごと）
+        const pos = new THREE.Vector3(node.x, node.y, node.z);
+        const depth = pos.dot(camDir);
+        // depth 大＝カメラ側（手前）→ 大きく不透明
+        const tDepth = Math.max(0, Math.min(1, (depth + 1.4) / 2.8));
+        const scale = 0.72 + 0.38 * tDepth;
+        const opacity = 0.4 + 0.6 * tDepth;
         const phase = node._bobPhase != null ? node._bobPhase : (node._bobPhase = slinePillPhase(node.name));
-        const amp = node.mode === 'full' ? 4.0 : 2.5;
+        const amp = (node.mode === 'full' ? 4.0 : 2.5) * (0.7 + 0.3 * tDepth);
         const bob = Math.sin(t * (Math.PI * 2 / 5.2) + phase) * amp;
-        projectToLabel(new THREE.Vector3(node.x, node.y, node.z), node._label, bob);
+        projectToLabel(pos, node._label, bob, scale, opacity);
       });
       if (slineState._userPill) {
-        // 中央は動かさない（安定した軸）
-        projectToLabel(new THREE.Vector3(0, 0.05, 0), slineState._userPill, 0);
+        projectToLabel(new THREE.Vector3(0, 0.05, 0), slineState._userPill, 0, 1.08, 1);
+        slineState._userPill.style.zIndex = '4';
       }
     }
 
-    function startSlineLoop() {
+function startSlineLoop() {
       stopSlineLoop();
       let lastTs = performance.now();
       function loop(now) {
@@ -15644,10 +15727,19 @@ function notesHtmlToMarkup(html) {
     }
 
     function navigateToCastCard(castName, event) {
-      if (event) { event.preventDefault(); event.stopPropagation(); }
-      const name = (castName || '').trim();
+      if (event) {
+        try { event.preventDefault(); event.stopPropagation(); } catch (e) {}
+      }
+      const name = String(castName || '').trim();
       if (!name) return;
-      if (typeof changeView === 'function') changeView('cast');
+
+      try {
+        if (typeof switchMainTab === 'function') switchMainTab('my');
+      } catch (e) {}
+
+      try {
+        if (typeof changeView === 'function') changeView('cast');
+      } catch (e) {}
       try {
         if (typeof activeTagFilter !== 'undefined') {
           activeTagFilter = { type: null, value: null };
@@ -15659,27 +15751,61 @@ function notesHtmlToMarkup(html) {
         if (search) search.value = name;
         if (typeof render === 'function') render();
       } catch (e) {}
-      const tryFocus = (attempt) => {
+
+      const applyFlash = function(el) {
+        if (!el) return;
+        document.querySelectorAll('.cast-flash-target').forEach(function(x) {
+          x.classList.remove('cast-flash-target');
+        });
+        // アニメ再発火
+        void el.offsetWidth;
+        el.classList.remove('cast-flash-target');
+        void el.offsetWidth;
+        el.classList.add('cast-flash-target');
+      };
+
+      const tryFocus = function(attempt) {
         const cards = document.querySelectorAll('details.cast-card');
         let target = null;
-        cards.forEach(el => {
-          if ((el.dataset.castName || '') === name) target = el;
+        cards.forEach(function(el) {
+          const n = (el.dataset && el.dataset.castName) ? el.dataset.castName : '';
+          if (n === name) target = el;
         });
         if (!target) {
-          if (attempt < 15) setTimeout(() => tryFocus(attempt + 1), 60);
+          if (attempt < 25) setTimeout(function() { tryFocus(attempt + 1); }, 40);
           return;
         }
-        document.querySelectorAll('.cast-flash-target').forEach(el => el.classList.remove('cast-flash-target'));
-        // アニメ再発火のため一旦外して付け直す
-        void target.offsetWidth;
-        target.classList.add('cast-flash-target');
-        try { target.open = true; } catch (e) {}
-        try { target.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
-        catch (e) { target.scrollIntoView(); }
-        setTimeout(() => target.classList.remove('cast-flash-target'), 1800);
+
+        applyFlash(target);
+
+        const topGap = 72;
+        const tr = target.getBoundingClientRect();
+        const needScroll = tr.top < topGap || tr.bottom > window.innerHeight - 24;
+        if (needScroll) {
+          try {
+            target.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+          } catch (e) {
+            try { target.scrollIntoView(false); } catch (e2) {}
+          }
+        }
+
+        setTimeout(function() {
+          try { target.open = true; } catch (e) {}
+          // 展開後にもう一度強調（render や open でクラスが落ちた場合の保険）
+          applyFlash(target);
+        }, 240);
+
+        setTimeout(function() {
+          if (target) target.classList.remove('cast-flash-target');
+        }, 2000);
       };
-      setTimeout(() => tryFocus(0), 120);
+
+      // render 完了後にフォーカス（遅延 render と競合しないよう1回に集約）
+      setTimeout(function() { tryFocus(0); }, 180);
     }
+
+    window.navigateToCastCard = navigateToCastCard;
+
 
 function navigateToStoreCard(storeName, event) {
       if (event) { event.preventDefault(); event.stopPropagation(); }
