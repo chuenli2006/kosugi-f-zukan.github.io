@@ -8,6 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title id="pageTitle">童貞の風俗履歴図鑑</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   
@@ -4450,6 +4451,16 @@
     .ai-talk-avatar { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
     .ai-talk-avatar.kenja { background: linear-gradient(135deg, #EDE9FE, #DBEAFE); }
     .ai-talk-avatar.kosugi { background: linear-gradient(135deg, #ffe8cc, #ffd8d8); }
+    .ai-talk-avatar.accountant { background: linear-gradient(135deg, #e6fcf5, #d3f9d8); }
+    .ai-chat-tab-body[data-persona="accountant"] .ai-chat-header h3 { color: #2b8a3e; }
+    .ai-chat-input-disabled {
+      opacity: 0.65; cursor: not-allowed; background: var(--bg-color) !important;
+    }
+    .ai-chat-send-disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+    .ai-chat-offline-note {
+      width: 100%; text-align: center; font-size: 0.72rem; font-weight: 700;
+      color: var(--light-text); padding: 8px 4px;
+    }
     .ai-talk-main { flex: 1; min-width: 0; }
     .ai-talk-name { font-weight: bold; font-size: 0.9rem; }
     .ai-talk-preview { font-size: 0.76rem; color: var(--light-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -5596,6 +5607,260 @@
     }
 
 
+
+    /* ===== Sライン ホーム ===== */
+    #homeSlineLayer {
+      display: none;
+      position: relative;
+      width: 100%;
+      height: min(58vh, 520px);
+      min-height: 280px;
+      margin: 4px 0 8px;
+      border-radius: 0;
+      overflow: hidden;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      box-sizing: border-box;
+      z-index: 1;
+      touch-action: none;
+    }
+    #homeSlineCanvas {
+      position: relative;
+      z-index: 3;
+    }
+    #homeSlineLabels {
+      z-index: 4;
+    }
+    /* 中央ピルはキャンバス下＝手前の線はオーバー可、奥の線はJSで非表示 */
+    .sline-user-pill {
+      z-index: 2 !important;
+    }
+    body.home-mode-sline #homeSlineLayer { display: block; }
+    body.home-mode-sline #homeFloatingArea {
+      display: none !important;
+    }
+    /* ウィジェット・通知・Sライン以外のホーム下部を隠す */
+
+    .home-sline-foot {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+    body:not(.home-mode-sline) .home-sline-foot {
+      display: flex;
+      flex-direction: column;
+    }
+    body.home-mode-sline .home-sline-foot {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 4px;
+      margin-bottom: 8px;
+    }
+    body.home-mode-sline .home-sline-foot .home-card-b,
+    body.home-mode-sline .home-sline-foot .home-card-c {
+      margin: 0;
+      min-width: 0;
+      padding: 10px 12px;
+      box-sizing: border-box;
+    }
+    .home-sline-foot-lbl {
+      font-size: 0.68rem;
+      color: var(--light-text);
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+    .home-next-visit-text {
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: var(--accent-pink);
+      line-height: 1.35;
+      word-break: break-word;
+    }
+    body.home-mode-sline .home-next-visit-text {
+      font-size: 0.78rem;
+      line-height: 1.4;
+    }
+    .home-next-l1 { font-weight: 800; }
+    .home-next-l2 {
+      font-weight: 700;
+      font-size: 0.92em;
+      margin-top: 2px;
+      opacity: 0.95;
+    }
+    body.home-mode-sline .home-sline-foot .countdown-anim {
+      font-size: 0.95rem;
+    }
+    body.home-mode-sline .home-top-panel > :not(#homeActionCardsContainer):not(#homeWidgetStack):not(#homeSlineLayer):not(#homeSlineFoot) {
+      display: none !important;
+    }
+
+        body.home-mode-sline .home-top-panel > :not(#homeActionCardsContainer):not(#homeWidgetStack):not(#homeSlineLayer):not(#homeSlineFoot) {
+      display: none !important;
+    }
+    body.home-mode-sline #viewHome {
+      position: relative;
+      overflow-x: hidden;
+    }
+    #homeSlineCanvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      touch-action: none;
+      position: relative;
+      z-index: 3;
+    }
+    #homeSlineLabels {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .sline-hint { display: none !important; }
+    .sline-bubble {
+      display: none;
+      position: absolute;
+      z-index: 7;
+      max-width: 220px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow);
+      font-size: 0.78rem;
+      color: var(--text-color);
+      pointer-events: none;
+      transform: translate(-50%, -110%);
+    }
+    .sline-bubble.show { display: block; }
+    .sline-bubble .sb-name {
+      font-weight: 800;
+      font-size: 0.88rem;
+      margin-bottom: 4px;
+      color: var(--accent-pink, #f72585);
+    }
+    .sline-bubble .sb-row {
+      font-size: 0.72rem;
+      color: var(--light-text);
+      margin-top: 2px;
+    }
+    .sline-label {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      pointer-events: auto;
+      cursor: pointer;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: var(--text-color);
+      background: rgba(255, 255, 255, 0.72);
+      -webkit-backdrop-filter: blur(14px) saturate(150%);
+      backdrop-filter: blur(14px) saturate(150%);
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.65);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255,255,255,0.7);
+      white-space: nowrap;
+      max-width: 100px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      z-index: 6;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .sline-label:active { transform: translate(-50%, -50%) scale(0.96); }
+    .sline-label.is-line-only {
+      width: 8px; height: 8px; max-width: 8px; padding: 0;
+      border-radius: 50%;
+      background: color-mix(in srgb, var(--accent-pink, #f72585) 55%, #fff);
+      border: 1px solid rgba(255,255,255,0.7);
+      box-shadow: 0 2px 8px color-mix(in srgb, var(--accent-pink, #f72585) 35%, transparent);
+      font-size: 0; color: transparent; overflow: hidden;
+    }
+    .sline-user-pill {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+    .sline-user-pill .sline-user-name {
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      color: var(--text-color);
+      background: rgba(255, 255, 255, 0.82);
+      -webkit-backdrop-filter: blur(16px) saturate(160%);
+      backdrop-filter: blur(16px) saturate(160%);
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow:
+        0 6px 20px rgba(247, 37, 133, 0.18),
+        inset 0 1px 0 rgba(255,255,255,0.8);
+      max-width: 140px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .sline-user-pill .sline-user-count {
+      font-size: 0.58rem;
+      font-weight: 700;
+      color: var(--light-text);
+      letter-spacing: 0.04em;
+    }
+    body.dark-mode .sline-label,
+    body.dark-mode .sline-user-pill .sline-user-name {
+      background: rgba(40, 40, 46, 0.75);
+      border-color: rgba(255, 255, 255, 0.14);
+      color: rgba(255, 255, 255, 0.92);
+    }
+    body.dark-mode .sline-user-pill .sline-user-count { color: rgba(255,255,255,0.55); }
+    .sline-bubble {
+      pointer-events: auto !important;
+      cursor: pointer;
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+      backdrop-filter: blur(20px) saturate(160%);
+      background: rgba(255, 255, 255, 0.6) !important;
+      border: 1px solid rgba(255, 255, 255, 0.5) !important;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+      border-radius: 14px !important;
+      z-index: 9;
+    }
+    .sline-bubble .sb-hint {
+      font-size: 0.62rem;
+      color: var(--accent-pink, #f72585);
+      font-weight: 700;
+      margin-top: 6px;
+    }
+    body.dark-mode .sline-label,
+    html.dark .sline-label {
+      background: rgba(40, 40, 46, 0.55);
+      border-color: rgba(255, 255, 255, 0.14);
+      box-shadow:
+        0 4px 18px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      color: rgba(255, 255, 255, 0.92);
+    }
+    .sline-bubble {
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+      backdrop-filter: blur(20px) saturate(160%);
+      background: rgba(255, 255, 255, 0.55) !important;
+      border: 1px solid rgba(255, 255, 255, 0.5) !important;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255,255,255,0.7);
+      border-radius: 14px !important;
+    }
+    body.dark-mode .sline-bubble {
+      background: rgba(40, 40, 46, 0.65) !important;
+      border-color: rgba(255, 255, 255, 0.12) !important;
+    }
+
     /* ===== Wrapped（ストーリー振り返り） ===== */
     #viewWrapped {
       display: none;
@@ -6093,7 +6358,7 @@
       </div>
       <!-- 1. ホーム画面 -->
       <div id="viewHome" class="active">
-        <div class="floating-container" id="homeFloatingArea"></div>
+<div class="floating-container" id="homeFloatingArea"></div>
 
         <div class="home-top-panel">
           <!-- 🔔 アクション通知エリア -->
@@ -6186,15 +6451,23 @@
             </div>
           </div>
 
-          <div class="home-card-b">
-            <div style="font-size: 0.72rem; color: var(--light-text); font-weight: bold; margin-bottom: 2px;">前回の利用からの経過</div>
-            <div class="countdown-anim" id="homeDaysSinceLast">計測データなし</div>
+          <div class="home-sline-foot" id="homeSlineFoot">
+            <div class="home-card-b">
+              <div class="home-sline-foot-lbl">前回の利用からの経過</div>
+              <div class="countdown-anim" id="homeDaysSinceLast">計測データなし</div>
+            </div>
+            <div class="home-card-c" onclick="switchMainTab('calendar')">
+              <div class="home-sline-foot-lbl">次の予定</div>
+              <div class="home-next-visit-text" id="homeNextVisitText">予定できたら追加してね〜！</div>
+            </div>
           </div>
 
-          <div class="home-card-c" onclick="switchMainTab('calendar')">
-            <div style="font-size: 0.72rem; color: var(--light-text); font-weight: bold; margin-bottom: 2px;">次の予定</div>
-            <div style="font-size: 0.95rem; font-weight: bold; color: var(--accent-pink);" id="homeNextVisitText">予定できたら追加してね〜！</div>
+          <div id="homeSlineLayer" aria-hidden="true">
+            <canvas id="homeSlineCanvas"></canvas>
+            <div id="homeSlineLabels"></div>
+            <div id="homeSlineBubble" class="sline-bubble"></div>
           </div>
+
         </div>
       </div>
 
@@ -6481,6 +6754,17 @@
               </label>
               <label style="font-size:0.8rem; display:flex; align-items:center; gap:8px; margin-top:8px;">
                 <input type="radio" name="amountHide" value="hide" onchange="saveAmountHide(this.value)"> 金額を非表示にする (***)
+              </label>
+
+
+              <hr class="sec-divider">
+
+              <label style="font-size:0.8rem; font-weight:bold; color:var(--light-text);">ホーム画面の表示</label>
+              <label style="font-size:0.8rem; display:flex; align-items:center; gap:8px; margin-top:6px;">
+                <input type="radio" name="homeViewMode" value="normal" onchange="saveHomeViewMode(this.value)" checked> 思い出ギャラリー
+              </label>
+              <label style="font-size:0.8rem; display:flex; align-items:center; gap:8px; margin-top:8px;">
+                <input type="radio" name="homeViewMode" value="sline" onchange="saveHomeViewMode(this.value)"> つながり3D
               </label>
 
               <hr class="sec-divider">
@@ -11907,7 +12191,595 @@ async function attemptBiometricUnlock() {
     }
 
 
+
+    /* ===== Sライン ホーム Phase1 ===== */
+    let homeViewMode = localStorage.getItem('app_home_view_mode') || 'normal';
+    let slineState = {
+      renderer: null, scene: null, camera: null, animId: null,
+      nodes: [], hitMeshes: [], labels: [],
+      dragging: false, lastX: 0, lastY: 0,
+      rotY: 0.4, rotX: 0.35,
+      targetRotY: 0.4, targetRotX: 0.35,
+      velY: 0, velX: 0,
+      ready: false,
+      autoRotate: true,
+      lastInteract: 0,
+      lastMoveTs: 0
+    };
+
+    window.saveHomeViewMode = function saveHomeViewMode(mode) {
+      homeViewMode = mode === 'sline' ? 'sline' : 'normal';
+      localStorage.setItem('app_home_view_mode', homeViewMode);
+      document.querySelectorAll('input[name="homeViewMode"]').forEach(function(el) {
+        el.checked = el.value === homeViewMode;
+      });
+      applyHomeViewMode();
+      try {
+        if (typeof renderHomeMetrics === 'function') renderHomeMetrics();
+        else if (typeof render === 'function') render();
+      } catch (e) {}
+    }
+
+    function applyHomeViewMode() {
+      document.body.classList.toggle('home-mode-sline', homeViewMode === 'sline');
+      const layer = document.getElementById('homeSlineLayer');
+      if (layer) layer.setAttribute('aria-hidden', homeViewMode === 'sline' ? 'false' : 'true');
+      if (homeViewMode === 'sline') {
+        setTimeout(function() { initOrResizeSline(); }, 50);
+      } else {
+        stopSlineLoop();
+        hideSlineBubble();
+      }
+    }
+
+    function slineHashAngle(name) {
+      let h = 0;
+      const s = String(name || '');
+      for (let i = 0; i < s.length; i++) h = ((h << 5) - h) + s.charCodeAt(i);
+      h = Math.abs(h);
+      return (h % 360) * Math.PI / 180;
+    }
+
+    function slineRecTime(v) {
+      const y = parseInt(v.year, 10) || 0;
+      let m = parseInt(String(v.month != null ? v.month : '').replace(/\D/g, ''), 10) || 1;
+      const d = parseInt(v.day, 10) || parseInt(v.date, 10) || 1;
+      return new Date(y, Math.max(0, m - 1), d).getTime();
+    }
+
+    function buildSlineCastNodes() {
+      const list = (typeof historyList !== 'undefined' && historyList) ? historyList : [];
+      const byName = {};
+      list.forEach(function(v) {
+        if (!v || !v.name) return;
+        const t = slineRecTime(v);
+        if (!byName[v.name] || t > byName[v.name].lastTs) {
+          byName[v.name] = { name: v.name, lastTs: t, count: (byName[v.name] && byName[v.name].count || 0) + 1 };
+        } else {
+          byName[v.name].count++;
+        }
+      });
+      const now = Date.now();
+      let nodes = Object.keys(byName).map(function(n) {
+        const st = (typeof castData !== 'undefined' && castData[n]) ? castData[n] : {};
+        const status = st.status || 'active';
+        const retired = status === 'retired';
+        const days = Math.max(0, Math.floor((now - byName[n].lastTs) / 86400000));
+        return {
+          name: n,
+          lastTs: byName[n].lastTs,
+          days: days,
+          count: byName[n].count,
+          status: status,
+          retired: retired,
+          statusLabel: retired ? '卒業' : '在籍'
+        };
+      });
+      nodes.sort(function(a, b) { return b.lastTs - a.lastTs; });
+
+      // 線は全員。フル表示（名前ラベル）は在籍かつ新しい順30人まで
+      let fullSlots = 0;
+      nodes.forEach(function(n) {
+        if (!n.retired && fullSlots < 30) {
+          n.mode = 'full';
+          fullSlots++;
+        } else {
+          n.mode = 'line';
+        }
+        // 距離: 日数ログ
+        const dist = 3.0 + Math.log(1 + n.days) * 0.85;
+        const ang = slineHashAngle(n.name);
+        n.x = Math.cos(ang) * dist;
+        n.z = Math.sin(ang) * dist;
+        n.y = (n.mode === 'full' ? 0.15 : -0.05) + (n.count % 5) * 0.03;
+      });
+      return nodes;
+    }
+
+    function getSlineAccentColor() {
+      try {
+        const c = getComputedStyle(document.documentElement).getPropertyValue('--accent-pink').trim();
+        if (c) return c;
+      } catch (e) {}
+      return '#f72585';
+    }
+
+    function stopSlineLoop() {
+      if (slineState.animId) {
+        cancelAnimationFrame(slineState.animId);
+        slineState.animId = null;
+      }
+    }
+
+    function disposeSlineScene() {
+      stopSlineLoop();
+      const labels = document.getElementById('homeSlineLabels');
+      if (labels) labels.innerHTML = '';
+      if (slineState.renderer) {
+        try {
+          const canvas = slineState.renderer.domElement;
+          if (canvas && canvas.parentNode) { /* keep canvas */ }
+          slineState.renderer.dispose();
+        } catch (e) {}
+      }
+      slineState.renderer = null;
+      slineState.scene = null;
+      slineState.camera = null;
+      slineState.nodes = [];
+      slineState.hitMeshes = [];
+      slineState.ready = false;
+    }
+
+    function hideSlineBubble() {
+      const b = document.getElementById('homeSlineBubble');
+      if (b) b.classList.remove('show');
+    }
+
+    function showSlineBubble(node, clientX, clientY) {
+      const b = document.getElementById('homeSlineBubble');
+      const layer = document.getElementById('homeSlineLayer');
+      if (!b || !layer || !node) return;
+      const last = node.lastTs ? new Date(node.lastTs) : null;
+      const lastStr = last
+        ? (last.getFullYear() + '/' + (last.getMonth() + 1) + '/' + last.getDate())
+        : '—';
+      b.innerHTML = '<div class="sb-name">' + escapeHTML(node.name) + '</div>' +
+        '<div class="sb-row">最後: ' + lastStr + '</div>' +
+        '<div class="sb-row">在籍: ' + escapeHTML(node.statusLabel) + '</div>' +
+        '<div class="sb-hint">タップで図鑑へ</div>';
+      const rect = layer.getBoundingClientRect();
+      b.style.left = (clientX - rect.left) + 'px';
+      b.style.top = (clientY - rect.top) + 'px';
+      b.classList.add('show');
+      b.onclick = function(ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        hideSlineBubble();
+        if (typeof navigateToCastCard === 'function') {
+          navigateToCastCard(node.name, ev);
+        } else if (typeof changeView === 'function') {
+          try {
+            if (typeof switchMainTab === 'function') switchMainTab('my');
+            changeView('cast');
+          } catch (e) {}
+        }
+      };
+    }
+
+    function initOrResizeSline() {
+      if (homeViewMode !== 'sline') return;
+      if (typeof THREE === 'undefined') {
+        const layer = document.getElementById('homeSlineLayer');
+        if (layer) {
+          layer.querySelector('.sline-hint').textContent = '3Dライブラリを読み込めませんでした';
+        }
+        return;
+      }
+      const canvas = document.getElementById('homeSlineCanvas');
+      const layer = document.getElementById('homeSlineLayer');
+      if (!canvas || !layer) return;
+
+      const w = layer.clientWidth || window.innerWidth;
+      const h = Math.max(layer.clientHeight || 0, 280);
+
+      if (!slineState.renderer) {
+        const scene = new THREE.Scene();
+        scene.background = null;
+        const camera = new THREE.PerspectiveCamera(50, w / h, 0.1, 100);
+        camera.position.set(0, 6, 12);
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        renderer.setSize(w, h, false);
+        renderer.setClearColor(0x000000, 0);
+
+        const ambient = new THREE.AmbientLight(0xffffff, 0.85);
+        scene.add(ambient);
+        const dir = new THREE.DirectionalLight(0xffffff, 0.35);
+        dir.position.set(5, 10, 7);
+        scene.add(dir);
+
+        // 中心はHTMLピル。3Dは線の起点用に不可視アンカーのみ
+        const core = new THREE.Object3D();
+        core.position.set(0, 0, 0);
+        core.userData = { slineCore: true };
+        scene.add(core);
+
+        slineState.scene = scene;
+        slineState.camera = camera;
+        slineState.renderer = renderer;
+        bindSlinePointer(canvas);
+        window.addEventListener('resize', onSlineResize);
+      } else {
+        slineState.renderer.setSize(w, h, false);
+        slineState.camera.aspect = w / h;
+        slineState.camera.updateProjectionMatrix();
+      }
+
+      rebuildSlineGraph();
+      startSlineLoop();
+      slineState.ready = true;
+    }
+
+    function onSlineResize() {
+      if (homeViewMode !== 'sline' || !slineState.renderer) return;
+      const layer = document.getElementById('homeSlineLayer');
+      if (!layer) return;
+      const w = layer.clientWidth || window.innerWidth;
+      const h = Math.max(layer.clientHeight || 0, 280);
+      slineState.renderer.setSize(w, h, false);
+      slineState.camera.aspect = w / h;
+      slineState.camera.updateProjectionMatrix();
+    }
+
+
+    function slineHeadOrigin() {
+      // 中央ピルと被らないよう、やや外側から線を出す
+      return new THREE.Vector3(0, 0.72, 0);
+    }
+
+    function slineCurvePoints(start, end, segments) {
+      segments = segments || 24;
+      const mid = start.clone().add(end).multiplyScalar(0.5);
+      const lift = start.distanceTo(end) * 0.32;
+      mid.y += lift;
+      // わずかに横へ膨らませる
+      const side = new THREE.Vector3().subVectors(end, start);
+      side.y = 0;
+      if (side.lengthSq() > 1e-6) {
+        side.normalize().multiplyScalar(start.distanceTo(end) * 0.08);
+        mid.x += -side.z;
+        mid.z += side.x;
+      }
+      const pts = [];
+      for (let i = 0; i <= segments; i++) {
+        const t = i / segments;
+        const u = 1 - t;
+        const p = new THREE.Vector3(
+          u * u * start.x + 2 * u * t * mid.x + t * t * end.x,
+          u * u * start.y + 2 * u * t * mid.y + t * t * end.y,
+          u * u * start.z + 2 * u * t * mid.z + t * t * end.z
+        );
+        pts.push(p);
+      }
+      return pts;
+    }
+
+    function slineGlassBallMat(accentHex, full, retired) {
+      if (retired) {
+        return new THREE.MeshPhysicalMaterial({
+          color: 0xc0c4cc,
+          transparent: true,
+          opacity: 0.55,
+          roughness: 0.25,
+          metalness: 0.05,
+          transmission: 0.35,
+          thickness: 0.4,
+          clearcoat: 0.8,
+          clearcoatRoughness: 0.2
+        });
+      }
+      return new THREE.MeshPhysicalMaterial({
+        color: full ? accentHex : 0xffffff,
+        emissive: full ? accentHex : 0x222222,
+        emissiveIntensity: full ? 0.15 : 0.05,
+        transparent: true,
+        opacity: full ? 0.72 : 0.5,
+        roughness: 0.18,
+        metalness: 0.08,
+        transmission: 0.45,
+        thickness: 0.5,
+        clearcoat: 1,
+        clearcoatRoughness: 0.15
+      });
+    }
+
+    function rebuildSlineGraph() {
+      if (!slineState.scene) return;
+      // remove old nodes except lights/core - clear non-light meshes by rebuild group
+      const scene = slineState.scene;
+      const toRemove = [];
+      scene.traverse(function(obj) {
+        if (obj.userData && obj.userData.sline) toRemove.push(obj);
+      });
+      toRemove.forEach(function(obj) {
+        scene.remove(obj);
+        if (obj.geometry) obj.geometry.dispose();
+        if (obj.material) {
+          if (Array.isArray(obj.material)) obj.material.forEach(function(m) { m.dispose(); });
+          else obj.material.dispose();
+        }
+      });
+      slineState.hitMeshes = [];
+      slineState.nodes = buildSlineCastNodes();
+
+      const accent = getSlineAccentColor();
+      let accentHex = 0xf72585;
+      try {
+        if (accent.charAt(0) === '#') accentHex = parseInt(accent.slice(1), 16);
+      } catch (e) {}
+
+      const labelsEl = document.getElementById('homeSlineLabels');
+      if (labelsEl) labelsEl.innerHTML = '';
+      slineState._userPill = null;
+
+      slineState.nodes.forEach(function(node) {
+        const start = slineHeadOrigin();
+        const end = new THREE.Vector3(node.x, node.y, node.z);
+        const pts = slineCurvePoints(start, end, 28);
+        const geo = new THREE.BufferGeometry().setFromPoints(pts);
+        const mat = new THREE.LineBasicMaterial({
+          color: accentHex,
+          transparent: true,
+          opacity: node.mode === 'full' ? 0.72 : 0.28
+        });
+        const line = new THREE.Line(geo, mat);
+        line.userData = { sline: true, node: node };
+        scene.add(line);
+        node._line = line;
+        node._baseOpacity = node.mode === 'full' ? 0.72 : 0.28;
+
+        // 終点ヒット（不可視）
+        const hitBall = new THREE.Mesh(
+          new THREE.SphereGeometry(node.mode === 'full' ? 0.22 : 0.12, 8, 8),
+          new THREE.MeshBasicMaterial({ visible: false })
+        );
+        hitBall.position.copy(end);
+        hitBall.userData = { sline: true, node: node, isHit: true };
+        scene.add(hitBall);
+        slineState.hitMeshes.push(hitBall);
+
+        if (labelsEl) {
+          const lab = document.createElement('button');
+          lab.type = 'button';
+          lab.className = 'sline-label' + (node.mode === 'line' ? ' is-line-only' : '');
+          lab.textContent = node.mode === 'full' ? node.name : '';
+          lab.dataset.name = node.name;
+          lab.setAttribute('aria-label', node.name);
+          lab.addEventListener('click', function(ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+            const r = lab.getBoundingClientRect();
+            showSlineBubble(node, r.left + r.width / 2, r.top);
+          });
+          labelsEl.appendChild(lab);
+          node._label = lab;
+        }
+      });
+
+      // 中央ユーザーピル（キャンバスより背面＝線がピルの上を通れる）
+      const layerEl = document.getElementById('homeSlineLayer');
+      if (layerEl) {
+        let userWrap = document.getElementById('slineUserPill');
+        if (userWrap) userWrap.remove();
+        userWrap = document.createElement('div');
+        userWrap.className = 'sline-user-pill';
+        userWrap.id = 'slineUserPill';
+        const uname = (typeof currentUserName !== 'undefined' && currentUserName) ? currentUserName : 'YOU';
+        const expCount = slineState.nodes.length;
+        userWrap.innerHTML = '<div class="sline-user-name">' + escapeHTML(uname) + '</div>' +
+          '<div class="sline-user-count">経験 ' + expCount + '人</div>';
+        // キャンバスの下（手前の線のみ中央ピルにオーバー）
+        const canvasEl = document.getElementById('homeSlineCanvas');
+        if (canvasEl && canvasEl.parentNode === layerEl) {
+          layerEl.insertBefore(userWrap, canvasEl);
+        } else {
+          layerEl.insertBefore(userWrap, layerEl.firstChild);
+        }
+        slineState._userPill = userWrap;
+      }
+    }
+
+
+    function slinePillPhase(name) {
+      let h = 0;
+      const s = String(name || '');
+      for (let i = 0; i < s.length; i++) h = ((h << 5) - h) + s.charCodeAt(i);
+      return (Math.abs(h) % 1000) / 1000 * Math.PI * 2;
+    }
+
+    function updateSlineLabels() {
+      if (!slineState.camera || !slineState.renderer) return;
+      const canvas = slineState.renderer.domElement;
+      const rect = canvas.getBoundingClientRect();
+      const t = performance.now() * 0.001;
+      function projectToLabel(vec3, el, bobPx) {
+        if (!el) return;
+        const v = vec3.clone().project(slineState.camera);
+        const x = (v.x * 0.5 + 0.5) * rect.width;
+        let y = (-v.y * 0.5 + 0.5) * rect.height;
+        if (bobPx) y += bobPx;
+        if (v.z > 1) {
+          el.style.display = 'none';
+        } else {
+          el.style.display = '';
+          el.style.left = x + 'px';
+          el.style.top = y + 'px';
+        }
+      }
+      slineState.nodes.forEach(function(node) {
+        if (node._line) {
+          node._line.visible = true;
+          if (node._line.material && node._baseOpacity != null) {
+            node._line.material.opacity = node._baseOpacity;
+            node._line.material.needsUpdate = true;
+          }
+        }
+        // ゆっくり上下（周期 ~2.8s、位相は名前ごと）
+        const phase = node._bobPhase != null ? node._bobPhase : (node._bobPhase = slinePillPhase(node.name));
+        const amp = node.mode === 'full' ? 4.0 : 2.5;
+        const bob = Math.sin(t * (Math.PI * 2 / 5.2) + phase) * amp;
+        projectToLabel(new THREE.Vector3(node.x, node.y, node.z), node._label, bob);
+      });
+      if (slineState._userPill) {
+        // 中央は動かさない（安定した軸）
+        projectToLabel(new THREE.Vector3(0, 0.05, 0), slineState._userPill, 0);
+      }
+    }
+
+    function startSlineLoop() {
+      stopSlineLoop();
+      let lastTs = performance.now();
+      function loop(now) {
+        slineState.animId = requestAnimationFrame(loop);
+        if (!slineState.renderer || !slineState.scene || !slineState.camera) return;
+        const t = (typeof now === 'number') ? now : performance.now();
+        let dt = (t - lastTs) / 16.6667;
+        lastTs = t;
+        if (dt < 0.2) dt = 0.2;
+        if (dt > 3) dt = 3;
+
+        if (slineState.dragging) {
+          // 弱め lerp: target に追従
+          const lerp = 1 - Math.pow(1 - 0.12, dt);
+          slineState.rotY += (slineState.targetRotY - slineState.rotY) * lerp;
+          slineState.rotX += (slineState.targetRotX - slineState.rotX) * lerp;
+        } else {
+          // 慣性
+          if (Math.abs(slineState.velY) > 0.00015 || Math.abs(slineState.velX) > 0.00015) {
+            slineState.targetRotY += slineState.velY * dt;
+            slineState.targetRotX += slineState.velX * dt;
+            slineState.targetRotX = Math.max(-0.2, Math.min(1.2, slineState.targetRotX));
+            slineState.velY *= Math.pow(0.965, dt);
+            slineState.velX *= Math.pow(0.965, dt);
+            if (Math.abs(slineState.velY) < 0.00015) slineState.velY = 0;
+            if (Math.abs(slineState.velX) < 0.00015) slineState.velX = 0;
+          } else {
+            if (!slineState.autoRotate && Date.now() - (slineState.lastInteract || 0) > 1800) {
+              slineState.autoRotate = true;
+            }
+            if (slineState.autoRotate) {
+              slineState.velY = 0;
+              slineState.velX = 0;
+              slineState.targetRotY += 0.0016 * dt;
+            }
+          }
+          const lerp = 1 - Math.pow(1 - 0.10, dt);
+          slineState.rotY += (slineState.targetRotY - slineState.rotY) * lerp;
+          slineState.rotX += (slineState.targetRotX - slineState.rotX) * lerp;
+        }
+        slineState.rotX = Math.max(-0.2, Math.min(1.2, slineState.rotX));
+
+        const cam = slineState.camera;
+        const r = 12;
+        cam.position.x = Math.sin(slineState.rotY) * Math.cos(slineState.rotX) * r;
+        cam.position.y = Math.sin(slineState.rotX) * r * 0.85 + 2;
+        cam.position.z = Math.cos(slineState.rotY) * Math.cos(slineState.rotX) * r;
+        cam.lookAt(0, 0, 0);
+        slineState.renderer.render(slineState.scene, cam);
+        updateSlineLabels();
+      }
+      loop(performance.now());
+    }
+
+    function bindSlinePointer(canvas) {
+      if (canvas._slineBound) return;
+      canvas._slineBound = true;
+      const raycaster = new THREE.Raycaster();
+      const pointer = new THREE.Vector2();
+
+      function getXY(e) {
+        const t = e.touches && e.touches[0] ? e.touches[0] : e;
+        return { x: t.clientX, y: t.clientY };
+      }
+
+      canvas.addEventListener('pointerdown', function(e) {
+        slineState.dragging = true;
+        slineState.autoRotate = false;
+        slineState.velY = 0;
+        slineState.velX = 0;
+        slineState.lastInteract = Date.now();
+        slineState.lastMoveTs = performance.now();
+        const p = getXY(e);
+        slineState.lastX = p.x;
+        slineState.lastY = p.y;
+        slineState._downX = p.x;
+        slineState._downY = p.y;
+        slineState.targetRotY = slineState.rotY;
+        slineState.targetRotX = slineState.rotX;
+      });
+      window.addEventListener('pointerup', function(e) {
+        if (!slineState.dragging) return;
+        slineState.dragging = false;
+        slineState.lastInteract = Date.now();
+        // 慣性が落ち着いてから自動回転再開
+        setTimeout(function() {
+          if (Date.now() - slineState.lastInteract >= 1800 &&
+              Math.abs(slineState.velY) < 0.0004 && Math.abs(slineState.velX) < 0.0004) {
+            slineState.autoRotate = true;
+          }
+        }, 1900);
+        const p = getXY(e);
+        const dx = Math.abs(p.x - (slineState._downX || 0));
+        const dy = Math.abs(p.y - (slineState._downY || 0));
+        if (dx < 8 && dy < 8) {
+          slineState.velY = 0;
+          slineState.velX = 0;
+          pickSline(p.x, p.y, canvas, raycaster, pointer);
+        }
+      });
+      window.addEventListener('pointermove', function(e) {
+        if (!slineState.dragging) return;
+        const p = getXY(e);
+        const now = performance.now();
+        const dtMs = Math.max(8, now - (slineState.lastMoveTs || now));
+        slineState.lastMoveTs = now;
+        const dx = p.x - slineState.lastX;
+        const dy = p.y - slineState.lastY;
+        slineState.lastX = p.x;
+        slineState.lastY = p.y;
+        // target を更新（表示は loop 側で弱め lerp）
+        slineState.targetRotY += dx * 0.0055;
+        slineState.targetRotX += dy * 0.004;
+        slineState.targetRotX = Math.max(-0.2, Math.min(1.2, slineState.targetRotX));
+        // 速度（慣性用）— 直近のスワイプ速度
+        const inv = 16.6667 / dtMs;
+        const instantVelY = dx * 0.0055 * inv;
+        const instantVelX = dy * 0.004 * inv;
+        slineState.velY = slineState.velY * 0.55 + instantVelY * 0.45;
+        slineState.velX = slineState.velX * 0.55 + instantVelX * 0.45;
+        hideSlineBubble();
+      });
+    }
+
+    function pickSline(clientX, clientY, canvas, raycaster, pointer) {
+      if (!slineState.camera || !slineState.hitMeshes.length) return;
+      const rect = canvas.getBoundingClientRect();
+      pointer.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+      pointer.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+      raycaster.setFromCamera(pointer, slineState.camera);
+      const hits = raycaster.intersectObjects(slineState.hitMeshes, false);
+      if (hits.length && hits[0].object.userData.node) {
+        showSlineBubble(hits[0].object.userData.node, clientX, clientY);
+      } else {
+        hideSlineBubble();
+      }
+    }
+
+
     function switchMainTab(type) {
+      if (type !== 'home' && typeof stopSlineLoop === 'function') {
+        try { stopSlineLoop(); hideSlineBubble(); } catch (e) {}
+      }
       if (isPcViewMode() && PC_VIEW_ALLOWED_TABS.indexOf(type) < 0) {
         showPcGuideModal(type === 'home' ? 'ホーム' : type === 'calendar' ? 'カレンダー' : type === 'dashboard' ? '統計' : type === 'goodValue' ? 'いい値ぇースコア' : type === 'playCatalog' ? '僕の四十八手' : type === 'castSettings' ? '女の子別設定' : 'この機能');
         return;
@@ -11943,6 +12815,7 @@ async function attemptBiometricUnlock() {
       if(type === 'home') {
         homeView.classList.add('active');
         headerTitle.classList.add('hidden');
+        try { applyHomeViewMode(); } catch (e) { console.warn(e); }
         myView.style.display = 'none';
         calendarView.style.display = 'none';
         sharedView.style.display = 'none';
@@ -12331,6 +13204,44 @@ async function attemptBiometricUnlock() {
       const mi = mm ? mm[2] : '00';
       const d = new Date(String(sch.date).replace(/\//g, '-') + 'T' + hh + ':' + mi + ':00');
       return isNaN(d.getTime()) ? null : d;
+    }
+
+    
+    function formatHomeNextScheduleLines(sch) {
+      if (!sch) return { line1: '予定できたら追加してね〜！', line2: '' };
+      const store = (sch.storeName || '').trim();
+      const name = (sch.castName || sch.title || '').trim();
+      const timePart = (sch.time && String(sch.time).trim()) ? String(sch.time).trim() : '';
+      const tail = [store, name].filter(Boolean).join('・');
+
+      if (sch.type === 'plan') {
+        const dt = typeof getScheduleDateTime === 'function' ? getScheduleDateTime(sch) : null;
+        if (dt) {
+          const now = new Date();
+          const diffMs = dt.getTime() - now.getTime();
+          if (diffMs >= 0 && diffMs <= 2 * 60 * 60 * 1000) {
+            let line1 = 'このあと';
+            if (timePart) line1 += ' ' + timePart;
+            return { line1: line1.trim(), line2: tail };
+          }
+        }
+      }
+
+      if (sch.type === 'reservation') {
+        const rel = getScheduleRelativeDayLabel(sch.date, sch.time, { simple: true });
+        const t = timePart || '10:00';
+        const mm = t.match(/^(\d{1,2}):(\d{2})/);
+        let clockLabel = t;
+        if (mm) {
+          clockLabel = parseInt(mm[1], 10) + '時' + (mm[2] === '00' ? '' : parseInt(mm[2], 10) + '分');
+        }
+        return { line1: rel + 'の' + clockLabel + 'から', line2: '予約スタート' };
+      }
+
+      const rel = getScheduleRelativeDayLabel(sch.date, sch.time, { simple: false });
+      let line1 = rel;
+      if (timePart) line1 += ' ' + timePart;
+      return { line1: line1.trim(), line2: tail };
     }
 
     function formatHomeNextScheduleText(sch) {
@@ -13728,9 +14639,19 @@ async function attemptBiometricUnlock() {
       // キャンセル・処理済み予約開始は除外
       const futureActive = futurePlans.filter(s => s && !s.cancelled && !(s.type === 'reservation' && s.reservationResult));
       if (futureActive.length === 0) {
-        nextTextElem.innerText = '予定できたら追加してね〜！';
+        nextTextElem.textContent = '予定できたら追加してね〜！';
+      } else if (homeViewMode === 'sline') {
+        // つながり3D: 2行表示
+        const lines = formatHomeNextScheduleLines(futureActive[0]);
+        if (lines.line2) {
+          nextTextElem.innerHTML = '<div class="home-next-l1">' + escapeHTML(lines.line1) + '</div>' +
+            '<div class="home-next-l2">' + escapeHTML(lines.line2) + '</div>';
+        } else {
+          nextTextElem.textContent = lines.line1 || formatHomeNextScheduleText(futureActive[0]);
+        }
       } else {
-        nextTextElem.innerText = formatHomeNextScheduleText(futureActive[0]);
+        // 思い出ギャラリー: 1行「明日夜 20:40 店・名前」
+        nextTextElem.textContent = formatHomeNextScheduleText(futureActive[0]);
       }
 
       // いい値ぇー！ホームウィジェット（ミニリング）
@@ -17686,6 +18607,7 @@ function getCssVar(name, fallback) {
 
     /* ========== プレイ内容タグ ========== */
     let playContentEnabled = localStorage.getItem('app_play_content_enabled');
+    homeViewMode = localStorage.getItem('app_home_view_mode') || 'normal';
     if (playContentEnabled === null) playContentEnabled = 'on';
     let playPickerDraft = [];
 
@@ -19312,6 +20234,9 @@ function getCssVar(name, fallback) {
     }
     
     function initSettingsView() {
+      document.querySelectorAll('input[name="homeViewMode"]').forEach(function(el) {
+        el.checked = el.value === (homeViewMode || 'normal');
+      });
       document.getElementById('inputUserName').value = currentUserName;
       document.getElementById('ratingEnabledToggle').checked = ratingEnabled;
       updateSecuritySettingsUI();
@@ -20073,11 +20998,23 @@ function getCssVar(name, fallback) {
           ['あの子の話しよ', 'よく行く子の話しよ'],
           ['最近の当たり外れ', '最近の当たり外れってどんな感じ？']
         ]
+      },
+      accountant: {
+        id: 'accountant',
+        name: '俺の会計士',
+        emoji: '🧾',
+        tagline: 'その金額、どこだと何ヶ月分？',
+        placeholder: '会計士 受付時間外',
+        greeting: '俺の会計士です🧾\n\nまだ正式オープン前で、受付時間外です。\n\n今後は「今月の支出」を沖縄・東京・神奈川・香港などの物価感覚で読み解く予定です。\n統計の数字と合わせて、使いすぎかどうかを尺度で見られるようにしていきます。',
+        chips: [],
+        offline: true
       }
     };
 
     function chatHistoryKey(pid) {
-      return pid === 'kosugi' ? 'ai_chat_history_kosugi_' + currentUserName : 'ai_chat_history_' + currentUserName;
+      if (pid === 'kosugi') return 'ai_chat_history_kosugi_' + currentUserName;
+      if (pid === 'accountant') return 'ai_chat_history_accountant_' + currentUserName;
+      return 'ai_chat_history_' + currentUserName;
     }
 
     function readChatHistory(pid) {
@@ -20131,12 +21068,30 @@ function getCssVar(name, fallback) {
         if (btn) btn.classList.toggle('active', id === p.id);
       });
       const input = document.getElementById('aiChatInput');
-      if (input) input.placeholder = p.placeholder;
+      const sendBtn = document.getElementById('aiChatSendBtn');
+      const offline = !!(p && p.offline);
+      if (input) {
+        input.placeholder = offline ? '会計士 受付時間外' : (p.placeholder || '');
+        input.disabled = offline;
+        input.readOnly = offline;
+        input.classList.toggle('ai-chat-input-disabled', offline);
+        if (offline) input.value = '';
+      }
+      if (sendBtn) {
+        sendBtn.disabled = offline;
+        sendBtn.classList.toggle('ai-chat-send-disabled', offline);
+      }
       const chipRow = document.getElementById('aiChatChipRow');
       if (chipRow) {
-        chipRow.innerHTML = p.chips.map((c, i) =>
-          `<button type="button" class="ai-chat-chip" onclick="sendPersonaChip(${i})">${escapeHTML(c[0])}</button>`
-        ).join('');
+        if (offline || !p.chips || !p.chips.length) {
+          chipRow.innerHTML = offline
+            ? '<div class="ai-chat-offline-note">受付時間外のため、メッセージは送れません</div>'
+            : '';
+        } else {
+          chipRow.innerHTML = p.chips.map((c, i) =>
+            `<button type="button" class="ai-chat-chip" onclick="sendPersonaChip(${i})">${escapeHTML(c[0])}</button>`
+          ).join('');
+        }
       }
     }
 
@@ -20215,6 +21170,7 @@ function getCssVar(name, fallback) {
     }
 
     function sendChatQuickQuestion(text) {
+      if (AI_PERSONAS[currentChatPersona] && AI_PERSONAS[currentChatPersona].offline) return;
       document.getElementById('aiChatInput').value = text;
       sendChatMessage();
     }
@@ -20405,6 +21361,7 @@ ${question}`;
     }
 
     async function sendChatMessage() {
+      if (AI_PERSONAS[currentChatPersona] && AI_PERSONAS[currentChatPersona].offline) return;
       const input = document.getElementById('aiChatInput');
       const question = input.value.trim();
       if (!question) return;
@@ -20883,7 +21840,7 @@ ${question}`;
       area.addEventListener('touchstart', (e) => {
         if (e.touches.length !== 1) return;
         // 横スワイプ専用UIはタブ切替の対象外
-        if (e.target.closest('.xl-grid-wrap, .sheet-ad-carousel, .home-widget-track, .map-scroll-body, .ai-chat-chip-row, .album-reader, .album-reader-track, .album-cover-grid, .album-cover, .album-scroll-body, .cast-feat-fold, .cast-feat-track, .cast-feat-toggle, .notes-box')) { tracking = false; return; }
+        if (e.target.closest('.xl-grid-wrap, .sheet-ad-carousel, .home-widget-track, .map-scroll-body, .ai-chat-chip-row, .album-reader, .album-reader-track, .album-cover-grid, .album-cover, .album-scroll-body, .cast-feat-fold, .cast-feat-track, .cast-feat-toggle, .notes-box, #homeSlineLayer, #homeSlineCanvas, .sline-label, .sline-user-pill, #homeSlineBubble')) { tracking = false; return; }
         startX = e.touches[0].clientX;
         startY = e.touches[0].clientY;
         tracking = true;
